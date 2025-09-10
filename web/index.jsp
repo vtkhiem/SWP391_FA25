@@ -1,3 +1,11 @@
+<%-- 
+    Document   : index
+    Created on : Sep 10, 2025, 11:00:05 PM
+    Author     : Admin
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <!doctype html>
 <html class="no-js" lang="zxx">
 
