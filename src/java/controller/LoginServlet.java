@@ -5,6 +5,9 @@
 
 package controller;
 
+import dal.AdminDAO;
+import dal.RegisterCandidateDAO;
+import dal.RegisterEmployerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +15,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import tool.ValidationRegister;
 
 /**
  *
@@ -68,8 +73,78 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+      try {
+           RegisterCandidateDAO candidateDAO = new RegisterCandidateDAO();
+            RegisterEmployerDAO employerDAO = new RegisterEmployerDAO();
+            AdminDAO adminDAO = new AdminDAO();
+
+            HttpSession session = request.getSession();
+
+            String status = " ";
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            if(email.contains("@")){
+            // kiểm tra xem có tồn tại trong Candidate trước          
+            if (candidateDAO.isEmailCandidateExist(email)) {
+
+                boolean result = candidateDAO.loginCandidate(email, password);
+                String idCandidate = candidateDAO.getIDByEmail(email);
+                if (result) {
+                    session.setAttribute("email", email);   
+                    session.setAttribute("role", "Candidate");       // lưu role 
+                    session.setAttribute("idUser", idCandidate);     // lưu id
+                
+                  
+                    response.sendRedirect("index.jsp");
+                } else {
+                    status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
+                    request.setAttribute("status", status);
+                    request.setAttribute("username", email);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                }
+                // Kiểm tra xem trong employerr
+            } else if (employerDAO.isEmailEmployerExist(email)) {
+
+                boolean result = employerDAO.loginEmployer(email, password);
+                String idEmployer = employerDAO.getIDByEmail(email);
+                if (result) {
+                    session.setAttribute("email", email);
+                    session.setAttribute("idUser", idEmployer);
+                    session.setAttribute("role", "Employer");
+                
+                    response.sendRedirect("Index");
+                } else {
+                    status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
+                    request.setAttribute("username",email );
+                    request.setAttribute("status", status);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                }
+            }
+            }else{
+                String username = request.getParameter("email");
+                 
+
+                boolean result = adminDAO.loginAccountAdmin(username, password);
+                if (result) {
+                    session.setAttribute("username", username);
+                    session.setAttribute("role", "Admin");
+
+                    response.sendRedirect("StatictisData"); 
+
+                } else {
+                    status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
+                    request.setAttribute("username", username);
+                    request.setAttribute("status", status);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                }
+        
+            }
+
+        } catch (Exception s) {
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
     }
+    
 
     /** 
      * Returns a short description of the servlet.

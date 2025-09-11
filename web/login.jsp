@@ -225,12 +225,10 @@
 <body>
 <div class="container" id="container">
     <div class="form-container sign-up-container">
-        <form id="signupForm" action="${pageContext.request.contextPath}/RegisterAccount" method="post" autocomplete="off">
-            <input type="text" name="username" placeholder="Tên đăng nhập" value="${username}" required />
+        <form id="signupForm" action="register" method="post" autocomplete="off">
+            <input type="text" name="name" placeholder="Tên" value="${name}" required />
+            <input type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
             <input type="email" name="email" placeholder="Email" value="${email}" required />
-            <div id="phoneContainer" style="display: none;">
-                <input type="tel" id="phoneInput" name="employerPhone" placeholder="Số điện thoại" pattern="[0-9]{10,15}" />
-            </div>
             <input type="password" id="password" name="password1" placeholder="Mật khẩu" required />
             <input type="password" id="confirmPassword" name="password2" placeholder="Xác nhận mật khẩu" required />
             <select id="role" name="role" required>
@@ -243,8 +241,8 @@
         </form>
     </div>
     <div class="form-container sign-in-container">
-        <form action="${pageContext.request.contextPath}/LoginAccount" method="post" autocomplete="off">
-            <input type="text" name="username" placeholder="Tên đăng nhập" value="${username}" required />
+        <form action="login" method="post" autocomplete="off">
+            <input type="text" name="email" placeholder="Email" value="${username}" required />
             <input type="password" name="password" placeholder="Mật khẩu" required />
             <button type="submit">Đăng nhập</button>
             <a href="<%= request.getContextPath() %>/forgetPassword.jsp">Quên mật khẩu?</a>
