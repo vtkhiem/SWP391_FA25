@@ -9,35 +9,34 @@ package model;
  * @author Admin
  */
 public class Employer {
-      private int employerId;
-    private String nameEmployer;
+
+    private int employerId;
+    private String employerName;
     private String email;
+    private String phoneNumber;
     private String passwordHash;
     private String companyName;
     private String description;
     private String location;
     private String urlWebsite;
-    private String companySize;
-    private String imgLogo;
-    private String phoneNumber;
     private String taxCode;
+    private String imgLogo;
 
-    public Employer(int employerId, String nameEmployer, String email, String passwordHash, String companyName, String description, String location, String urlWebsite, String companySize, String imgLogo, String phoneNumber, String taxCode) {
+    public Employer() {
+    }
+
+    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location, String urlWebsite, String taxCode, String imgLogo) {
         this.employerId = employerId;
-        this.nameEmployer = nameEmployer;
+        this.employerName = employerName;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.passwordHash = passwordHash;
         this.companyName = companyName;
         this.description = description;
         this.location = location;
         this.urlWebsite = urlWebsite;
-        this.companySize = companySize;
-        this.imgLogo = imgLogo;
-        this.phoneNumber = phoneNumber;
         this.taxCode = taxCode;
-    }
-
-    public Employer() {
+        this.imgLogo = imgLogo;
     }
 
     public int getEmployerId() {
@@ -48,12 +47,12 @@ public class Employer {
         this.employerId = employerId;
     }
 
-    public String getNameEmployer() {
-        return nameEmployer;
+    public String getEmployerName() {
+        return employerName;
     }
 
-    public void setNameEmployer(String nameEmployer) {
-        this.nameEmployer = nameEmployer;
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
     }
 
     public String getEmail() {
@@ -62,6 +61,14 @@ public class Employer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPasswordHash() {
@@ -104,12 +111,12 @@ public class Employer {
         this.urlWebsite = urlWebsite;
     }
 
-    public String getCompanySize() {
-        return companySize;
+    public String getTaxCode() {
+        return taxCode;
     }
 
-    public void setCompanySize(String companySize) {
-        this.companySize = companySize;
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
     public String getImgLogo() {
@@ -120,20 +127,6 @@ public class Employer {
         this.imgLogo = imgLogo;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
     
+
 }

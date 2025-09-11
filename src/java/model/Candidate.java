@@ -4,16 +4,12 @@
  */
 package model;
 
-
-import java.time.LocalDate;
-
-
 public class Candidate {
-
-   private int candidateId;
+    private int candidateId;
     private String candidateName;
     private String address;
     private String email;
+    private String phoneNumber;
     private String nationality;
     private String passwordHash;
     private String avatar;
@@ -21,14 +17,23 @@ public class Candidate {
     public Candidate() {
     }
 
-    public Candidate(int candidateId, String candidateName, String address, String email, String nationality, String passwordHash, String avatar) {
+    public Candidate(int candidateId, String candidateName, String address, String email, String phoneNumber, String nationality, String passwordHash, String avatar) {
         this.candidateId = candidateId;
         this.candidateName = candidateName;
         this.address = address;
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.nationality = nationality;
         this.passwordHash = passwordHash;
         this.avatar = avatar;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public int getCandidateId() {
@@ -86,5 +91,5 @@ public class Candidate {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-  
+
 }
