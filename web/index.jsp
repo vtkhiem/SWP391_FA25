@@ -1,13 +1,13 @@
-    <%-- 
-        Document   : index
-        Created on : Sep 10, 2025, 11:00:05 PM
-        Author     : Admin
-    --%>
-
-    <%@page contentType="text/html" pageEncoding="UTF-8"%>
-    <!DOCTYPE html>
-    <!doctype html>
-    <html class="no-js" lang="zxx">
+<%-- 
+    Document   : index
+    Created on : Sep 10, 2025, 11:00:05 PM
+    Author     : Admin
+--%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<!doctype html>
+<html class="no-js" lang="zxx">
 
     <head>
         <meta charset="utf-8">
@@ -43,6 +43,7 @@
 
         <!-- header-start -->
         <header>
+       
             <div class="header-area ">
                 <div id="sticky-header" class="main-header-area">
                     <div class="container-fluid ">
@@ -87,9 +88,22 @@
                                 </div>
                                 <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                                     <div class="Appointment">
-                                        <div class="phone_num d-none d-xl-block">
-                                            <a href="login.jsp">Login</a>
-                                        </div>
+
+                                        <!-- Nếu chưa login thì hiện nút Login -->
+                                        <c:if test="${empty sessionScope.user}">
+                                            <div class="phone_num d-none d-xl-block">
+                                                <a href="login.jsp">Login</a>
+                                            </div>
+                                        </c:if>
+
+                                        <!-- Nếu đã login thì hiện tên user + Logout -->
+                                        <c:if test="${not empty sessionScope.user}">
+                                            <div class="phone_num d-none d-xl-block">
+                                                Xin chào, <a href="profile">   ${sessionScope.user.candidateName} | </a>
+                                                <a href="logout">Logout</a>
+                                            </div>
+                                        </c:if>
+
                                         <div class="d-none d-lg-block">
                                             <a class="boxed-btn3" href="#">Post a Job</a>
                                         </div>
@@ -147,7 +161,7 @@
                                 <option value="1">Dhaka</option>
                                 <option value="2">Rangpur</option>
                                 <option value="4">Sylet</option>
-                              </select>
+                            </select>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-4">
@@ -157,7 +171,7 @@
                                 <option value="1">Category 1</option>
                                 <option value="2">Category 2</option>
                                 <option value="4">Category 3</option>
-                              </select>
+                            </select>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-12">
@@ -803,8 +817,8 @@
                         <div class="col-xl-12">
                             <p class="copy_right text-center">
                                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                             </p>
                         </div>
                     </div>
@@ -847,4 +861,4 @@
         <script src="js/main.js"></script>
     </body>
 
-    </html>
+</html>
