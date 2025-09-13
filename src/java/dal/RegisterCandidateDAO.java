@@ -5,6 +5,7 @@
 package dal;
 
 import java.sql.*;
+import model.Candidate;
 import tool.EncodePassword;
 
 /**
@@ -116,6 +117,39 @@ public class RegisterCandidateDAO extends DBContext {
         }
         return null;
     }
+    public Candidate getCandidateByEmail(String email) {
+        try {
+              String query = "SELECT [CandidateID], [CandidateName], [Address], [Email], [PhoneNumber], "
+                     + "[Nationality], [PasswordHash], [Avatar] "
+                     + "FROM [dbo].[Candidate] "
+                     + "WHERE Email = ?";
+      
+             PreparedStatement ps = c.prepareStatement(query);
+            
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                return new Candidate(
+                    rs.getInt("CandidateID"),
+                    rs.getString("CandidateName"),
+                    rs.getString("Address"),
+                    rs.getString("Email"),
+                    rs.getString("PhoneNumber"),
+                    rs.getString("Nationality"),
+                    rs.getString("PasswordHash"),
+                    rs.getString("Avatar")
+                );
+            }
+        } catch (Exception e) {
+        }
+      
+      
+        return null;  
+    }
+     
+     
+     
     public static void main(String[] args) {
         RegisterCandidateDAO dao = new RegisterCandidateDAO();
 

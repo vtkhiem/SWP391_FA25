@@ -229,8 +229,8 @@
             <input type="text" name="name" placeholder="Tên" value="${name}" required />
             <input type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
             <input type="email" name="email" placeholder="Email" value="${email}" required />
-            <input type="password" id="password" name="password1" placeholder="Mật khẩu" required />
-            <input type="password" id="confirmPassword" name="password2" placeholder="Xác nhận mật khẩu" required />
+            <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
             <select id="role" name="role" required>
                 <option value="" disabled selected>Chọn vai trò</option>
                 <option value="candidate">Ứng viên</option>
