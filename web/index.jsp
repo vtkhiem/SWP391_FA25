@@ -74,6 +74,12 @@
                                                         <li><a href="single-blog.html">single-blog</a></li>
                                                     </ul>
                                                 </li>
+                                                <li><a href="#">CV <i class="ti-angle-down"></i></a>
+                                                    <ul class="submenu">
+                                                        <li><a href="cv-create.jsp">CV Create</a></li>
+                                                        <li><a href="cv-management.jsp">CV Management</a></li>
+                                                    </ul>
+                                                </li>
                                                 <li><a href="contact.html">Contact</a></li>
                                             </ul>
                                         </nav>
