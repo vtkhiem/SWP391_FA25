@@ -67,6 +67,12 @@
                                                     <li><a href="single-blog.html">single-blog</a></li>
                                                 </ul>
                                             </li>
+                                            <li><a href="#">CV <i class="ti-angle-down"></i></a>
+                                                <ul class="submenu">
+                                                    <li><a href="cv-create.jsp">CV Create</a></li>
+                                                    <li><a href="cv-management.jsp">CV Management</a></li>
+                                                </ul>
+                                            </li>
                                             <li><a href="contact.html">Contact</a></li>
                                         </ul>
                                     </nav>
@@ -184,11 +190,12 @@
                             <label for="amount">Price range:</label>
                             <div id="slider-range"></div>
                             <p>
-                                <input type="text" id="amount" readonly style="border:0; color:#7A838B; font-size: 14px; font-weight:400;">
+                                <input type="text" id="amount" readonly
+                                    style="border:0; color:#7A838B; font-size: 14px; font-weight:400;">
                             </p>
                         </div>
                         <div class="reset_btn">
-                            <button  class="boxed-btn3 w-100" type="submit">Reset</button>
+                            <button class="boxed-btn3 w-100" type="submit">Reset</button>
                         </div>
                     </div>
                 </div>
@@ -222,7 +229,9 @@
                                             <img src="img/svg_icon/1.svg" alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.html"><h4>Software Engineer</h4></a>
+                                            <a href="job_details.html">
+                                                <h4>Software Engineer</h4>
+                                            </a>
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
                                                     <p> <i class="fa fa-map-marker"></i> California, USA</p>
@@ -251,7 +260,9 @@
                                             <img src="img/svg_icon/2.svg" alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.html"><h4>Digital Marketer</h4></a>
+                                            <a href="job_details.html">
+                                                <h4>Digital Marketer</h4>
+                                            </a>
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
                                                     <p> <i class="fa fa-map-marker"></i> California, USA</p>
@@ -280,7 +291,9 @@
                                             <img src="img/svg_icon/3.svg" alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.html"><h4>Wordpress Developer</h4></a>
+                                            <a href="job_details.html">
+                                                <h4>Wordpress Developer</h4>
+                                            </a>
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
                                                     <p> <i class="fa fa-map-marker"></i> California, USA</p>
@@ -309,8 +322,10 @@
                                             <img src="img/svg_icon/4.svg" alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.html"><h4>Visual Designer</h4></a>
-                                            
+                                            <a href="job_details.html">
+                                                <h4>Visual Designer</h4>
+                                            </a>
+
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
                                                     <p> <i class="fa fa-map-marker"></i> California, USA</p>
@@ -339,7 +354,9 @@
                                             <img src="img/svg_icon/5.svg" alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.html"><h4>Software Engineer</h4></a>
+                                            <a href="job_details.html">
+                                                <h4>Software Engineer</h4>
+                                            </a>
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
                                                     <p> <i class="fa fa-map-marker"></i> California, USA</p>
@@ -368,7 +385,9 @@
                                             <img src="img/svg_icon/1.svg" alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.html"><h4>Creative Designer</h4></a>
+                                            <a href="job_details.html">
+                                                <h4>Creative Designer</h4>
+                                            </a>
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
                                                     <p> <i class="fa fa-map-marker"></i> California, USA</p>
@@ -504,8 +523,11 @@
                     <div class="col-xl-12">
                         <p class="copy_right text-center">
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;
+                            <script>document.write(new Date().getFullYear());</script> All rights reserved | This
+                            template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a
+                                href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </p>
                     </div>
                 </div>
@@ -549,21 +571,21 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <script src="js/main.js"></script>
 
 
-	<script>
-        $( function() {
-            $( "#slider-range" ).slider({
+    <script>
+        $(function () {
+            $("#slider-range").slider({
                 range: true,
                 min: 0,
                 max: 24600,
-                values: [ 750, 24600 ],
-                slide: function( event, ui ) {
-                    $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] +"/ Year" );
+                values: [750, 24600],
+                slide: function (event, ui) {
+                    $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1] + "/ Year");
                 }
             });
-            $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-                " - $" + $( "#slider-range" ).slider( "values", 1 ) + "/ Year");
-        } );
-        </script>
+            $("#amount").val("$" + $("#slider-range").slider("values", 0) +
+                " - $" + $("#slider-range").slider("values", 1) + "/ Year");
+        });
+    </script>
 </body>
 
 </html>
