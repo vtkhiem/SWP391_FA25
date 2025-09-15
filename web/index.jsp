@@ -85,7 +85,7 @@
                                             <a href="login.jsp">Login</a>
                                         </div>
                                         <div class="d-none d-lg-block">
-                                            <a class="boxed-btn3" href="#">Post a Job</a>
+                                            <a class="boxed-btn3" href="employer.jsp">For employer</a>
                                         </div>
                                     </div>
                                 </div>
