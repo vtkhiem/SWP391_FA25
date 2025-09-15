@@ -52,7 +52,7 @@ public class ProfileServlet extends HttpServlet {
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
+     * @param request servlet request 
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
@@ -66,7 +66,7 @@ public class ProfileServlet extends HttpServlet {
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
-
+        String error = request.getParameter("error");
         String role = (String) session.getAttribute("role");
         if ("Candidate".equals(role)) {
             // Candidate: Dữ liệu đã có trong session từ LoginServlet
@@ -95,7 +95,7 @@ public class ProfileServlet extends HttpServlet {
                 String email = (String) session.getAttribute("email");
                 employer = candidateDAO.getEmployerByEmail(email);
                 if (employer != null) {
-                    session.setAttribute("candidate", employer);
+                    session.setAttribute("employer", employer);
                 } 
             } else {
                 request.setAttribute("status", "Không tìm thấy thông tin nhà tuyển dụng!");
@@ -107,6 +107,7 @@ public class ProfileServlet extends HttpServlet {
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
+        request.setAttribute("error", error);
 
         request.getRequestDispatcher("profile.jsp").forward(request, response);
     
