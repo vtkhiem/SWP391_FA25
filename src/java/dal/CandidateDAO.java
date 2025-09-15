@@ -4,10 +4,15 @@
  */
 package dal;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author Admin
  */
-public class CandidateDAO {
-    
+public class CandidateDAO extends DBContext{
+   
+
 }

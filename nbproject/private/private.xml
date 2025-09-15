@@ -7,7 +7,9 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/blog.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/jobs.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/single-blog.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ForgotPasswordServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/job_details.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ChangePasswordServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/META-INF/context.xml</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/LoginServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/login.jsp</file>
@@ -19,17 +21,17 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterCandidateDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/EncodePassword.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/RegisterServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Employer.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/CandidateDAO.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/WEB-INF/web.xml</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ProfileServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/WEB-INF/web.xml</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/DBContext.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/PasswordDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/LogoutServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/EmployerDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/AdminDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/forget_password.jsp</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/candidate.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/contact.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/EmailService.java</file>
         </group>
     </open-files>
 </project-private>
