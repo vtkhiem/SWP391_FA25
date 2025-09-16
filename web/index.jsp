@@ -777,6 +777,7 @@
     <body>
         <!-- header-start -->
         <header>
+
             <div class="header-area ">
                 <div id="sticky-header" class="main-header-area">
                     <div class="container-fluid ">
@@ -808,6 +809,12 @@
                                                         <li><a href="single-blog.html">single-blog</a></li>
                                                     </ul>
                                                 </li>
+                                                <li><a href="#">CV <i class="ti-angle-down"></i></a>
+                                                    <ul class="submenu">
+                                                        <li><a href="cv-create.jsp">CV Create</a></li>
+                                                        <li><a href="cv-management.jsp">CV Management</a></li>
+                                                    </ul>
+                                                </li>
                                                 <li><a href="contact.html">Contact</a></li>
                                             </ul>
                                         </nav>
@@ -815,9 +822,22 @@
                                 </div>
                                 <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                                     <div class="Appointment">
-                                        <div class="phone_num d-none d-xl-block">
-                                            <a href="login.jsp">Login</a>
-                                        </div>
+
+                                        <!-- Nếu chưa login thì hiện nút Login -->
+                                        <c:if test="${empty sessionScope.user}">
+                                            <div class="phone_num d-none d-xl-block">
+                                                <a href="login.jsp">Login</a>
+                                            </div>
+                                        </c:if>
+
+                                        <!-- Nếu đã login thì hiện tên user + Logout -->
+                                        <c:if test="${not empty sessionScope.user}">
+                                            <div class="phone_num d-none d-xl-block">
+                                                Xin chào, <a href="profile">   ${sessionScope.user.candidateName} | </a>
+                                                <a href="logout">Logout</a>
+                                            </div>
+                                        </c:if>
+
                                         <div class="d-none d-lg-block">
                                             <a class="boxed-btn3" href="#">Post a Job</a>
                                         </div>
