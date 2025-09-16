@@ -98,31 +98,6 @@
     </form>
 </div>
 
-<script>
-    const forgetPasswordForm = document.getElementById('forgetPasswordForm');
-    const notification = document.getElementById('notification');
 
-    forgetPasswordForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        notification.style.display = 'none';
-
-        const formData = new FormData(forgetPasswordForm);
-        fetch('forgetPassword', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            notification.style.display = 'block';
-            notification.className = 'notification ' + (data.success ? 'success' : 'error');
-            notification.textContent = data.message || data.error;
-        })
-        .catch(error => {
-            notification.style.display = 'block';
-            notification.className = 'notification error';
-            notification.textContent = 'Lỗi hệ thống: ' + error.message;
-        });
-    });
-</script>
 </body>
 </html>
