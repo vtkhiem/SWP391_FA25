@@ -171,6 +171,38 @@ public class RegisterEmployerDAO extends DBContext {
 
         return null;
     }
+      public boolean verifyPassword(String email, String password) {
+        String query = "SELECT [PasswordHash] FROM [dbo].[Employer] WHERE Email = ?";
+        try  {
+            PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String storedHash = rs.getString("PasswordHash");
+                String inputHash = EncodePassword.encodePasswordbyHash(password);
+                    return inputHash.equals(storedHash);
+              
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean changePassword(String email, String newHashedPassword) {
+        String query = "UPDATE [dbo].[Employer] SET [PasswordHash] = ? WHERE Email = ?";
+        try {
+              PreparedStatement ps = c.prepareStatement(query);
+            ps.setString(1, newHashedPassword);
+            ps.setString(2, email);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static void main(String[] args) {
         RegisterEmployerDAO dao = new RegisterEmployerDAO();
