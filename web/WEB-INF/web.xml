@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1">
-
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <display-name>MyWebApp</display-name>
-
     <!-- Sau này nếu có Servlet thì thêm ở đây -->
     <!--
     <servlet>
@@ -19,5 +13,47 @@
         <url-pattern>/hello</url-pattern>
     </servlet-mapping>
     -->
-
+    <servlet>
+        <servlet-name>JobListServlet</servlet-name>
+        <servlet-class>controller.JobListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobSearchServlet</servlet-name>
+        <servlet-class>controller.JobSearchServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobAddServlet</servlet-name>
+        <servlet-class>controller.JobAddServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobEditServlet</servlet-name>
+        <servlet-class>controller.JobEditServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobDeleteServlet</servlet-name>
+        <servlet-class>controller.JobDeleteServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JobListServlet</servlet-name>
+        <url-pattern>/jobs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobSearchServlet</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobAddServlet</servlet-name>
+        <url-pattern>/job/add</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobEditServlet</servlet-name>
+        <url-pattern>/job/edit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobDeleteServlet</servlet-name>
+        <url-pattern>/job/delete</url-pattern>
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>views/home/home.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

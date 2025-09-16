@@ -1,160 +1,131 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.*;
 import model.Employer;
 import tool.EncodePassword;
 
-/**
- *
- * @author Admin
- */
 public class RegisterEmployerDAO extends DBContext {
 
+    // Kiểm tra email đã tồn tại chưa
     public boolean isEmailEmployerExist(String mail) {
-        try {
-            String query = "SELECT 1 FROM [dbo].[Employer] WHERE Email = ?";
-            PreparedStatement push = c.prepareStatement(query);
-            push.setString(1, mail);
-            ResultSet rs = push.executeQuery();
-
-            return rs.next(); // có dòng nào => email đã tồn tại
-        } catch (SQLException s) {
-            System.out.println("Bug SQL: " + s.getMessage());
-        }
-        return false;
-    }
-
-    public boolean isPhoneEmployerExist(String phone) {
-        try {
-            String query = "SELECT 1 FROM [dbo].[Employer] WHERE PhoneNumber = ?";
-            PreparedStatement push = c.prepareStatement(query);
-            push.setString(1, phone);
-            ResultSet rs = push.executeQuery();
-
-            return rs.next(); // nếu có dòng nào => số điện thoại đã tồn tại
-        } catch (SQLException s) {
-            System.out.println("Bug SQL: " + s.getMessage());
-        }
-        return false;
-    }
-
-    public boolean registerEmployer(String name, String mail, String phone, String password) {
-        try {
-            String query = "INSERT INTO [dbo].[Employer]\n"
-                    + "           ([EmployerName]          \n"
-                    + "           ,[Email]                   \n"
-                    + "           ,[PhoneNumber]                   \n"
-                    + "           ,[PasswordHash])\n"
-                    + "     VALUES (?,?,?,?)";
-
-            // Mã hóa password trước khi lưu vào database 
-            String passwordHash = EncodePassword.encodePasswordbyHash(password);
-
-            PreparedStatement push = c.prepareStatement(query);
-            push.setString(1, name);
-            push.setString(2, mail);
-            push.setString(3, phone);
-            push.setString(4, passwordHash);
-
-            int row = push.executeUpdate();
-
-            if (row > 0) {
-                System.out.println("Đăng ký nhà tuyển dụng thành công!");
-            } else {
-                System.out.println("Đăng ký thất bại!");
+        String query = "SELECT 1 FROM [dbo].[Employer] WHERE Email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, mail);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
             }
-
-            return row != 0;
-        } catch (SQLException s) {
-            System.out.println("Lỗi SQL: " + s.getMessage());
+        } catch (SQLException e) {
+            System.out.println("SQL error (isEmailEmployerExist): " + e.getMessage());
         }
         return false;
     }
 
+    // Kiểm tra phone đã tồn tại chưa
+    public boolean isPhoneEmployerExist(String phone) {
+        String query = "SELECT 1 FROM [dbo].[Employer] WHERE PhoneNumber = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error (isPhoneEmployerExist): " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Đăng ký employer mới
+    public boolean registerEmployer(String name, String mail, String phone, String password) {
+        String query = "INSERT INTO [dbo].[Employer] "
+                     + "([EmployerName], [Email], [PhoneNumber], [PasswordHash]) "
+                     + "VALUES (?, ?, ?, ?)";
+
+        String passwordHash = EncodePassword.encodePasswordbyHash(password);
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, name);
+            ps.setString(2, mail);
+            ps.setString(3, phone);
+            ps.setString(4, passwordHash);
+
+            int row = ps.executeUpdate();
+            return row > 0;
+        } catch (SQLException e) {
+            System.out.println("SQL error (registerEmployer): " + e.getMessage());
+        }
+        return false;
+    }
+
+    // Đăng nhập employer
     public boolean loginEmployer(String email, String password) {
         String query = "SELECT PasswordHash FROM [dbo].[Employer] WHERE Email = ?";
 
-        try (PreparedStatement ps = c.prepareStatement(query)) {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     String storedHash = rs.getString("PasswordHash");
                     String inputHash = EncodePassword.encodePasswordbyHash(password);
                     return inputHash.equals(storedHash);
-                } else {
-                    // Không tìm thấy email
-                    return false;
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Lỗi SQL: " + e.getMessage());
-            return false;
+            System.out.println("SQL error (loginEmployer): " + e.getMessage());
         }
+        return false;
     }
 
+    // Lấy EmployerID theo email
     public String getIDByEmail(String email) {
-        try {
-
-            String query = "SELECT [EmployerID]\n"
-                    + "  FROM [dbo].[Employer]\n"
-                    + "  Where Email = ?";
-
-            PreparedStatement push = c.prepareStatement(query);
-
-            push.setString(1, email);
-
-            ResultSet rs = push.executeQuery();
-            while (rs.next()) {
-                return rs.getString("EmployerID");
-            }
-        } catch (Exception s) {
-            System.out.println("Bug  SQL:" + s.getMessage());
-
-        }
-        return null;
-    }
-
-    public String getNameByEmail(String email) {
-        try {
-
-            String query = "SELECT [EmployerName]\n"
-                    + "  FROM [dbo].[Candidate]\n"
-                    + "  Where Email = ?";
-
-            PreparedStatement push = c.prepareStatement(query);
-
-            push.setString(1, email);
-
-            ResultSet rs = push.executeQuery();
-            while (rs.next()) {
-                return rs.getString("EmployerName");
-            }
-        } catch (Exception s) {
-            System.out.println("Bug  SQL:" + s.getMessage());
-
-        }
-        return null;
-    }
-
-    public Employer getEmployerByEmail(String email) {
-        try {
-            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PhoneNumber], "
-                    + "[CompanyName], [Description], [Location], [URLWebsite], [TaxCode], [ImgLogo] "
-                    + "FROM [dbo].[Candidate] "
-                    + "WHERE Email = ?";
-
-            PreparedStatement ps = c.prepareStatement(query);
-
+        String query = "SELECT EmployerID FROM [dbo].[Employer] WHERE Email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("EmployerID");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error (getIDByEmail): " + e.getMessage());
+        }
+        return null;
+    }
 
-            if (rs.next()) {
-                return new Employer(
-                        rs.getInt("EmplyerID"),
+    // Lấy EmployerName theo email
+    public String getNameByEmail(String email) {
+        String query = "SELECT EmployerName FROM [dbo].[Employer] WHERE Email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("EmployerName");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error (getNameByEmail): " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Lấy đầy đủ thông tin Employer theo email
+    public Employer getEmployerByEmail(String email) {
+        String query = "SELECT EmployerID, EmployerName, Email, PhoneNumber, "
+                     + "CompanyName, PasswordHash, Description, Location, "
+                     + "URLWebsite, TaxCode, ImgLogo "
+                     + "FROM [dbo].[Employer] WHERE Email = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Employer(
+                        rs.getInt("EmployerID"),
                         rs.getString("EmployerName"),
                         rs.getString("Email"),
                         rs.getString("PhoneNumber"),
@@ -164,65 +135,13 @@ public class RegisterEmployerDAO extends DBContext {
                         rs.getString("Location"),
                         rs.getString("URLWebsite"),
                         rs.getString("TaxCode"),
-                        rs.getString("ImgLogo"));
+                        rs.getString("ImgLogo")
+                    );
+                }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            System.out.println("SQL error (getEmployerByEmail): " + e.getMessage());
         }
-
         return null;
-    }
-      public boolean verifyPassword(String email, String password) {
-        String query = "SELECT [PasswordHash] FROM [dbo].[Employer] WHERE Email = ?";
-        try  {
-            PreparedStatement ps = c.prepareStatement(query);
-            ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                String storedHash = rs.getString("PasswordHash");
-                String inputHash = EncodePassword.encodePasswordbyHash(password);
-                    return inputHash.equals(storedHash);
-              
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-
-    public boolean changePassword(String email, String newHashedPassword) {
-        String query = "UPDATE [dbo].[Employer] SET [PasswordHash] = ? WHERE Email = ?";
-        try {
-              PreparedStatement ps = c.prepareStatement(query);
-            ps.setString(1, newHashedPassword);
-            ps.setString(2, email);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static void main(String[] args) {
-        RegisterEmployerDAO dao = new RegisterEmployerDAO();
-
-        String name = "Nguyen Van C";
-        String email = "nguyenvanc@example.com";
-        String phone = "0912345678";
-        String password = "123456";
-
-        // Kiểm tra email và phone trước khi đăng ký
-        if (dao.isEmailEmployerExist(email)) {
-            System.out.println("Email đã tồn tại!");
-        } else if (dao.isPhoneEmployerExist(phone)) {
-            System.out.println("Số điện thoại đã tồn tại!");
-        } else {
-            boolean success = dao.registerEmployer(name, email, phone, password);
-            System.out.println("Kết quả đăng ký: " + (success ? "Thành công" : "Thất bại"));
-        }
-
-        // Đóng connection
-        dao.closeConnection();
     }
 }
