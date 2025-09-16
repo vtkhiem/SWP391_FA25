@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import model.EmailService;
+import model.PasswordResetToken;
 import tool.EncodePassword;
 
 /**
@@ -67,7 +68,7 @@ public class PasswordDAO extends DBContext {
         }
     }
 
-    private void savePasswordResetToken(String email, String role, String token, Timestamp expiry) {
+    public void savePasswordResetToken(String email, String role, String token, Timestamp expiry) {
       String query = "INSERT INTO PasswordResetToken (Email, TokenHash, ExpiresAt, Role) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement ps = c.prepareStatement(query);
@@ -118,6 +119,33 @@ public class PasswordDAO extends DBContext {
     }
 }
 
+     public PasswordResetToken getToken(String token, String role) throws SQLException {
+        String sql = "SELECT Id, Email, TokenHash, CreatedAt, ExpiresAt, Used, Attempts, Role " +
+                     "FROM PasswordResetToken " +
+                     "WHERE TokenHash = ? AND Role = ?";
+
+         try( PreparedStatement ps = c.prepareStatement(sql)) {
+             String tokenHash = EncodePassword.encodePasswordbyHash(token);
+            ps.setString(1, tokenHash);
+            ps.setString(2, role);
+       try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    PasswordResetToken resetToken = new PasswordResetToken();
+                    resetToken.setId(rs.getLong("Id"));
+                    resetToken.setEmail(rs.getString("Email"));
+                    resetToken.setTokenHash(rs.getString("TokenHash"));
+                    resetToken.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    resetToken.setExpiresAt(rs.getTimestamp("ExpiresAt"));
+                    resetToken.setUsed(rs.getBoolean("Used"));
+                    resetToken.setAttempts(rs.getInt("Attempts"));
+                    resetToken.setRole(rs.getString("Role"));
+                    return resetToken;
+                }
+            }
+    }
+        return null;
 
 
+
+}
 }
