@@ -17,8 +17,8 @@
         <servlet-name>CVCreateServlet</servlet-name>
         <servlet-class>controller.CVCreateServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
+<!--    <servlet-mapping>
         <servlet-name>CVCreateServlet</servlet-name>
         <url-pattern>/create-CV</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 </web-app>

@@ -20,7 +20,6 @@
         <link rel="stylesheet" href="css/nice-select.css">
         <link rel="stylesheet" href="css/flaticon.css">
         <link rel="stylesheet" href="css/gijgo.css">
-        <link rel="stylesheet" href="css/animate.css">
         <link rel="stylesheet" href="css/slicknav.css">
         <link rel="stylesheet" href="css/style.css">
     </head>
@@ -124,7 +123,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 my-5">
-                    <form action="create-CV" method="POST" enctype="multipart/form-data">
+                    <form action="${pageContext.request.contextPath}/create-CV" method="post" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -211,25 +210,7 @@
         <!--/ footer end  -->
 
         <!-- JS here -->
-        <script src="js/vendor/modernizr-3.5.0.min.js"></script>
-        <script src="js/vendor/jquery-1.12.4.min.js"></script>
-        <script src="js/popper.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/owl.carousel.min.js"></script>
-        <script src="js/isotope.pkgd.min.js"></script>
-        <script src="js/ajax-form.js"></script>
-        <script src="js/waypoints.min.js"></script>
-        <script src="js/jquery.counterup.min.js"></script>
-        <script src="js/imagesloaded.pkgd.min.js"></script>
-        <script src="js/scrollIt.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/wow.min.js"></script>
-        <script src="js/nice-select.min.js"></script>
-        <script src="js/jquery.slicknav.min.js"></script>
-        <script src="js/jquery.magnific-popup.min.js"></script>
-        <script src="js/plugins.js"></script>
-        <script src="js/gijgo.min.js"></script>
-        <script src="js/main.js"></script>
+
     </body>
 
     </html>
