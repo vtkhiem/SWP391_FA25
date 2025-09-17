@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.PasswordResetToken;
 import tool.EncodePassword;
+import tool.ValidationRegister;
 
 /**
  *
@@ -130,8 +131,9 @@ public class ResetPasswordServlet extends HttpServlet {
                 request.getRequestDispatcher("forget_password.jsp").forward(request, response);
                 return;
             }
-
-            // Hash mật khẩu mới
+            ValidationRegister validate = new ValidationRegister();
+            if(validate.checkLength(password)&&validate.checkChar(password)){
+                // Hash mật khẩu mới
             String hashedPassword = EncodePassword.encodePasswordbyHash(password);
 
             boolean updated = false;
@@ -151,6 +153,15 @@ public class ResetPasswordServlet extends HttpServlet {
                 request.setAttribute("error", "Không thể cập nhật mật khẩu!");
                 request.getRequestDispatcher("reset_password.jsp").forward(request, response);
             }
+            }else if(!validate.checkLength(password)||!validate.checkChar(password)){
+                request.setAttribute("error", "Mật khẩu cần 8 kí tự và có kí tự đặc biệt");
+            request.setAttribute("token", token);
+            request.setAttribute("role", role);
+            request.getRequestDispatcher("reset_password.jsp").forward(request, response);
+            return;
+            }
+
+            
 
         } catch (Exception e) {
             e.printStackTrace();
