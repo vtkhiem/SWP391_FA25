@@ -10,7 +10,7 @@ employer.css
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background: #f8faff;
     line-height: 1.6;
 }
@@ -673,4 +673,87 @@ body {
     color: #666;
     font-size: 0.9rem;
     flex-wrap: wrap;
+}
+
+/* ===== FIXED APPLICATION ACTIONS LAYOUT ===== */
+.application-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #e8f2ff;
+    align-items: stretch;
+}
+
+.action-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 70px;
+}
+
+.action-label {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: auto;
+}
+
+.action-item .btn,
+.action-item .status-badge {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.action-item select.btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* ===== RESPONSIVE FOR APPLICATION ACTIONS ===== */
+@media (max-width: 768px) {
+    .application-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .action-item {
+        min-height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .application-actions {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+    
+    .action-item {
+        min-height: 50px;
+    }
+    
+    .action-item .btn,
+    .action-item .status-badge {
+        min-height: 32px;
+        font-size: 0.8rem;
+    }
 }
