@@ -61,10 +61,6 @@ public class CandidateViewServlet extends HttpServlet {
         int id = -1;
         try { id = Integer.parseInt(idParam); } catch (Exception ignored) {}
 
-        if (id <= 0) {
-            resp.sendRedirect(req.getContextPath() + "/admin/candidates");
-            return;
-        }
 
         CandidateDAO dao = new CandidateDAO();
         Candidate item = dao.findById(id);

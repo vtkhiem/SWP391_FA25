@@ -12,6 +12,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import model.Candidate;
 import dal.CandidateDAO;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.regex.Pattern;
+import tool.EncodePassword;
 /**
  *
  * @author ADMIN
@@ -64,38 +69,65 @@ public class CandidateAddServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+  @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
- throws ServletException, IOException {
+throws ServletException, IOException {
 
         req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
 
-        String name  = req.getParameter("name");
-        String email = req.getParameter("email");
-        String phone = req.getParameter("phone");
-        String addr  = req.getParameter("address");
-        String nat   = req.getParameter("nationality");
+        String name        = s(req.getParameter("name"));
+        String email       = s(req.getParameter("email"));
+        String phone       = s(req.getParameter("phone"));
+        String address     = s(req.getParameter("address"));
+        String nationality = s(req.getParameter("nationality"));
+        String password    = s(req.getParameter("password"));
 
-        // Upload avatar (tùy chọn)
-        
-        // Tạo đối tượng
+       
+        String err = validate(name, email, phone, password);
+        if (err != null) {
+            req.setAttribute("error", err);
+            req.getRequestDispatcher("/admin/candidate-add.jsp").forward(req, resp);
+            return;
+        }
+
+       
+        String passwordHash = EncodePassword.encodePasswordbyHash(password);
+
         Candidate cd = new Candidate();
         cd.setCandidateName(name);
         cd.setEmail(email);
         cd.setPhoneNumber(phone);
-        cd.setAddress(addr);
-        cd.setNationality(nat);
-        cd.setPasswordHash("hashed_default");
-      
-        CandidateDAO dao = new CandidateDAO();
-        int newId = dao.insert(cd);
+        cd.setAddress(address);
+        cd.setNationality(nationality);
+        cd.setPasswordHash(passwordHash);
+        cd.setAvatar(null);
+
+        int newId = new CandidateDAO().insert(cd); // DAO nên trả về ID mới (>0) nếu OK
         if (newId > 0) {
             resp.sendRedirect(req.getContextPath() + "/admin/candidates?added=1");
         } else {
-            req.setAttribute("error", "Không thể thêm ứng viên. Kiểm tra trùng Email/Phone/Name hoặc dữ liệu không hợp lệ.");
+            req.setAttribute("error", "Không thể thêm ứng viên. Có thể trùng Tên/Email/SĐT hoặc dữ liệu không hợp lệ.");
             req.getRequestDispatcher("/admin/candidate-add.jsp").forward(req, resp);
         }
     }
+
+    private String s(String v) { return v == null ? "" : v.trim(); }
+
+    private String validate(String name, String email, String phone, String pass) {
+        if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || pass.isEmpty())
+            return "Vui lòng nhập đủ Tên, Email, Số điện thoại và Mật khẩu.";
+        if (!EMAIL.matcher(email).matches()) return "Email không hợp lệ.";
+        if (phone.length() > 15) return "Số điện thoại tối đa 15 ký tự.";
+        if (pass.length() < 6) return "Mật khẩu tối thiểu 6 ký tự.";
+        return null;
+    }
+
+    private static final Pattern EMAIL =
+            Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+
+
+
 
     /** 
      * Returns a short description of the servlet.

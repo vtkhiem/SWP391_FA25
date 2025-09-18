@@ -75,13 +75,13 @@
 </head>
 <body>
 
-<!-- HEADER -->
+
 <div class="navbar">
     <div class="brand"><a href="${pageContext.request.contextPath}/admin/candidates">Admin Dashboard</a></div>
     <div></div>
 </div>
 
-<!-- SEARCH dưới header (không có dropdown, cố định 10/trang) -->
+
 <div class="searchbar-wrap">
     <form class="searchbar" method="get" action="">
         <input type="text" name="q" placeholder="Tìm ứng viên theo tên, email, SĐT..." value="${q}"/>
@@ -91,19 +91,16 @@
        
 
 <div class="container">
-
-    <!-- TỔNG ỨNG VIÊN (full width) -->
     <div class="total-card">
         <div class="total-title">Tổng ứng viên</div>
         <div class="total-num">${total}</div>
-        <div class="muted">Trang: <b>${page}</b>/<b>${totalPages}</b> • Kích thước: <b>10</b>/trang</div>
+       
     </div>
  <div class="container" style="margin-top:14px;">
             <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
                 <a class="btn" href="${pageContext.request.contextPath}/admin/candidate/add">+ Thêm ứng viên</a>
             </div>
         </div>
-    <!-- DANH SÁCH ỨNG VIÊN -->
     <div class="candidates">
         <h3>Danh Sách Ứng Viên</h3>
 
@@ -140,7 +137,7 @@
             <div class="muted" style="padding:24px;">Không có dữ liệu</div>
         </c:if>
 
-        <!-- PHÂN TRANG (không kèm size) -->
+   
         <div class="pagination">
             <c:forEach var="i" begin="1" end="${totalPages}">
                 <c:choose>
