@@ -21,7 +21,7 @@
 </head>
 <body>
   <div class="navbar">
-    <div class="brand"><a href="${pageContext.request.contextPath}/admin/employers">Employers</a></div>
+    <div class="brand"><a href="${pageContext.request.contextPath}/admin/employers">Admin Dashboard</a></div>
     <div></div>
   </div>
 

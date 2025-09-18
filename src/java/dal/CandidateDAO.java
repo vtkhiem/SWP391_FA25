@@ -8,7 +8,6 @@ import java.util.List;
 
 public class CandidateDAO extends DBContext {
 
-    // Đếm theo keyword
     public int countAll(String keyword) {
         String base = "SELECT COUNT(*) FROM Candidate";
         String where = "";
@@ -30,7 +29,6 @@ public class CandidateDAO extends DBContext {
         return 0;
     }
 
-    // Phân trang
     public List<Candidate> findPage(int page, int pageSize, String keyword) {
         StringBuilder sb = new StringBuilder();
         sb.append("""
@@ -74,7 +72,7 @@ public class CandidateDAO extends DBContext {
         return list;
     }
 
-    // Lấy theo ID (nếu cần xem chi tiết)
+   
     public Candidate findById(int id) {
         String sql = """
             SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar
@@ -101,7 +99,7 @@ public class CandidateDAO extends DBContext {
         return null;
     }
 
-    // ======= Check trùng khoá duy nhất =======
+ 
     public boolean existsByEmail(String email) {
         String sql = "SELECT 1 FROM Candidate WHERE Email = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -138,8 +136,8 @@ public int insert(Candidate cd) {
         ps.setString(3, cd.getEmail());
         ps.setString(4, cd.getPhoneNumber());
         ps.setString(5, cd.getNationality());
-        ps.setString(6, cd.getPasswordHash()); // nhận HASH từ servlet
-        ps.setString(7, cd.getAvatar());       // có thể null
+        ps.setString(6, cd.getPasswordHash()); 
+        ps.setString(7, cd.getAvatar());       
         try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) return rs.getInt(1);
         }
@@ -147,8 +145,6 @@ public int insert(Candidate cd) {
     return 0;
 }
 
-
-    // (tuỳ chọn) Xoá ứng viên + Apply liên quan
     public boolean deleteCascade(int candidateId) {
         String delApply = "DELETE FROM Apply WHERE CandidateID = ?";
         String delCand  = "DELETE FROM Candidate WHERE CandidateID = ?";
