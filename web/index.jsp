@@ -839,7 +839,7 @@
                                         </c:if>
 
                                         <div class="d-none d-lg-block">
-                                            <a class="boxed-btn3" href="#">Post a Job</a>
+                                            <a class="boxed-btn3" href="employer.jsp">Post a Job</a>
                                         </div>
                                     </div>
                                 </div>
@@ -1109,7 +1109,7 @@
                         <div class="searching_text">
                             <h3>Looking for a Expert?</h3>
                             <p>We provide online instant cash loans with quick approval </p>
-                            <a href="#" class="boxed-btn3">Post a Job</a>
+                            <a href="employer.jsp" >Post a Job</a>
                         </div>
                     </div>
                 </div>
