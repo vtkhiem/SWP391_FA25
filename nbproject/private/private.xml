@@ -7,14 +7,12 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/jobs.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/single-blog.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ForgotPasswordServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/CVDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ChangePasswordServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/job_details.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/LoginServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/login.jsp</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CVCreateServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/css/bootstrap.min.css</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/index.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/css/bootstrap.min.css</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/ValidationRegister.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-create.jsp</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterCandidateDAO.java</file>
@@ -29,6 +27,7 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/candidate.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/CV.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/contact.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/EmailService.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-management.jsp</file>
         </group>
     </open-files>
