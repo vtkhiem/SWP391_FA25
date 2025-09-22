@@ -13,26 +13,40 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.sql.Date;
 import model.Candidate;
 
- @WebServlet(name = "CVCreateServlet", urlPatterns = {"/create-CV"})
-@MultipartConfig(
-//        fileSizeThreshold = 1024 * 1024, // 1 MB
-//        maxFileSize = 1024 * 1024 * 10, // 10 MB
-//        maxRequestSize = 1024 * 1024 * 15 // 15 MB
-)
+@WebServlet(name = "CVCreateServlet", urlPatterns = {"/create-CV"})
+@MultipartConfig( //        fileSizeThreshold = 1024 * 1024, // 1 MB
+        //        maxFileSize = 1024 * 1024 * 10, // 10 MB
+        //        maxRequestSize = 1024 * 1024 * 15 // 15 MB
+        )
 public class CVCreateServlet extends HttpServlet {
 
+    private static final String UPLOAD_DIRECTORY = "uploads/cv_files";
+
     @Override
-     protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void init() throws ServletException {
+        // Tạo thư mục uploads nếu chưa tồn tại
+        String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         System.out.println("=== CV CREATE SERVLET DEBUG ===");
-        
-        
+
         try {
             // Get session and check login status
             HttpSession session = request.getSession(false);
@@ -40,6 +54,36 @@ public class CVCreateServlet extends HttpServlet {
                 System.out.println("ERROR: No session found");
                 response.sendRedirect("login.jsp");
                 return;
+            }
+
+            Part filePart = request.getPart("cvFile");
+            String fileName = "";
+            String filePath = "";
+
+            if (filePart != null && filePart.getSize() > 0) {
+                // Tạo tên file unique bằng timestamp
+                fileName = System.currentTimeMillis() + "_"
+                        + filePart.getSubmittedFileName().replaceAll("\\s+", "_");
+
+                // Tạo đường dẫn lưu file
+                String uploadPath = getServletContext().getRealPath("")
+                        + File.separator + UPLOAD_DIRECTORY;
+                filePath = UPLOAD_DIRECTORY + File.separator + fileName;
+
+                // Lưu file vào thư mục
+                try (InputStream input = filePart.getInputStream(); OutputStream output = new FileOutputStream(uploadPath + File.separator + fileName)) {
+
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = input.read(buffer)) != -1) {
+                        output.write(buffer, 0, bytesRead);
+                    }
+
+                    System.out.println("File saved successfully: " + filePath);
+                } catch (IOException e) {
+                    System.out.println("Error saving file: " + e.getMessage());
+                    throw e;
+                }
             }
 
             // Debug session info
@@ -53,14 +97,13 @@ public class CVCreateServlet extends HttpServlet {
 
             // Try multiple ways to get candidateId
             int candidateId = -1;
-            
+
             // Method 1: Direct candidateId from session
             Object candidateIdObj = session.getAttribute("candidateId");
             if (candidateIdObj != null) {
                 candidateId = (int) candidateIdObj;
                 System.out.println("Found candidateId directly: " + candidateId);
-            } 
-            // Method 2: Get from user object
+            } // Method 2: Get from user object
             else {
                 Object userObj = session.getAttribute("user");
                 if (userObj != null && userObj instanceof Candidate) {
@@ -70,7 +113,7 @@ public class CVCreateServlet extends HttpServlet {
                 } else {
                     System.out.println("ERROR: No valid candidateId found in session");
                     System.out.println("user object type: " + (userObj != null ? userObj.getClass().getName() : "null"));
-                    
+
                     request.setAttribute("error", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                     return;
@@ -119,13 +162,13 @@ public class CVCreateServlet extends HttpServlet {
             System.out.println("  birthday: " + birthdayStr);
 
             // Validate required fields
-            if (fullName == null || fullName.trim().isEmpty() ||
-                email == null || email.trim().isEmpty() ||
-                position == null || position.trim().isEmpty() ||
-                numberExpStr == null || numberExpStr.trim().isEmpty() ||
-                currentSalaryStr == null || currentSalaryStr.trim().isEmpty() ||
-                birthdayStr == null || birthdayStr.trim().isEmpty()) {
-                
+            if (fullName == null || fullName.trim().isEmpty()
+                    || email == null || email.trim().isEmpty()
+                    || position == null || position.trim().isEmpty()
+                    || numberExpStr == null || numberExpStr.trim().isEmpty()
+                    || currentSalaryStr == null || currentSalaryStr.trim().isEmpty()
+                    || birthdayStr == null || birthdayStr.trim().isEmpty()) {
+
                 System.out.println("ERROR: Missing required fields");
                 request.setAttribute("error", "Vui lòng điền đầy đủ thông tin bắt buộc.");
                 request.getRequestDispatcher("cv-create.jsp").forward(request, response);
@@ -134,12 +177,12 @@ public class CVCreateServlet extends HttpServlet {
 
             // Parse numeric fields
             int numberExp;
-            double currentSalary;
+            BigDecimal currentSalary;
             Date birthday;
-            
+
             try {
                 numberExp = Integer.parseInt(numberExpStr);
-                currentSalary = Double.parseDouble(currentSalaryStr);
+                currentSalary = new BigDecimal(currentSalaryStr);
                 birthday = Date.valueOf(birthdayStr);
                 System.out.println("Parsed numeric fields successfully");
             } catch (IllegalArgumentException e) {
@@ -150,22 +193,6 @@ public class CVCreateServlet extends HttpServlet {
             }
 
             // Handle file upload
-            Part filePart = request.getPart("cvFile");
-            if (filePart == null || filePart.getSize() == 0) {
-                System.out.println("ERROR: No file uploaded or file is empty");
-                request.setAttribute("error", "Vui lòng chọn file CV để upload.");
-                request.getRequestDispatcher("cv-create.jsp").forward(request, response);
-                return;
-            }
-
-            byte[] fileData;
-            try (InputStream fileContent = filePart.getInputStream()) {
-                fileData = fileContent.readAllBytes();
-                System.out.println("File uploaded successfully, size: " + fileData.length + " bytes");
-            }
-            String mimeType = filePart.getContentType();
-            System.out.println("File MIME type: " + mimeType);
-
             // Create CV object
             CV cv = new CV();
             cv.setCandidateID(candidateId);
@@ -180,8 +207,8 @@ public class CVCreateServlet extends HttpServlet {
             cv.setBirthday(birthday);
             cv.setNationality(nationality);
             cv.setGender(gender);
-            cv.setFileData(fileData);
-            cv.setMimeType(mimeType);
+            cv.setFileData(filePath); // Lưu đường dẫn thay vì nội dung file
+
 
             System.out.println("CV object created, attempting to save to database...");
 
@@ -204,10 +231,10 @@ public class CVCreateServlet extends HttpServlet {
             request.setAttribute("error", "Error: " + e.getMessage());
             request.getRequestDispatcher("cv-create.jsp").forward(request, response);
         }
-        
+
         System.out.println("=== END CV CREATE SERVLET ===");
     }
-    
+
     @Override
     public String getServletInfo() {
         return "Short description";

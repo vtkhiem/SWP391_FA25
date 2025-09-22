@@ -61,7 +61,7 @@
                                                 <li><a href="#">CV <i class="ti-angle-down"></i></a>
                                                     <ul class="submenu">
                                                         <li><a href="cv-create.jsp">CV Create</a></li>
-                                                        <li><a href="cv-management.jsp">CV Management</a></li>
+                                                        <li><a href="${pageContext.request.contextPath}/cv-list" class="nav-link">CV Management</a></li>
                                                     </ul>
                                                 </li>
                                                 <li><a href="contact.html">Contact</a></li>
@@ -106,16 +106,16 @@
 
         <!-- Add this after the bradcam_area div and before the form -->
         <div class="container mt-3">
-            <% if(request.getAttribute("error") != null) { %>
+            <% if(request.getAttribute("error") !=null) { %>
                 <div class="alert alert-danger" role="alert">
                     <%= request.getAttribute("error") %>
                 </div>
-            <% } %>
-            <% if(request.getAttribute("message") != null) { %>
-                <div class="alert alert-success" role="alert">
-                    <%= request.getAttribute("message") %>
-                </div>
-            <% } %>
+                <% } %>
+                    <% if(request.getAttribute("message") !=null) { %>
+                        <div class="alert alert-success" role="alert">
+                            <%= request.getAttribute("message") %>
+                        </div>
+                        <% } %>
         </div>
 
         <!-- CV creation form area -->
@@ -199,6 +199,7 @@
 
                         <button type="submit" class="boxed-btn3 w-100 mt-4">Create CV</button>
                     </form>
+                    
                 </div>
             </div>
         </div>

@@ -812,7 +812,7 @@
                                                 <li><a href="#">CV <i class="ti-angle-down"></i></a>
                                                     <ul class="submenu">
                                                         <li><a href="cv-create.jsp">CV Create</a></li>
-                                                        <li><a href="cv-management.jsp">CV Management</a></li>
+                                                        <li><a href="${pageContext.request.contextPath}/cv-list" class="nav-link">CV Management</a></li>
                                                     </ul>
                                                 </li>
                                                 <li><a href="contact.html">Contact</a></li>

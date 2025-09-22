@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+import java.math.BigDecimal;
 import java.sql.Date;
 /**
  *
@@ -10,6 +11,7 @@ import java.sql.Date;
  */
 public class CV {
 
+    private int CVID;
     private int candidateID;
     private String fullName;
     private String address;
@@ -18,18 +20,19 @@ public class CV {
     private int numberExp;
     private String education;
     private String field;
-    private double currentSalary;
+    private BigDecimal currentSalary;
     private Date birthday;
     private String nationality;
     private String gender;
-    private byte[] fileData;
-    private String mimeType;
+    private String fileData;
+
     private Date dayCreate;
 
     public CV() {
     }
 
-    public CV(int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, double currentSalary, Date birthday, String nationality, String gender, byte[] fileData, String mimeType, Date dayCreate) {
+        public CV(int CVID, int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
+        this.CVID = CVID;
         this.candidateID = candidateID;
         this.fullName = fullName;
         this.address = address;
@@ -43,7 +46,6 @@ public class CV {
         this.nationality = nationality;
         this.gender = gender;
         this.fileData = fileData;
-        this.mimeType = mimeType;
         this.dayCreate = dayCreate;
     }
 
@@ -79,7 +81,7 @@ public class CV {
         this.field = field;
     }
 
-    public void setCurrentSalary(double currentSalary) {
+    public void setCurrentSalary(BigDecimal currentSalary) {
         this.currentSalary = currentSalary;
     }
 
@@ -95,13 +97,11 @@ public class CV {
         this.gender = gender;
     }
 
-    public void setFileData(byte[] fileData) {
+    public void setFileData(String fileData) {
         this.fileData = fileData;
     }
 
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
+
 
     public void setDayCreate(Date dayCreate) {
         this.dayCreate = dayCreate;
@@ -139,7 +139,7 @@ public class CV {
         return field;
     }
 
-    public double getCurrentSalary() {
+    public BigDecimal getCurrentSalary() {
         return currentSalary;
     }
 
@@ -155,18 +155,21 @@ public class CV {
         return gender;
     }
 
-    public byte[] getFileData() {
+    public String getFileData() {
         return fileData;
     }
 
-    public String getMimeType() {
-        return mimeType;
-    }
 
     public Date getDayCreate() {
         return dayCreate;
     }
     
-    
+    public int getCVID() {
+        return CVID;
+    }
+
+    public void setCVID(int CVID) {
+        this.CVID = CVID;
+    }
     
 }
