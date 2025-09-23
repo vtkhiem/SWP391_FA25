@@ -839,7 +839,7 @@
                                         </c:if>
 
                                         <div class="d-none d-lg-block">
-                                            <a class="boxed-btn3" href="#">Post a Job</a>
+                                            <a class="boxed-btn3" href="employer.jsp">Post a Job</a>
                                         </div>
                                     </div>
                                 </div>
@@ -859,27 +859,46 @@
         <div class="slider_area">
             <div class="single_slider  d-flex align-items-center slider_bg_1">
                 <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-7 col-md-6">
-                            <div class="slider_text">
-                                <h5 class="wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".2s">4536+ Jobs listed
-                                </h5>
-                                <h3 class="wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".3s">Find your Dream Job
-                                </h3>
-                                <p class="wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".4s">We provide online
-                                    instant cash loans with quick approval that suit your term length</p>
-                                <div class="sldier_btn wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".5s">
-                                    <a href="#" class="boxed-btn3">Upload your Resume</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                 
+                      <div class="search_container">
+            <div class="search_bar">
+                <div class="search_inputs">
+                    <input type="text" placeholder="Enter your expected position">
+                    <select>
+                        <option>All occupations</option>
+                        <option>IT</option>
+                        <option>Kinh doanh</option>
+                        <option>Marketing</option>
+                    </select>
+                    <select>
+                        <option>Nationwide</option>
+                        <option>Hanoi</option>
+                        <option>Ho Chi Minh City</option>
+                        <option>Danang</option>
+                    </select>
+                </div>
+
+                <div class="search_buttons">
+                    <button class="btn-find">Search</button>
+                    <button class="btn-advanced" id="btnAdvancedFilter">Filter</button>
                 </div>
             </div>
-            <div class="ilstration_img wow fadeInRight d-none d-lg-block text-right" data-wow-duration="1s"
-                 data-wow-delay=".2s">
-                <img src="img/banner/illustration.png" alt="">
+
+            <div class="popular_search">
+                <span>Popular search:</span>
+                <ul>
+                    <li><a href="#">PHP Developer</a></li>
+                    <li><a href="#">React Native</a></li>
+                    <li><a href="#">Marketing Online</a></li>
+                    <li><a href="#">Data Analyst</a></li>
+                </ul>
             </div>
+        </div>
+                    
+                  
+                </div>
+            </div>
+          
         </div>
         <!-- slider_area_end -->
 
@@ -1090,7 +1109,7 @@
                         <div class="searching_text">
                             <h3>Looking for a Expert?</h3>
                             <p>We provide online instant cash loans with quick approval </p>
-                            <a href="#" class="boxed-btn3">Post a Job</a>
+                            <a href="employer.jsp" >Post a Job</a>
                         </div>
                     </div>
                 </div>
