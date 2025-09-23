@@ -4,7 +4,7 @@
  */
 package model;
 
-import java.sql.Timestamp; 
+
 import java.util.Date;
 
 /**
@@ -16,19 +16,23 @@ public class Apply {
     private int jobPostId;
     private int candidateId;
     private int cvId;
-    private Timestamp dayCreate;
+    private Date dayCreate;
     private int statusId;
+    private float rate; 
+    private String note;
 
-    public Apply() {
-    }
-
-    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Timestamp dayCreate, int StatusId) {
+    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Date dayCreate, int statusId, float rate, String note) {
         this.applyId = applyId;
         this.jobPostId = jobPostId;
         this.candidateId = candidateId;
         this.cvId = cvId;
         this.dayCreate = dayCreate;
-        this.statusId = StatusId;
+        this.statusId = statusId;
+        this.rate = rate;
+        this.note = note;
+    }
+    
+    public Apply() {
     }
 
     public int getApplyId() {
@@ -63,11 +67,11 @@ public class Apply {
         this.cvId = cvId;
     }
 
-    public Timestamp getDayCreate() {
+    public Date getDayCreate() {
         return dayCreate;
     }
 
-    public void setDayCreate(Timestamp dayCreate) {
+    public void setDayCreate(Date dayCreate) {
         this.dayCreate = dayCreate;
     }
 
@@ -75,12 +79,28 @@ public class Apply {
         return statusId;
     }
 
-    public void setStatusId(int StatusId) {
-        this.statusId = StatusId;
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     @Override
     public String toString() {
-        return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", StatusId=" + statusId + '}';
+        return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", statusId=" + statusId + ", rate=" + rate + ", note=" + note + '}';
     }
 }

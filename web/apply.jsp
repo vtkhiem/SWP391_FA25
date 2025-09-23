@@ -97,11 +97,17 @@
                                 <div class="application-header">
                                     <div class="applicant-info">
                                         <h4>${d.candidate.candidateName}</h4>
-                                        <div class="applicant-details">
+                                        <div class="applicant-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start;">
                                             <span><strong>Job:</strong> ${d.job.title}</span>
                                             <span><strong>Email:</strong> ${d.candidate.email}</span>
                                             <span><strong>Phone:</strong> ${d.candidate.phoneNumber}</span>
                                             <span><strong>Experience:</strong> ${d.cv.numberExp} years</span>
+                                            <span><strong>Rate:</strong> ${d.apply.rate}</span>
+                                            <span ><strong>Notes:</strong> ${d.apply.note}</span>
+                                            <span>
+                                                <strong style="grid-column: 1 / -1;">Applied:</strong>
+                                                <span  class="apply-time" data-date="${d.apply.dayCreate}">${d.apply.dayCreate}</span>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -110,28 +116,19 @@
                                     <div class="action-item">
                                         <div class="action-label">View CV</div>
                                         <a href="${d.cv.fileData}" class="btn btn-primary">Open CV</a>
-
-                                    </div>
-                                    <div class="action-item">
-                                        <div class="action-label">Rate</div>
-                                        <button class="btn btn-info" >9.2/10</button>
                                     </div>
                                     <div class="action-item">
                                         <div class="action-label">Status</div>
                                         <span class="status-badge status-hired">${d.status.statusName}</span>
                                     </div>
                                     <div class="action-item">
-                                        <div class="action-label">Action</div>
-                                        <button class="btn btn-success" >View Offer</button>
+                                        <div class="action-label">View Offer</div>
+                                        <button class="btn btn-success">View Offer</button>
                                     </div>
-                                </div>
-                                <!--app sumary was here--> 
-                                <div class="application-summary">
-                                    <span>
-                                        <strong>Applied:</strong>
-                                        <span class="apply-time" data-date="${d.apply.dayCreate}">${d.apply.dayCreate}</span>
-
-                                    </span>
+                                    <div class="action-item">
+                                        <div class="action-label">Reject</div>
+                                        <button href="updateStatus" class="btn btn-danger">Reject</button>
+                                    </div>
                                 </div>
 
                             </div>
