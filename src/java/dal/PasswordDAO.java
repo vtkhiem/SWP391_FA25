@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import model.EmailService;
+
 import model.PasswordResetToken;
 import tool.EncodePassword;
 
@@ -46,27 +46,6 @@ public class PasswordDAO extends DBContext {
         return false;
     }
 
-    public void sendResetLink(String email, String role) {
-        try {
-            String token = java.util.UUID.randomUUID().toString();
-            java.sql.Timestamp expiry = new java.sql.Timestamp(System.currentTimeMillis() + 15 * 60 * 1000); // 15 phút
-
-            // Lưu token vào DB
-            PasswordDAO passwordDAO = new PasswordDAO();
-            passwordDAO.savePasswordResetToken(email, role, token, expiry);
-
-            // Tạo link reset
-            String resetLink = "http://localhost:8080/YourApp/resetPassword?token=" + token + "&role=" + role;
-
-            // Gửi mail (bạn cần cấu hình JavaMail)
-            String subject = "Đặt lại mật khẩu";
-            String content = "Nhấn vào link sau để đặt lại mật khẩu (có hiệu lực 15 phút):\n" + resetLink;
-
-            EmailService.sendEmail(email, subject, content); // tự viết class EmailUtility
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void savePasswordResetToken(String email, String role, String token, Timestamp expiry) {
       String query = "INSERT INTO PasswordResetToken (Email, TokenHash, ExpiresAt, Role) VALUES (?, ?, ?, ?)";

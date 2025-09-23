@@ -172,6 +172,7 @@
                                     </div>
                                     <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
                                 </div>
+
                                 <!-- Job Card 3 -->
                                 <div class="job_card">
                                     <img src="img/svg_icon/3.svg" alt="Vietcombank" class="job_card_logo">
@@ -191,6 +192,7 @@
                                         <div class="job_card_company">Vietcombank</div>
                                         <div class="job_card_salary">Thương lượng</div>
                                         <div class="job_card_location">Hà Nội</div>
+
                                     </div>
                                     <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
                                 </div>
@@ -404,12 +406,14 @@
                                 <a href="#" class="boxed-btn3">Browse Job</a>
                             </div>
                         </div>
+
                         <div class="col-lg-5 offset-lg-1 col-md-6">
                             <div class="searching_text">
                                 <h3>Looking for a Expert?</h3>
                                 <p>We provide online instant cash loans with quick approval </p>
                                 <a href="#" class="boxed-btn3">Post a Job</a>
                             </div>
+
                         </div>
                     </div>
                 </div>

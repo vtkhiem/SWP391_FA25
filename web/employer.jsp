@@ -22,7 +22,7 @@
                         <ul>
                             <li class="active"><a href="#create-job">Create Job</a></li>
                             <li><a href="#edit-job">Edit Job</a></li>
-                            <li><a href="#view-apply">View Apply</a></li>
+                            <li><a href="viewApply">View Apply</a></li>
                         </ul>
                     </nav>
                     <div class="user-info">

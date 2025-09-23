@@ -1,0 +1,46 @@
+[33m079d512[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m hetconflictchuav
+[33m815797d[m[33m ([m[1;31morigin/main[m[33m)[m Merge pull request #51 from vtkhiem/thao
+[33mc2dea04[m commitgiday
+[33ma0a3313[m Resolve merge conflicts, remove CV.java
+[33me2f3568[m Hoan thanh view CV by apply
+[33m821ee25[m Merge pull request #50 from vtkhiem/Tlam
+[33mf85128f[m merge
+[33m399f5e5[m merge TLam
+[33mb68bbf9[m update local main
+[33md6ea1b6[m Remove nbproject/private from repo and ignore it
+[33m48d1193[m Ignore NetBeans private config files
+[33md3c5aa3[m Merge pull request #49 from vtkhiem/khiem
+[33md7ec732[m done reset password
+[33m5949837[m merge
+[33mfb0b859[m merge TLam
+[33ma810732[m update local main
+[33m6d62152[m Merge branch 'main' into khiem
+[33mcb8813b[m add employer layout
+[33m747af13[m Merge pull request #46 from vtkhiem/thao
+[33me807b95[m employer layout
+[33me4b0b25[m Merge pull request #44 from vtkhiem/dat
+[33m00911bb[m Update index.jsp
+[33ma94168e[m 1609
+[33ma613d0a[m Merge pull request #43 from vtkhiem/dat
+[33m6f8b2e2[m Update index.jsp
+[33m1dfbc3f[m Merge pull request #26 from vtkhiem/khiem
+[33m1aca55c[m Merge branch 'main' into khiem
+[33m427977a[m drafting
+[33m968487d[m Create CODEOWNERS
+[33md15e7dc[m update library
+[33m7a2399c[m Merge branch 'TLam'
+[33me614fe7[m update frontend cv management
+[33m5c3dfb2[m Merge pull request #23 from vtkhiem/khiem
+[33ma87a9fe[m  fix login add profile
+[33mb132d0b[m fix bug
+[33m13fd342[m update gitignore
+[33m4003bb8[m update password bug
+[33mba12334[m Merge pull request #4 from vtkhiem/khiem
+[33m22fab18[m  done fundemental login and register
+[33m271f77d[m Merge pull request #3 from vtkhiem/khiem
+[33mac046e3[m add some models and jsp about login function
+[33m10095ea[m Merge pull request #2 from vtkhiem/khiem
+[33md2239dd[m layout da thanh jsp
+[33m09401cf[m Merge pull request #1 from vtkhiem/khiem
+[33m823a671[m xml
+[33md4af084[m[33m ([m[1;31morigin/master[m[33m)[m layout

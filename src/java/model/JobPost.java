@@ -1,3 +1,5 @@
+
+
 package model;
 
 import java.math.BigDecimal;
@@ -165,4 +167,6 @@ public class JobPost {
                 + ", dayCreate=" + dayCreate
                 + '}';
     }
+
 }
+
