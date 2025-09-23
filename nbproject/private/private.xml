@@ -3,11 +3,31 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
+=======
+
+
+
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/blog.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/jobs.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/single-blog.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ForgotPasswordServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ChangePasswordServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/job_details.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/login.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/index.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/css/bootstrap.min.css</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/ValidationRegister.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-create.jsp</file>
+
+>>>>>>> 82763f27e416ecbb5d9cfd7feb82b6ca2b876ad6
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterCandidateDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Status.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/jobs.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ResetPasswordServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/ValidationRegister.java</file>
+<<<<<<< HEAD
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/genfiles.properties</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/EmployerDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/PasswordResetToken.java</file>
@@ -47,6 +67,9 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Admin.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/private/private.xml</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/RegisterServlet.java</file>
+=======
+
+>>>>>>> 82763f27e416ecbb5d9cfd7feb82b6ca2b876ad6
         </group>
     </open-files>
 </project-private>
