@@ -3,8 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Status.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Admin.java</file>
+=======
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> main
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/blog.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/ant-deploy.xml</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/jobs.html</file>
@@ -21,6 +29,7 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/css/bootstrap.min.css</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/ValidationRegister.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-create.jsp</file>
+<<<<<<< HEAD
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ViewCVServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterCandidateDAO.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/ApplyDetail.java</file>
@@ -43,6 +52,58 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/CV.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/contact.html</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-management.jsp</file>
+=======
+
+>>>>>>> 82763f27e416ecbb5d9cfd7feb82b6ca2b876ad6
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterCandidateDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Status.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/jobs.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ResetPasswordServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/ValidationRegister.java</file>
+<<<<<<< HEAD
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/genfiles.properties</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/EmployerDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/PasswordResetToken.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ViewCVServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-create.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/login.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Employer.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/index.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/DBContext.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/StatusLog.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/LogoutServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/css/bootstrap.min.css</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/blog.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/CV.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/EncodePassword.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/job_details.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/candidate.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/tool/ResetService.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ChangePasswordServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/JobPost.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/employer.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Apply.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/ant-deploy.xml</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Candidate.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/ApplyDetail.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/project.properties</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/CandidateDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ForgotPasswordServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/contact.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/PasswordDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-management.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/forget_password.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ProfileServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/single-blog.html</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Admin.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/private/private.xml</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/RegisterServlet.java</file>
+=======
+
+>>>>>>> 82763f27e416ecbb5d9cfd7feb82b6ca2b876ad6
+>>>>>>> main
         </group>
     </open-files>
 </project-private>
