@@ -74,24 +74,25 @@
                 <div class="card-container">
                     <div class="applications-header">
                         <h2 class="section-title" style="margin-bottom: 0;">Recent Applications</h2>
-
-                        <div class="search-filter-container">
-                            <input type="text" class="search-box" placeholder="Search candidates..." id="searchInput">
-                            <div class="status-filters">
-                                <a href="#" class="filter-btn active" onclick="filterByStatus('all')">All</a>
-                                <a href="#" class="filter-btn" onclick="filterByStatus('new')">New</a>
-                                <a href="#" class="filter-btn" onclick="filterByStatus('reviewed')">Reviewed</a>
-                                <a href="#" class="filter-btn" onclick="filterByStatus('interview')">Interview</a>
-                                <a href="#" class="filter-btn" onclick="filterByStatus('hired')">Hired</a>
-                                <a href="#" class="filter-btn" onclick="filterByStatus('rejected')">Rejected</a>
+                        <form action ="searchApply" method="post" >
+                            <div class="search-filter-container">
+                                <input value = "${sValue}" name = "txt" type="text" class="search-box" placeholder="Search candidates..." >
+                                <div class="status-filters">
+                                    <a href="#" class="filter-btn active" onclick="filterByStatus('all')">All</a>
+                                    <a href="#" class="filter-btn" onclick="filterByStatus('new')">New</a>
+                                    <a href="#" class="filter-btn" onclick="filterByStatus('reviewed')">Reviewed</a>
+                                    <a href="#" class="filter-btn" onclick="filterByStatus('interview')">Interview</a>
+                                    <a href="#" class="filter-btn" onclick="filterByStatus('hired')">Hired</a>
+                                    <a href="#" class="filter-btn" onclick="filterByStatus('rejected')">Rejected</a>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
 
                     <div class="item-list" id="applications-list">
                         <c:forEach var="d" items="${applyDetails}">
                             <div class="application-item fade-in-item" 
-                                 data-status="${d.status.statusName}" 
+                                 data-status="${d.apply.status}" 
                                  style="border-left: 4px solid #2196f3;">
 
                                 <div class="application-header">
@@ -102,7 +103,6 @@
                                             <span><strong>Email:</strong> ${d.candidate.email}</span>
                                             <span><strong>Phone:</strong> ${d.candidate.phoneNumber}</span>
                                             <span><strong>Experience:</strong> ${d.cv.numberExp} years</span>
-                                            <span><strong>Rate:</strong> ${d.apply.rate}</span>
                                             <span ><strong>Notes:</strong> ${d.apply.note}</span>
                                             <span>
                                                 <strong style="grid-column: 1 / -1;">Applied:</strong>
@@ -119,7 +119,7 @@
                                     </div>
                                     <div class="action-item">
                                         <div class="action-label">Status</div>
-                                        <span class="status-badge status-hired">${d.status.statusName}</span>
+                                        <span class="status-badge status-hired">${d.apply.status}</span>
                                     </div>
                                     <div class="action-item">
                                         <div class="action-label">View Offer</div>

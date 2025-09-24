@@ -3,17 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/project/src/java/model/ApplyDetail.java</file>
-            <file>file:/D:/project/src/java/controller/ChangePasswordServlet.java</file>
+            <file>file:/D:/project/web/apply.jsp</file>
             <file>file:/D:/project/src/java/model/CV.java</file>
-            <file>file:/D:/project/src/java/tool/ValidationRegister.java</file>
-            <file>file:/D:/project/src/java/controller/ResetPasswordServlet.java</file>
-            <file>file:/D:/project/src/java/model/Apply.java</file>
+            <file>file:/D:/project/src/java/model/Candidate.java</file>
+            <file>file:/D:/project/src/java/dal/CandidateDAO.java</file>
             <file>file:/D:/project/src/java/dal/ApplyDAO.java</file>
-            <file>file:/D:/project/src/java/controller/ViewApply.java</file>
-            <file>file:/D:/project/src/java/controller/ViewCVServlet.java</file>
-            <file>file:/D:/project/nbproject/genfiles.properties</file>
-            <file>file:/D:/project/src/java/controller/LoginServlet.java</file>
         </group>
     </open-files>
 </project-private>

@@ -17,22 +17,20 @@ public class Apply {
     private int candidateId;
     private int cvId;
     private Date dayCreate;
-    private int statusId;
-    private float rate; 
+    private String status;
     private String note;
 
-    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Date dayCreate, int statusId, float rate, String note) {
+    public Apply() {
+    }
+
+    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Date dayCreate, String status, String note) {
         this.applyId = applyId;
         this.jobPostId = jobPostId;
         this.candidateId = candidateId;
         this.cvId = cvId;
         this.dayCreate = dayCreate;
-        this.statusId = statusId;
-        this.rate = rate;
+        this.status = status;
         this.note = note;
-    }
-    
-    public Apply() {
     }
 
     public int getApplyId() {
@@ -75,20 +73,12 @@ public class Apply {
         this.dayCreate = dayCreate;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
-    }
-
-    public float getRate() {
-        return rate;
-    }
-
-    public void setRate(float rate) {
-        this.rate = rate;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getNote() {
@@ -101,6 +91,8 @@ public class Apply {
 
     @Override
     public String toString() {
-        return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", statusId=" + statusId + ", rate=" + rate + ", note=" + note + '}';
+        return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", status=" + status + ", note=" + note + '}';
     }
+    
+    
 }

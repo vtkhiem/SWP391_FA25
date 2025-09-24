@@ -7,6 +7,8 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import model.Candidate;
 
 /**
@@ -95,7 +97,6 @@ public class CandidateDAO extends DBContext{
         return false;
     }
     
-    
     public static void main(String[] args) {
         CandidateDAO dao = new CandidateDAO();
 
@@ -127,4 +128,6 @@ public class CandidateDAO extends DBContext{
             System.out.println("Get Candidate By ID: " + c2.getCandidateName() + " - " + c2.getEmail());
         }
     }
+    
+    
 }

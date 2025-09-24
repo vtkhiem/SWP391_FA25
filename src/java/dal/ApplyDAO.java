@@ -11,8 +11,7 @@ import model.Apply;
 import model.CV;
 import model.Candidate;
 import model.JobPost;
-import model.Status;
-import model.StatusLog;
+
 
 public class ApplyDAO {
 
@@ -20,16 +19,15 @@ public class ApplyDAO {
 
     // CREATE
     public void insertApply(Apply apply) {
-        String sql = "INSERT INTO Apply (jobPostId, candidateId, cvId, dayCreate, statusId, rate, note) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Apply (jobPostId, candidateId, cvId, dayCreate, status, note) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
             st.setInt(3, apply.getCvId());
             st.setDate(4, new java.sql.Date(apply.getDayCreate().getTime()));
-            st.setInt(5, apply.getStatusId());
-            st.setFloat(6, apply.getRate());
-            st.setString(7, apply.getNote());
+            st.setString(5, apply.getStatus());
+            st.setString(6, apply.getNote());
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,16 +67,15 @@ public class ApplyDAO {
     // UPDATE
     public void updateApply(Apply apply) {
         String sql = "UPDATE Apply SET jobPostId=?, candidateId=?, cvId=?, dayCreate=?, "
-                + "statusId=?, rate=?, note=? WHERE applyId=?";
+                   + "status=?, note=? WHERE applyId=?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
             st.setInt(3, apply.getCvId());
             st.setDate(4, new java.sql.Date(apply.getDayCreate().getTime()));
-            st.setInt(5, apply.getStatusId());
-            st.setFloat(6, apply.getRate());
-            st.setString(7, apply.getNote());
-            st.setInt(8, apply.getApplyId());
+            st.setString(5, apply.getStatus());
+            st.setString(6, apply.getNote());
+            st.setInt(7, apply.getApplyId());
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,8 +101,7 @@ public class ApplyDAO {
         apply.setCandidateId(rs.getInt("candidateId"));
         apply.setCvId(rs.getInt("cvId"));
         apply.setDayCreate(rs.getDate("dayCreate"));
-        apply.setStatusId(rs.getInt("statusId"));
-        apply.setRate(rs.getFloat("rate"));
+        apply.setStatus(rs.getString("status"));   // String
         apply.setNote(rs.getString("note"));
         return apply;
     }
@@ -116,7 +112,6 @@ public class ApplyDAO {
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     JobPost job = new JobPost();
                     job.setJobPostID(rs.getInt("JobPostID"));
@@ -199,49 +194,26 @@ public class ApplyDAO {
         return null;
     }
 
-    public Status getStatusById(int statusId) {
-        String sql = "SELECT * FROM ApplyStatus WHERE StatusID = ?";
+    public List<Apply> searchApplyByCandidateName(String keyword) {
+        List<Apply> list = new ArrayList<>();
+        String sql = "SELECT a.* "
+                   + "FROM Apply a "
+                   + "JOIN Candidate c ON a.CandidateID = c.CandidateID "
+                   + "WHERE c.CandidateName LIKE ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, statusId);
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    Status status = new Status();
-                    status.setStatusId(rs.getInt("StatusID"));
-                    status.setStatusName(rs.getString("StatusName"));
-                    return status;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public List<StatusLog> getTransitionsByApplyId(int applyId) {
-        List<StatusLog> transitions = new ArrayList<>();
-        String sql = "SELECT TransitionID, ApplyID, EmployerID, FromStatusID, ToStatusID, Note, TransitionDate "
-                + "FROM StatusTransition WHERE ApplyID = ? ORDER BY TransitionDate ASC";
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, applyId);
+            st.setString(1, "%" + keyword + "%");
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
-                    StatusLog log = new StatusLog();
-                    log.setTransitionId(rs.getInt("TransitionID"));
-                    log.setApplyId(rs.getInt("ApplyID"));
-                    log.setEmployerId(rs.getInt("EmployerID"));
-                    log.setFromStatusId(rs.getInt("FromStatusID"));
-                    log.setToStatusId(rs.getInt("ToStatusID"));
-                    log.setNote(rs.getString("Note"));
-                    Timestamp ts = rs.getTimestamp("TransitionDate");
-                    if (ts != null) {
-                        log.setTransitionDate(ts.toLocalDateTime());
-                    }
-                    transitions.add(log);
+                    list.add(mapResultSet(rs));
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return transitions;
+        return list;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new ApplyDAO().getAllApplies());
     }
 }

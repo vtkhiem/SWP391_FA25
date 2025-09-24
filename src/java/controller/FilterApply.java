@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller;
-import dal.ApplyDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,19 +10,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.Apply;
-import model.ApplyDetail;
-import model.CV;
-import model.Candidate;
-import model.JobPost;
 /**
 *
 * @author shiro
 */
-@WebServlet(name="SearchApply", urlPatterns={"/searchApply"})
-public class SearchApply extends HttpServlet {
+@WebServlet(name="FilterApply", urlPatterns={"/filterApply"})
+public class FilterApply extends HttpServlet {
 /**
 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
 * @param request servlet request
@@ -39,10 +31,10 @@ try (PrintWriter out = response.getWriter()) {
 out.println("<!DOCTYPE html>");
 out.println("<html>");
 out.println("<head>");
-out.println("<title>Servlet SearchApply</title>");
+out.println("<title>Servlet FilterApply</title>");
 out.println("</head>");
 out.println("<body>");
-out.println("<h1>Servlet SearchApply at " + request.getContextPath () + "</h1>");
+out.println("<h1>Servlet FilterApply at " + request.getContextPath () + "</h1>");
 out.println("</body>");
 out.println("</html>");
 }
@@ -70,27 +62,7 @@ processRequest(request, response);
 @Override
 protected void doPost(HttpServletRequest request, HttpServletResponse response)
 throws ServletException, IOException {
-        //cho phep search Tieng Viet
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-       
-        String txtSearch = request.getParameter("txt");
-        ApplyDAO dao = new ApplyDAO();
-        List<Apply> foundList = dao.searchApplyByCandidateName(txtSearch);
-        List<ApplyDetail> details = new ArrayList<>();
-
-        
-        for (Apply apply : foundList) {
-            Candidate can = dao.getCandidateById(apply.getCandidateId());
-            CV cv = dao.getCVById(apply.getCvId());
-            JobPost job = dao.getJobPostById(apply.getJobPostId());
-            details.add(new ApplyDetail(apply, can, cv, job));
-        }
-        
-        request.setAttribute("sValue", txtSearch);
-        request.setAttribute("applyDetails", details);
-
-        request.getRequestDispatcher("apply.jsp").forward(request, response);
+processRequest(request, response);
 }
 /**
 * Returns a short description of the servlet.

@@ -19,8 +19,7 @@ import model.ApplyDetail;
 import model.CV;
 import model.Candidate;
 import model.JobPost;
-import model.Status;
-import model.StatusLog;
+
 
 /**
  *
@@ -70,14 +69,13 @@ public class ViewApply extends HttpServlet {
         ApplyDAO dao = new ApplyDAO();
         List<Apply> applies = dao.getAllApplies(); // lấy tất cả apply
         List<ApplyDetail> details = new ArrayList<>();
-        List<StatusLog> logs = new ArrayList<>();
+
         
         for (Apply apply : applies) {
             Candidate can = dao.getCandidateById(apply.getCandidateId());
             CV cv = dao.getCVById(apply.getCvId());
             JobPost job = dao.getJobPostById(apply.getJobPostId());
-            Status st = dao.getStatusById(apply.getStatusId());
-            details.add(new ApplyDetail(apply, can, cv, job,st));
+            details.add(new ApplyDetail(apply, can, cv, job));
         }
 
         request.setAttribute("applyDetails", details);
