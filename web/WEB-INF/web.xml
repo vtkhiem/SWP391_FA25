@@ -17,8 +17,56 @@
         <servlet-name>CVCreateServlet</servlet-name>
         <servlet-class>controller.CVCreateServlet</servlet-class>
     </servlet>
-<!--    <servlet-mapping>
+    <!--    <servlet-mapping>
         <servlet-name>CVCreateServlet</servlet-name>
         <url-pattern>/create-CV</url-pattern>
     </servlet-mapping>-->
+    <servlet>
+        <servlet-name>JobListServlet</servlet-name>
+        <servlet-class>controller.JobListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobSearchServlet</servlet-name>
+        <servlet-class>controller.JobSearchServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobAddServlet</servlet-name>
+        <servlet-class>controller.JobAddServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobEditServlet</servlet-name>
+        <servlet-class>controller.JobEditServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobDeleteServlet</servlet-name>
+        <servlet-class>controller.JobDeleteServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobDetailServlet</servlet-name>
+        <servlet-class>controller.JobDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>JobListServlet</servlet-name>
+        <url-pattern>/jobs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobSearchServlet</servlet-name>
+        <url-pattern>/job_search</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobAddServlet</servlet-name>
+        <url-pattern>/job_add</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobEditServlet</servlet-name>
+        <url-pattern>/job_edit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobDeleteServlet</servlet-name>
+        <url-pattern>/job_delete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobDetailServlet</servlet-name>
+        <url-pattern>/job_details</url-pattern>
+    </servlet-mapping>
 </web-app>
