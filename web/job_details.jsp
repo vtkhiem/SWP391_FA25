@@ -72,10 +72,12 @@
                                 <div class="jobs_right">
                                     <div class="apply_now">
                                         <a class="heart_mark" href="#"><i class="ti-heart"></i></a>
-                                        <!-- Nút Edit Job -->
-                                        <a href="job_edit?id=${job.jobPostID}" class="boxed-btn3 ml-2">Edit Job</a>
+                                        <c:if test="${not empty sessionScope.employer and sessionScope.employer.employerID == job.employerID}">
+                                            <a href="job_edit?id=${job.jobPostID}" class="boxed-btn3 ml-2">Edit Job</a>
+                                        </c:if>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
