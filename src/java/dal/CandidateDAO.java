@@ -99,9 +99,6 @@ public class CandidateDAO extends DBContext {
     public Candidate getCandidateById(int id) {
         return findById(id);
     }
-<<<<<<< HEAD
-    
-=======
 
     public boolean existsByEmail(String email) {
         String sql = "SELECT 1 FROM Candidate WHERE Email = ?";
@@ -207,7 +204,8 @@ public class CandidateDAO extends DBContext {
         return cd;
     }
 
->>>>>>> origin
+
+    
     public static void main(String[] args) {
         CandidateDAO dao = new CandidateDAO();
         Candidate newC = new Candidate();
@@ -232,8 +230,4 @@ public class CandidateDAO extends DBContext {
         System.out.println("Page1 size: " + page1.size());
     }
     
-<<<<<<< HEAD
-    
-=======
->>>>>>> origin
 }

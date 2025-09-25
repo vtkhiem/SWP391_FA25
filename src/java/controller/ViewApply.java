@@ -5,6 +5,7 @@
 package controller;
 
 import dal.ApplyDAO;
+import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,14 +13,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import model.Apply;
 import model.ApplyDetail;
 import model.CV;
 import model.Candidate;
+import model.Employer;
 import model.JobPost;
-
 
 /**
  *
@@ -66,19 +68,10 @@ public class ViewApply extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ApplyDAO dao = new ApplyDAO();
-        List<Apply> applies = dao.getAllApplies(); // lấy tất cả apply
-        List<ApplyDetail> details = new ArrayList<>();
 
-        
-        for (Apply apply : applies) {
-            Candidate can = dao.getCandidateById(apply.getCandidateId());
-            CV cv = dao.getCVById(apply.getCvId());
-            JobPost job = dao.getJobPostById(apply.getJobPostId());
-            details.add(new ApplyDetail(apply, can, cv, job));
-        }
-
-        request.setAttribute("applyDetails", details);
+        JobPostDAO jdao = new JobPostDAO();
+        List<JobPost> jobs = jdao.getAllJobPosts();
+        request.setAttribute("jobList", jobs);
         request.getRequestDispatcher("apply.jsp").forward(request, response);
     }
 
@@ -93,7 +86,31 @@ public class ViewApply extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String jobIdStr = request.getParameter("jobId");
+
+        if (jobIdStr != null && !jobIdStr.isEmpty()) {
+            int jobId = Integer.parseInt(jobIdStr);
+            ApplyDAO dao = new ApplyDAO();
+            JobPostDAO jdao = new JobPostDAO();
+            
+            List<Apply> applies = dao.getApplyByJobPost(jobId);
+            List<ApplyDetail> details = new ArrayList<>();
+
+            for (Apply apply : applies) {
+                Candidate can = dao.getCandidateById(apply.getCandidateId());
+                CV cv = dao.getCVById(apply.getCvId());
+                JobPost job = dao.getJobPostById(apply.getJobPostId());
+                details.add(new ApplyDetail(apply, can, cv, job));
+            }
+
+            List<JobPost> jobs = jdao.getAllJobPosts();
+            request.setAttribute("jobList", jobs);
+            request.setAttribute("applyDetails", details);
+            request.getRequestDispatcher("apply.jsp").forward(request, response);
+        } else {
+            // Nếu không có jobId, redirect về trang job list
+            response.sendRedirect("viewApply");
+        }
     }
 
     /**

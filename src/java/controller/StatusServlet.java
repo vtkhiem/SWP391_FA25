@@ -25,8 +25,8 @@ import model.JobPost;
  *
  * @author shiro
  */
-@WebServlet(name = "SearchApply", urlPatterns = {"/searchApply"})
-public class SearchApply extends HttpServlet {
+@WebServlet(name = "StatusServlet", urlPatterns = {"/status"})
+public class StatusServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +45,10 @@ public class SearchApply extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SearchApply</title>");
+            out.println("<title>Servlet StatusServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SearchApply at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet StatusServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -80,30 +80,50 @@ public class SearchApply extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //cho phep search Tieng Viet
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
+        String applyIdStr = request.getParameter("applyId");
+        String newStatus = request.getParameter("status");
 
-        String txtSearch = request.getParameter("txt");
-        ApplyDAO dao = new ApplyDAO();
-        List<Apply> foundList = dao.searchApplyByCandidateName(txtSearch);
-        List<ApplyDetail> details = new ArrayList<>();
+        if (applyIdStr != null && !applyIdStr.isEmpty() && newStatus != null) {
+            try {
+                int applyId = Integer.parseInt(applyIdStr);
+                ApplyDAO dao = new ApplyDAO();
 
-        JobPostDAO jdao = new JobPostDAO();
-        List<JobPost> jobs = jdao.getAllJobPosts();
-
-        for (Apply apply : foundList) {
-            Candidate can = dao.getCandidateById(apply.getCandidateId());
-            CV cv = dao.getCVById(apply.getCvId());
-            JobPost job = dao.getJobPostById(apply.getJobPostId());
-            details.add(new ApplyDetail(apply, can, cv, job));
+                // Lấy apply hiện tại
+                model.Apply apply = dao.getApplyById(applyId);
+                if (apply != null) {
+                    apply.setStatus(newStatus);  // Cập nhật status mới
+                    dao.updateApply(apply);      // Gọi DAO để update DB
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
 
-        request.setAttribute("jobList", jobs);
-        request.setAttribute("sValue", txtSearch);
-        request.setAttribute("applyDetails", details);
+        String jobIdStr = request.getParameter("jobId");
 
-        request.getRequestDispatcher("apply.jsp").forward(request, response);
+        if (jobIdStr != null && !jobIdStr.isEmpty()) {
+            int jobId = Integer.parseInt(jobIdStr);
+            ApplyDAO dao = new ApplyDAO();
+            JobPostDAO jdao = new JobPostDAO();
+
+            List<Apply> applies = dao.getApplyByJobPost(jobId);
+            List<ApplyDetail> details = new ArrayList<>();
+
+            for (Apply apply : applies) {
+                Candidate can = dao.getCandidateById(apply.getCandidateId());
+                CV cv = dao.getCVById(apply.getCvId());
+                JobPost job = dao.getJobPostById(apply.getJobPostId());
+                details.add(new ApplyDetail(apply, can, cv, job));
+            }
+
+            List<JobPost> jobs = jdao.getAllJobPosts();
+            request.setAttribute("jobList", jobs);
+            request.setAttribute("applyDetails", details);
+            request.getRequestDispatcher("apply.jsp").forward(request, response);
+        } else {
+            // Nếu không có jobId, redirect về trang job list
+            response.sendRedirect("viewApply");
+        }
     }
 
     /**

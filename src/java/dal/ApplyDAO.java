@@ -12,7 +12,6 @@ import model.CV;
 import model.Candidate;
 import model.JobPost;
 
-
 public class ApplyDAO {
 
     Connection con = new DBContext().c;
@@ -20,7 +19,7 @@ public class ApplyDAO {
     // CREATE
     public void insertApply(Apply apply) {
         String sql = "INSERT INTO Apply (jobPostId, candidateId, cvId, dayCreate, status, note) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
@@ -67,7 +66,7 @@ public class ApplyDAO {
     // UPDATE
     public void updateApply(Apply apply) {
         String sql = "UPDATE Apply SET jobPostId=?, candidateId=?, cvId=?, dayCreate=?, "
-                   + "status=?, note=? WHERE applyId=?";
+                + "status=?, note=? WHERE applyId=?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
@@ -197,11 +196,28 @@ public class ApplyDAO {
     public List<Apply> searchApplyByCandidateName(String keyword) {
         List<Apply> list = new ArrayList<>();
         String sql = "SELECT a.* "
-                   + "FROM Apply a "
-                   + "JOIN Candidate c ON a.CandidateID = c.CandidateID "
-                   + "WHERE c.CandidateName LIKE ?";
+                + "FROM Apply a "
+                + "JOIN Candidate c ON a.CandidateID = c.CandidateID "
+                + "WHERE c.CandidateName LIKE ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setString(1, "%" + keyword + "%");
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    // Lấy tất cả apply theo jobPostId
+
+    public List<Apply> getApplyByJobPost(int jobPostId) {
+        List<Apply> list = new ArrayList<>();
+        String sql = "SELECT * FROM Apply WHERE jobPostId = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setInt(1, jobPostId);
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSet(rs));
