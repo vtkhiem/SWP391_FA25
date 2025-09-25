@@ -29,7 +29,7 @@
 
     <body>
         <!-- header_start -->
-        <jsp:include page="header.jsp"/>
+        <jsp:include page="employer-header.jsp"/>
         <!-- header_end -->
 
         <!-- bradcam_area -->
@@ -63,11 +63,6 @@
                             </c:if>
 
                             <form action="job_add" method="post" onsubmit="return validateForm()">
-                                <div class="form-group">
-                                    <label>Employer ID</label>
-                                    <input type="number" class="form-control" name="employerId" required>
-                                </div>
-
                                 <div class="form-group">
                                     <label>Title</label>
                                     <input type="text" class="form-control" name="title" required>
