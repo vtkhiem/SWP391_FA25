@@ -83,7 +83,6 @@ public class LoginServlet extends HttpServlet {
                             case AdminRoleDefine.ADMIN:
                                 session.setAttribute("role", "Admin");
                                 session.setAttribute("username", inputValue);
-                              
                                 response.sendRedirect("admin/candidates");
                                 return;
                             case AdminRoleDefine.SALE:

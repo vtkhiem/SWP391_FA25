@@ -9,13 +9,21 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/log_controller/LoginServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/Staff/LogSaleServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/admin/employer-list.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-edit.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/CreateCVServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/admin/candidate-list.jsp</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/sale.jsp</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/AdminDAO.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/CVListServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/log_controller/RegisterServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/CVEditServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/EmployerDeleteServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/CV.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/Staff/LogStaffServlet.java</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-management.jsp</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/admin/candidate-view.jsp</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/build.xml</file>
+            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/DeleteCVServlet.java</file>
         </group>
     </open-files>
 </project-private>

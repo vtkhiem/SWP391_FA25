@@ -30,6 +30,10 @@ public class CVEditServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int cvId = Integer.parseInt(request.getParameter("id"));
+            if(cvId>22){
+                response.sendRedirect("access-denied.jsp");
+                return;
+            }
             CVDAO cvDao = new CVDAO();
             CV cv = cvDao.getCVById(cvId);
 

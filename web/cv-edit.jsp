@@ -20,8 +20,8 @@
         <div class="alert alert-danger"><%= error %></div>
     <% } %>
 
-    <form action="<%= request.getContextPath() %>/edit-cv" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
-        <input type="hidden" name="CVID" value="<%= cv.getCVID() %>"/>
+    <form action="edit-cv" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        <input type="hidden" name="CVID" value=""/>
 
         <div class="mb-3">
             <label class="form-label">Full Name</label>
