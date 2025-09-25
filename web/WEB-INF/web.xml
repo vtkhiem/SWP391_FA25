@@ -15,7 +15,7 @@
     -->
     <servlet>
         <servlet-name>CVCreateServlet</servlet-name>
-        <servlet-class>controller.CVCreateServlet</servlet-class>
+        <servlet-class>controller.CV.CreateCVServlet</servlet-class>
     </servlet>
     <!--    <servlet-mapping>
         <servlet-name>CVCreateServlet</servlet-name>

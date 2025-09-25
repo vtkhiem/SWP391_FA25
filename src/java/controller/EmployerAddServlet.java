@@ -82,7 +82,7 @@ public class EmployerAddServlet extends HttpServlet {
         String description  = s(req.getParameter("description"));
         String location     = s(req.getParameter("location"));
         String urlWebsite   = s(req.getParameter("urlWebsite"));
-        String taxCode      = s(req.getParameter("taxCode"));
+
         String password     = s(req.getParameter("password")); // hiển thị & bắt buộc
 
         String err = validate(employerName, email, phoneNumber, password, urlWebsite);
@@ -103,7 +103,7 @@ public class EmployerAddServlet extends HttpServlet {
         e.setDescription(description);
         e.setLocation(location);
         e.setUrlWebsite(urlWebsite);
-        e.setTaxCode(taxCode);
+
 
         EmployerDAO dao = new EmployerDAO();
         int newId = dao.insert(e); 

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+import java.math.BigDecimal;
 import java.sql.Date;
 /**
  *
@@ -10,6 +11,7 @@ import java.sql.Date;
  */
 public class CV {
 
+    private int CVID;
     private int candidateID;
     private String fullName;
     private String address;
@@ -18,18 +20,19 @@ public class CV {
     private int numberExp;
     private String education;
     private String field;
-    private double currentSalary;
+    private BigDecimal currentSalary;
     private Date birthday;
     private String nationality;
     private String gender;
-    private byte[] fileData;
-    private String mimeType;
+    private String fileData;
+
     private Date dayCreate;
 
     public CV() {
     }
 
-    public CV(int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, double currentSalary, Date birthday, String nationality, String gender, byte[] fileData, String mimeType, Date dayCreate) {
+    public CV(int CVID, int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
+        this.CVID = CVID;
         this.candidateID = candidateID;
         this.fullName = fullName;
         this.address = address;
@@ -43,129 +46,130 @@ public class CV {
         this.nationality = nationality;
         this.gender = gender;
         this.fileData = fileData;
-        this.mimeType = mimeType;
         this.dayCreate = dayCreate;
     }
 
-    public void setCandidateID(int candidateID) {
-        this.candidateID = candidateID;
+    public int getCVID() {
+        return CVID;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public void setNumberExp(int numberExp) {
-        this.numberExp = numberExp;
-    }
-
-    public void setEducation(String education) {
-        this.education = education;
-    }
-
-    public void setField(String field) {
-        this.field = field;
-    }
-
-    public void setCurrentSalary(double currentSalary) {
-        this.currentSalary = currentSalary;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public void setFileData(byte[] fileData) {
-        this.fileData = fileData;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    public void setDayCreate(Date dayCreate) {
-        this.dayCreate = dayCreate;
+    public void setCVID(int CVID) {
+        this.CVID = CVID;
     }
 
     public int getCandidateID() {
         return candidateID;
     }
 
+    public void setCandidateID(int candidateID) {
+        this.candidateID = candidateID;
+    }
+
     public String getFullName() {
         return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getAddress() {
         return address;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPosition() {
         return position;
     }
 
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
     public int getNumberExp() {
         return numberExp;
+    }
+
+    public void setNumberExp(int numberExp) {
+        this.numberExp = numberExp;
     }
 
     public String getEducation() {
         return education;
     }
 
+    public void setEducation(String education) {
+        this.education = education;
+    }
+
     public String getField() {
         return field;
     }
 
-    public double getCurrentSalary() {
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public BigDecimal getCurrentSalary() {
         return currentSalary;
+    }
+
+    public void setCurrentSalary(BigDecimal currentSalary) {
+        this.currentSalary = currentSalary;
     }
 
     public Date getBirthday() {
         return birthday;
     }
 
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
     public String getNationality() {
         return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public String getGender() {
         return gender;
     }
 
-    public byte[] getFileData() {
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getFileData() {
         return fileData;
     }
 
-    public String getMimeType() {
-        return mimeType;
+    public void setFileData(String fileData) {
+        this.fileData = fileData;
     }
 
     public Date getDayCreate() {
         return dayCreate;
     }
+
+    public void setDayCreate(Date dayCreate) {
+        this.dayCreate = dayCreate;
+    }
+
+    
     
     
     

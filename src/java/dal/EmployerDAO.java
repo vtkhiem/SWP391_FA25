@@ -72,7 +72,7 @@ public class EmployerDAO extends DBContext {
                     e.setDescription(rs.getString("Description"));
                     e.setLocation(rs.getString("Location"));
                     e.setUrlWebsite(rs.getString("URLWebsite"));
-                    e.setTaxCode(rs.getString("TaxCode"));
+                 
                     e.setImgLogo(rs.getString("ImgLogo"));
                     list.add(e);
                 }
@@ -103,7 +103,7 @@ public class EmployerDAO extends DBContext {
                 e.setDescription(rs.getString("Description"));
                 e.setLocation(rs.getString("Location"));
                 e.setUrlWebsite(rs.getString("URLWebsite"));
-                e.setTaxCode(rs.getString("TaxCode"));
+             
                 e.setImgLogo(rs.getString("ImgLogo"));
                 return e;
             }
@@ -128,7 +128,7 @@ public int insert(Employer e) {
         ps.setString(6, e.getDescription());
         ps.setString(7, e.getLocation());
         ps.setString(8, e.getUrlWebsite());
-        ps.setString(9, e.getTaxCode());
+     
         ps.setString(10, e.getImgLogo()); // null
         try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) return rs.getInt(1);
