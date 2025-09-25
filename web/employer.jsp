@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,8 +20,8 @@
                     </div>
                     <nav class="main-menu">
                         <ul>
-                            <li class="active"><a href="#create-job">Create Job</a></li>
-                            <li><a href="#edit-job">Edit Job</a></li>
+                            <li><a href="job_post.jsp">Create Job</a></li>
+                            <li><a href="jobs">Edit Job</a></li>
                             <li><a href="viewApply">View Apply</a></li>
                         </ul>
                     </nav>
@@ -70,13 +70,13 @@
                 <div class="quick-actions">
                     <h2 class="section-title">Quick Actions</h2>
                     <div class="actions-grid">
-                        <a href="#create-job" class="action-btn" onclick="showCreateJobForm()">
+                        <a href="job_post.jsp" class="action-btn" onclick="showCreateJobForm()">
                             <div class="action-content">
                                 <h4>Create New Job</h4>
                                 <p>Post a new job opening and start receiving applications</p>
                             </div>
                         </a>
-                        <a href="#edit-job" class="action-btn" onclick="showEditJobSection()">
+                        <a href="jobs" class="action-btn" onclick="showEditJobSection()">
                             <div class="action-content">
                                 <h4>Edit Existing Jobs</h4>
                                 <p>Update job details, requirements, and status</p>

@@ -2,21 +2,55 @@ package controller;
 
 import dal.JobPostDAO;
 import model.JobPost;
-
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import model.Employer;
 
+@WebServlet(name = "JobAddServlet", urlPatterns = {"/job_add"})
 public class JobAddServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet JobAddServlet</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet JobAddServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int employerId = Integer.parseInt(request.getParameter("employerId"));
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("employer") == null) {
+                response.sendRedirect("login_employer.jsp?error=notLoggedIn");
+                return;
+            }
+            
+            Employer employer = (Employer) session.getAttribute("employer");
+            int employerId = employer.getEmployerId();
+            
             String title = request.getParameter("title");
             String description = request.getParameter("description");
             String category = request.getParameter("category");
@@ -43,7 +77,11 @@ public class JobAddServlet extends HttpServlet {
             request.setAttribute("message", "Error: " + e.getMessage());
         }
 
-        // forward về lại trang thêm job
         request.getRequestDispatcher("job_post.jsp").forward(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Short description";
     }
 }
