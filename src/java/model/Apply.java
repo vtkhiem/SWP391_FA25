@@ -4,7 +4,10 @@
  */
 package model;
 
-import java.sql.Timestamp; 
+
+
+import java.util.Date;
+
 
 /**
  *
@@ -15,19 +18,21 @@ public class Apply {
     private int jobPostId;
     private int candidateId;
     private int cvId;
-    private Timestamp dayCreate;
-    private int statusId;
+    private Date dayCreate;
+    private String status;
+    private String note;
 
     public Apply() {
     }
 
-    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Timestamp dayCreate, int StatusId) {
+    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Date dayCreate, String status, String note) {
         this.applyId = applyId;
         this.jobPostId = jobPostId;
         this.candidateId = candidateId;
         this.cvId = cvId;
         this.dayCreate = dayCreate;
-        this.statusId = StatusId;
+        this.status = status;
+        this.note = note;
     }
 
     public int getApplyId() {
@@ -62,24 +67,34 @@ public class Apply {
         this.cvId = cvId;
     }
 
-    public Timestamp getDayCreate() {
+    public Date getDayCreate() {
         return dayCreate;
     }
 
-    public void setDayCreate(Timestamp dayCreate) {
+    public void setDayCreate(Date dayCreate) {
         this.dayCreate = dayCreate;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStatusId(int StatusId) {
-        this.statusId = StatusId;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     @Override
     public String toString() {
-        return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", StatusId=" + statusId + '}';
+        return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", status=" + status + ", note=" + note + '}';
     }
+    
+    
 }

@@ -21,7 +21,7 @@
     <% } %>
 
     <form action="edit-cv" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
-        <input type="hidden" name="CVID" value=""/>
+        <input type="hidden" name="CVID" value="<%= cv.getCVID() %>"/>
 
         <div class="mb-3">
             <label class="form-label">Full Name</label>

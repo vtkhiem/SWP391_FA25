@@ -69,7 +69,7 @@ public class LogSaleServlet extends HttpServlet {
         request.setAttribute("password", password);
         request.setAttribute("user", admin);
         request.setAttribute("role", role);
-        response.sendRedirect("sale,jsp");
+        response.sendRedirect("sale.jsp");
 
     }
 

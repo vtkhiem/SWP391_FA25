@@ -11,8 +11,9 @@ import java.sql.Date;
  */
 public class CV {
 
-    private int CVID;
-    private int candidateID;
+    private int cvId;
+    private int candidateId;
+
     private String fullName;
     private String address;
     private String email;
@@ -25,15 +26,14 @@ public class CV {
     private String nationality;
     private String gender;
     private String fileData;
-
     private Date dayCreate;
 
     public CV() {
     }
 
-    public CV(int CVID, int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
-        this.CVID = CVID;
-        this.candidateID = candidateID;
+    public CV(int cvId, int candidateId, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
+        this.cvId = cvId;
+        this.candidateId = candidateId;
         this.fullName = fullName;
         this.address = address;
         this.email = email;
@@ -49,20 +49,20 @@ public class CV {
         this.dayCreate = dayCreate;
     }
 
-    public int getCVID() {
-        return CVID;
+    public int getCvId() {
+        return cvId;
     }
 
-    public void setCVID(int CVID) {
-        this.CVID = CVID;
+    public void setCvId(int cvId) {
+        this.cvId = cvId;
     }
 
-    public int getCandidateID() {
-        return candidateID;
+    public int getCandidateId() {
+        return candidateId;
     }
 
-    public void setCandidateID(int candidateID) {
-        this.candidateID = candidateID;
+    public void setCandidateId(int candidateId) {
+        this.candidateId = candidateId;
     }
 
     public String getFullName() {
@@ -169,8 +169,11 @@ public class CV {
         this.dayCreate = dayCreate;
     }
 
+
+
     
     
-    
+
+
     
 }

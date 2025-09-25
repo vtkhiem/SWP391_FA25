@@ -29,7 +29,7 @@
 
     <body>
         <!-- header_start -->
-        <jsp:include page="header.jsp"/>
+        <jsp:include page="employer-header.jsp"/>
         <!-- header_end -->
 
         <!-- bradcam_area -->  
@@ -62,7 +62,7 @@
                             </c:if>
                             <form action="job_edit" method="post">
                                 <input type="hidden" name="id" value="${job.jobPostID}"/>
-                                <input type="hidden" name="employerId" value="${job.employerID}"/>
+                                <input type="hidden" name="employerId" value="${sessionScope.employer.employerID}"/>
 
                                 <div class="form-group">
                                     <label>Job Title</label>

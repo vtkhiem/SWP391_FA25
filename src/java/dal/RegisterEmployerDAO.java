@@ -122,7 +122,7 @@ public class RegisterEmployerDAO extends DBContext {
         try {
 
             String query = "SELECT [EmployerName]\n"
-                    + "  FROM [dbo].[Candidate]\n"
+                    + "  FROM [dbo].[Employer]\n"
                     + "  Where Email = ?";
 
             PreparedStatement push = c.prepareStatement(query);
@@ -142,9 +142,11 @@ public class RegisterEmployerDAO extends DBContext {
 
     public Employer getEmployerByEmail(String email) {
         try {
+
             String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PhoneNumber], "
                     + "[CompanyName], [Description], [Location], [URLWebsite], [ImgLogo] "
                     + "FROM [dbo].[Candidate] "
+
                     + "WHERE Email = ?";
 
             PreparedStatement ps = c.prepareStatement(query);
@@ -154,12 +156,12 @@ public class RegisterEmployerDAO extends DBContext {
 
             if (rs.next()) {
                 return new Employer(
-                        rs.getInt("EmplyerID"),
+                        rs.getInt("EmployerID"),
                         rs.getString("EmployerName"),
                         rs.getString("Email"),
                         rs.getString("PhoneNumber"),
-                        rs.getString("CompanyName"),
                         rs.getString("PasswordHash"),
+                        rs.getString("CompanyName"),
                         rs.getString("Description"),
                         rs.getString("Location"),
                         rs.getString("URLWebsite"),
@@ -167,21 +169,23 @@ public class RegisterEmployerDAO extends DBContext {
                         rs.getString("ImgLogo"));
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
     }
-      public boolean verifyPassword(String email, String password) {
+
+    public boolean verifyPassword(String email, String password) {
         String query = "SELECT [PasswordHash] FROM [dbo].[Employer] WHERE Email = ?";
-        try  {
+        try {
             PreparedStatement ps = c.prepareStatement(query);
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 String storedHash = rs.getString("PasswordHash");
                 String inputHash = EncodePassword.encodePasswordbyHash(password);
-                    return inputHash.equals(storedHash);
-              
+                return inputHash.equals(storedHash);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -189,11 +193,10 @@ public class RegisterEmployerDAO extends DBContext {
         return false;
     }
 
-
     public boolean changePassword(String email, String newHashedPassword) {
         String query = "UPDATE [dbo].[Employer] SET [PasswordHash] = ? WHERE Email = ?";
         try {
-              PreparedStatement ps = c.prepareStatement(query);
+            PreparedStatement ps = c.prepareStatement(query);
             ps.setString(1, newHashedPassword);
             ps.setString(2, email);
             int rowsAffected = ps.executeUpdate();

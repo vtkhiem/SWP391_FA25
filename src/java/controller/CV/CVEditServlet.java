@@ -41,7 +41,7 @@ public class CVEditServlet extends HttpServlet {
                 // Kiểm tra quyền truy cập
                 HttpSession session = request.getSession();
                 Candidate candidate = (Candidate) session.getAttribute("user");
-                if (candidate != null && cv.getCandidateID() == candidate.getCandidateId()) {
+                if (candidate != null && cv.getCandidateId() == candidate.getCandidateId()) {
                     request.setAttribute("cv", cv);
                     request.getRequestDispatcher("cv-edit.jsp").forward(request, response);
                 } else {
@@ -73,15 +73,15 @@ public class CVEditServlet extends HttpServlet {
             HttpSession session = request.getSession();
             Candidate candidate = (Candidate) session.getAttribute("user");
             if (existingCV == null || candidate == null
-                    || existingCV.getCandidateID() != candidate.getCandidateId()) {
+                    || existingCV.getCandidateId() != candidate.getCandidateId()) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                 return;
             }
 
             // Create updated CV object
             CV updatedCV = new CV();
-            updatedCV.setCVID(cvId);
-            updatedCV.setCandidateID(existingCV.getCandidateID());
+            updatedCV.setCvId(cvId);
+            updatedCV.setCandidateId(existingCV.getCandidateId());
             updatedCV.setFullName(request.getParameter("fullName"));
             updatedCV.setAddress(request.getParameter("address"));
             updatedCV.setEmail(request.getParameter("email"));
