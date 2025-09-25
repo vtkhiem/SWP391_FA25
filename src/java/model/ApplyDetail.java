@@ -13,17 +13,16 @@ public class ApplyDetail {
     private Candidate candidate;
     private CV cv;
     private JobPost job;
-    private Status status;
+
 
     public ApplyDetail() {
     }
 
-    public ApplyDetail(Apply apply, Candidate candidate, CV cv, JobPost job, Status status) {
+    public ApplyDetail(Apply apply, Candidate candidate, CV cv, JobPost job) {
         this.apply = apply;
         this.candidate = candidate;
         this.cv = cv;
         this.job = job;
-        this.status = status;
     }
 
     public Apply getApply() {
@@ -58,17 +57,11 @@ public class ApplyDetail {
         this.job = job;
     }
 
-    public Status getStatus() {
-        return status;
-    }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 
     @Override
     public String toString() {
-        return "ApplyDetail{" + "apply=" + apply + ", candidate=" + candidate + ", cv=" + cv + ", job=" + job + ", status=" + status + '}';
+        return "ApplyDetail{" + "apply=" + apply + ", candidate=" + candidate + ", cv=" + cv + ", job=" + job + '}';
     }
 
 }
