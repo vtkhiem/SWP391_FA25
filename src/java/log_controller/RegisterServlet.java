@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package log_controller;
 
 import dal.RegisterCandidateDAO;
 import dal.RegisterEmployerDAO;
@@ -90,13 +90,20 @@ public class RegisterServlet extends HttpServlet {
             if (role.equals("candidate")) {
 
                 // kiểm tra xem email đã tồn tại chưa 
-                if (candidateDAO.isEmailCandidateExist(email) && !employersDAO.isEmailEmployerExist(email)) {
+                if (candidateDAO.isEmailCandidateExist(email) &&!employersDAO.isEmailEmployerExist(email)) {
                     status = "Email của bạn đã được đăng ký với một tài khoản khác";
                     request.setAttribute("status", status);
                     request.getRequestDispatcher("login.jsp").forward(request, response);
 
                     // kiểm tra tài khoản 
-                }  else if (!validation.checkLength(password)) {
+                } else if (!candidateDAO.isEmailCandidateExist(email) &&employersDAO.isEmailEmployerExist(email)) {
+                    status = "Email của bạn đã được đăng ký ở nhà tuyển dụng";
+                    request.setAttribute("status", status);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+
+                    // kiểm tra tài khoản 
+                }
+                else if (!validation.checkLength(password)) {
                     status = "Mật khẩu yêu cầu tối thiểu là 8 ký tự !";
                     request.setAttribute("status", status);
                     request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -134,7 +141,12 @@ public class RegisterServlet extends HttpServlet {
                     request.setAttribute("status", status);
                     request.getRequestDispatcher("login.jsp").forward(request, response);
        
-                } else if (!validation.checkLength(password)) {
+                }  else if (!employersDAO.isEmailEmployerExist(email)&&candidateDAO.isEmailCandidateExist(email)) {
+                    status = "Tài khoản Email này đã được đăng ký ở ứng viên !";
+                    request.setAttribute("status", status);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+       
+                }    else if (!validation.checkLength(password)) {
                     status = "Mật khẩu yêu cầu tối thiểu là 8 ký tự !";
                     request.setAttribute("status", status);
                     request.getRequestDispatcher("login.jsp").forward(request, response);

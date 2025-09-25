@@ -8,7 +8,7 @@ package model;
  *
  * @author Admin
  */
-public class Admin {
+public class Admin{
     private int adminId;
     private String username;
     private String passwordHash;

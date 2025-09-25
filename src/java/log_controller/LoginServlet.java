@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package log_controller;
 
 import dal.AdminDAO;
 import dal.CandidateDAO;
@@ -16,9 +16,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import model.Candidate;
 import model.Employer;
+import model.Role;
 import tool.ValidationRegister;
+import model.Admin;
+import tool.AdminRoleDefine;
 
 /**
  *
@@ -26,7 +30,6 @@ import tool.ValidationRegister;
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
-
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -45,13 +48,11 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -69,13 +70,39 @@ public class LoginServlet extends HttpServlet {
 
             // Thay đổi: Kiểm tra admin trước (dùng username = inputValue), vì linh hoạt hơn
             // Giả sử bạn implement method isUsernameExist() trong AdminDAO tương tự các DAO khác
-            if (adminDAO.isAdmin(inputValue)) {  // Nếu chưa có method này, implement nó (check DB bằng username)
-                boolean result = adminDAO.loginAccountAdmin(inputValue, password);
-                if (result) {
-                    session.setAttribute("username", inputValue);
-                    session.setAttribute("role", "Admin");
-                    response.sendRedirect("StatictisData");  // Sửa: "StatictisData" → "StatisticsData" nếu là lỗi typo
-                    return;  // Thêm: Tránh code chạy tiếp
+            if (adminDAO.isAdmin(inputValue)) {
+                Admin admin = adminDAO.loginAccountAdmin(inputValue, password);
+                if (admin != null) {
+                    List<Role> roles = adminDAO.getRolesByAdminId(admin.getAdminId());
+
+                    session.setAttribute("roles", roles);
+
+                    // Check quyền dựa trên roleId
+                    for (Role role : roles) {
+                        switch (role.getRoleId()) {
+                            case AdminRoleDefine.ADMIN:
+                                session.setAttribute("role", "Admin");
+                                session.setAttribute("username", inputValue);
+                                response.sendRedirect("admin/candidates");
+                                return;
+                            case AdminRoleDefine.SALE:
+                                session.setAttribute("username", inputValue);
+                             
+                                session.setAttribute("role", "Sale");
+                                response.sendRedirect("logSale");
+                                return;
+                            case AdminRoleDefine.MARKETING_STAFF:
+                                session.setAttribute("role", "MarketingStaff");
+                                session.setAttribute("username", inputValue);
+                           
+                                response.sendRedirect("logStaff");
+                                return;
+                        }
+                    }
+
+                    // Nếu không match role nào
+                    response.sendRedirect("access-denied.jsp");
+                    return;
                 } else {
                     status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
                 }
@@ -85,7 +112,7 @@ public class LoginServlet extends HttpServlet {
                 if (candidateDAO.isEmailCandidateExist(inputValue)) {
                     boolean result = candidateDAO.loginCandidate(inputValue, password);
                     Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
-                    
+
                     if (result) {
                         session.setAttribute("email", inputValue);
                         session.setAttribute("role", "Candidate");
@@ -104,7 +131,7 @@ public class LoginServlet extends HttpServlet {
                         session.setAttribute("email", inputValue);
                         session.setAttribute("user", employer);
                         session.setAttribute("role", "Employer");
-                        response.sendRedirect("Index");  // Giả sử "Index" là servlet/redirect đúng
+                        response.sendRedirect("employer.jsp");  // Giả sử "Index" là servlet/redirect đúng
                         return;
                     } else {
                         status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
@@ -131,7 +158,7 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("login.jsp").forward(request, response);
             e.printStackTrace();  // Thêm: Log lỗi để debug (xem console server)
         }
-        
+
     }
 
     @Override

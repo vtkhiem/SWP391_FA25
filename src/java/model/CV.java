@@ -10,8 +10,10 @@ import java.sql.Date;
  * @author ADMIN
  */
 public class CV {
+
     private int cvId;
     private int candidateId;
+
     private String fullName;
     private String address;
     private String email;
@@ -59,7 +61,7 @@ public class CV {
         return candidateId;
     }
 
-    public void setCandidateId(int candIdateId) {
+    public void setCandidateId(int candidateId) {
         this.candidateId = candidateId;
     }
 
@@ -167,10 +169,11 @@ public class CV {
         this.dayCreate = dayCreate;
     }
 
-    @Override
-    public String toString() {
-        return "CV{" + "cvId=" + cvId + ", candidateId=" + candidateId + ", fullName=" + fullName + ", address=" + address + ", email=" + email + ", position=" + position + ", numberExp=" + numberExp + ", education=" + education + ", field=" + field + ", currentSalary=" + currentSalary + ", birthday=" + birthday + ", nationality=" + nationality + ", gender=" + gender + ", fileData=" + fileData + ", dayCreate=" + dayCreate + '}';
-    }
+
+
+    
+    
+
 
     
 }

@@ -3,8 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package controller.CV;
 
+import dal.CVDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,13 +14,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import model.CV;
+import model.Candidate;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name="LogoutServlet", urlPatterns={"/logout"})
-public class LogoutServlet extends HttpServlet {
+@WebServlet(name="DeleteCVServlet", urlPatterns={"/delete-CV"})
+public class DeleteCVServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +40,10 @@ public class LogoutServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LogoutServlet</title>");  
+            out.println("<title>Servlet DeleteCVServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LogoutServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet DeleteCVServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -56,17 +60,32 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        try{
-         HttpSession session = request.getSession(false);
-
-            session.removeAttribute("user");   // xóa key username trong session
-            session.removeAttribute("role");        // xóa role 
-            request.getRequestDispatcher("index.jsp").forward(request, response);
-
-        } catch (Exception s) {
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+        int cvId = Integer.parseInt(request.getParameter("id"));
+        CVDAO cvDao = new CVDAO();
+ 
+        
+        // Kiểm tra quyền xóa CV
+        HttpSession session = request.getSession();
+        Object userObj = session.getAttribute("user");
+        if (userObj != null && userObj instanceof Candidate) {
+            Candidate candidate = (Candidate) userObj;
+            CV cv = cvDao.getCVById(cvId);
+            
+            if (cv != null && cv.getCandidateId() == candidate.getCandidateId()) {
+                // Xóa file CV
+                String realPath = getServletContext().getRealPath("") + File.separator + cv.getFileData();
+                File file = new File(realPath);
+                if (file.exists()) {
+                    file.delete();
+                }
+                
+                // Xóa record trong database
+                cvDao.deleteCV(cvId);
+            }
         }
-    } 
+        
+        response.sendRedirect("cv-list");
+    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.

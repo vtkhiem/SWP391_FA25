@@ -49,7 +49,7 @@
                                                 <li><a href="#">CV <i class="ti-angle-down"></i></a>
                                                     <ul class="submenu">
                                                         <li><a href="cv-create.jsp">CV Create</a></li>
-                                                        <li><a href="cv-management.jsp">CV Management</a></li>
+                                                        <li><a href="cv-list">CV Management</a></li>
                                                     </ul>
                                                 </li>
                                                 <li><a href="contact.html">Contact</a></li>
@@ -70,10 +70,25 @@
                                         <!-- Nếu đã login thì hiện tên user + Logout -->
                                         <c:if test="${not empty sessionScope.user}">
                                             <div class="phone_num d-none d-xl-block">
-                                                Xin chào, <a href="profile">   ${sessionScope.user.candidateName} | </a>
+                                                Xin chào, <a href="profile">
+                                                    <c:choose>
+                                                        <c:when test="${sessionScope.role eq 'Candidate'}">
+                                                            ${sessionScope.user.candidateName}
+                                                        </c:when>
+                                                        <c:when test="${sessionScope.role eq 'Employer'}">
+                                                            ${sessionScope.user.employerName}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            ${sessionScope.user.username}
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </a> |
                                                 <a href="logout">Logout</a>
                                             </div>
                                         </c:if>
+
+
+                                        
 
                                         <div class="d-none d-lg-block">
 
