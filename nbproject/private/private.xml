@@ -3,27 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/admin/candidate-view.jsp</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-management.jsp</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/cv-edit.jsp</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/genfiles.properties</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/project.xml</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/CreateCVServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/build.xml</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/WEB-INF/web.xml</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CandidateListServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/admin/employer-list.jsp</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/CVDAO.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/nbproject/project.properties</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/EmployerDeleteServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Admin.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/AdminDAO.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/Apply.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/DeleteCVServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/model/CV.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/CV/CVEditServlet.java</file>
-            <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/admin/candidate-list.jsp</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/web/login.jsp</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/model/Employer.java</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/filter/EmployerAuthFilter.java</file>
         </group>
     </open-files>
 </project-private>

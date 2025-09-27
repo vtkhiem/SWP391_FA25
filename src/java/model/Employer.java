@@ -116,9 +116,4 @@ public class Employer {
     public void setImgLogo(String imgLogo) {
         this.imgLogo = imgLogo;
     }
-
-    
-
-    
-
 }
