@@ -10,8 +10,9 @@ import java.sql.Date;
  * @author ADMIN
  */
 public class CV {
-    private int cvId;
-    private int candidateId;
+
+    private int CVID;
+    private int candidateID;
     private String fullName;
     private String address;
     private String email;
@@ -29,9 +30,9 @@ public class CV {
     public CV() {
     }
 
-    public CV(int cvId, int candidateId, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
-        this.cvId = cvId;
-        this.candidateId = candidateId;
+    public CV(int CVID, int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
+        this.CVID = CVID;
+        this.candidateID = candidateID;
         this.fullName = fullName;
         this.address = address;
         this.email = email;
@@ -47,20 +48,20 @@ public class CV {
         this.dayCreate = dayCreate;
     }
 
-    public int getCvId() {
-        return cvId;
+    public int getCVID() {
+        return CVID;
     }
 
-    public void setCvId(int cvId) {
-        this.cvId = cvId;
+    public void setCVID(int CVID) {
+        this.CVID = CVID;
     }
 
-    public int getCandidateId() {
-        return candidateId;
+    public int getCandidateID() {
+        return candidateID;
     }
 
-    public void setCandidateId(int candIdateId) {
-        this.candidateId = candidateId;
+    public void setCandidateID(int candidateID) {
+        this.candidateID = candidateID;
     }
 
     public String getFullName() {
@@ -167,10 +168,10 @@ public class CV {
         this.dayCreate = dayCreate;
     }
 
-    @Override
-    public String toString() {
-        return "CV{" + "cvId=" + cvId + ", candidateId=" + candidateId + ", fullName=" + fullName + ", address=" + address + ", email=" + email + ", position=" + position + ", numberExp=" + numberExp + ", education=" + education + ", field=" + field + ", currentSalary=" + currentSalary + ", birthday=" + birthday + ", nationality=" + nationality + ", gender=" + gender + ", fileData=" + fileData + ", dayCreate=" + dayCreate + '}';
-    }
+ 
+    
+    
+
 
     
 }

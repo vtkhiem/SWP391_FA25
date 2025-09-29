@@ -19,13 +19,12 @@ public class Employer {
     private String description;
     private String location;
     private String urlWebsite;
-    private String taxCode;
     private String imgLogo;
 
     public Employer() {
     }
 
-    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location, String urlWebsite, String taxCode, String imgLogo) {
+    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location, String urlWebsite, String imgLogo) {
         this.employerId = employerId;
         this.employerName = employerName;
         this.email = email;
@@ -35,7 +34,6 @@ public class Employer {
         this.description = description;
         this.location = location;
         this.urlWebsite = urlWebsite;
-        this.taxCode = taxCode;
         this.imgLogo = imgLogo;
     }
 
@@ -111,14 +109,6 @@ public class Employer {
         this.urlWebsite = urlWebsite;
     }
 
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
     public String getImgLogo() {
         return imgLogo;
     }
@@ -126,6 +116,8 @@ public class Employer {
     public void setImgLogo(String imgLogo) {
         this.imgLogo = imgLogo;
     }
+
+    
 
     
 

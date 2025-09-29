@@ -3,23 +3,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package controller.CV;
 
-import dal.AdminDAO;
-import dal.CandidateDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import dal.CVDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import model.Admin;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import model.CV;
+import model.Candidate;
 
 /**
  *
- * @author ADMIN
+ * @author Admin
  */
-@WebServlet(name="CandidateListServlet", urlPatterns={"/admin/candidates"})
-public class CandidateListServlet extends HttpServlet {
+@WebServlet(name="DeleteCVServlet", urlPatterns={"/delete-CV"})
+public class DeleteCVServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +40,10 @@ public class CandidateListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateListServlet</title>");  
+            out.println("<title>Servlet DeleteCVServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateListServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet DeleteCVServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,52 +57,36 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
- private String param(HttpServletRequest req, String name, String def) {
-        String v = req.getParameter(name);
-        return v == null ? def : v;
-    }
-
-    private int parseInt(String s, int def) {
-        try { return Integer.parseInt(s); } catch (Exception e) { return def; }
-    }
-
-
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-throws ServletException, IOException {
-        String username= req.getParameter("username");
-               String password = req.getParameter("password");
-               AdminDAO adminDAO = new AdminDAO();
-               Admin admin = adminDAO.loginAccountAdmin(username, password);
-                
-
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
-        String q = param(req, "q", "").trim();
-        int page = parseInt(param(req, "page", "1"), 1);
-        int size = 10; 
-
-        CandidateDAO dao = new CandidateDAO(); 
-
-        int total = dao.countAll(q);
-        int totalPages = (int) Math.ceil(total / (double) size);
-        if (totalPages <= 0) totalPages = 1;
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
-
-        req.setAttribute("q", q);
-        req.setAttribute("page", page);
-        req.setAttribute("size", size); 
-        req.setAttribute("total", total);
-        req.setAttribute("totalPages", totalPages);
-        req.setAttribute("candidates", dao.findPage(page, size, q));
-req.setAttribute("user", admin);
-req.setAttribute("role", "Admin");
-
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
+        int cvId = Integer.parseInt(request.getParameter("id"));
+        CVDAO cvDao = new CVDAO();
+ 
         
-        req.getRequestDispatcher("/admin/candidate-list.jsp").forward(req, resp);
+        // Kiểm tra quyền xóa CV
+        HttpSession session = request.getSession();
+        Object userObj = session.getAttribute("user");
+        if (userObj != null && userObj instanceof Candidate) {
+            Candidate candidate = (Candidate) userObj;
+            CV cv = cvDao.getCVById(cvId);
+            
+            if (cv != null && cv.getCandidateID() == candidate.getCandidateId()) {
+                // Xóa file CV
+                String realPath = getServletContext().getRealPath("") + File.separator + cv.getFileData();
+                File file = new File(realPath);
+                if (file.exists()) {
+                    file.delete();
+                }
+                
+                // Xóa record trong database
+                cvDao.deleteCV(cvId);
+            }
+        }
+        
+        response.sendRedirect("cv-list");
     }
+
     /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request

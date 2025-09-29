@@ -18,7 +18,7 @@ public class ApplyDAO {
 
     // CREATE
     public void insertApply(Apply apply) {
-        String sql = "INSERT INTO Apply (jobPostId, candidateId, cvId, dayCreate, status, note) "
+        String sql = "INSERT INTO Apply (jobPostId, candidateID, CVID, dayCreate, status, note) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, apply.getJobPostId());
@@ -145,8 +145,8 @@ public class ApplyDAO {
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
                     CV cv = new CV();
-                    cv.setCvId(rs.getInt("CVID"));
-                    cv.setCandidateId(rs.getInt("CandidateID"));
+                    cv.setCVID(rs.getInt("CVID"));
+                    cv.setCandidateID(rs.getInt("CandidateID"));
                     cv.setFullName(rs.getString("FullName"));
                     cv.setAddress(rs.getString("Address"));
                     cv.setEmail(rs.getString("Email"));
