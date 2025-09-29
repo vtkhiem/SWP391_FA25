@@ -125,31 +125,7 @@ public class CandidateDAO extends DBContext {
         } catch (SQLException e) { e.printStackTrace(); return true; }
     }
 
-    public int insert(Candidate cd) {
-        String sql = """
-            INSERT INTO Candidate (CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar)
-            OUTPUT INSERTED.CandidateID
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
-        try (PreparedStatement ps = conn().prepareStatement(sql)) {
-            ps.setString(1, cd.getCandidateName());
-            ps.setString(2, cd.getAddress());
-            ps.setString(3, cd.getEmail());
-            ps.setString(4, cd.getPhoneNumber());
-            ps.setString(5, cd.getNationality());
-            ps.setString(6, cd.getPasswordHash());
-            if (cd.getAvatar() == null) ps.setNull(7, Types.NVARCHAR);
-            else ps.setString(7, cd.getAvatar());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
-            }
-        } catch (SQLException e) { e.printStackTrace(); }
-        return 0;
-    }
 
-    public boolean insertCandidate(Candidate candidate) {
-        return insert(candidate) > 0;
-    }
 
     public Candidate checkLogin(String email, String passwordHash) {
         String sql = """
@@ -205,28 +181,6 @@ public class CandidateDAO extends DBContext {
         return cd;
     }
 
-    public static void main(String[] args) {
-        CandidateDAO dao = new CandidateDAO();
-        Candidate newC = new Candidate();
-        newC.setCandidateName("Nguyen Van A");
-        newC.setAddress("Ha Noi");
-        newC.setEmail("test@example.com");
-        newC.setPhoneNumber("0123456789");
-        newC.setNationality("Vietnam");
-        newC.setPasswordHash("123456");
-        newC.setAvatar(null);
-        int newId = dao.insert(newC);
-        System.out.println("Inserted CandidateID = " + newId);
-        Candidate login = dao.checkLogin("test@example.com", "123456");
-        System.out.println("Login " + (login != null ? "OK: " + login.getCandidateName() : "FAILED"));
-        if (newId > 0) {
-            Candidate byId = dao.getCandidateById(newId);
-            System.out.println("GetById: " + (byId != null ? byId.getEmail() : "null"));
-        }
-        int total = dao.countAll("Nguyen");
-        System.out.println("Total 'Nguyen': " + total);
-        List<Candidate> page1 = dao.findPage(1, 5, "Nguyen");
-        System.out.println("Page1 size: " + page1.size());
-    }
+
     
 }

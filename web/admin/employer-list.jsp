@@ -30,22 +30,24 @@
 </head>
 <body>
 <div class="navbar">
-  <div class="brand"><a href="${pageContext.request.contextPath}/admin/employers">Admin Dashboard</a></div>
+  <div class="brand">
+    <a href="${pageContext.request.contextPath}/admin/employers">Admin Dashboard</a>
+    &nbsp;|&nbsp;
+    <a href="${pageContext.request.contextPath}/admin/candidates" style="color:#fff; text-decoration:none;">Candidates</a>
+    &nbsp;|&nbsp;
+    <a href="${pageContext.request.contextPath}/admin/employers" style="color:#fff; text-decoration:none;">Employers</a>
+</div>
   <div></div>
 </div>
 
 <div class="searchbar-wrap">
   <form class="searchbar" method="get" action="">
-    <input type="text" name="q" placeholder="Tìm employer theo tên, email, công ty..." value="${q}"/>
+    <input type="text" name="q" placeholder="Tìm employer theo tên, email, công ty, SĐT" value="${q}"/>
     <button class="btn primary" type="submit">Tìm kiếm</button>
   </form>
 </div>
 
 <div class="container">
-  <!-- Alerts -->
-  <c:if test="${param.added == '1'}"><div class="alert ok">Đã thêm employer.</div></c:if>
-  <c:if test="${param.deleted == '1'}"><div class="alert ok">Đã xoá employer.</div></c:if>
-  <c:if test="${param.deleted == '0'}"><div class="alert err">Xoá thất bại.</div></c:if>
 
   <div class="total-card">
     <div class="total-title">Tổng employer</div>
@@ -62,7 +64,7 @@
   <c:forEach var="e" items="${employers}">
     <div class="employer-card">
       <c:choose>
-        <c:when test="${not empty e.imgLogo}">
+        <c:when test="${not empty a}">
           <img class="logo" src="${pageContext.request.contextPath}/uploads/${e.imgLogo}" alt="logo">
         </c:when>
         <c:otherwise>
@@ -80,15 +82,13 @@
             <a href="//${e.urlWebsite}" target="_blank" rel="noopener noreferrer">${e.urlWebsite}</a>
           </div>
         </c:if>
-        <c:if test="${not empty e.taxCode}">
-          <div class="muted">Mã số thuế: ${e.taxCode}</div>
-        </c:if>
+       
       </div>
 
       <div class="actions">
         <a class="btn" href="${pageContext.request.contextPath}/admin/employer/view?id=${e.employerId}">View</a>
         <form method="post" action="${pageContext.request.contextPath}/admin/employer/delete"
-              onsubmit="return confirm('Xoá employer ${e.employerName}? Hành động này có thể xoá cả JobPost/Apply liên quan.');">
+              onsubmit="return confirm('Xoá employer ${e.employerName}?');">
           <input type="hidden" name="id" value="${e.employerId}">
           <button class="btn" style="border-color:#fecaca;color:#b91c1c;background:#fff;">Delete</button>
         </form>
@@ -103,8 +103,12 @@
   <div class="pagination">
     <c:forEach var="i" begin="1" end="${totalPages}">
       <c:choose>
-        <c:when test="${i == page}"><span class="active">${i}</span></c:when>
-        <c:otherwise><a href="?page=${i}&q=${q}">${i}</a></c:otherwise>
+        <c:when test="${i == page}">
+            <span class="active">${i}</span>
+        </c:when>
+        <c:otherwise>
+            <a href="?page=${i}&q=${q}">${i}</a>
+        </c:otherwise>
       </c:choose>
     </c:forEach>
   </div>
