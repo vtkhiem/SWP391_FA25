@@ -27,11 +27,7 @@ public class EncodePassword {
 
             result = Base64.getEncoder().encodeToString(md.digest(databyte));  // Base64 giúp mã hóa dữ liệu nhị phân (byte/số) thành chuỗi ký tự dễ đọc, dễ lưu trữ.
 
-//            byte[] t = md.digest(databyte);
-//
-//            for (byte k : t) {
-//                System.out.println(k);
-//            }
+
         } catch (Exception s) {
             System.out.println(s.getMessage());
         }

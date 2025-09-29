@@ -757,3 +757,25 @@ body {
         font-size: 0.8rem;
     }
 }
+
+/* Dropdown status đẹp hơn */
+.status-dropdown {
+    padding: 0.4rem 0.6rem;
+    border: none;            /* bỏ viền */
+    border-radius: 5px;      /* bo tròn */
+    background-color: #f0f0f0;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.status-dropdown:focus {
+    outline: none;           /* bỏ viền xanh mặc định khi focus */
+    box-shadow: 0 0 0 2px #2196f3; /* thêm highlight nhẹ */
+}
+
+.status-dropdown option {
+    padding: 0.5rem;
+}
+

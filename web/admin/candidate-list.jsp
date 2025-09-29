@@ -1,6 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="model.Admin" %>
+<%
+    // Check quyền role
+    String role = (String) session.getAttribute("role");
+    if (role == null || !role.equals("Admin")) {
+        response.sendRedirect("access-denied.jsp");
+        return;
+    }
 
+    Admin user = (Admin) session.getAttribute("user");
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>

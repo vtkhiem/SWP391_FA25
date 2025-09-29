@@ -1,60 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Recruiter Dashboard - Job Management</title>
-        
-        <!-- CSS here -->
-         <link rel="stylesheet" href="css/employer.css">
+        <title>Recruiter Dashboard - Applications</title>
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+
+        <!-- CSS: Bootstrap first, then libraries, then main style -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/themify-icons.css">
+        <link rel="stylesheet" href="css/flaticon.css">
+        <link rel="stylesheet" href="css/owl.carousel.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="css/gijgo.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/slicknav.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/custom.css"> 
+        <!--<link rel="stylesheet" href="css/employer.css">-->
     </head>
     <body>
+
         <!-- Header Start -->
-        <header class="header-area">
-            <div class="container-fluid">
-                <div class="header_bottom_border">
-                    <div class="logo">
-                        <a href="index.jsp">
-                            <img src="img/logo.png" alt="">
-                        </a>
-                    </div>
-                    <nav class="main-menu">
-                        <ul>
-                            <li class="active"><a href="#create-job">Create Job</a></li>
-                            <li><a href="#edit-job">Edit Job</a></li>
-                            <li><a href="viewApply">View Apply</a></li>
-                        </ul>
-                    </nav>
-                    <div class="user-info">
-                        <a href="#" class="profile-btn">Admin</a>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <jsp:include page="header.jsp"/>
         <!-- Header End -->
 
         <!-- Breadcrumb Area -->
         <div class="bradcam_area">
             <div class="container">
                 <div class="bradcam_text">
-                    <h3>Job Management Dashboard</h3>
-                    <p class="breadcrumb">Manage your job postings and applications</p>
+                    <h3>Application Management</h3>
+                    <p class="breadcrumb">Review and manage candidate applications</p>
                 </div>
             </div>
         </div>
 
-        <!-- Dashboard Content -->
+        <!-- Applications Content -->
         <div class="job_listing_area">
             <div class="container">
                 <!-- Dashboard Stats -->
                 <div class="dashboard-stats">
                     <div class="stat-card">
-                        <div class="stat-number">24</div>
-                        <div class="stat-label">Active Jobs</div>
-                    </div>
-                    <div class="stat-card">
                         <div class="stat-number">156</div>
                         <div class="stat-label">Total Applications</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">New Applications</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number">12</div>
@@ -66,17 +62,18 @@
                     </div>
                 </div>
 
+
                 <!-- Quick Actions -->
                 <div class="quick-actions">
                     <h2 class="section-title">Quick Actions</h2>
                     <div class="actions-grid">
-                        <a href="#create-job" class="action-btn" onclick="showCreateJobForm()">
+                        <a href="job_post.jsp" class="action-btn" onclick="showCreateJobForm()">
                             <div class="action-content">
                                 <h4>Create New Job</h4>
                                 <p>Post a new job opening and start receiving applications</p>
                             </div>
                         </a>
-                        <a href="#edit-job" class="action-btn" onclick="showEditJobSection()">
+                        <a href="jobs" class="action-btn" onclick="showEditJobSection()">
                             <div class="action-content">
                                 <h4>Edit Existing Jobs</h4>
                                 <p>Update job details, requirements, and status</p>
