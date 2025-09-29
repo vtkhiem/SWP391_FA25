@@ -29,7 +29,7 @@
 
     <body>
         <!-- header_start -->
-        <jsp:include page="employer-header.jsp"/>
+        <jsp:include page="header.jsp"/>
         <!-- header_end -->
 
         <!-- bradcam_area -->
@@ -63,6 +63,8 @@
                             </c:if>
 
                             <form action="job_add" method="post" onsubmit="return validateForm()">
+                                <input type="hidden" name="employerId" value="${sessionScope.user.employerId}"/>
+
                                 <div class="form-group">
                                     <label>Title</label>
                                     <input type="text" class="form-control" name="title" required>
@@ -192,7 +194,7 @@
 
                                 <div class="form-actions mt-3">
                                     <button type="submit" class="btn btn-primary">Add Job</button>
-                                    <a href="jobs" class="btn btn-secondary ml-2">Cancel</a>
+                                    <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
                                 </div>
                             </form>
                         </div>

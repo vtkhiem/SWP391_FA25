@@ -1,19 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.*;
 import model.Employer;
 import tool.EncodePassword;
 
-/**
- *
- * @author Admin
- */
 public class RegisterEmployerDAO extends DBContext {
-
     public boolean isEmailEmployerExist(String mail) {
         try {
             String query = "SELECT 1 FROM [dbo].[Employer] WHERE Email = ?";
@@ -142,11 +133,9 @@ public class RegisterEmployerDAO extends DBContext {
 
     public Employer getEmployerByEmail(String email) {
         try {
-
-            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PhoneNumber], "
+            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash],"
                     + "[CompanyName], [Description], [Location], [URLWebsite], [ImgLogo] "
-                    + "FROM [dbo].[Candidate] "
-
+                    + "FROM [dbo].[Employer] "
                     + "WHERE Email = ?";
 
             PreparedStatement ps = c.prepareStatement(query);
@@ -165,7 +154,6 @@ public class RegisterEmployerDAO extends DBContext {
                         rs.getString("Description"),
                         rs.getString("Location"),
                         rs.getString("URLWebsite"),
-     
                         rs.getString("ImgLogo"));
             }
         } catch (Exception e) {
