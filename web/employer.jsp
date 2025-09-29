@@ -1,33 +1,35 @@
 <!DOCTYPE html>
-<%@ page import="model.Employer" %>
-
-<%
-    Employer employer = (Employer) session.getAttribute("user");
-    String fullName = (employer != null) ? employer.getEmployerName() : "Guest";
-%>
-
 <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Recruiter Dashboard - Applications</title>
-        <!-- CSS here -->
-        <link rel="stylesheet" href="css/employer.css">
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+
+        <!-- CSS: Bootstrap first, then libraries, then main style -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/themify-icons.css">
+        <link rel="stylesheet" href="css/flaticon.css">
+        <link rel="stylesheet" href="css/owl.carousel.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="css/gijgo.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/slicknav.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/custom.css"> 
+        <!--<link rel="stylesheet" href="css/employer.css">-->
     </head>
     <body>
 
-       <!-- Header Start -->
-<jsp:include page="employer-header.jsp"/>
-<!-- Header End -->
-
-<!-- Hi?n th? tên ng??i dùng -->
-<div style="text-align: right; margin: 1rem; font-weight: bold;">
-    Xin chào, <%= fullName %>!
-</div>
-
+        <!-- Header Start -->
+        <jsp:include page="header.jsp"/>
+        <!-- Header End -->
 
         <!-- Breadcrumb Area -->
-        
         <div class="bradcam_area">
             <div class="container">
                 <div class="bradcam_text">
@@ -209,4 +211,3 @@
 
     </body>
 </html>
-

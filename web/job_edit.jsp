@@ -29,7 +29,7 @@
 
     <body>
         <!-- header_start -->
-        <jsp:include page="employer-header.jsp"/>
+        <jsp:include page="header.jsp"/>
         <!-- header_end -->
 
         <!-- bradcam_area -->  
@@ -193,7 +193,7 @@
 
                                 <div class="d-flex justify-content-between">
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    <a href="job_details?id=${job.jobPostID}" class="btn btn-secondary">Cancel</a>
+                                    <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
                                 </div>
                             </form>
                         </div>
