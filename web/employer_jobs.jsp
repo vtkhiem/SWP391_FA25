@@ -48,7 +48,7 @@
 
         <!-- search-area_start -->
         <div class="search_container">
-            <form action="job_search" method="get" class="search_bar">
+            <form action="search" method="get" class="search_bar">
                 <div class="search_inputs">
                     <!-- Vị trí -->
                     <input type="text" name="keyword" placeholder="Enter your expected position">
