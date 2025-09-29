@@ -14,6 +14,7 @@ import model.JobPost;
 
 @WebServlet(name = "JobAddServlet", urlPatterns = {"/job_add"})
 public class JobAddServlet extends HttpServlet {
+
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -35,12 +36,6 @@ public class JobAddServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int employerId = Integer.parseInt(request.getParameter("employerId"));
@@ -70,6 +65,13 @@ public class JobAddServlet extends HttpServlet {
         }
 
         request.getRequestDispatcher("job_post.jsp").forward(request, response);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+            processRequest(request, response);
     }
 
     @Override
