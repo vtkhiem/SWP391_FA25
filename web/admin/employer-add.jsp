@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="model.Admin" %>
+
 <%
     // Check quyền role
     String role = (String) session.getAttribute("role");
@@ -67,10 +69,7 @@
         </div>
         <div class="row"><div>Website</div>
           <input name="urlWebsite" placeholder="www.example.com" value="${param.urlWebsite}" maxlength="100">
-        </div>
-        <div class="row"><div>Mã số thuế</div>
-          <input name="taxCode" value="${param.taxCode}" maxlength="50">
-        </div>
+        </div> 
         <div class="row"><div>Mô tả</div>
           <textarea name="description" rows="4"><c:out value="${param.description}"/></textarea>
         </div>

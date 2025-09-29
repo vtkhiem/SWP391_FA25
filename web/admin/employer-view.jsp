@@ -1,5 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="model.Admin" %>
+
 <%
     // Check quyền role
     String role = (String) session.getAttribute("role");
@@ -10,6 +12,7 @@
 
     Admin user = (Admin) session.getAttribute("user");
 %>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -53,7 +56,6 @@
         <div class="row"><div class="label">Số điện thoại</div><div>${item.phoneNumber}</div></div>
         <div class="row"><div class="label">Địa điểm</div><div>${item.location}</div></div>
         <div class="row"><div class="label">Website</div><div><c:out value="${item.urlWebsite}"/></div></div>
-        <div class="row"><div class="label">Mã số thuế</div><div><c:out value="${item.taxCode}"/></div></div>
         <div class="row"><div class="label">Mô tả</div><div style="white-space:pre-wrap;"><c:out value="${item.description}"/></div></div>
         <div class="row"><div class="label">Mã Employer</div><div>${item.employerId}</div></div>
       </div>
