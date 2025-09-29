@@ -60,13 +60,14 @@ public class LogSaleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+       HttpSession session = request.getSession();
+    String username = (String) session.getAttribute("username");
+ 
         String role = request.getParameter("role");
         AdminDAO adminDAO = new AdminDAO();
-        Admin admin = adminDAO.loginAccountAdmin(username, password);
+        Admin admin = adminDAO.getAdminByUsername(username);
         request.setAttribute("username", username);
-        request.setAttribute("password", password);
+ 
         request.setAttribute("user", admin);
         request.setAttribute("role", role);
         response.sendRedirect("sale.jsp");

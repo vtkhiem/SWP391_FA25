@@ -71,7 +71,7 @@ public class DeleteCVServlet extends HttpServlet {
             Candidate candidate = (Candidate) userObj;
             CV cv = cvDao.getCVById(cvId);
             
-            if (cv != null && cv.getCandidateId() == candidate.getCandidateId()) {
+            if (cv != null && cv.getCandidateID() == candidate.getCandidateId()) {
                 // Xóa file CV
                 String realPath = getServletContext().getRealPath("") + File.separator + cv.getFileData();
                 File file = new File(realPath);

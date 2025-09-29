@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<%@ page import="model.Employer" %>
+
+<%
+    Employer employer = (Employer) session.getAttribute("user");
+    String fullName = (employer != null) ? employer.getEmployerName() : "Guest";
+%>
 
 <html>
     <head>
@@ -10,12 +16,18 @@
     </head>
     <body>
 
-        <!-- Header Start -->
-        <jsp:include page="employer-header.jsp"/>
+       <!-- Header Start -->
+<jsp:include page="employer-header.jsp"/>
+<!-- Header End -->
 
-        <!-- Header End -->
+<!-- Hi?n th? tên ng??i dùng -->
+<div style="text-align: right; margin: 1rem; font-weight: bold;">
+    Xin chào, <%= fullName %>!
+</div>
+
 
         <!-- Breadcrumb Area -->
+        
         <div class="bradcam_area">
             <div class="container">
                 <div class="bradcam_text">

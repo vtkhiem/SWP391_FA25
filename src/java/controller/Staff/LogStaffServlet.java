@@ -60,18 +60,42 @@ public class LogStaffServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
+      HttpSession session = request.getSession();
+    String username = (String) session.getAttribute("username");
 
+        // Check if username is null or empty
+        if (username == null || username.trim().isEmpty()) {
+            System.out.println("Error: Username parameter is null or empty");
+            // Optionally, set an error message for the client
+            request.setAttribute("error", "Username is required");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        // Debug: Log the username
+        System.out.println("Username received: " + username);
+
+        // Proceed with AdminDAO
         AdminDAO adminDAO = new AdminDAO();
+        Admin admin = adminDAO.getAdminByUsername(username);
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+        // Check if admin is null
+        if (admin == null) {
+            System.out.println("Error: No Admin found for username: " + username);
+            request.setAttribute("errorMessage", "Invalid username");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
 
+        // Debug: Log the admin username
+        System.out.println("Admin found: " + admin.getUsername());
+
+        // Set attributes and forward to JSP
+        request.setAttribute("user", admin);
         request.setAttribute("role", "MarketingStaff");
-
         request.getRequestDispatcher("marketing-staff.jsp").forward(request, response);
-
     }
+
 
     /**
      * Handles the HTTP <code>POST</code> method.

@@ -15,10 +15,10 @@ public class CVDAO extends DBContext {
             return false;
         }
         System.out.println("=== CVDAO createCV DEBUG ===");
-        System.out.println("CandidateID: " + cv.getCandidateId());
+        System.out.println("CandidateID: " + cv.getCandidateID());
 
-        if (!isCandidateExists(cv.getCandidateId())) {
-            System.out.println("ERROR: CandidateID " + cv.getCandidateId() + " không tồn tại trong bảng Candidate");
+        if (!isCandidateExists(cv.getCandidateID())) {
+            System.out.println("ERROR: CandidateID " + cv.getCandidateID() + " không tồn tại trong bảng Candidate");
             return false;
         }
         System.out.println("SUCCESS: CandidateID exists, proceeding with INSERT");
@@ -33,7 +33,7 @@ public class CVDAO extends DBContext {
             ps = c.prepareStatement(sql);
 
             System.out.println("Setting parameters...");
-            ps.setInt(1, cv.getCandidateId());
+            ps.setInt(1, cv.getCandidateID());
             ps.setString(2, cv.getFullName());
             ps.setString(3, cv.getAddress());
             ps.setString(4, cv.getEmail());
@@ -155,8 +155,8 @@ public class CVDAO extends DBContext {
                 // Chỉ thêm CV nếu candidateId khớp
                 if (rs.getInt("CandidateId") == candidateId) {
                     CV cv = new CV();
-                    cv.setCvId(rs.getInt("CVID"));
-                    cv.setCandidateId(rs.getInt("CandidateId"));
+                    cv.setCVID(rs.getInt("CVID"));
+                    cv.setCandidateID(rs.getInt("CandidateId"));
                     cv.setFullName(rs.getString("FullName"));
                     cv.setAddress(rs.getString("Address"));
                     cv.setEmail(rs.getString("Email"));
@@ -191,8 +191,8 @@ public class CVDAO extends DBContext {
 
             if (rs.next()) {
                 CV cv = new CV();
-                cv.setCvId(rs.getInt("CVID"));
-                cv.setCandidateId(rs.getInt("CandidateId"));
+                cv.setCVID(rs.getInt("CVID"));
+                cv.setCandidateID(rs.getInt("CandidateId"));
                 cv.setFullName(rs.getString("FullName"));
                 cv.setAddress(rs.getString("Address"));
                 cv.setEmail(rs.getString("Email"));
@@ -233,7 +233,7 @@ public class CVDAO extends DBContext {
             ps.setString(10, cv.getNationality());
             ps.setString(11, cv.getGender());
             ps.setString(12, cv.getFileData());
-            ps.setInt(13, cv.getCvId());
+            ps.setInt(13, cv.getCVID());
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -272,11 +272,12 @@ public class CVDAO extends DBContext {
         }
 
     }
+    /*
     public static void main(String[] args) {
         try {
             // Tạo đối tượng CV test
             CV testCV = new CV();
-            testCV.setCandidateId(1); // Đảm bảo ID này tồn tại trong bảng Candidate
+            testCV.setCandidateID(1); // Đảm bảo ID này tồn tại trong bảng Candidate
             testCV.setFullName("Test User");
             testCV.setEmail("test@example.com");
             testCV.setAddress("Test Address");
@@ -301,7 +302,7 @@ public class CVDAO extends DBContext {
                 // Kiểm tra CV vừa tạo
                 System.out.println("Checking CVs for candidate 1:");
                 cvDao.getCVsByCandidate(2).forEach(cv -> {
-                    System.out.println("CV ID: " + cv.getCvId());
+                    System.out.println("CV ID: " + cv.getCVID());
                     System.out.println("Full Name: " + cv.getFullName());
                     System.out.println("Position: " + cv.getPosition());
                     System.out.println("Email: " + cv.getEmail());
@@ -315,7 +316,7 @@ public class CVDAO extends DBContext {
             System.out.println("Error creating CV:");
             e.printStackTrace();
         }
-    }
+    }*/
     
 
    /* public static void main(String[] args) {
@@ -359,14 +360,14 @@ public class CVDAO extends DBContext {
             e.printStackTrace();
         }
 
-    }
-    /*
+    }*/
+  
     public static void main(String[] args) {
     try {
         CVDAO cvDao = new CVDAO();
 
         // 🟢 Test lấy CV theo ID
-        int testCvId = 1; // thay bằng CVID có trong DB
+        int testCvId = 2; // thay bằng CVID có trong DB
         CV cv = cvDao.getCVById(testCvId);
         if (cv != null) {
             System.out.println("=== CV DETAILS (ID = " + testCvId + ") ===");
@@ -402,5 +403,5 @@ public class CVDAO extends DBContext {
         e.printStackTrace();
     }
 }
-    */
+
 }

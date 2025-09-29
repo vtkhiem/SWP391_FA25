@@ -89,6 +89,9 @@ public class CVListServlet extends HttpServlet {
             request.setAttribute("candidateId", candidateId); // Thêm candidateId vào request
 
             request.getRequestDispatcher("cv-management.jsp").forward(request, response);
+            
+            
+      
 
         } catch (Exception e) {
             System.out.println("Error in CVListServlet: " + e.getMessage());

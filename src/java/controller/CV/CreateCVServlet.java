@@ -196,7 +196,7 @@ public class CreateCVServlet extends HttpServlet {
             // Handle file upload
             // Create CV object
             CV cv = new CV();
-            cv.setCandidateId(candidateId);
+            cv.setCandidateID(candidateId);
             cv.setFullName(fullName);
             cv.setEmail(email);
             cv.setAddress(address);

@@ -3,6 +3,10 @@
 <%
     CV cv = (CV) request.getAttribute("cv");
     String error = (String) request.getAttribute("error");
+    if(cv==null){
+   response.sendRedirect("access-denied.jsp");
+        return;
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -21,7 +25,7 @@
     <% } %>
 
     <form action="edit-cv" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
-        <input type="hidden" name="CVID" value="<%= cv.getCVID() %>"/>
+        <input type="hidden" name="id" value="<%= cv.getCVID() %>"/>
 
         <div class="mb-3">
             <label class="form-label">Full Name</label>

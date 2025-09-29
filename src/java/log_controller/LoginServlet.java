@@ -81,17 +81,18 @@ public class LoginServlet extends HttpServlet {
                     for (Role role : roles) {
                         switch (role.getRoleId()) {
                             case AdminRoleDefine.ADMIN:
+                              
                                 session.setAttribute("role", "Admin");
                                 session.setAttribute("username", inputValue);
                                 response.sendRedirect("admin/candidates");
                                 return;
                             case AdminRoleDefine.SALE:
                                 session.setAttribute("username", inputValue);
-                             
                                 session.setAttribute("role", "Sale");
                                 response.sendRedirect("logSale");
                                 return;
                             case AdminRoleDefine.MARKETING_STAFF:
+                              
                                 session.setAttribute("role", "MarketingStaff");
                                 session.setAttribute("username", inputValue);
                            

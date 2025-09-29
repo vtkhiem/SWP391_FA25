@@ -10,6 +10,7 @@
         response.sendRedirect("access-denied.jsp");
         return;
     }
+    Admin admin = (Admin) session.getAttribute("user");
 
    
 %>
@@ -232,7 +233,7 @@
     <header>
         <h1>📊 Marketing Staff Dashboard</h1>
         <div class="user-info">
-            <span class="welcome-text">Xin chào, <b>${sessionScope.user.username}</b></span>
+            <span class="welcome-text">Xin chào, <b>${user.username}</b></span>
             <a class="logout" href="logout">🚪 Đăng xuất</a>
         </div>
     </header>

@@ -63,6 +63,27 @@ public class AdminDAO extends DBContext {
         }
         return null; // login fail
     }
+    public Admin getAdminByUsername(String username) {
+        String query = "SELECT AdminID, Username, PasswordHash FROM [dbo].[Admin] WHERE Username = ?";
+        try (PreparedStatement ps = c.prepareStatement(query)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                
+                   
+                   
+                        Admin admin = new Admin();
+                        admin.setAdminId(rs.getInt("AdminID"));
+                        admin.setUsername(rs.getString("Username"));
+                        return admin; // login thành công
+                    
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi login admin: " + e.getMessage());
+        }
+        return null; // login fail
+    }
 
     public List<Role> getRolesByAdminId(int adminId) throws SQLException {
         List<Role> roles = new ArrayList<>();
@@ -103,8 +124,9 @@ public class AdminDAO extends DBContext {
         String username = "hung";   // thay bằng username trong DB
         String password = "1234";   // thay bằng password thật (sẽ được hash để so sánh)
         Admin admin = dao.loginAccountAdmin(username, password);
+        Admin admin1 = dao.getAdminByUsername(username);
 
-        if (admin != null) {
+        if (admin1 != null) {
             System.out.println("Đăng nhập thành công!");
             System.out.println("AdminID: " + admin.getAdminId());
             System.out.println("Username: " + admin.getUsername());

@@ -143,9 +143,9 @@ public class RegisterEmployerDAO extends DBContext {
     public Employer getEmployerByEmail(String email) {
         try {
 
-            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PhoneNumber], "
+            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash], "
                     + "[CompanyName], [Description], [Location], [URLWebsite], [ImgLogo] "
-                    + "FROM [dbo].[Candidate] "
+                    + "FROM [dbo].[Employer] "
 
                     + "WHERE Email = ?";
 
@@ -214,16 +214,12 @@ public class RegisterEmployerDAO extends DBContext {
         String email = "nguyenvanca@example.com";
         String phone = "0912345674";
         String password = "1234561";
-
+        Employer emp = dao.getEmployerByEmail(email);
+if(emp!= null){
+    System.out.println(emp.getEmployerName());
+}
         // Kiểm tra email và phone trước khi đăng ký
-        if (dao.isEmailEmployerExist(email)) {
-            System.out.println("Email đã tồn tại!");
-        } else if (dao.isPhoneEmployerExist(phone)) {
-            System.out.println("Số điện thoại đã tồn tại!");
-        } else {
-            boolean success = dao.registerEmployer(name, email, phone, password);
-            System.out.println("Kết quả đăng ký: " + (success ? "Thành công" : "Thất bại"));
-        }
+    
 
         // Đóng connection
         dao.closeConnection();
