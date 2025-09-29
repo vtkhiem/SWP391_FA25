@@ -1,19 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.*;
 import model.Employer;
 import tool.EncodePassword;
 
-/**
- *
- * @author Admin
- */
 public class RegisterEmployerDAO extends DBContext {
-
     public boolean isEmailEmployerExist(String mail) {
         try {
             String query = "SELECT 1 FROM [dbo].[Employer] WHERE Email = ?";
@@ -142,11 +133,9 @@ public class RegisterEmployerDAO extends DBContext {
 
     public Employer getEmployerByEmail(String email) {
         try {
-
-            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash], "
+            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash],"
                     + "[CompanyName], [Description], [Location], [URLWebsite], [ImgLogo] "
                     + "FROM [dbo].[Employer] "
-
                     + "WHERE Email = ?";
 
             PreparedStatement ps = c.prepareStatement(query);
@@ -165,7 +154,6 @@ public class RegisterEmployerDAO extends DBContext {
                         rs.getString("Description"),
                         rs.getString("Location"),
                         rs.getString("URLWebsite"),
-     
                         rs.getString("ImgLogo"));
             }
         } catch (Exception e) {
@@ -214,12 +202,16 @@ public class RegisterEmployerDAO extends DBContext {
         String email = "nguyenvanca@example.com";
         String phone = "0912345674";
         String password = "1234561";
-        Employer emp = dao.getEmployerByEmail(email);
-if(emp!= null){
-    System.out.println(emp.getEmployerName());
-}
+
         // Kiểm tra email và phone trước khi đăng ký
-    
+        if (dao.isEmailEmployerExist(email)) {
+            System.out.println("Email đã tồn tại!");
+        } else if (dao.isPhoneEmployerExist(phone)) {
+            System.out.println("Số điện thoại đã tồn tại!");
+        } else {
+            boolean success = dao.registerEmployer(name, email, phone, password);
+            System.out.println("Kết quả đăng ký: " + (success ? "Thành công" : "Thất bại"));
+        }
 
         // Đóng connection
         dao.closeConnection();

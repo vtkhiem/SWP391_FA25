@@ -38,7 +38,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="bradcam_text">
-                            <h3>Jobs Available</h3>
+                            <h3>${sessionScope.user.employerName}'s Jobs</h3>
                         </div>
                     </div>
                 </div>
@@ -139,16 +139,6 @@
                     <button type="button" class="btn-advanced" id="btnAdvancedFilter">Filter</button>
                 </div>
             </form>
-
-            <div class="popular_search">
-                <span>Popular search:</span>
-                <ul>
-                    <li><a href="job_search?keyword=PHP Developer">PHP Developer</a></li>
-                    <li><a href="job_search?keyword=React Native">React Native</a></li>
-                    <li><a href="job_search?keyword=Marketing Online">Marketing Online</a></li>
-                    <li><a href="job_search?keyword=Data Analyst">Data Analyst</a></li>
-                </ul>
-            </div>
         </div>
         <!-- search-area-end -->
 
@@ -193,7 +183,7 @@
                                             <div class="jobs_right">
                                                 <div class="apply_now">
                                                     <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                                    <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Apply Now</a>
+                                                    <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">View Details</a>
                                                 </div>
                                                 <div class="date">
                                                     <p>Date: ${job.dayCreate}</p>
