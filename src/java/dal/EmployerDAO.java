@@ -37,7 +37,7 @@ public class EmployerDAO extends DBContext {
         StringBuilder sb = new StringBuilder();
         sb.append("""
             SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
-                   CompanyName, Description, Location, URLWebsite, TaxCode, ImgLogo
+                   CompanyName, Description, Location, URLWebsite, ImgLogo
             FROM Employer
         """);
 
@@ -72,7 +72,7 @@ public class EmployerDAO extends DBContext {
                     e.setDescription(rs.getString("Description"));
                     e.setLocation(rs.getString("Location"));
                     e.setUrlWebsite(rs.getString("URLWebsite"));
-                    e.setTaxCode(rs.getString("TaxCode"));
+               
                     e.setImgLogo(rs.getString("ImgLogo"));
                     list.add(e);
                 }
@@ -86,7 +86,7 @@ public class EmployerDAO extends DBContext {
     public Employer findById(int id) {
     String sql = """
         SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
-               CompanyName, Description, Location, URLWebsite, TaxCode, ImgLogo
+               CompanyName, Description, Location, URLWebsite, ImgLogo
         FROM Employer WHERE EmployerID = ?
     """;
     try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -103,7 +103,7 @@ public class EmployerDAO extends DBContext {
                 e.setDescription(rs.getString("Description"));
                 e.setLocation(rs.getString("Location"));
                 e.setUrlWebsite(rs.getString("URLWebsite"));
-                e.setTaxCode(rs.getString("TaxCode"));
+                e.setUrlWebsite(rs.getString("URLWebsite"));    
                 e.setImgLogo(rs.getString("ImgLogo"));
                 return e;
             }
@@ -115,21 +115,20 @@ public class EmployerDAO extends DBContext {
 public int insert(Employer e) {
     String sql = """
         INSERT INTO Employer (EmployerName, Email, PhoneNumber, PasswordHash,
-                              CompanyName, Description, Location, URLWebsite, TaxCode, ImgLogo)
+                              CompanyName, Description, Location, URLWebsite, ImgLogo)
         OUTPUT INSERTED.EmployerID
-        VALUES (?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?)
     """;
     try (PreparedStatement ps = c.prepareStatement(sql)) {
         ps.setString(1, e.getEmployerName());
         ps.setString(2, e.getEmail());
         ps.setString(3, e.getPhoneNumber());
-        ps.setString(4, e.getPasswordHash()); // HASH đã tạo từ servlet
+        ps.setString(4, e.getPasswordHash());
         ps.setString(5, e.getCompanyName());
         ps.setString(6, e.getDescription());
         ps.setString(7, e.getLocation());
         ps.setString(8, e.getUrlWebsite());
-        ps.setString(9, e.getTaxCode());
-        ps.setString(10, e.getImgLogo()); // null
+        ps.setString(9, e.getImgLogo());   // có thể là null
         try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) return rs.getInt(1);
         }
@@ -138,7 +137,6 @@ public int insert(Employer e) {
     }
     return 0;
 }
-
 public boolean delete(int id) {
         String sql = "DELETE FROM Employer WHERE EmployerID = ?";
     try (PreparedStatement ps = c.prepareStatement(sql)) {
