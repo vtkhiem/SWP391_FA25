@@ -1,12 +1,4 @@
-
-
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.cv;
-
 
 import dal.CVDAO;
 import java.io.IOException;
@@ -25,13 +17,13 @@ import model.CV;
 import model.Candidate;
 import jakarta.servlet.annotation.MultipartConfig;
 
-@WebServlet(name = "CVEditServlet", urlPatterns = {"/edit-cv"})
+@WebServlet(name = "EditCVServlet", urlPatterns = {"/edit-cv"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2, // 2MB: lưu file tạm trong RAM
         maxFileSize = 1024 * 1024 * 10, // 10MB: giới hạn dung lượng file
         maxRequestSize = 1024 * 1024 * 50 // 50MB: tổng dung lượng request
 )
-public class CVEditServlet extends HttpServlet {
+public class EditCVServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

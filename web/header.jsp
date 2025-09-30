@@ -55,7 +55,7 @@
                                                         <li><a href="#">CV<i class="ti-angle-down"></i></a>
                                                             <ul class="submenu">
                                                                 <li><a href="cv-create.jsp">CV Create</a></li>
-                                                                <li><a href="cv-list">CV Management</a></li>
+                                                                <li><a href="list-cv">CV Management</a></li>
                                                             </ul>
                                                         </li>
                                                         <li><a href="contact.html">Contact</a></li>

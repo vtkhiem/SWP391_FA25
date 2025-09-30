@@ -23,8 +23,8 @@ import model.Candidate;
  *
  * @author Admin
  */
-@WebServlet(name="CVListServlet", urlPatterns={"/cv-list"})
-public class CVListServlet extends HttpServlet {
+@WebServlet(name="ListCVServlet", urlPatterns={"/list-cv"})
+public class ListCVServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
