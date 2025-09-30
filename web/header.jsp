@@ -35,24 +35,32 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-7">
-                                    <div class="main-menu  d-none d-lg-block">
+                                    <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">
-                                                <li><a href="index.jsp">Home</a></li>
-                                                <li><a href="jobs">Browse Job</a></li>
-                                                <li><a href="#">blog <i class="ti-angle-down"></i></a>
-                                                    <ul class="submenu">
-                                                        <li><a href="blog.html">blog</a></li>
-                                                        <li><a href="single-blog.html">single-blog</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="#">CV <i class="ti-angle-down"></i></a>
-                                                    <ul class="submenu">
-                                                        <li><a href="cv-create.jsp">CV Create</a></li>
-                                                        <li><a href="cv-list">CV Management</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="contact.html">Contact</a></li>
+                                                <c:choose>
+                                                    <%-- Nếu là Employer --%>
+                                                    <c:when test="${sessionScope.role eq 'Employer'}">
+                                                        <li><a href="employer.jsp">DashBoard</a></li>
+                                                        <li><a href="job_add?id=${sessionScope.user.employerId}">Create Job</a></li>
+                                                        <li><a href="employer_jobs?id=${sessionScope.user.employerId}">View Jobs</a></li>
+                                                        <li><a href="viewApply?id=${sessionScope.user.employerId}">View Apply</a></li>
+                                                        </c:when>
+
+                                                    <%-- Nếu chưa login hoặc là Candidate --%>
+                                                    <c:otherwise>
+                                                        <li><a href="index.jsp">Home</a></li>
+                                                        <li><a href="jobs">Browse Job</a></li>
+                                                        <li><a href="#">Blog</a></li>
+                                                        <li><a href="#">CV<i class="ti-angle-down"></i></a>
+                                                            <ul class="submenu">
+                                                                <li><a href="cv-create.jsp">CV Create</a></li>
+                                                                <li><a href="cv-list">CV Management</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li><a href="contact.html">Contact</a></li>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                             </ul>
                                         </nav>
                                     </div>
@@ -65,12 +73,16 @@
                                             <div class="phone_num d-none d-xl-block">
                                                 <a href="login.jsp">Login</a>
                                             </div>
+                                            <div class="d-none d-lg-block">
+                                                <a class="boxed-btn3" href="viewApply">Employer</a>
+                                            </div>
                                         </c:if>
 
                                         <!-- Nếu đã login thì hiện tên user + Logout -->
                                         <c:if test="${not empty sessionScope.user}">
                                             <div class="phone_num d-none d-xl-block">
-                                                Xin chào, <a href="profile">
+                                                Xin chào, 
+                                                <a href="profile">
                                                     <c:choose>
                                                         <c:when test="${sessionScope.role eq 'Candidate'}">
                                                             ${sessionScope.user.candidateName}
@@ -86,14 +98,6 @@
                                                 <a href="logout">Logout</a>
                                             </div>
                                         </c:if>
-
-
-                                        
-
-                                        <div class="d-none d-lg-block">
-
-                                            <a class="boxed-btn3" href="employer.jsp">Employer</a>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-12">

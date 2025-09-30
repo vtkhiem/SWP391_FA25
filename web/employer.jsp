@@ -1,212 +1,275 @@
 <!DOCTYPE html>
-<%@ page import="model.Employer" %>
-
-<%
-    Employer employer = (Employer) session.getAttribute("user");
-    String fullName = (employer != null) ? employer.getEmployerName() : "Guest";
-%>
-
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Recruiter Dashboard - Applications</title>
-        <!-- CSS here -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/employer.css">
+        
     </head>
     <body>
 
-       <!-- Header Start -->
-<jsp:include page="employer-header.jsp"/>
-<!-- Header End -->
-
-<!-- Hi?n th? tên ng??i dùng -->
-<div style="text-align: right; margin: 1rem; font-weight: bold;">
-    Xin chào, <%= fullName %>!
-</div>
-
+        <!-- Header Start -->
+        <jsp:include page="header.jsp"/>
+        <!-- Header End -->
 
         <!-- Breadcrumb Area -->
-        
         <div class="bradcam_area">
             <div class="container">
                 <div class="bradcam_text">
                     <h3>Application Management</h3>
-                    <p class="breadcrumb">Review and manage candidate applications</p>
+                    
                 </div>
             </div>
         </div>
 
-        <!-- Applications Content -->
+        <!-- Dashboard Stats -->
+        <div class="container" style="margin-top: 3rem;">
+            <div class="dashboard-stats">
+                <div class="stat-card fade-in-item">
+                    <div class="stat-number">156</div>
+                    <div class="stat-label">Total Applications</div>
+                </div>
+                <div class="stat-card fade-in-item">
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">New Applications</div>
+                </div>
+                <div class="stat-card fade-in-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Interviews Scheduled</div>
+                </div>
+                <div class="stat-card fade-in-item">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Hired This Month</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Listing Area -->
         <div class="job_listing_area">
-            <div class="container">
-                <!-- Dashboard Stats -->
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">156</div>
-                        <div class="stat-label">Total Applications</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">24</div>
-                        <div class="stat-label">New Applications</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Interviews Scheduled</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">8</div>
-                        <div class="stat-label">Hired This Month</div>
-                    </div>
+            <div class="job_listing_container">
+                <div class="job_listing_header">
+                    <div class="job_listing_title">Your Job Postings</div>
+                    <a href="#" class="job_listing_viewall">Manage All Jobs</a>
                 </div>
+                <div class="job_listing_nav">
+                    <button class="job_nav_arrow" aria-label="Prev">&lt;</button>
+                    <div class="job_listing_grid">
+                        <form class="job_card_form">
+                            <div class="job_card">
+                                <img src="https://via.placeholder.com/50" alt="Logo" class="job_card_logo">
+                                <div class="job_card_info">
+                                    <div class="job_card_title">Senior Frontend Developer</div>
+                                    <div class="job_card_salary">$80,000 - $120,000</div>
+                                    <div class="job_card_location">Remote</div>
+                                </div>
+                                <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
+                            </div>
+                        </form>
 
+                        <form class="job_card_form">
+                            <div class="job_card">
+                                <img src="https://via.placeholder.com/50" alt="Logo" class="job_card_logo">
+                                <div class="job_card_info">
+                                    <div class="job_card_title">Marketing Manager</div>
+                                    <div class="job_card_salary">$70,000 - $90,000</div>
+                                    <div class="job_card_location">New York, NY</div>
+                                </div>
+                                <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
+                            </div>
+                        </form>
 
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <h2 class="section-title">Quick Actions</h2>
-                    <div class="actions-grid">
-                        <a href="job_post.jsp" class="action-btn" onclick="showCreateJobForm()">
-                            <div class="action-content">
-                                <h4>Create New Job</h4>
-                                <p>Post a new job opening and start receiving applications</p>
+                        <form class="job_card_form">
+                            <div class="job_card">
+                                <img src="https://via.placeholder.com/50" alt="Logo" class="job_card_logo">
+                                <div class="job_card_info">
+                                    <div class="job_card_title">UI/UX Designer</div>
+                                    <div class="job_card_salary">$75,000 - $95,000</div>
+                                    <div class="job_card_location">San Francisco, CA</div>
+                                </div>
                             </div>
-                        </a>
-                        <a href="jobs" class="action-btn" onclick="showEditJobSection()">
-                            <div class="action-content">
-                                <h4>Edit Existing Jobs</h4>
-                                <p>Update job details, requirements, and status</p>
+                        </form>
+
+                        <form class="job_card_form">
+                            <div class="job_card">
+                                <img src="https://via.placeholder.com/50" alt="Logo" class="job_card_logo">
+                                <div class="job_card_info">
+                                    <div class="job_card_title">Backend Developer</div>
+                                    <div class="job_card_salary">$85,000 - $110,000</div>
+                                    <div class="job_card_location">Austin, TX</div>
+                                </div>
                             </div>
-                        </a>
-                        <a href="#view-apply" class="action-btn" onclick="showApplicationsSection()">
-                            <div class="action-content">
-                                <h4>View Applications</h4>
-                                <p>Review and manage candidate applications</p>
-                            </div>
-                        </a>
+                        </form>
                     </div>
+                    <button class="job_nav_arrow" aria-label="Next">&gt;</button>
                 </div>
+            </div>
+        </div>
 
-                <!-- Job Management Section -->
-                <div class="job-management">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <h2 class="section-title" style="margin-bottom: 0;">Your Job Postings</h2>
-                        <button class="btn btn-primary" onclick="showCreateJobForm()">New Job</button>
-                    </div>
-
-                    <!-- Job Filters -->
-                    <div class="job-filters">
-                        <a href="#" class="filter-btn active" onclick="filterJobs('all')">All Jobs</a>
-                        <a href="#" class="filter-btn" onclick="filterJobs('active')">Active</a>
-                        <a href="#" class="filter-btn" onclick="filterJobs('paused')">Paused</a>
-                        <a href="#" class="filter-btn" onclick="filterJobs('closed')">Closed</a>
-                    </div>
-
-                    <!-- Job List -->
-                    <div class="job-list">
-                        <div class="job-item" data-status="active">
-                            <div class="job-header">
-                                <div class="job-info">
-                                    <h4>Senior Frontend Developer</h4>
-                                    <div class="job-meta">
-                                        <span>Remote</span>
-                                        <span>Full-time</span>
-                                        <span>$80,000 - $120,000</span>
-                                        <span style="color: #28a745;">Active</span>
-                                    </div>
-                                </div>
-                                <div class="job-actions">
-                                    <a href="#" class="btn btn-primary" onclick="viewApplications('frontend-dev')">23 Applications</a>
-                                    <a href="#" class="btn btn-secondary" onclick="editJob('frontend-dev')">Edit</a>
-                                    <button class="btn btn-danger" onclick="deleteJob('frontend-dev')">Delete</button>
-                                </div>
-                            </div>
-                            <div class="job-stats">
-                                <span><strong>Posted:</strong> 5 days ago</span>
-                                <span><strong>Views:</strong> 156</span>
-                                <span><strong>Applications:</strong> 23</span>
-                                <span><strong>Interviews:</strong> 5</span>
-                            </div>
-                        </div>
-
-                        <div class="job-item" data-status="active">
-                            <div class="job-header">
-                                <div class="job-info">
-                                    <h4>Marketing Manager</h4>
-                                    <div class="job-meta">
-                                        <span>New York, NY</span>
-                                        <span>Full-time</span>
-                                        <span>$70,000 - $90,000</span>
-                                        <span style="color: #28a745;">Active</span>
-                                    </div>
-                                </div>
-                                <div class="job-actions">
-                                    <a href="#" class="btn btn-primary" onclick="viewApplications('marketing-mgr')">18 Applications</a>
-                                    <a href="#" class="btn btn-secondary" onclick="editJob('marketing-mgr')">Edit</a>
-                                    <button class="btn btn-danger" onclick="deleteJob('marketing-mgr')">Delete</button>
-                                </div>
-                            </div>
-                            <div class="job-stats">
-                                <span><strong>Posted:</strong> 1 week ago</span>
-                                <span><strong>Views:</strong> 89</span>
-                                <span><strong>Applications:</strong> 18</span>
-                                <span><strong>Interviews:</strong> 3</span>
-                            </div>
-                        </div>
-
-                        <div class="job-item" data-status="paused">
-                            <div class="job-header">
-                                <div class="job-info">
-                                    <h4>UI/UX Designer</h4>
-                                    <div class="job-meta">
-                                        <span>San Francisco, CA</span>
-                                        <span>Full-time</span>
-                                        <span>$75,000 - $95,000</span>
-                                        <span style="color: #ffc107;">Paused</span>
-                                    </div>
-                                </div>
-                                <div class="job-actions">
-                                    <a href="#" class="btn btn-primary" onclick="viewApplications('ui-designer')">31 Applications</a>
-                                    <a href="#" class="btn btn-secondary" onclick="editJob('ui-designer')">Edit</a>
-                                    <button class="btn btn-danger" onclick="deleteJob('ui-designer')">Delete</button>
-                                </div>
-                            </div>
-                            <div class="job-stats">
-                                <span><strong>Posted:</strong> 2 weeks ago</span>
-                                <span><strong>Views:</strong> 203</span>
-                                <span><strong>Applications:</strong> 31</span>
-                                <span><strong>Interviews:</strong> 7</span>
-                            </div>
-                        </div>
-
-                        <div class="job-item" data-status="closed">
-                            <div class="job-header">
-                                <div class="job-info">
-                                    <h4>Backend Developer</h4>
-                                    <div class="job-meta">
-                                        <span>Austin, TX</span>
-                                        <span>Full-time</span>
-                                        <span>$85,000 - $110,000</span>
-                                        <span style="color: #dc3545;">Closed</span>
-                                    </div>
-                                </div>
-                                <div class="job-actions">
-                                    <a href="#" class="btn btn-primary" onclick="viewApplications('backend-dev')">45 Applications</a>
-                                    <a href="#" class="btn btn-secondary" onclick="editJob('backend-dev')">Edit</a>
-                                    <button class="btn btn-danger" onclick="deleteJob('backend-dev')">Delete</button>
-                                </div>
-                            </div>
-                            <div class="job-stats">
-                                <span><strong>Posted:</strong> 1 month ago</span>
-                                <span><strong>Views:</strong> 312</span>
-                                <span><strong>Applications:</strong> 45</span>
-                                <span><strong>Hired:</strong> 1 candidate</span>
-                            </div>
-                        </div>
+        <!-- Recent Applications Section -->
+        <div class="card-container">
+            <div class="applications-header">
+                <h2 class="section-title" style="margin-bottom: 0;">Recent Applications</h2>
+                <div class="search-filter-container">
+                    <input type="text" class="search-box" placeholder="Search candidates...">
+                    <div class="status-filters">
+                        <a href="#" class="filter-btn active">All</a>
+                        <a href="#" class="filter-btn">New</a>
+                        <a href="#" class="filter-btn">Reviewed</a>
+                        <a href="#" class="filter-btn">Interview</a>
+                        <a href="#" class="filter-btn">Hired</a>
+                        <a href="#" class="filter-btn">Rejected</a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="item-list">
+            <!-- Application Item 1 -->
+            <div class="application-item fade-in-item" style="border-left: 4px solid #2196f3;">
+                <div class="application-header">
+                    <div class="applicant-info">
+                        <h4>John Anderson</h4>
+                        <div class="applicant-details">
+                            <span><strong>Job:</strong> Senior Frontend Developer</span>
+                            <span><strong>Email:</strong> john.anderson@email.com</span>
+                            <span><strong>Phone:</strong> +1 (555) 123-4567</span>
+                            <span><strong>Experience:</strong> 5 years</span>
+                            <span><strong>Notes:</strong> Excellent React skills, previous experience at tech startups</span>
+                            <span style="grid-column: 1 / -1;"><strong>Applied:</strong> 2 days ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="application-actions">
+                    <div class="action-item">
+                        <div class="action-label">View CV</div>
+                        <a href="#" class="btn btn-primary">Open CV</a>
+                    </div>
+                    <form class="status-form">
+                        <div class="action-label">Application Status</div>
+                        <select class="status-dropdown">
+                            <option value="Pending" selected>Pending</option>
+                            <option value="Hired">Hired</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Application Item 2 -->
+            <div class="application-item fade-in-item" style="border-left: 4px solid #4caf50;">
+                <div class="application-header">
+                    <div class="applicant-info">
+                        <h4>Sarah Martinez</h4>
+                        <div class="applicant-details">
+                            <span><strong>Job:</strong> Marketing Manager</span>
+                            <span><strong>Email:</strong> sarah.martinez@email.com</span>
+                            <span><strong>Phone:</strong> +1 (555) 234-5678</span>
+                            <span><strong>Experience:</strong> 7 years</span>
+                            <span><strong>Notes:</strong> Strong digital marketing background, SEO expert</span>
+                            <span style="grid-column: 1 / -1;"><strong>Applied:</strong> 3 days ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="application-actions">
+                    <div class="action-item">
+                        <div class="action-label">View CV</div>
+                        <a href="#" class="btn btn-primary">Open CV</a>
+                    </div>
+                    <form class="status-form">
+                        <div class="action-label">Application Status</div>
+                        <select class="status-dropdown">
+                            <option value="Pending">Pending</option>
+                            <option value="Hired" selected>Hired</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Application Item 3 -->
+            <div class="application-item fade-in-item" style="border-left: 4px solid #ff9800;">
+                <div class="application-header">
+                    <div class="applicant-info">
+                        <h4>Michael Chen</h4>
+                        <div class="applicant-details">
+                            <span><strong>Job:</strong> UI/UX Designer</span>
+                            <span><strong>Email:</strong> michael.chen@email.com</span>
+                            <span><strong>Phone:</strong> +1 (555) 345-6789</span>
+                            <span><strong>Experience:</strong> 4 years</span>
+                            <span><strong>Notes:</strong> Portfolio shows excellent design sense, Figma expert</span>
+                            <span style="grid-column: 1 / -1;"><strong>Applied:</strong> 5 days ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="application-actions">
+                    <div class="action-item">
+                        <div class="action-label">View CV</div>
+                        <a href="#" class="btn btn-primary">Open CV</a>
+                    </div>
+                    <form class="status-form">
+                        <div class="action-label">Application Status</div>
+                        <select class="status-dropdown">
+                            <option value="Pending" selected>Pending</option>
+                            <option value="Hired">Hired</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Application Item 4 -->
+            <div class="application-item fade-in-item" style="border-left: 4px solid #9c27b0;">
+                <div class="application-header">
+                    <div class="applicant-info">
+                        <h4>Emily Thompson</h4>
+                        <div class="applicant-details">
+                            <span><strong>Job:</strong> Backend Developer</span>
+                            <span><strong>Email:</strong> emily.thompson@email.com</span>
+                            <span><strong>Phone:</strong> +1 (555) 456-7890</span>
+                            <span><strong>Experience:</strong> 6 years</span>
+                            <span><strong>Notes:</strong> Strong Python and Node.js skills, cloud architecture experience</span>
+                            <span style="grid-column: 1 / -1;"><strong>Applied:</strong> 1 week ago</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="application-actions">
+                    <div class="action-item">
+                        <div class="action-label">View CV</div>
+                        <a href="#" class="btn btn-primary">Open CV</a>
+                    </div>
+                    <form class="status-form">
+                        <div class="action-label">Application Status</div>
+                        <select class="status-dropdown">
+                            <option value="Pending" selected>Pending</option>
+                            <option value="Hired">Hired</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Filter buttons functionality
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Job card click functionality
+            document.querySelectorAll('.job_card').forEach(card => {
+                card.addEventListener('click', function () {
+                    console.log('Job card clicked');
+                });
+            });
+        </script>
 
     </body>
 </html>
-

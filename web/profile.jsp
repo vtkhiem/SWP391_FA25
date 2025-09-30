@@ -152,7 +152,6 @@
                     <div class="profile-info">
                         <p><strong>Tên công ty:</strong> ${sessionScope.employer.companyName}</p>
                         <p><strong>Email:</strong> ${sessionScope.employer.email}</p>
-                        <p><strong>Địa chỉ:</strong> ${sessionScope.employer.address}</p>
                         <p><strong>Số điện thoại:</strong> ${sessionScope.employer.phoneNumber}</p>
                     </div>
                     <button onclick="window.location.href = 'editProfile'">Chỉnh sửa</button>

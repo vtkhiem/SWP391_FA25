@@ -18,17 +18,31 @@
     <title>Admin Dashboard - Candidates</title>
     <style>
         body { margin:0; font-family: Arial, sans-serif; background:#f3f4f6; color:#111827; }
-
-        /* ===== HEADER ===== */
+ 
         .navbar {
-            background:#003366; color:#fff;
-            display:flex; align-items:center; justify-content:space-between;
-            padding:12px 20px; position:sticky; top:0; z-index:10;
-        }
+        background: #003366;
+        color: #fff;
+        padding: 10px 20px;
+        font-family: Arial, sans-serif;
+        display: flex;
+        gap: 10px;
+    }
+    .navbar .nav-link {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .navbar .nav-link:hover {
+        text-decoration: underline;
+    }
+    .navbar .divider {
+        color: #fff;
+        margin: 0 5px;
+    }
         .brand { font-weight:700; font-size:18px; }
         .brand a { color:#fff; text-decoration:none; }
 
-        /* ===== SEARCH (dưới header) ===== */
+      
         .searchbar-wrap {
             background:#e9eef7;
             padding:14px 16px;
@@ -47,10 +61,10 @@
         .btn { padding:10px 14px; border-radius:10px; border:1px solid transparent; cursor:pointer; font-weight:600; }
         .btn.primary { background:#ff7a00; color:#fff; }
 
-        /* ===== CONTAINER ===== */
+      
         .container { width:100%; max-width:1180px; margin:18px auto; padding:0 16px; }
 
-        /* ===== TOTAL (full-width) ===== */
+     
         .total-card {
             background:#ffffff; border-radius:14px; padding:22px 20px; margin-bottom:16px;
             box-shadow:0 2px 8px rgba(0,0,0,.06);
@@ -58,7 +72,7 @@
         .total-title { color:#6b7280; font-size:14px; margin-bottom:6px; }
         .total-num   { font-size:36px; font-weight:800; }
 
-        /* ===== LIST ===== */
+   
         .candidates h3 { margin:12px 0; }
         .candidate-card {
             background:#fff; border-radius:10px; padding:16px; margin-bottom:12px;
@@ -70,7 +84,6 @@
         }
         .muted { color:#6b7280; font-size:13px; }
 
-        /* ===== PAGINATION ===== */
         .pagination {
             display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:14px;
         }
@@ -87,14 +100,19 @@
 
 
 <div class="navbar">
-    <div class="brand"><a href="${pageContext.request.contextPath}/admin/candidates">Admin Dashboard</a></div>
+    <a href="${pageContext.request.contextPath}/admin/dashboard" class="nav-link">Admin Dashboard</a>
+    <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
+    <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/admin/employers" class="nav-link">Employers</a>
+</div>
     <div></div>
 </div>
 
 
 <div class="searchbar-wrap">
     <form class="searchbar" method="get" action="">
-        <input type="text" name="q" placeholder="Tìm ứng viên theo tên, email, SĐT..." value="${q}"/>
+        <input type="text" name="q" placeholder="Tìm ứng viên theo tên, email, SĐT" value="${q}"/>
         <button class="btn primary" type="submit">Tìm kiếm</button>
     </form>
 </div>
@@ -106,11 +124,7 @@
         <div class="total-num">${total}</div>
        
     </div>
- <div class="container" style="margin-top:14px;">
-            <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-                <a class="btn" href="${pageContext.request.contextPath}/admin/candidate/add">+ Thêm ứng viên</a>
-            </div>
-        </div>
+
     <div class="candidates">
         <h3>Danh Sách Ứng Viên</h3>
 

@@ -25,7 +25,6 @@
         <link rel="stylesheet" href="css/slicknav.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css"> 
-        
     </head>
 
     <body>
@@ -37,12 +36,12 @@
             <div class="job-explore">
                 <!-- search-area_start -->
                 <div class="search_container">
-                    <form action="job_search" method="get" class="search_bar">
+                    <form action="search" method="get" class="search_bar">
                         <div class="search_inputs">
-                            <!-- Vị trí -->
+                            <!-- Keyword -->
                             <input type="text" name="keyword" placeholder="Enter your expected position">
 
-                            <!-- Ngành nghề -->
+                            <!-- Occupations -->
                             <select name="category">
                                 <option value="">All occupations</option>
                                 <option value="IT">IT</option>
@@ -54,7 +53,7 @@
                                 <option value="Human Resources">Human Resources</option>
                             </select>
 
-                            <!-- Địa điểm -->
+                            <!-- Location -->
                             <select name="location">
                                 <option value="">Nationwide</option>
                                 <option value="Hà Nội">Hà Nội</option>
@@ -132,10 +131,10 @@
                     <div class="popular_search">
                         <span>Popular search:</span>
                         <ul>
-                            <li><a href="job_search?keyword=PHP Developer">PHP Developer</a></li>
-                            <li><a href="job_search?keyword=React Native">React Native</a></li>
-                            <li><a href="job_search?keyword=Marketing Online">Marketing Online</a></li>
-                            <li><a href="job_search?keyword=Data Analyst">Data Analyst</a></li>
+                            <li><a href="search?keyword=PHP Developer">PHP Developer</a></li>
+                            <li><a href="search?keyword=React Native">React Native</a></li>
+                            <li><a href="search?keyword=Marketing Online">Marketing Online</a></li>
+                            <li><a href="search?keyword=Data Analyst">Data Analyst</a></li>
                         </ul>
                     </div>
                 </div>
@@ -426,7 +425,7 @@
                 <div class="advanced_filter_box">
                     <button class="advanced_filter_close" id="closeAdvancedFilter" title="Close">&times;</button>
                     <h3>Advanced Search</h3>
-                    <form id="advancedFilterForm" action="job_search" method="get">
+                    <form id="advancedFilterForm" action="search" method="get">
                         <!-- Keyword / Position -->
                         <div class="advanced_filter_group">
                             <label for="keyword">Expected Position / Keyword</label>
