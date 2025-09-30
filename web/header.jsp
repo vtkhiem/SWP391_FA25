@@ -42,7 +42,7 @@
                                                     <%-- Nếu là Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
                                                         <li><a href="employer.jsp">DashBoard</a></li>
-                                                        <li><a href="job_add?id=${sessionScope.user.employerId}">Create Job</a></li>
+                                                        <li><a href="job_post.jsp">Create Job</a></li>
                                                         <li><a href="employer_jobs?id=${sessionScope.user.employerId}">View Jobs</a></li>
                                                         <li><a href="viewApply?id=${sessionScope.user.employerId}">View Apply</a></li>
                                                         </c:when>
