@@ -37,7 +37,13 @@ public class JobAddServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+                    try {
             int employerId = Integer.parseInt(request.getParameter("employerId"));
             String title = request.getParameter("title");
             String description = request.getParameter("description");
@@ -65,13 +71,6 @@ public class JobAddServlet extends HttpServlet {
         }
 
         request.getRequestDispatcher("job_post.jsp").forward(request, response);
-
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-            processRequest(request, response);
     }
 
     @Override
