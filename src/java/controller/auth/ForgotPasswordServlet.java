@@ -5,7 +5,6 @@
 
 package controller.auth;
 
-
 import dal.PasswordDAO;
 import java.io.IOException;
 import java.io.PrintWriter;

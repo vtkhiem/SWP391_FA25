@@ -22,7 +22,7 @@ import model.Candidate;
  *
  * @author Admin
  */
-@WebServlet(name="DeleteCVServlet", urlPatterns={"/delete-CV"})
+@WebServlet(name="DeleteCVServlet", urlPatterns={"/delete-cv"})
 public class DeleteCVServlet extends HttpServlet {
    
     /** 
