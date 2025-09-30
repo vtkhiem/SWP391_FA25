@@ -24,9 +24,9 @@ import java.sql.Date;
 import model.Candidate;
 
 @WebServlet(name = "CreateCVServlet", urlPatterns = {"/create-CV"})
-@MultipartConfig( //        fileSizeThreshold = 1024 * 1024, // 1 MB
-        //        maxFileSize = 1024 * 1024 * 10, // 10 MB
-        //        maxRequestSize = 1024 * 1024 * 15 // 15 MB
+@MultipartConfig(       fileSizeThreshold = 1024 * 1024, // 1 MB
+               maxFileSize = 1024 * 1024 * 10, // 10 MB
+                maxRequestSize = 1024 * 1024 * 15 // 15 MB
         )
 public class CreateCVServlet extends HttpServlet {
 
@@ -219,7 +219,7 @@ public class CreateCVServlet extends HttpServlet {
             if (success) {
                 System.out.println("SUCCESS: CV created successfully");
                 session.setAttribute("message", "CV created successfully!");
-                response.sendRedirect("cv-management.jsp");
+                response.sendRedirect("cv-list");
             } else {
                 System.out.println("ERROR: Failed to create CV in database");
                 request.setAttribute("error", "Failed to create CV! Please check server logs.");
