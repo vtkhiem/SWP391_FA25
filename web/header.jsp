@@ -74,7 +74,7 @@
                                                 <a href="login.jsp">Login</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="viewApply">Employer</a>
+                                                <a class="boxed-btn3" href="login.jsp">Employer</a>
                                             </div>
                                         </c:if>
 
