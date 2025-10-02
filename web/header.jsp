@@ -44,7 +44,6 @@
                                                         <li><a href="employer.jsp">DashBoard</a></li>
                                                         <li><a href="job_post.jsp">Create Job</a></li>
                                                         <li><a href="employer_jobs">View Jobs</a></li>
-                                                        <li><a href="viewApply?id=${sessionScope.user.employerId}">View Apply</a></li>
                                                         </c:when>
 
                                                     <%-- Nếu chưa login hoặc là Candidate --%>
