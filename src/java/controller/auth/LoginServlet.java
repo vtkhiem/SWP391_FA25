@@ -58,97 +58,55 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String status = null;  // Thay đổi: Khởi tạo null để dễ check
-        String inputValue = request.getParameter("email");  // Thay đổi: Lấy chung cho email/username
+        String inputValue = request.getParameter("email");
         String password = request.getParameter("password");
 
         try {
             RegisterCandidateDAO candidateDAO = new RegisterCandidateDAO();
             RegisterEmployerDAO employerDAO = new RegisterEmployerDAO();
-            AdminDAO adminDAO = new AdminDAO();
 
             HttpSession session = request.getSession();
 
-            // Thay đổi: Kiểm tra admin trước (dùng username = inputValue), vì linh hoạt hơn
-            // Giả sử bạn implement method isUsernameExist() trong AdminDAO tương tự các DAO khác
-            if (adminDAO.isAdmin(inputValue)) {
-                Admin admin = adminDAO.loginAccountAdmin(inputValue, password);
-                if (admin != null) {
-                    List<Role> roles = adminDAO.getRolesByAdminId(admin.getAdminId());
+            if (candidateDAO.isEmailCandidateExist(inputValue)) {
+                boolean result = candidateDAO.loginCandidate(inputValue, password);
+                Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
 
-                    session.setAttribute("roles", roles);
-
-                    // Check quyền dựa trên roleId
-                    for (Role role : roles) {
-                        switch (role.getRoleId()) {
-                            case AdminRoleDefine.ADMIN:
-                              
-                                session.setAttribute("role", "Admin");
-                                session.setAttribute("username", inputValue);
-                                response.sendRedirect("admin/candidates");
-                                return;
-                            case AdminRoleDefine.SALE:
-                                session.setAttribute("username", inputValue);
-                                session.setAttribute("role", "Sale");
-                                response.sendRedirect("logSale");
-                                return;
-                            case AdminRoleDefine.MARKETING_STAFF:
-                              
-                                session.setAttribute("role", "MarketingStaff");
-                                session.setAttribute("username", inputValue);
-                           
-                                response.sendRedirect("logStaff");
-                                return;
-                        }
-                    }
-
-                    // Nếu không match role nào
-                    response.sendRedirect("access-denied.jsp");
+                if (result) {
+                    session.setAttribute("email", inputValue);
+                    session.setAttribute("role", "Candidate");
+                    session.setAttribute("user", candidate);
+                    session.setAttribute("candidateId", candidate.getCandidateId());
+                    response.sendRedirect("index.jsp");
                     return;
                 } else {
                     status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
                 }
-            } // Nếu không phải admin, kiểm tra candidate/employer (chỉ nếu có "@" để an toàn)
-            else if (inputValue.contains("@")) {
-                // Kiểm tra candidate trước
-                if (candidateDAO.isEmailCandidateExist(inputValue)) {
-                    boolean result = candidateDAO.loginCandidate(inputValue, password);
-                    Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
-
-                    if (result) {
-                        session.setAttribute("email", inputValue);
-                        session.setAttribute("role", "Candidate");
-                        session.setAttribute("user", candidate);
-                        session.setAttribute("candidateId", candidate.getCandidateId());
-                        response.sendRedirect("index.jsp");
-                        return;
-                    } else {
-                        status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
+            } // Kiểm tra employer
+            else if (employerDAO.isEmailEmployerExist(inputValue)) {
+                
+                boolean result = employerDAO.loginEmployer(inputValue, password);
+                Employer employer = employerDAO.getEmployerByEmail(inputValue);
+                boolean passed = employerDAO.getEmployerStatusByEmail(inputValue);
+                if (result) {
+                    if(passed){
+                            session.setAttribute("email", inputValue);
+                    session.setAttribute("user", employer);
+                    session.setAttribute("role", "Employer");
+                    response.sendRedirect("employer.jsp");
+                    return;
+                    }else{
+                        status ="Tài khoản chưa dc duyệt";
                     }
-                } // Kiểm tra employer
-                else if (employerDAO.isEmailEmployerExist(inputValue)) {
-                    boolean result = employerDAO.loginEmployer(inputValue, password);
-                    Employer employer = employerDAO.getEmployerByEmail(inputValue);
-                    if (result) {
-                        session.setAttribute("email", inputValue);
-                        session.setAttribute("user", employer);
-                        session.setAttribute("role", "Employer");
-                        response.sendRedirect("employer.jsp");  // Giả sử "Index" là servlet/redirect đúng
-                        return;
-                    } else {
-                        status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
-                    }
-                } // Nếu email có "@" nhưng không tồn tại ở candidate/employer → lỗi chung
-                else {
-                    status = "Tài Khoản không tồn tại";
+                    
+                } else {
+                    status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
                 }
-            } // Nếu không có "@" và không phải admin → lỗi
-            else {
+            } else {
                 status = "Tài Khoản không tồn tại";
             }
 
-            // Nếu đến đây → login thất bại, forward về login.jsp với status và giữ input
             request.setAttribute("status", status);
-            request.setAttribute("username", inputValue);  // Thay đổi: Nhất quán, dùng cho cả admin/email
+            request.setAttribute("username", inputValue);
             request.getRequestDispatcher("login.jsp").forward(request, response);
 
         } catch (Exception e) {  // Thay đổi: Đổi 's' thành 'e' chuẩn

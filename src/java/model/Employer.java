@@ -7,43 +7,28 @@ public class Employer {
     private String phoneNumber;
     private String passwordHash;
     private String companyName;
+    private String taxCode;
     private String description;
     private String location;
-    private String taxcode;
     private String urlWebsite;
     private String imgLogo;
     private boolean status;
+
     public Employer() {
     }
 
-    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location,String taxcode, String urlWebsite, String imgLogo, boolean status) {
+    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String taxCode, String description, String location, String urlWebsite, String imgLogo, boolean status) {
         this.employerId = employerId;
         this.employerName = employerName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.passwordHash = passwordHash;
         this.companyName = companyName;
+        this.taxCode = taxCode;
         this.description = description;
         this.location = location;
-        this.taxcode = taxcode;
         this.urlWebsite = urlWebsite;
         this.imgLogo = imgLogo;
-        this.status = status;
-    }
-
-    public String getTaxcode() {
-        return taxcode;
-    }
-
-    public void setTaxcode(String taxcode) {
-        this.taxcode = taxcode;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
         this.status = status;
     }
 
@@ -95,6 +80,14 @@ public class Employer {
         this.companyName = companyName;
     }
 
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -126,4 +119,14 @@ public class Employer {
     public void setImgLogo(String imgLogo) {
         this.imgLogo = imgLogo;
     }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+    
+
 }

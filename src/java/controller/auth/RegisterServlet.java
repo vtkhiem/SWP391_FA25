@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.auth;
 
 import dal.RegisterCandidateDAO;
@@ -20,17 +19,20 @@ import tool.ValidationRegister;
  *
  * @author Admin
  */
-@WebServlet(name="RegisterServlet", urlPatterns={"/register"})
+@WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
-    
-    /** * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
@@ -40,14 +42,16 @@ public class RegisterServlet extends HttpServlet {
             out.println("<title>Servlet RegisterServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** * Handles the HTTP <code>GET</code> method.
+    /**
+     * * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -55,12 +59,14 @@ public class RegisterServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         // Chuyển hướng đến trang đăng nhập/đăng ký nếu truy cập bằng GET
         request.getRequestDispatcher("login.jsp").forward(request, response);
-    } 
+    }
 
-    /** * Handles the HTTP <code>POST</code> method.
+    /**
+     * * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -68,12 +74,12 @@ public class RegisterServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         // Thiết lập mã hóa ký tự để hỗ trợ tiếng Việt
         request.setCharacterEncoding("UTF-8");
-        
+
         String status = "";
-        
+
         try {
             // Lấy tham số từ form
             String name = request.getParameter("name");
@@ -82,16 +88,16 @@ public class RegisterServlet extends HttpServlet {
             String password = request.getParameter("password");
             String passwordConfirm = request.getParameter("confirmPassword");
             String role = request.getParameter("role");
+            String taxcode = request.getParameter("taxcode");
 
             ValidationRegister validation = new ValidationRegister();
             RegisterCandidateDAO candidateDAO = new RegisterCandidateDAO();
             RegisterEmployerDAO employersDAO = new RegisterEmployerDAO();
 
             // --- KIỂM TRA TÍNH HỢP LỆ CHUNG (EMAIL & MẬT KHẨU) ---
-
             // 1. Kiểm tra Email đã tồn tại (ở bất kỳ vai trò nào)
             if (candidateDAO.isEmailCandidateExist(email) || employersDAO.isEmailEmployerExist(email)) {
-                
+
                 // Cung cấp thông báo cụ thể hơn cho người dùng
                 if ("candidate".equals(role) && employersDAO.isEmailEmployerExist(email)) {
                     status = "Email này đã được đăng ký với tài khoản nhà tuyển dụng. Vui lòng sử dụng email khác.";
@@ -100,7 +106,7 @@ public class RegisterServlet extends HttpServlet {
                 } else {
                     status = "Email của bạn đã được đăng ký với một tài khoản khác.";
                 }
-                
+
                 request.setAttribute("status", status);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 return; // QUAN TRỌNG: Dừng thực thi
@@ -113,15 +119,15 @@ public class RegisterServlet extends HttpServlet {
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 return; // QUAN TRỌNG: Dừng thực thi
             }
-            
+
             // 3. Kiểm tra mật khẩu xác nhận
             if (!password.equals(passwordConfirm)) {
-                status = "Mật khẩu xác nhận không khớp với mật khẩu ban đầu bạn nhập!"; 
+                status = "Mật khẩu xác nhận không khớp với mật khẩu ban đầu bạn nhập!";
                 request.setAttribute("status", status);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 return; // QUAN TRỌNG: Dừng thực thi
             }
-            
+
             // 4. Kiểm tra độ phức tạp mật khẩu
             if (!validation.checkChar(password)) {
                 status = "Mật khẩu cần 8 ký tự và bao gồm các ký tự đặc biệt (chữ hoa, chữ thường, số, ký tự đặc biệt).";
@@ -130,9 +136,7 @@ public class RegisterServlet extends HttpServlet {
                 return; // QUAN TRỌNG: Dừng thực thi
             }
 
-
             // --- KIỂM TRA RIÊNG VÀ THỰC HIỆN ĐĂNG KÝ ---
-
             boolean registrationResult = false;
 
             if ("candidate".equals(role)) {
@@ -140,7 +144,7 @@ public class RegisterServlet extends HttpServlet {
                 registrationResult = candidateDAO.registerCandidate(name, email, phone, password);
 
             } else if ("employer".equals(role)) {
-                
+
                 // 5. Kiểm tra số điện thoại của Nhà tuyển dụng
                 if (phone == null || phone.length() != 10) {
                     status = "Số điện thoại phải có đúng 10 chữ số!";
@@ -155,33 +159,45 @@ public class RegisterServlet extends HttpServlet {
                 }
 
                 // Đăng ký Nhà tuyển dụng (Employer)
-                registrationResult = employersDAO.registerEmployer(name, email, phone, password);
+                registrationResult = employersDAO.registerEmployer(name, email, phone, password, taxcode);
 
             } else {
                 // Xử lý vai trò không hợp lệ
                 status = "Lỗi: Vai trò đăng ký không hợp lệ.";
                 request.setAttribute("status", status);
-                request.getRequestDispatcher("login.jsp").forward(request, response);
-                return;
+                if (role.equalsIgnoreCase("candidate")) {
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                } else if (role.equalsIgnoreCase("employer")) {
+                    request.getRequestDispatcher("login-employer.jsp").forward(request, response);
+                    return;
+                }
+
             }
 
-            
             // --- XỬ LÝ KẾT QUẢ ĐĂNG KÝ CUỐI CÙNG ---
-
             if (registrationResult) {
                 status = "Đăng ký thành công, mời bạn quay lại để đăng nhập!";
                 request.setAttribute("status", status);
-                // Forward tới login.jsp để hiển thị thông báo thành công
-                request.getRequestDispatcher("login.jsp").forward(request, response);
-                return;
+                 if (role.equalsIgnoreCase("candidate")) {
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                } else if (role.equalsIgnoreCase("employer")) {
+                    request.getRequestDispatcher("login-employer.jsp").forward(request, response);
+                    return;
+                }
             } else {
                 // Lỗi khi chèn vào DB (DAO thất bại)
                 status = "Đăng ký thất bại do lỗi hệ thống (DAO failure). Vui lòng thử lại.";
                 request.setAttribute("status", status);
-                request.getRequestDispatcher("login.jsp").forward(request, response);
-                return;
+                  if (role.equalsIgnoreCase("candidate")) {
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    return;
+                } else if (role.equalsIgnoreCase("employer")) {
+                    request.getRequestDispatcher("login-employer.jsp").forward(request, response);
+                    return;
+                }
             }
-
 
         } catch (Exception e) {
             // Log lỗi để debug
@@ -195,7 +211,9 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    /** * Returns a short description of the servlet.
+    /**
+     * * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

@@ -145,7 +145,7 @@
                     </c:if>
                     <c:if test="${empty e.urlWebsite}">—</c:if>
                   </td>
-                  <td class="col-loc">${e.taxcode}</td>
+                  <td class="col-loc">${e.taxCode}</td>
 
                   <!-- STATUS: boolean -->
                   <td class="col-status">

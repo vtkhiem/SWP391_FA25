@@ -85,7 +85,7 @@ public class EmployerDAO extends DBContext {
                 e.setDescription(rs.getString("Description"));
                 e.setLocation(rs.getString("Location"));
                 e.setUrlWebsite(rs.getString("URLWebsite"));
-                e.setTaxcode(rs.getString("TaxCode"));
+                e.setTaxCode(rs.getString("TaxCode"));
                 e.setImgLogo(rs.getString("ImgLogo"));
                 e.setStatus(rs.getBoolean("Status"));
                 list.add(e);
@@ -212,8 +212,8 @@ public class EmployerDAO extends DBContext {
         ps.setString(6, e.getDescription());
         ps.setString(7, e.getLocation());
         ps.setString(8, e.getUrlWebsite());
-        if (e.getTaxcode() == null || e.getTaxcode().isBlank()) ps.setNull(9, Types.NVARCHAR);
-        else ps.setString(9, e.getTaxcode());
+        if (e.getTaxCode() == null || e.getTaxCode().isBlank()) ps.setNull(9, Types.NVARCHAR);
+        else ps.setString(9, e.getTaxCode());
         if (e.getImgLogo() == null || e.getImgLogo().isBlank()) ps.setNull(10, Types.NVARCHAR);
         else ps.setString(10, e.getImgLogo());
         ps.setBoolean(11, e.isStatus());
