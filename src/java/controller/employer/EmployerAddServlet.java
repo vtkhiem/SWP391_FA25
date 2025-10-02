@@ -83,7 +83,7 @@ public class EmployerAddServlet extends HttpServlet {
         String location     = s(req.getParameter("location"));
         String urlWebsite   = s(req.getParameter("urlWebsite"));
         String password     = s(req.getParameter("password")); // hiển thị & bắt buộc
-
+        String taxcode     = s(req.getParameter("taxcode"));
         String err = validate(employerName, email, phoneNumber, password, urlWebsite);
         if (err != null) {
             req.setAttribute("error", err);
@@ -102,8 +102,10 @@ public class EmployerAddServlet extends HttpServlet {
         e.setDescription(description);
         e.setLocation(location);
         e.setUrlWebsite(urlWebsite);
+        e.setTaxcode(taxcode);     
+        e.setStatus(true);
         EmployerDAO dao = new EmployerDAO();
-        int newId = dao.insert(e); 
+        int newId = dao.insertWithStatus(e); 
         if (newId > 0) {
             resp.sendRedirect(req.getContextPath() + "/admin/employers?added=1");
         } else {
@@ -118,9 +120,13 @@ public class EmployerAddServlet extends HttpServlet {
         if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || pass.isEmpty())
             return "Vui lòng nhập đủ Tên employer, Email, Số điện thoại và Mật khẩu.";
 
-        if (name.length() > 100) return "Tên employer tối đa 100 ký tự.";
+        if (pass.length() < 8) return "Mật khẩu phải tối thiểu 8 ký tự."; 
+        if (!UPPERCASE.matcher(pass).matches())
+            return "Mật khẩu phải chứa ít nhất 1 chữ cái viết hoa (A-Z).";
+        if (!SPECIAL.matcher(pass).matches())
+            return "Mật khẩu phải chứa ít nhất 1 ký hiệu (ví dụ: !@#$%^&*).";
         if (!EMAIL.matcher(email).matches() || email.length() > 100) return "Email không hợp lệ hoặc quá dài (≤100).";
-        if (phone.length() > 15) return "Số điện thoại tối đa 15 ký tự.";
+        if (phone.length() > 10) return "Số điện thoại tối đa 10 ký tự.";
         if (pass.length() < 6) return "Mật khẩu tối thiểu 6 ký tự.";
         if (website != null && !website.isEmpty() && website.length() > 100) return "URL website tối đa 100 ký tự.";
         return null;
@@ -128,7 +134,12 @@ public class EmployerAddServlet extends HttpServlet {
 
     private static final Pattern EMAIL =
             Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-
+    private static final Pattern UPPERCASE =
+        Pattern.compile(".*[A-Z].*");                 // ≥ 1 chữ cái viết hoa
+    private static final Pattern SPECIAL =
+        Pattern.compile(".*[^A-Za-z0-9].*");          // ≥ 1 ký hiệu (không phải chữ/số)
+    private static final Pattern DIGITS_ONLY =
+        Pattern.compile("^\\d+$"); 
 
     /** 
      * Returns a short description of the servlet.

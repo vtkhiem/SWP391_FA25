@@ -5,14 +5,14 @@
 
 package controller.candidate;
 
-import dal.AdminDAO;
 import dal.CandidateDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import model.Admin;
+import java.util.List;
+import model.Candidate;
 
 /**
  *
@@ -53,52 +53,40 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
- private String param(HttpServletRequest req, String name, String def) {
-        String v = req.getParameter(name);
-        return v == null ? def : v;
-    }
-
-    private int parseInt(String s, int def) {
-        try { return Integer.parseInt(s); } catch (Exception e) { return def; }
-    }
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-throws ServletException, IOException {
-        String username= req.getParameter("username");
-               String password = req.getParameter("password");
-               AdminDAO adminDAO = new AdminDAO();
-               Admin admin = adminDAO.loginAccountAdmin(username, password);
-                
+ throws ServletException, IOException {
 
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
 
-        String q = param(req, "q", "").trim();
-        int page = parseInt(param(req, "page", "1"), 1);
-        int size = 10; 
+        String q = req.getParameter("q");        
+        int pageSize = 10;
+        int page = 1;
+        try {
+            String p = req.getParameter("page");
+            if (p != null) page = Math.max(1, Integer.parseInt(p));
+        } catch (NumberFormatException ignored) {}
 
-        CandidateDAO dao = new CandidateDAO(); 
-
-        int total = dao.countAll(q);
-        int totalPages = (int) Math.ceil(total / (double) size);
-        if (totalPages <= 0) totalPages = 1;
-        if (page < 1) page = 1;
+        CandidateDAO dao = new CandidateDAO();
+        int total = dao.countAll(q);                  
+        int totalPages = (int) Math.ceil(total / (double) pageSize);
+        if (totalPages == 0) totalPages = 1;
         if (page > totalPages) page = totalPages;
 
-        req.setAttribute("q", q);
-        req.setAttribute("page", page);
-        req.setAttribute("size", size); 
-        req.setAttribute("total", total);
-        req.setAttribute("totalPages", totalPages);
-        req.setAttribute("candidates", dao.findPage(page, size, q));
-req.setAttribute("user", admin);
-req.setAttribute("role", "Admin");
+        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
 
-        
-        req.getRequestDispatcher("/admin/candidate-list.jsp").forward(req, resp);
+        req.setAttribute("q", q);             
+        req.setAttribute("page", page);
+        req.setAttribute("totalPages", totalPages);
+        req.setAttribute("total", total);
+        req.setAttribute("candidates", candidates);
+
+        req.getRequestDispatcher("/admin/candidate-list.jsp")
+               .forward(req, resp);
     }
+
     /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
