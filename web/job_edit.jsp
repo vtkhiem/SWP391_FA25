@@ -191,6 +191,11 @@
                                     </select>
                                 </div>
 
+                                <div class="form-group">
+                                    <label>Due Date</label>
+                                    <input type="date" class="form-control" name="dueDate" required>
+                                </div>
+
                                 <div class="d-flex justify-content-between">
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
                                     <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
