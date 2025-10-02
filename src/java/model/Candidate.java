@@ -16,7 +16,13 @@ public class Candidate {
 
     public Candidate() {
     }
-
+    public Candidate(int candidateId, String candidateName, String email, String phoneNumber, String nationality) {
+        this.candidateId = candidateId;
+        this.candidateName = candidateName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.nationality = nationality;
+    }
     public Candidate(int candidateId, String candidateName, String address, String email, String phoneNumber, String nationality, String passwordHash, String avatar) {
         this.candidateId = candidateId;
         this.candidateName = candidateName;

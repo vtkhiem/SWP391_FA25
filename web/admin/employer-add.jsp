@@ -3,8 +3,7 @@
 <%@ page import="model.Admin" %>
 
 <%
-    // Check quyền role
-    String role = (String) session.getAttribute("role");
+     String role = (String) session.getAttribute("role");
     if (role == null || !role.equals("Admin")) {
         response.sendRedirect("access-denied.jsp");
         return;
@@ -58,8 +57,14 @@
         <div class="row"><div>Số điện thoại *</div>
           <input name="phoneNumber" value="${param.phoneNumber}" maxlength="15" required>
         </div>
+        <div class="row"><div>Mã số thuế</div>
+  <!-- MST ở VN thường 10 hoặc 13 chữ số; có thể để trống nếu bạn muốn -->
+        <input name="taxcode" value="${param.taxcode}" maxlength="50" placeholder="VD: 0312345678 hoặc 0312345678-001">
+        <small style="opacity:.8">Nếu nhập, nên là 10 hoặc 13 chữ số (bỏ dấu gạch).</small>
+        </div>
+ 
         <div class="row"><div>Mật khẩu *</div>
-          <input name="password" type="text" minlength="6" required>
+          <input name="password" type="text" minlength="8" required>
         </div>
         <div class="row"><div>Company</div>
           <input name="companyName" value="${param.companyName}" maxlength="100">

@@ -16,20 +16,6 @@ public class Employer {
 
     public Employer() {
     }
-    
-
-    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location, String urlWebsite, String imgLogo) {
-        this.employerId = employerId;
-        this.employerName = employerName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.passwordHash = passwordHash;
-        this.companyName = companyName;
-        this.description = description;
-        this.location = location;
-        this.urlWebsite = urlWebsite;
-        this.imgLogo = imgLogo;
-    }
 
     public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String taxCode, String description, String location, String urlWebsite, String imgLogo, boolean status) {
         this.employerId = employerId;
@@ -45,24 +31,6 @@ public class Employer {
         this.imgLogo = imgLogo;
         this.status = status;
     }
-
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-    
-    
 
     public int getEmployerId() {
         return employerId;
@@ -112,6 +80,14 @@ public class Employer {
         this.companyName = companyName;
     }
 
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -143,4 +119,14 @@ public class Employer {
     public void setImgLogo(String imgLogo) {
         this.imgLogo = imgLogo;
     }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+    
+
 }
