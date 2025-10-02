@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller.auth;
 
 import dal.AdminDAO;
@@ -20,6 +24,10 @@ import tool.ValidationRegister;
 import model.Admin;
 import tool.AdminRoleDefine;
 
+/**
+ *
+ * @author Admin
+ */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
@@ -73,17 +81,18 @@ public class LoginServlet extends HttpServlet {
                     for (Role role : roles) {
                         switch (role.getRoleId()) {
                             case AdminRoleDefine.ADMIN:
+                              
                                 session.setAttribute("role", "Admin");
                                 session.setAttribute("username", inputValue);
                                 response.sendRedirect("admin/candidates");
                                 return;
                             case AdminRoleDefine.SALE:
                                 session.setAttribute("username", inputValue);
-                             
                                 session.setAttribute("role", "Sale");
                                 response.sendRedirect("logSale");
                                 return;
                             case AdminRoleDefine.MARKETING_STAFF:
+                              
                                 session.setAttribute("role", "MarketingStaff");
                                 session.setAttribute("username", inputValue);
                            
@@ -121,9 +130,8 @@ public class LoginServlet extends HttpServlet {
                     Employer employer = employerDAO.getEmployerByEmail(inputValue);
                     if (result) {
                         session.setAttribute("email", inputValue);
-                        session.setAttribute("role", "Employer");
                         session.setAttribute("user", employer);
-                        session.setAttribute("employerId", employer.getEmployerId());
+                        session.setAttribute("role", "Employer");
                         response.sendRedirect("employer.jsp");  // Giả sử "Index" là servlet/redirect đúng
                         return;
                     } else {
@@ -145,7 +153,7 @@ public class LoginServlet extends HttpServlet {
 
         } catch (Exception e) {  // Thay đổi: Đổi 's' thành 'e' chuẩn
             // Thêm: Luôn set status lỗi mặc định trong catch
-            status = "Có lỗi " + e.toString() + " xảy ra khi đăng nhập. Vui lòng thử lại!";
+            status = "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại!";
             request.setAttribute("status", status);
             request.setAttribute("username", inputValue);
             request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -158,4 +166,5 @@ public class LoginServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
 }

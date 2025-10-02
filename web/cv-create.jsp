@@ -62,7 +62,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 my-5">
-                    <form action="${pageContext.request.contextPath}/create-CV" method="post" enctype="multipart/form-data">
+                    <form action="${pageContext.request.contextPath}/create-cv" method="post" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">

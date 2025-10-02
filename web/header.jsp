@@ -41,9 +41,10 @@
                                                 <c:choose>
                                                     <%-- Nếu là Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
+                                                        <li><a href="employer.jsp">DashBoard</a></li>
                                                         <li><a href="job_post.jsp">Create Job</a></li>
                                                         <li><a href="employer_jobs?id=${sessionScope.user.employerId}">View Jobs</a></li>
-                                                        <li><a href="viewApply">View Apply</a></li>
+                                                        <li><a href="viewApply?id=${sessionScope.user.employerId}">View Apply</a></li>
                                                         </c:when>
 
                                                     <%-- Nếu chưa login hoặc là Candidate --%>
@@ -54,7 +55,7 @@
                                                         <li><a href="#">CV<i class="ti-angle-down"></i></a>
                                                             <ul class="submenu">
                                                                 <li><a href="cv-create.jsp">CV Create</a></li>
-                                                                <li><a href="cv-list">CV Management</a></li>
+                                                                <li><a href="list-cv">CV Management</a></li>
                                                             </ul>
                                                         </li>
                                                         <li><a href="contact.html">Contact</a></li>
@@ -73,7 +74,7 @@
                                                 <a href="login.jsp">Login</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="employer.jsp">Employer</a>
+                                                <a class="boxed-btn3" href="login.jsp">Employer</a>
                                             </div>
                                         </c:if>
 

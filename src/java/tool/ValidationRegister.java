@@ -49,6 +49,6 @@ public class ValidationRegister {
      
      
      public static void main(String[] args) {
-         System.out.println(searchKey("           pham              trung               duc                  "));
+         System.out.println(searchKey("  khiem vu     thien "));
     }
 }

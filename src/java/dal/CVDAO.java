@@ -272,6 +272,95 @@ public class CVDAO extends DBContext {
         }
 
     }
+    public boolean updateFullName(CV cv) {
+    String sql = "UPDATE CV SET FullName = ? WHERE CVID = ?";
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setString(1, cv.getFullName());
+        ps.setInt(2, cv.getCVID());
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+public boolean updateBasicInfo(CV cv) {
+    String sql = "UPDATE CV SET FullName = ?, Email = ?, Address = ?, Position = ?, Education = ?, Field = ?, Nationality = ?, Gender = ?, NumberExp = ? WHERE CVID = ?";
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setString(1, cv.getFullName());
+        ps.setString(2, cv.getEmail());
+        ps.setString(3, cv.getAddress());
+        ps.setString(4, cv.getPosition());
+        ps.setString(5, cv.getEducation());
+        ps.setString(6, cv.getField());
+        ps.setString(7, cv.getNationality());
+        ps.setString(8, cv.getGender());
+        ps.setInt(9, cv.getNumberExp());
+        ps.setInt(10, cv.getCVID());
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+public boolean updateFullCV(CV cv) {
+    String sql = "UPDATE CV SET FullName = ?, Email = ?, Address = ?, Position = ?, NumberExp = ?, Education = ?, Field = ?, CurrentSalary = ?, Birthday = ?, Nationality = ?, Gender = ?, FileData = ? WHERE CVID = ?";
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setString(1, cv.getFullName());
+        ps.setString(2, cv.getEmail());
+        ps.setString(3, cv.getAddress());
+        ps.setString(4, cv.getPosition());
+        ps.setInt(5, cv.getNumberExp());
+        ps.setString(6, cv.getEducation());
+        ps.setString(7, cv.getField());
+        if (cv.getCurrentSalary() != null) {
+            ps.setBigDecimal(8, cv.getCurrentSalary());
+        } else {
+            ps.setNull(8, java.sql.Types.DECIMAL);
+        }
+        if (cv.getBirthday() != null) {
+            ps.setDate(9, cv.getBirthday());
+        } else {
+            ps.setNull(9, java.sql.Types.DATE);
+        }
+        ps.setString(10, cv.getNationality());
+        ps.setString(11, cv.getGender());
+        ps.setString(12, cv.getFileData());
+        ps.setInt(13, cv.getCVID());
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+public static void main(String[] args) {
+    CVDAO dao = new CVDAO();
+
+    CV cv = new CV();
+    cv.setCVID(2); // ID CV đã tồn tại trong DB để test
+    cv.setFullName("Nguyen Van Test");
+    cv.setEmail("test@example.com");
+    cv.setAddress("Hanoi, Vietnam");
+    cv.setPosition("Java Developer");
+    cv.setNumberExp(3);
+    cv.setEducation("Bachelor of IT");
+    cv.setField("Software Engineering");
+    cv.setCurrentSalary(new java.math.BigDecimal("1500.50"));
+    cv.setBirthday(java.sql.Date.valueOf("1995-08-15"));
+    cv.setNationality("Vietnamese");
+    cv.setGender("Male");
+    cv.setFileData("uploads/cv_files/test_cv.pdf");
+
+    boolean result = dao.updateFullCV(cv);
+    if (result) {
+        System.out.println("✅ Update thành công!");
+    } else {
+        System.out.println("❌ Update thất bại!");
+    }
+}
+}
+
+
     /*
     public static void main(String[] args) {
         try {
@@ -319,89 +408,4 @@ public class CVDAO extends DBContext {
     }*/
     
 
-   /* public static void main(String[] args) {
-        try {
-            // Tạo đối tượng CV test
-            CV testCV = new CV();
-            testCV.setCandidateID(1); // Đảm bảo ID này tồn tại trong bảng Candidate
-            testCV.setFullName("Test User");
-            testCV.setEmail("test@example.com");
-            testCV.setAddress("Test Address");
-            testCV.setPosition("Software Developer");
-            testCV.setNumberExp(3);
-            testCV.setEducation("Bachelor Degree");
-            testCV.setField("Information Technology");
-            testCV.setCurrentSalary(new BigDecimal("50000.00"));
-            testCV.setBirthday(Date.valueOf("1990-01-01"));
-            testCV.setNationality("Vietnamese");
-            testCV.setGender("male");
-            testCV.setFileData("uploads/cv_files/test_cv.pdf");
-
-            // Thử thêm CV vào database
-            CVDAO cvDao = new CVDAO();
-            boolean success = cvDao.createCV(testCV);
-
-            if (success) {
-                System.out.println("CV created successfully!");
-                // Kiểm tra CV vừa tạo
-                System.out.println("Checking CVs for candidate 1:");
-                cvDao.getCVsByCandidate(1).forEach(cv -> {
-                    System.out.println("CV ID: " + cv.getCVID());
-                    System.out.println("Full Name: " + cv.getFullName());
-                    System.out.println("Position: " + cv.getPosition());
-                    System.out.println("--------------------");
-                });
-            } else {
-                System.out.println("Failed to create CV!");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error creating CV:");
-            e.printStackTrace();
-        }
-
-    }*/
-  
-    public static void main(String[] args) {
-    try {
-        CVDAO cvDao = new CVDAO();
-
-        // 🟢 Test lấy CV theo ID
-        int testCvId = 2; // thay bằng CVID có trong DB
-        CV cv = cvDao.getCVById(testCvId);
-        if (cv != null) {
-            System.out.println("=== CV DETAILS (ID = " + testCvId + ") ===");
-            System.out.println("Full Name: " + cv.getFullName());
-            System.out.println("Email: " + cv.getEmail());
-            System.out.println("Position: " + cv.getPosition());
-            System.out.println("Salary: " + cv.getCurrentSalary());
-            System.out.println("Created: " + cv.getDayCreate());
-        } else {
-            System.out.println("⚠ CV with ID " + testCvId + " not found!");
-        }
-
-        // 🟢 Test lấy tất cả CV của 1 Candidate
-        int candidateId = 1; // thay bằng CandidateID có trong DB
-        System.out.println("\n=== LIST OF CVs FOR CandidateID = " + candidateId + " ===");
-        List<CV> cvList = cvDao.getCVsByCandidate(candidateId);
-
-        if (cvList.isEmpty()) {
-            System.out.println("⚠ No CVs found for CandidateID = " + candidateId);
-        } else {
-            for (CV item : cvList) {
-                System.out.println("----------------------------");
-                System.out.println("CV ID: " + item.getCVID());
-                System.out.println("Full Name: " + item.getFullName());
-                System.out.println("Position: " + item.getPosition());
-                System.out.println("Salary: " + item.getCurrentSalary());
-                System.out.println("Created: " + item.getDayCreate());
-            }
-        }
-
-    } catch (Exception e) {
-        System.out.println("Error testing getCV:");
-        e.printStackTrace();
-    }
-}
-
-}
+   

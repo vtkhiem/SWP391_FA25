@@ -60,7 +60,7 @@
                                     <div class="jobs_right">
                                         <div class="apply_now">
                                             <a class="boxed-btn3" href="edit-cv?id=${cv.CVID}">Edit</a>
-                                            <a class="boxed-btn3" href="delete-CV?id=${cv.CVID}"
+                                            <a class="boxed-btn3" href="delete-cv?id=${cv.CVID}"
                                                onclick="return confirm('Are you sure you want to delete this CV?');">Delete</a>
                                         </div>
                                     </div>

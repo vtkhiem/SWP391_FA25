@@ -1,10 +1,19 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package dal;
 
 import java.sql.*;
 import model.Employer;
 import tool.EncodePassword;
 
+/**
+ *
+ * @author Admin
+ */
 public class RegisterEmployerDAO extends DBContext {
+
     public boolean isEmailEmployerExist(String mail) {
         try {
             String query = "SELECT 1 FROM [dbo].[Employer] WHERE Email = ?";
@@ -89,13 +98,11 @@ public class RegisterEmployerDAO extends DBContext {
 
     public String getIDByEmail(String email) {
         try {
-
-            String query = "SELECT [EmployerID]\n"
-                    + "  FROM [dbo].[Employer]\n"
-                    + "  Where Email = ?";
+            String query = "SELECT [EmployerID] "
+                    + "FROM [dbo].[Employer] "
+                    + "WHERE Email = ?";
 
             PreparedStatement push = c.prepareStatement(query);
-
             push.setString(1, email);
 
             ResultSet rs = push.executeQuery();
@@ -103,21 +110,18 @@ public class RegisterEmployerDAO extends DBContext {
                 return rs.getString("EmployerID");
             }
         } catch (Exception s) {
-            System.out.println("Bug  SQL:" + s.getMessage());
-
+            System.out.println("Bug SQL: " + s.getMessage());
         }
         return null;
     }
 
     public String getNameByEmail(String email) {
         try {
-
-            String query = "SELECT [EmployerName]\n"
-                    + "  FROM [dbo].[Employer]\n"
-                    + "  Where Email = ?";
+            String query = "SELECT [EmployerName] "
+                    + "FROM [dbo].[Employer] "
+                    + "WHERE Email = ?";
 
             PreparedStatement push = c.prepareStatement(query);
-
             push.setString(1, email);
 
             ResultSet rs = push.executeQuery();
@@ -125,21 +129,19 @@ public class RegisterEmployerDAO extends DBContext {
                 return rs.getString("EmployerName");
             }
         } catch (Exception s) {
-            System.out.println("Bug  SQL:" + s.getMessage());
-
+            System.out.println("Bug SQL: " + s.getMessage());
         }
         return null;
     }
 
     public Employer getEmployerByEmail(String email) {
         try {
-            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash],"
-                    + "[CompanyName], [Description], [Location], [URLWebsite], [ImgLogo] ,[Status]"
+            String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash], "
+                    + "[CompanyName], [Description], [Location], [TaxCode], [URLWebsite], [ImgLogo], [Status] "
                     + "FROM [dbo].[Employer] "
                     + "WHERE Email = ?";
 
             PreparedStatement ps = c.prepareStatement(query);
-
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
 
@@ -153,15 +155,15 @@ public class RegisterEmployerDAO extends DBContext {
                         rs.getString("CompanyName"),
                         rs.getString("Description"),
                         rs.getString("Location"),
-                        rs.getString("taxcode"),
+                        rs.getString("TaxCode"),
                         rs.getString("URLWebsite"),
                         rs.getString("ImgLogo"),
-                        rs.getBoolean("Status"));
+                        rs.getBoolean("Status")
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -175,7 +177,6 @@ public class RegisterEmployerDAO extends DBContext {
                 String storedHash = rs.getString("PasswordHash");
                 String inputHash = EncodePassword.encodePasswordbyHash(password);
                 return inputHash.equals(storedHash);
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -205,14 +206,9 @@ public class RegisterEmployerDAO extends DBContext {
         String phone = "0912345674";
         String password = "1234561";
 
-        // Kiểm tra email và phone trước khi đăng ký
-        if (dao.isEmailEmployerExist(email)) {
-            System.out.println("Email đã tồn tại!");
-        } else if (dao.isPhoneEmployerExist(phone)) {
-            System.out.println("Số điện thoại đã tồn tại!");
-        } else {
-            boolean success = dao.registerEmployer(name, email, phone, password);
-            System.out.println("Kết quả đăng ký: " + (success ? "Thành công" : "Thất bại"));
+        Employer emp = dao.getEmployerByEmail(email);
+        if (emp != null) {
+            System.out.println(emp.getEmployerName());
         }
 
         // Đóng connection

@@ -4,7 +4,6 @@
  */
 
 package controller.auth;
-
 import dal.RegisterCandidateDAO;
 import dal.RegisterEmployerDAO;
 import java.io.IOException;
