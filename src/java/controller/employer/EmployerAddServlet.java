@@ -102,7 +102,7 @@ public class EmployerAddServlet extends HttpServlet {
         e.setDescription(description);
         e.setLocation(location);
         e.setUrlWebsite(urlWebsite);
-        e.setTaxcode(taxcode);     
+        e.setTaxCode(taxcode);     
         e.setStatus(true);
         EmployerDAO dao = new EmployerDAO();
         int newId = dao.insertWithStatus(e); 
@@ -135,9 +135,9 @@ public class EmployerAddServlet extends HttpServlet {
     private static final Pattern EMAIL =
             Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     private static final Pattern UPPERCASE =
-        Pattern.compile(".*[A-Z].*");                 // ≥ 1 chữ cái viết hoa
+        Pattern.compile(".*[A-Z].*");               
     private static final Pattern SPECIAL =
-        Pattern.compile(".*[^A-Za-z0-9].*");          // ≥ 1 ký hiệu (không phải chữ/số)
+        Pattern.compile(".*[^A-Za-z0-9].*");          
     private static final Pattern DIGITS_ONLY =
         Pattern.compile("^\\d+$"); 
 

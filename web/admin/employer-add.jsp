@@ -58,9 +58,9 @@
           <input name="phoneNumber" value="${param.phoneNumber}" maxlength="15" required>
         </div>
         <div class="row"><div>Mã số thuế</div>
-  <!-- MST ở VN thường 10 hoặc 13 chữ số; có thể để trống nếu bạn muốn -->
+
         <input name="taxcode" value="${param.taxcode}" maxlength="50" placeholder="VD: 0312345678 hoặc 0312345678-001">
-        <small style="opacity:.8">Nếu nhập, nên là 10 hoặc 13 chữ số (bỏ dấu gạch).</small>
+       
         </div>
  
         <div class="row"><div>Mật khẩu *</div>

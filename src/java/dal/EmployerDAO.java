@@ -85,7 +85,7 @@ public class EmployerDAO extends DBContext {
                 e.setDescription(rs.getString("Description"));
                 e.setLocation(rs.getString("Location"));
                 e.setUrlWebsite(rs.getString("URLWebsite"));
-                e.setTaxcode(rs.getString("TaxCode"));
+                e.setTaxCode(rs.getString("TaxCode"));
                 e.setImgLogo(rs.getString("ImgLogo"));
                 e.setStatus(rs.getBoolean("Status"));
                 list.add(e);
@@ -96,102 +96,6 @@ public class EmployerDAO extends DBContext {
     }
     return list;
 }
-
-
-   public List<Employer> findPage(int page, int pageSize, String keyword, Integer statusFilter) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("""
-            SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
-                   CompanyName, Description, Location, URLWebsite, ImgLogo, [Status]
-            FROM Employer
-        """);
-
-        List<Object> params = new ArrayList<>();
-        List<String> conds = new ArrayList<>();
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            conds.add("(EmployerName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? OR CompanyName LIKE ?)");
-            String like = "%" + keyword.trim() + "%";
-            params.add(like);
-            params.add(like);
-            params.add(like);
-            params.add(like);
-        }
-        if (statusFilter != null) {
-            conds.add("[Status] = ?");
-            params.add(statusFilter);
-        }
-        if (!conds.isEmpty()) {
-            sb.append(" WHERE ").append(String.join(" AND ", conds)).append(' ');
-        }
-
-        sb.append(" ORDER BY EmployerID ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-
-        int offset = (Math.max(page, 1) - 1) * pageSize;
-        params.add(offset);
-        params.add(pageSize);
-
-        List<Employer> list = new ArrayList<>();
-        try (PreparedStatement ps = c.prepareStatement(sb.toString())) {
-            int idx = 1;
-            for (Object v : params) {
-                if (v instanceof Integer) ps.setInt(idx++, (Integer) v);
-                else ps.setString(idx++, v.toString());
-            }
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Employer e = new Employer();
-                    e.setEmployerId(rs.getInt("EmployerID"));
-                    e.setEmployerName(rs.getString("EmployerName"));
-                    e.setEmail(rs.getString("Email"));
-                    e.setPhoneNumber(rs.getString("PhoneNumber"));
-                    e.setPasswordHash(rs.getString("PasswordHash"));
-                    e.setCompanyName(rs.getString("CompanyName"));
-                    e.setDescription(rs.getString("Description"));
-                    e.setLocation(rs.getString("Location"));
-                    e.setUrlWebsite(rs.getString("URLWebsite"));
-                    e.setImgLogo(rs.getString("ImgLogo"));
-                    e.setStatus(rs.getBoolean("Status"));
-                    list.add(e);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public Employer findById(int id) {
-        String sql = """
-            SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
-                   CompanyName, Description, Location, URLWebsite, ImgLogo, [Status]
-            FROM Employer
-            WHERE EmployerID = ?
-        """;
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Employer e = new Employer();
-                    e.setEmployerId(rs.getInt("EmployerID"));
-                    e.setEmployerName(rs.getString("EmployerName"));
-                    e.setEmail(rs.getString("Email"));
-                    e.setPhoneNumber(rs.getString("PhoneNumber"));
-                    e.setPasswordHash(rs.getString("PasswordHash"));
-                    e.setCompanyName(rs.getString("CompanyName"));
-                    e.setDescription(rs.getString("Description"));
-                    e.setLocation(rs.getString("Location"));
-                    e.setUrlWebsite(rs.getString("URLWebsite"));
-                    e.setImgLogo(rs.getString("ImgLogo"));
-                    e.setStatus(rs.getBoolean("Status")); // <— đọc status
-                    return e;
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 
    public int insertWithStatus(Employer e) {
     String sql = """
@@ -212,8 +116,8 @@ public class EmployerDAO extends DBContext {
         ps.setString(6, e.getDescription());
         ps.setString(7, e.getLocation());
         ps.setString(8, e.getUrlWebsite());
-        if (e.getTaxcode() == null || e.getTaxcode().isBlank()) ps.setNull(9, Types.NVARCHAR);
-        else ps.setString(9, e.getTaxcode());
+        if (e.getTaxCode() == null || e.getTaxCode().isBlank()) ps.setNull(9, Types.NVARCHAR);
+        else ps.setString(9, e.getTaxCode());
         if (e.getImgLogo() == null || e.getImgLogo().isBlank()) ps.setNull(10, Types.NVARCHAR);
         else ps.setString(10, e.getImgLogo());
         ps.setBoolean(11, e.isStatus());

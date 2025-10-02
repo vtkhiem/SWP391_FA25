@@ -83,7 +83,6 @@
   <div></div>
 </div>
 
-<!-- Search -->
 <div class="searchbar-wrap">
   <form class="searchbar" method="get" action="">
     <input type="text" name="q" placeholder="Tìm employer theo tên, email, công ty, SĐT" value="${q}"/>
@@ -94,22 +93,19 @@
       <option value="false" ${status == 'false' ? 'selected' : ''}>Not Verified</option>
     </select>
 
-    <button class="btn primary" type="submit">Lọc</button>
+    <button class="btn primary" type="submit">Tìm kiếm</button>
   </form>
 </div>
 
 <div class="container">
-  <!-- Tổng employer -->
   <div class="total-card">
     <div class="total-title">Tổng Employer</div>
     <div class="total-num">${total}</div>
   </div>
 
-  <div class="toolbar">
+<!--  <div class="toolbar">
     <a class="btn" href="${pageContext.request.contextPath}/admin/employer/add">+ Thêm employer</a>
-  </div>
-
-  <!-- Bảng -->
+  </div>-->
   <div class="table-card">
     <div class="table-head">Danh Sách Employer</div>
     <div class="table-scroll">
@@ -145,9 +141,7 @@
                     </c:if>
                     <c:if test="${empty e.urlWebsite}">—</c:if>
                   </td>
-                  <td class="col-loc">${e.taxcode}</td>
-
-                  <!-- STATUS: boolean -->
+                  <td class="col-loc">${e.taxCode}</td>
                   <td class="col-status">
                     <c:choose>
                       <c:when test="${e.status}">
@@ -158,8 +152,6 @@
                       </c:otherwise>
                     </c:choose>
                   </td>
-
-                  <!-- ACTIONS: hiện Verify khi status == false -->
                   <td class="col-actions">
                     <c:if test="${not e.status}">
                       <form method="post"
@@ -189,8 +181,6 @@
         </tbody>
       </table>
     </div>
-
-
  <div class="pagination">
   <c:forEach var="i" begin="1" end="${totalPages}">
     <c:url var="pageUrl" value="">
