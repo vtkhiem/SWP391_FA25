@@ -123,6 +123,7 @@
             <th class="col-phone">SĐT</th>
             <th class="col-loc">Địa điểm</th>
             <th class="col-web">Website</th>
+            <th class="col-web">TaxCode</th>
             <th class="col-status">Status</th>
             <th class="col-actions">Action</th>
           </tr>
@@ -144,6 +145,7 @@
                     </c:if>
                     <c:if test="${empty e.urlWebsite}">—</c:if>
                   </td>
+                  <td class="col-loc">${e.taxcode}</td>
 
                   <!-- STATUS: boolean -->
                   <td class="col-status">
