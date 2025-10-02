@@ -1,8 +1,7 @@
-
-
 package model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class JobPost {
@@ -19,15 +18,15 @@ public class JobPost {
     private boolean visible;
     private String typeJob;
     private LocalDateTime dayCreate;
+    private LocalDateTime dueDate;
 
-    // --- Constructors ---
     public JobPost() {
     }
 
     public JobPost(int jobPostID, int employerID, String title, String description,
             String category, String position, String location,
             BigDecimal offerMin, BigDecimal offerMax, int numberExp,
-            boolean visible, String typeJob, LocalDateTime dayCreate) {
+            boolean visible, String typeJob, LocalDateTime dayCreate, LocalDateTime dueDate) {
         this.jobPostID = jobPostID;
         this.employerID = employerID;
         this.title = title;
@@ -41,9 +40,9 @@ public class JobPost {
         this.visible = visible;
         this.typeJob = typeJob;
         this.dayCreate = dayCreate;
+        this.dueDate = dueDate;
     }
 
-    // --- Getters & Setters ---
     public int getJobPostID() {
         return jobPostID;
     }
@@ -147,8 +146,15 @@ public class JobPost {
     public void setDayCreate(LocalDateTime dayCreate) {
         this.dayCreate = dayCreate;
     }
+    
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+    
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
 
-    // --- toString() ---
     @Override
     public String toString() {
         return "JobPost{"
@@ -165,8 +171,7 @@ public class JobPost {
                 + ", visible=" + visible
                 + ", typeJob='" + typeJob + '\''
                 + ", dayCreate=" + dayCreate
+                + ", dueDate=" + dueDate
                 + '}';
     }
-
 }
-

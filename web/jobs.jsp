@@ -1,4 +1,5 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -191,12 +192,27 @@
                                                 </div>
                                             </div>
                                             <div class="jobs_right">
-                                                <div class="apply_now">
-                                                    <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
+                                                <div class="apply_now justify-content-center">
                                                     <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Apply Now</a>
                                                 </div>
                                                 <div class="date">
-                                                    <p>Date: ${job.dayCreate}</p>
+                                                    <%
+                                                        model.JobPost jobObj = (model.JobPost) pageContext.getAttribute("job");
+                                                        java.sql.Timestamp publishedTs = null;
+                                                        if (jobObj != null && jobObj.getDayCreate() != null) {
+                                                            publishedTs = java.sql.Timestamp.valueOf(jobObj.getDayCreate());
+                                                        }
+                                                        pageContext.setAttribute("publishedDate", publishedTs);
+                                                    %>
+                                                    <p>Published: <fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></p>
+                                                    <%
+                                                        java.sql.Timestamp dueTs = null;
+                                                        if (jobObj != null && jobObj.getDueDate() != null) {
+                                                            dueTs = java.sql.Timestamp.valueOf(jobObj.getDueDate());
+                                                        }
+                                                        pageContext.setAttribute("dueDateFmt", dueTs);
+                                                    %>
+                                                    <p>Due Date: <fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></p>
                                                 </div>
                                             </div>
                                         </div>

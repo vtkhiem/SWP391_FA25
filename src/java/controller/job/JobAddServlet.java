@@ -9,12 +9,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import model.JobPost;
 
 @WebServlet(name = "JobAddServlet", urlPatterns = {"/job_add"})
 public class JobAddServlet extends HttpServlet {
-
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -55,9 +56,16 @@ public class JobAddServlet extends HttpServlet {
             int numberExp = Integer.parseInt(request.getParameter("numberExp"));
             boolean visible = true;
             String typeJob = request.getParameter("typeJob");
+            String dueDateStr = request.getParameter("dueDate");
+            LocalDateTime dueDate = null;
+            if (dueDateStr != null && !dueDateStr.isEmpty()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(dueDateStr, formatter);
+                dueDate = localDate.atStartOfDay();
+            }
 
             JobPost job = new JobPost(0, employerId, title, description, category, position, location,
-                    offerMin, offerMax, numberExp, visible, typeJob, LocalDateTime.now());
+                    offerMin, offerMax, numberExp, visible, typeJob, LocalDateTime.now(), dueDate);
 
             boolean success = jobPostDAO.insertJobPost(job);
 
