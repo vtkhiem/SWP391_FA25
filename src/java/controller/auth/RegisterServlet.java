@@ -82,6 +82,7 @@ public class RegisterServlet extends HttpServlet {
             String password = request.getParameter("password");
             String passwordConfirm = request.getParameter("confirmPassword");
             String role = request.getParameter("role");
+            String taxcode = request.getParameter("taxcode");
 
             ValidationRegister validation = new ValidationRegister();
             RegisterCandidateDAO candidateDAO = new RegisterCandidateDAO();
@@ -155,7 +156,7 @@ public class RegisterServlet extends HttpServlet {
                 }
 
                 // Đăng ký Nhà tuyển dụng (Employer)
-                registrationResult = employersDAO.registerEmployer(name, email, phone, password);
+                registrationResult = employersDAO.registerEmployer(name, email, phone, password,taxcode);
 
             } else {
                 // Xử lý vai trò không hợp lệ

@@ -42,38 +42,41 @@ public class RegisterEmployerDAO extends DBContext {
         return false;
     }
 
-    public boolean registerEmployer(String name, String mail, String phone, String password) {
-        try {
-            String query = "INSERT INTO [dbo].[Employer]\n"
-                    + "           ([EmployerName]          \n"
-                    + "           ,[Email]                   \n"
-                    + "           ,[PhoneNumber]                   \n"
-                    + "           ,[PasswordHash])\n"
-                    + "     VALUES (?,?,?,?)";
+    public boolean registerEmployer(String name, String mail, String phone, String password, String taxCode) {
+    try {
+        String query = "INSERT INTO [dbo].[Employer]\n"
+                + "([EmployerName]\n"
+                + ",[Email]\n"
+                + ",[PhoneNumber]\n"
+                + ",[PasswordHash]\n"
+                + ",[TaxCode])\n"
+                + "VALUES (?,?,?,?,?)";
 
-            // Mã hóa password trước khi lưu vào database 
-            String passwordHash = EncodePassword.encodePasswordbyHash(password);
+        // Mã hóa password trước khi lưu vào database 
+        String passwordHash = EncodePassword.encodePasswordbyHash(password);
 
-            PreparedStatement push = c.prepareStatement(query);
-            push.setString(1, name);
-            push.setString(2, mail);
-            push.setString(3, phone);
-            push.setString(4, passwordHash);
+        PreparedStatement push = c.prepareStatement(query);
+        push.setString(1, name);
+        push.setString(2, mail);
+        push.setString(3, phone);
+        push.setString(4, passwordHash);
+        push.setString(5, taxCode);
 
-            int row = push.executeUpdate();
+        int row = push.executeUpdate();
 
-            if (row > 0) {
-                System.out.println("Đăng ký nhà tuyển dụng thành công!");
-            } else {
-                System.out.println("Đăng ký thất bại!");
-            }
-
-            return row != 0;
-        } catch (SQLException s) {
-            System.out.println("Lỗi SQL: " + s.getMessage());
+        if (row > 0) {
+            System.out.println("Đăng ký nhà tuyển dụng thành công!");
+        } else {
+            System.out.println("Đăng ký thất bại!");
         }
-        return false;
+
+        return row > 0;
+    } catch (SQLException s) {
+        System.out.println("Lỗi SQL: " + s.getMessage());
     }
+    return false;
+}
+
 
     public boolean loginEmployer(String email, String password) {
         String query = "SELECT PasswordHash FROM [dbo].[Employer] WHERE Email = ?";
@@ -206,6 +209,20 @@ public class RegisterEmployerDAO extends DBContext {
             return false;
         }
     }
+    public boolean getEmployerStatusByEmail(String email) {
+    String query = "SELECT [Status] FROM [dbo].[Employer] WHERE Email = ?";
+    try (PreparedStatement ps = c.prepareStatement(query)) {
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getBoolean("Status"); // true = đã duyệt, false = chưa duyệt
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false; // mặc định chưa duyệt nếu không tìm thấy
+}
+
 
     public static void main(String[] args) {
         RegisterEmployerDAO dao = new RegisterEmployerDAO();

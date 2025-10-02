@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Đăng nhập & Đăng ký cho Ứng Viên</title>
+        <title>Đăng nhập & Đăng ký cho Nhà Tuyển Dụng</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>
             body {
@@ -232,9 +232,10 @@
                     <input type="text" name="name" placeholder="Tên" value="${name}" required />
                     <input type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
                     <input type="email" name="email" placeholder="Email" value="${email}" required />
+                       <input type="text" name="taxcode" placeholder="Mã số thuế" value="${taxcode}" required />
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
-                     <input type="hidden" name="role" value="Candidate"/>
+                      <input type="hidden" name="role" value="Employer"/>
                     <div id="passwordError" style="display:none;">Mật khẩu không trùng khớp!</div>
                     <button type="submit">Đăng ký</button>
                 </form>
