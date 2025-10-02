@@ -32,12 +32,14 @@ public class CandidateDAO extends DBContext {
 
     public int countAll(String keyword) {
         String base = "SELECT COUNT(*) FROM Candidate";
-        boolean hasKw = keyword != null && !keyword.trim().isEmpty();
-        String where = hasKw ? " WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?" : "";
+        String where = "";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            where = " WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?";
+        }
         String sql = base + where;
 
-        try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
-            if (hasKw) {
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            if (!where.isEmpty()) {
                 String like = "%" + keyword.trim() + "%";
                 ps.setString(1, like);
                 ps.setString(2, like);
@@ -53,41 +55,49 @@ public class CandidateDAO extends DBContext {
     }
 
     public List<Candidate> findPage(int page, int pageSize, String keyword) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("""
-            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar
-            FROM Candidate
-        """);
-
-        List<Object> params = new ArrayList<>();
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            sb.append(" WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? ");
-            String like = "%" + keyword.trim() + "%";
-            params.add(like);
-            params.add(like);
-            params.add(like);
-        }
-        sb.append(" ORDER BY CandidateID DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-
-        int offset = (Math.max(page, 1) - 1) * pageSize;
-        params.add(offset);
-        params.add(pageSize);
-
         List<Candidate> list = new ArrayList<>();
-        try (PreparedStatement ps = requireConn().prepareStatement(sb.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                Object v = params.get(i);
-                if (v instanceof Integer) ps.setInt(i + 1, (Integer) v);
-                else ps.setString(i + 1, v.toString());
+        if (page < 1) page = 1;
+        int offset = (page - 1) * pageSize;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality ")
+          .append("FROM Candidate ");
+
+        boolean hasKw = keyword != null && !keyword.trim().isEmpty();
+        if (hasKw) {
+            sb.append("WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? ");
+        }
+        sb.append("ORDER BY CandidateID ASC ")
+          .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
+
+        try (PreparedStatement ps = c.prepareStatement(sb.toString())) {
+            int idx = 1;
+            if (hasKw) {
+                String like = "%" + keyword.trim() + "%";
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
+                ps.setString(idx++, like);
             }
+            ps.setInt(idx++, offset);
+            ps.setInt(idx, pageSize);
+
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) list.add(mapRow(rs));
+                while (rs.next()) {
+                    Candidate cd = new Candidate();
+                    cd.setCandidateId(rs.getInt("CandidateID"));
+                    cd.setCandidateName(rs.getString("CandidateName"));
+                    cd.setEmail(rs.getString("Email"));
+                    cd.setPhoneNumber(rs.getString("PhoneNumber"));
+                    cd.setNationality(rs.getString("Nationality"));
+                    list.add(cd);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
     }
+
 
     public Candidate findById(int id) {
         String sql = """
@@ -149,8 +159,7 @@ public class CandidateDAO extends DBContext {
         }
     }
 
-    /** BẢN HỢP NHẤT từ nhánh main (đã bỏ conflict markers) */
-    public int insert(Candidate cd) {
+       public int insert(Candidate cd) {
         String sql = """
             INSERT INTO Candidate (CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar)
             OUTPUT INSERTED.CandidateID

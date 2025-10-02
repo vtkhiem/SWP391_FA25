@@ -11,6 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import dal.EmployerDAO;
+import java.util.List;
+import model.Employer;
 /**
  *
  * @author ADMIN
@@ -61,24 +63,45 @@ public class EmployerListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
   throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8"); resp.setCharacterEncoding("UTF-8");
-        String q = param(req, "q", "").trim();
-        int page = parseInt(param(req, "page", "1"), 1);
-        int size = 10;
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+
+        String qParam      = param(req, "q", "").trim();
+        String statusParam = param(req, "status", "").trim();
+        int page           = parseInt(param(req, "page", "1"), 1);
+        final int size     = 10;
+
+          Boolean statusFilter = null;
+        if (!statusParam.isEmpty()) {
+            String v = statusParam.toLowerCase();
+            if (v.equals("true") || v.equals("1") || v.equals("verified")) {
+                statusFilter = Boolean.TRUE;
+                statusParam = "true"; 
+            } else if (v.equals("false") || v.equals("0") || v.equals("not")) {
+                statusFilter = Boolean.FALSE;
+                statusParam = "false";
+            } else {
+                statusFilter = null;
+                statusParam = "";
+            }
+        }
 
         EmployerDAO dao = new EmployerDAO();
-        int total = dao.countAll(q);
-        int totalPages = (int)Math.ceil(total / (double)size);
+       int total = dao.countAll(qParam, statusFilter);
+        int totalPages = (int) Math.ceil(total / (double) size);
         if (totalPages <= 0) totalPages = 1;
         if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
 
-        req.setAttribute("q", q);
+        List<Employer> employers = dao.findPage(page, size, qParam, statusFilter);
+
+        req.setAttribute("q", qParam);
+        req.setAttribute("status", statusParam); // để <select> giữ selected
         req.setAttribute("page", page);
         req.setAttribute("total", total);
         req.setAttribute("totalPages", totalPages);
-        req.setAttribute("employers", dao.findPage(page, size, q));
-        req.getRequestDispatcher("/admin/employer-list.jsp").forward(req, resp);
+        req.setAttribute("employers", employers);
+       req.getRequestDispatcher("/admin/employer-list.jsp").forward(req, resp);
     }
    
 

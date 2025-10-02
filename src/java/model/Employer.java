@@ -9,13 +9,14 @@ public class Employer {
     private String companyName;
     private String description;
     private String location;
+    private String taxcode;
     private String urlWebsite;
     private String imgLogo;
-
+    private boolean status;
     public Employer() {
     }
 
-    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location, String urlWebsite, String imgLogo) {
+    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String description, String location,String taxcode, String urlWebsite, String imgLogo, boolean status) {
         this.employerId = employerId;
         this.employerName = employerName;
         this.email = email;
@@ -24,8 +25,26 @@ public class Employer {
         this.companyName = companyName;
         this.description = description;
         this.location = location;
+        this.taxcode = taxcode;
         this.urlWebsite = urlWebsite;
         this.imgLogo = imgLogo;
+        this.status = status;
+    }
+
+    public String getTaxcode() {
+        return taxcode;
+    }
+
+    public void setTaxcode(String taxcode) {
+        this.taxcode = taxcode;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public int getEmployerId() {
