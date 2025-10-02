@@ -74,7 +74,7 @@
 <body>
 <div class="navbar">
   <div class="brand">
-     <a href="${pageContext.request.contextPath}/admin/dashboard" class="nav-link">Admin Dashboard</a>
+     <a>Admin Dashboard</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
     <span class="divider">|</span>
