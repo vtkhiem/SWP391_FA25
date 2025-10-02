@@ -8,12 +8,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.sql.Timestamp;
-import model.JobPost;
 
-@WebServlet(name = "JobListServlet", urlPatterns = {"/jobs"})
-public class JobListServlet extends HttpServlet {
+@WebServlet(name = "JobDeleteBilkServlet", urlPatterns = {"/job_delete_bulk"})
+public class JobDeleteBilkServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -24,10 +21,10 @@ public class JobListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet JobListServlet</title>");
+            out.println("<title>Servlet JobDeleteBilkServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet JobListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet JobDeleteBilkServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -36,15 +33,20 @@ public class JobListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<JobPost> jobs = jobPostDAO.getAllJobPosts();
-        request.setAttribute("jobs", jobs);
-        request.getRequestDispatcher("jobs.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String[] ids = request.getParameterValues("jobIds");
+        if (ids != null) {
+            for (String idStr : ids) {
+                int id = Integer.parseInt(idStr);
+                jobPostDAO.deleteJobPost(id);
+            }
+        }
+        response.sendRedirect("employer_jobs");
     }
 
     @Override
