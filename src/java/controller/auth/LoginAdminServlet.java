@@ -88,6 +88,7 @@ public class LoginAdminServlet extends HttpServlet {
                 List<Role> roles = adminDAO.getRolesByAdminId(admin.getAdminId());
                 session.setAttribute("roles", roles);
                 session.setAttribute("username", inputValue);
+                session.setAttribute("user", admin);
 
                 for (Role role : roles) {
                     switch (role.getRoleId()) {

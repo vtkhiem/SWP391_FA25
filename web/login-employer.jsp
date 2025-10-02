@@ -235,7 +235,7 @@
                        <input type="text" name="taxcode" placeholder="Mã số thuế" value="${taxcode}" required />
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
-                      <input type="hidden" name="role" value="Employer"/>
+                      <input type="hidden" name="role" value="employer"/>
                     <div id="passwordError" style="display:none;">Mật khẩu không trùng khớp!</div>
                     <button type="submit">Đăng ký</button>
                 </form>
