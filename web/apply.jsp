@@ -6,7 +6,10 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Recruiter Dashboard - Applications</title>
-        <link rel="stylesheet" href="css/employer.css">
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/themify-icons.css">
@@ -19,6 +22,59 @@
         <link rel="stylesheet" href="css/slicknav.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css"> 
+
+        <style>
+            /* ===== BREADCRUMB ===== */
+            .bradcam_area {
+                background: linear-gradient(135deg, #1489f1 0%, #0f6bb8 100%);
+                padding: 4rem 0;
+                text-align: center;
+                color: white;
+            }
+
+            .bradcam_text h3 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .breadcrumb {
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 1.1rem;
+            }
+
+            /* ===== DASHBOARD STATS ===== */
+            .dashboard-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                margin-bottom: 3rem;
+            }
+
+            .stat-card {
+                background: white;
+                padding: 2rem;
+                border-radius: 15px;
+                box-shadow: 0 5px 20px rgba(20, 137, 241, 0.1);
+                text-align: center;
+                transition: transform 0.3s ease;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: #1489f1;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-label {
+                color: #666;
+                font-size: 1rem;
+            }
+        </style>
     </head>
     <body>
 
@@ -30,8 +86,7 @@
         <c:if test="${not empty sessionScope.user and sessionScope.role == 'Employer'}">
             <div class="employer-info" style="padding: 1rem; background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
                 <p><strong>Welcome,</strong> ${sessionScope.user.employerName}</p>
-                <p>Email: ${sessionScope.user.email}</p>
-                <p>Role: ${sessionScope.role}</p>
+
             </div>
         </c:if>
 

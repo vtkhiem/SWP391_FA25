@@ -123,7 +123,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <a class="btn btn-sm btn-info" href="job_details?id=${job.jobPostID}">View</a>
+                                                    <a class="btn btn-sm btn-info" href="viewApply">View Applies</a>
 
                                                     <c:if test="${(sessionScope.employer != null and sessionScope.employer.employerID eq job.employerID) 
                                                                   or (sessionScope.user != null and sessionScope.user.employerId eq job.employerID)}">
