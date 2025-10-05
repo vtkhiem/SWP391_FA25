@@ -30,21 +30,21 @@ public class CV {
     public CV() {
     }
 
-    public CV(int CVID, int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
-        this.CVID = CVID;
-        this.candidateID = candidateID;
-        this.fullName = fullName;
-        this.address = address;
-        this.email = email;
-        this.position = position;
-        this.numberExp = numberExp;
-        this.education = education;
-        this.field = field;
-        this.currentSalary = currentSalary;
-        this.birthday = birthday;
-        this.nationality = nationality;
-        this.gender = gender;
-        this.fileData = fileData;
+        public CV(int CVID, int candidateID, String fullName, String address, String email, String position, int numberExp, String education, String field, BigDecimal currentSalary, Date birthday, String nationality, String gender, String fileData, Date dayCreate) {
+            this.CVID = CVID;
+            this.candidateID = candidateID;
+            this.fullName = fullName;
+            this.address = address;
+            this.email = email;
+            this.position = position;
+            this.numberExp = numberExp;
+            this.education = education;
+            this.field = field;
+            this.currentSalary = currentSalary;
+            this.birthday = birthday;
+            this.nationality = nationality;
+            this.gender = gender;
+            this.fileData = fileData;
         this.dayCreate = dayCreate;
     }
 

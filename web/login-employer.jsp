@@ -230,9 +230,12 @@
             <div class="form-container sign-up-container">
                 <form id="signupForm" action="register" method="post" autocomplete="off">
                     <input type="text" name="name" placeholder="Tên" value="${name}" required />
-                    <input type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
-                    <input type="email" name="email" placeholder="Email" value="${email}" required />
-                       <input type="text" name="taxcode" placeholder="Mã số thuế" value="${taxcode}" required />
+                    <input id="phone"type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
+                       <p id="phoneResult" style="font-size: 12px; color: red; margin: 0;"></p>
+                    <input id="email" type="email" name="email" placeholder="Email" value="${email}" required />
+                       <p id="emailResult" style="font-size: 12px; color: red; margin: 0;"></p>
+                       <input id="taxcode" type="text" name="taxcode" placeholder="Mã số thuế" value="${taxcode}" required />
+                          <p id="taxcodeResult" style="font-size: 12px; color: red; margin: 0;"></p>
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
                       <input type="hidden" name="role" value="employer"/>
@@ -314,5 +317,59 @@
                 }
             });
         </script>
+          <script>
+    // --- KIỂM TRA EMAIL ---
+    document.getElementById("email").addEventListener("keyup", function () {
+        let email = this.value.trim();
+        if (email.length === 0) {
+            document.getElementById("emailResult").innerText = "";
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "checkInputEmployer?type=email&value=" + encodeURIComponent(email), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById("emailResult").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+
+    // --- KIỂM TRA SỐ ĐIỆN THOẠI ---
+    document.getElementById("phone").addEventListener("keyup", function () {
+        let phone = this.value.trim();
+        if (phone.length === 0) {
+            document.getElementById("phoneResult").innerText = "";
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "checkInputEmployer?type=phone&value=" + encodeURIComponent(phone), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById("phoneResult").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+     document.getElementById("taxcode").addEventListener("keyup", function () {
+        let taxcode = this.value.trim();
+        if (taxcode.length === 0) {
+            document.getElementById("taxcodeResult").innerText = "";
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "checkInputEmployer?type=taxcode&value=" + encodeURIComponent(taxcode), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById("taxcodeResult").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+</script>
+            
     </body>
 </html>
