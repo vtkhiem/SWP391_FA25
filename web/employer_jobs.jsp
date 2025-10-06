@@ -53,7 +53,7 @@
 
         <!-- job_listing_area -->
         <div class="job_listing_area">
-            <div class="container">
+            <div class="container-fluid p-0">
                 <div class="row">
                     <div class="col-lg-12">
                         <form action="job_delete_bulk" method="post" onsubmit="return confirm('Are you sure want to delete selected jobs?');">
@@ -64,8 +64,8 @@
                                             <th style="width:40px">
                                                 <input type="checkbox" id="selectAll"/>
                                             </th>
-                                            <th style="width:48px">#</th>
-                                            <th>Title</th>
+                                            <th style="width:48px">No</th>
+                                            <th style="width:160px">Title</th>
                                             <th style="width:160px">Location</th>
                                             <th style="width:120px">Type</th>
                                             <th style="width:160px">Salary</th>
@@ -98,9 +98,9 @@
                                                 <td>
                                                     <c:out value="${job.offerMin}"/> 
                                                     <c:if test="${not empty job.offerMax}"> - <c:out value="${job.offerMax}"/></c:if>
-                                                    </td>
+                                                </td>
 
-                                                    <td>
+                                                <td>
                                                     <%
                                                         JobPost j = (JobPost) pageContext.getAttribute("job");
                                                         if (j != null && j.getDueDate() != null) {
@@ -123,17 +123,19 @@
                                                 </td>
 
                                                 <td>
-                                                    <a class="btn btn-sm btn-info" href="viewApply">View Applies</a>
+                                                    <div >
+                                                        <a class="btn btn-sm btn-info me-2" href="viewApply?id=${job.jobPostID}">View Applies</a>
 
-                                                    <c:if test="${(sessionScope.employer != null and sessionScope.employer.employerID eq job.employerID) 
-                                                                  or (sessionScope.user != null and sessionScope.user.employerId eq job.employerID)}">
-                                                          <a class="btn btn-sm btn-warning" href="job_edit?id=${job.jobPostID}">Edit</a>
-                                                          <form action="job_delete" method="post" style="display:inline-block;"
-                                                                onsubmit="return confirm('Are you sure you want to delete this job?');">
-                                                              <input type="hidden" name="id" value="${job.jobPostID}"/>
-                                                              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                                          </form>
-                                                    </c:if>
+                                                        <c:if test="${(sessionScope.employer != null and sessionScope.employer.employerID eq job.employerID) 
+                                                                      or (sessionScope.user != null and sessionScope.user.employerId eq job.employerID)}">
+                                                              <a class="btn btn-sm btn-warning me-2" href="job_edit?id=${job.jobPostID}">Edit</a>
+                                                              <form action="job_delete" method="post" style="display:inline-block;"
+                                                                    onsubmit="return confirm('Are you sure you want to delete this job?');">
+                                                                  <input type="hidden" name="id" value="${job.jobPostID}"/>
+                                                                  <button type="submit" class="btn btn-sm btn-danger me-2">Delete</button>
+                                                              </form>
+                                                        </c:if>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </c:forEach>

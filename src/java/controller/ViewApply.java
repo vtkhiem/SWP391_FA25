@@ -80,12 +80,32 @@ public class ViewApply extends HttpServlet {
         Employer employer = (Employer) session.getAttribute("user");
         int employerId = employer.getEmployerId();
 
-        // Gọi DAO để lấy job theo employerId
-        JobPostDAO jdao = new JobPostDAO();
-        List<JobPost> jobs = jdao.getJobsByEmployer(employerId);
+        String jobIdStr = request.getParameter("id");
 
-        request.setAttribute("jobList", jobs);
-        request.getRequestDispatcher("apply.jsp").forward(request, response);
+        if (jobIdStr != null && !jobIdStr.isEmpty()) {
+            int jobId = Integer.parseInt(jobIdStr);
+
+            ApplyDAO dao = new ApplyDAO();
+            JobPostDAO jdao = new JobPostDAO();
+
+            List<Apply> applies = dao.getApplyByJobPost(jobId);
+            List<ApplyDetail> details = new ArrayList<>();
+
+            for (Apply apply : applies) {
+                Candidate can = dao.getCandidateById(apply.getCandidateId());
+                CV cv = dao.getCVById(apply.getCvId());
+                JobPost job = dao.getJobPostById(apply.getJobPostId());
+                details.add(new ApplyDetail(apply, can, cv, job));
+            }
+
+            request.setAttribute("details", details);
+            request.getRequestDispatcher("apply.jsp").forward(request, response);
+
+        } else {
+            // Nếu không có jobId, redirect về trang job list
+            response.sendRedirect("employer_jobs");
+        }
+
     }
 
     /**

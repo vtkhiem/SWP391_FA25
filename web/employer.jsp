@@ -72,7 +72,7 @@
             .stat-label {
                 color: #666;
                 font-size: 1rem;
-            }
+            }   
         </style>
     </head>
     <body>

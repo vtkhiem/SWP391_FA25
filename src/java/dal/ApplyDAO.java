@@ -24,7 +24,7 @@ public class ApplyDAO {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
             st.setInt(3, apply.getCvId());
-            st.setDate(4, new java.sql.Date(apply.getDayCreate().getTime()));
+            st.setTimestamp(4, Timestamp.valueOf(apply.getDayCreate())); // LocalDateTime
             st.setString(5, apply.getStatus());
             st.setString(6, apply.getNote());
             st.executeUpdate();
@@ -71,7 +71,7 @@ public class ApplyDAO {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
             st.setInt(3, apply.getCvId());
-            st.setDate(4, new java.sql.Date(apply.getDayCreate().getTime()));
+            st.setTimestamp(4, Timestamp.valueOf(apply.getDayCreate())); // LocalDateTime
             st.setString(5, apply.getStatus());
             st.setString(6, apply.getNote());
             st.setInt(7, apply.getApplyId());
@@ -99,7 +99,10 @@ public class ApplyDAO {
         apply.setJobPostId(rs.getInt("jobPostId"));
         apply.setCandidateId(rs.getInt("candidateId"));
         apply.setCvId(rs.getInt("cvId"));
-        apply.setDayCreate(rs.getDate("dayCreate"));
+        Timestamp ts = rs.getTimestamp("dayCreate");
+        if (ts != null) {
+            apply.setDayCreate(ts.toLocalDateTime());
+        }
         apply.setStatus(rs.getString("status"));   // String
         apply.setNote(rs.getString("note"));
         return apply;
