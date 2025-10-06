@@ -96,21 +96,23 @@ public class RegisterServlet extends HttpServlet {
 
             // --- KIỂM TRA TÍNH HỢP LỆ CHUNG (EMAIL & MẬT KHẨU) ---
             // 1. Kiểm tra Email đã tồn tại (ở bất kỳ vai trò nào)
-            if (candidateDAO.isEmailCandidateExist(email) || employersDAO.isEmailEmployerExist(email)) {
-
-                // Cung cấp thông báo cụ thể hơn cho người dùng
-                if ("candidate".equals(role) && employersDAO.isEmailEmployerExist(email)) {
-                    status = "Email này đã được đăng ký với tài khoản nhà tuyển dụng. Vui lòng sử dụng email khác.";
-                } else if ("employer".equals(role) && candidateDAO.isEmailCandidateExist(email)) {
-                    status = "Email này đã được đăng ký với tài khoản ứng viên. Vui lòng sử dụng email khác.";
-                } else {
-                    status = "Email của bạn đã được đăng ký với một tài khoản khác.";
-                }
-
-                request.setAttribute("status", status);
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+            if(role.equalsIgnoreCase("employer")){
+                if(employersDAO.isEmailEmployerExist(email)){
+                         status = "Email này đã được đăng ký với tài khoản nhà tuyển dụng. Vui lòng sử dụng email khác.";
+                           request.setAttribute("status", status);
+                request.getRequestDispatcher("login-employer.jsp").forward(request, response);
                 return; // QUAN TRỌNG: Dừng thực thi
+                }
+            } else if(role.equalsIgnoreCase("candidate")){
+                if(candidateDAO.isEmailCandidateExist(email)){
+                    
+                   status = "Email này đã được đăng ký với tài khoản ứng viên. Vui lòng sử dụng email khác.";  
+                    request.setAttribute("status", status);
+                      request.getRequestDispatcher("login.jsp").forward(request, response);
+                return; // QUAN TRỌNG: Dừng thực thi
+                }
             }
+       
 
             // 2. Kiểm tra độ dài mật khẩu (tối thiểu 8 ký tự)
             if (!validation.checkLength(password)) {

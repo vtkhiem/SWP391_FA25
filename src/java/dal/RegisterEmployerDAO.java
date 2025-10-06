@@ -27,6 +27,19 @@ public class RegisterEmployerDAO extends DBContext {
         }
         return false;
     }
+      public boolean isTaxcodeEmployerExist(String taxcode) {
+        try {
+            String query = "SELECT 1 FROM [dbo].[Employer] WHERE Taxcode = ?";
+            PreparedStatement push = c.prepareStatement(query);
+            push.setString(1, taxcode);
+            ResultSet rs = push.executeQuery();
+
+            return rs.next(); // có dòng nào => email đã tồn tại
+        } catch (SQLException s) {
+            System.out.println("Bug SQL: " + s.getMessage());
+        }
+        return false;
+    }
 
     public boolean isPhoneEmployerExist(String phone) {
         try {
