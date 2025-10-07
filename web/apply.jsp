@@ -75,7 +75,7 @@
         <jsp:include page="header.jsp"/>
         <!-- Header End -->
         <%
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm");
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         %>
         <!-- Employer Info -->
         <c:if test="${not empty sessionScope.user and sessionScope.role == 'Employer'}">
@@ -83,6 +83,7 @@
                 <p><strong>Welcome,</strong> ${sessionScope.user.employerName}</p>
 
             </div>
+
         </c:if>
 
         <!-- Breadcrumb Area -->
@@ -95,26 +96,32 @@
         </div>
 
         <!-- Search & Filter Controls -->
-        <div class="d-flex justify-content-between align-items-center mt-3 mb-3 px-3">
+        <!-- Container -->
+        <div class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
             <!-- Search box -->
-            <form action="searchCandidate" method="post">
-                <div class="search-box">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Search by name or email...">
-                </div>
-            </form>
+
+            <input type="text" class="form-control align-middle" id="searchInput" placeholder="Search by name or email..." 
+                   style="height: 38px; min-width: 250px;">
 
 
-            <!-- Filter dropdown -->
-            <div class="filter-box">
-                <select class="form-control" id="experienceFilter">
-                    <option value="">Filter by Experience</option>
-                    <option value="0-1">0 - 1 years</option>
-                    <option value="2-3">2 - 3 years</option>
-                    <option value="4-5">4 - 5 years</option>
-                    <option value="5+">5+ years</option>
-                </select>
-            </div>
+            <!-- Filters -->
+            <select class="form-control" id="experienceFilter" style="height: 38px; min-width: 180px;">
+                <option value="">Filter by Experience</option>
+                <option value="0-1">0 - 1 years</option>
+                <option value="2-3">2 - 3 years</option>
+                <option value="4-5">4 - 5 years</option>
+                <option value="5+">5+ years</option>
+            </select>
+
+            <select class="form-control" id="statusFilter" style="height: 38px; min-width: 150px;">
+                <option value="">Filter by Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+
         </div>
+
 
         <div class="apply_listing_by_job">
             <div class="container-fluid p-0">
@@ -133,31 +140,53 @@
                                             <th style="width:160px">Email</th>
                                             <th style="width:120px">Experience</th>
                                             <th style="width:160px">Current salary</th>
-                                            <th style="width:160px">Applied</th>
-                                            <th style="width:220px">Actions</th>
+                                            <th style="width:160px">Status</th>
+                                            <th style="width:120px">Note</th>
+                                            <th style="width:120px">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <c:forEach var="d" items="${details}" varStatus="st">
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" name="applyIds" value="${d.apply.applyId}" class="jobCheckbox"/>
+                                                    <input type="checkbox" name="applyId" value="${d.apply.applyId}" class="jobCheckbox"/>
                                                 </td>
                                                 <td>${st.index + 1}</td>
 
-                                                <td>${d.cv.fullName}</td>
+                                                <td>${d.cv.fullName} <br>
+
+                                                    <div class="small text-muted" style="margin-top: 5px;">
+                                                        <%
+                                                        ApplyDetail d = (ApplyDetail) pageContext.getAttribute("d");
+                                                        if (d.getApply().getDayCreate() != null) {
+                                                            out.print("Applied:" + d.getApply().getDayCreate().format(dtf));
+                                                        } else {
+                                                            out.print("-");
+                                                        }
+                                                        %>
+                                                    </div>
+                                                </td>
+
                                                 <td>${d.cv.email}</td>
                                                 <td>${d.cv.numberExp}</td>
                                                 <td>${d.cv.currentSalary}</td>
                                                 <td>
-                                                    <%
-                                                        ApplyDetail d = (ApplyDetail) pageContext.getAttribute("d");
-                                                        if (d.getApply().getDayCreate() != null) {
-                                                            out.print(d.getApply().getDayCreate().format(dtf));
-                                                        } else {
-                                                            out.print("-");
-                                                        }
-                                                    %>
+                                                    <select class="form-control status-select" data-apply-id="${d.apply.applyId}">
+                                                        <option value="Pending" ${d.apply.status == 'Pending' ? 'selected' : ''}>Pending</option>
+                                                        <option value="Approved" ${d.apply.status == 'Approved' ? 'selected' : ''}>Approved</option>
+                                                        <option value="Rejected" ${d.apply.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                                    </select>
+                                                </td>
+                                                <td>${d.apply.note}</td>
+                                                <td>
+                                                    <div class="d-flex gap-2 ">
+                                                        <a class="btn btn-sm btn-warning me-2" href="viewCV?id=${d.cv.CVID}">View CV</a>
+                                                        <a class="btn btn-sm btn-warning me-2" href="downloadCV?id=${d.cv.CVID}">Download CV</a>
+                                                        <a class="btn btn-sm btn-warning me-2 noteBtn"
+                                                           href="#"
+                                                           data-apply-id="${d.apply.applyId}">Note
+                                                        </a>
+                                                    </div>
                                                 </td>
 
                                             </tr>
@@ -171,13 +200,165 @@
                                     </tbody>
                                 </table>
                             </div>
-
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Popup Modal for Note -->
+        <div id="noteModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+             background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1050;">
+            <div style="background:#fff; padding:20px; border-radius:8px; width:400px; position:relative;">
+                <h5>Edit Note</h5>
+                <textarea id="noteText" class="form-control" rows="5" style="width:100%;"></textarea>
+                <input type="hidden" id="noteApplyId"/>
+                <div class="mt-3 d-flex justify-content-end gap-2">
+                    <button id="cancelNoteBtn" class="btn btn-secondary btn-sm">Cancel</button>
+                    <button id="saveNoteBtn" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            const contextPath = "${pageContext.request.contextPath}";
+            document.querySelectorAll(".status-select").forEach(select => {
+                select.addEventListener("change", function () {
+                    let applyId = this.getAttribute("data-apply-id");
+                    let newStatus = this.value;
+
+                    fetch(contextPath + "/status", {// ✅ luôn đúng path
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: "applyId=" + encodeURIComponent(applyId)
+                                + "&status=" + encodeURIComponent(newStatus)
+                    })
+                            .then(response => response.text())
+                            .then(data => {
+                                console.log("Server response:", data);
+                                alert(data);
+                            })
+                            .catch(error => console.error("Lỗi:", error));
+                });
+            });
+
+            // Lấy các input và select
+            const searchInput = document.getElementById("searchInput");
+            const experienceFilter = document.getElementById("experienceFilter");
+            const statusFilter = document.getElementById("statusFilter");
+            const tableRows = document.querySelectorAll("tbody tr");
+
+            // Hàm lọc
+            function filterTable() {
+                const searchText = searchInput.value.toLowerCase();
+                const experienceText = experienceFilter.value; // "0-1", "2-3", "4-5", "5+"
+                const statusText = statusFilter.value.toLowerCase();
+
+                tableRows.forEach(row => {
+                    const candidateName = row.cells[2]?.textContent.toLowerCase() || "";
+                    const candidateEmail = row.cells[3]?.textContent.toLowerCase() || "";
+                    const candidateExp = parseInt(row.cells[4]?.textContent || "0"); // chuyển về số
+                    const candidateStatus = row.cells[6]?.querySelector("select")?.value.toLowerCase() || "";
+
+                    // Kiểm tra filter search
+                    const matchesSearch = candidateName.includes(searchText) || candidateEmail.includes(searchText);
+
+                    // Kiểm tra filter kinh nghiệm
+                    let matchesExperience = true;
+                    if (experienceText) {
+                        if (experienceText === "0-1") {
+                            matchesExperience = candidateExp >= 0 && candidateExp <= 1;
+                        } else if (experienceText === "2-3") {
+                            matchesExperience = candidateExp >= 2 && candidateExp <= 3;
+                        } else if (experienceText === "4-5") {
+                            matchesExperience = candidateExp >= 4 && candidateExp <= 5;
+                        } else if (experienceText === "5+") {
+                            matchesExperience = candidateExp > 5;
+                        }
+                    }
+
+                    // Kiểm tra filter status
+                    const matchesStatus = !statusText || candidateStatus === statusText;
+
+                    // Hiển thị hoặc ẩn dòng
+                    if (matchesSearch && matchesExperience && matchesStatus) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+
+
+            // Gắn sự kiện
+            searchInput.addEventListener("input", filterTable);
+            experienceFilter.addEventListener("change", filterTable);
+            statusFilter.addEventListener("change", filterTable);
+
+            const noteModal = document.getElementById("noteModal");
+            const noteText = document.getElementById("noteText");
+            const noteApplyId = document.getElementById("noteApplyId");
+            const cancelNoteBtn = document.getElementById("cancelNoteBtn");
+            const saveNoteBtn = document.getElementById("saveNoteBtn");
+
+// Khi bấm nút Note
+            let currentRow = null;
+
+            document.querySelectorAll(".noteBtn").forEach(btn => {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const applyId = this.getAttribute("data-apply-id");
+
+                    const row = this.closest("tr");  // lấy row hiện tại
+                    const currentNote = row.cells[7]?.textContent.trim() || "";
+
+                    noteApplyId.value = applyId;
+                    noteText.value = currentNote;
+                    noteModal.style.display = "flex";
+
+                    currentRow = row; // lưu row để update sau này
+                });
+            });
+
+            // Save note
+            saveNoteBtn.addEventListener("click", () => {
+                const applyId = noteApplyId.value;
+                const newNote = noteText.value;
+
+                fetch(contextPath + "/noteApply", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: "applyId=" + encodeURIComponent(applyId)
+                            + "&note=" + encodeURIComponent(newNote)
+                })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data.trim() !== "") {
+                                alert(data);
+                            }
+
+                            if (currentRow) {
+                                currentRow.cells[7].textContent = newNote; // update cột Note
+                            }
+
+                            noteModal.style.display = "none"; // đóng modal
+                            currentRow = null;
+                        })
+                        .catch(err => console.error("Lỗi:", err));
+            });
+
+            // Đóng modal khi click bên ngoài
+            window.addEventListener("click", (e) => {
+                if (e.target === noteModal) {
+                    noteModal.style.display = "none";
+                }
+            });
+
+        </script>
+
 
 
     </body>

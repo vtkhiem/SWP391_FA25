@@ -81,6 +81,28 @@ public class ApplyDAO {
         }
     }
 
+    public void updateApplyStatus(int applyId,String newStatus) {
+        String sql = "UPDATE Apply SET Status = ? WHERE ApplyID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setString(1, newStatus);
+            st.setInt(2, applyId);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateApplyNote(int applyId,String newNote) {
+        String sql = "UPDATE Apply SET Note = ? WHERE ApplyID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setString(1, newNote);
+            st.setInt(2, applyId);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     // DELETE
     public void deleteApply(int applyId) {
         String sql = "DELETE FROM Apply WHERE applyId = ?";
@@ -196,29 +218,10 @@ public class ApplyDAO {
         return null;
     }
 
-    public List<Apply> searchApplyByCandidateName(String keyword) {
-        List<Apply> list = new ArrayList<>();
-        String sql = "SELECT a.* "
-                + "FROM Apply a "
-                + "JOIN Candidate c ON a.CandidateID = c.CandidateID "
-                + "WHERE c.CandidateName LIKE ?";
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setString(1, "%" + keyword + "%");
-            try (ResultSet rs = st.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapResultSet(rs));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-    // Lấy tất cả apply theo jobPostId
 
     public List<Apply> getApplyByJobPost(int jobPostId) {
         List<Apply> list = new ArrayList<>();
-        String sql = "SELECT * FROM Apply WHERE jobPostId = ?";
+        String sql = "SELECT * FROM Apply WHERE jobPostID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, jobPostId);
             try (ResultSet rs = st.executeQuery()) {
@@ -233,6 +236,6 @@ public class ApplyDAO {
     }
 
     public static void main(String[] args) {
-        System.out.println(new ApplyDAO().getAllApplies());
+        System.out.println(new ApplyDAO().getApplyByJobPost(1005));
     }
 }
