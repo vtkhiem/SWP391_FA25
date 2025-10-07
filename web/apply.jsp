@@ -138,10 +138,10 @@
                                             <th style="width:48px">No</th>
                                             <th style="width:160px">Candidate</th>
                                             <th style="width:160px">Email</th>
-                                            <th style="width:120px">Experience</th>
-                                            <th style="width:160px">Current salary</th>
-                                            <th style="width:160px">Status</th>
-                                            <th style="width:120px">Note</th>
+                                            <th style="width:50px">Experience</th>
+                                            <th style="width:60px">Current salary</th>
+                                            <th style="width:120px">Status</th>
+                                            <th style="width:160px">Note</th>
                                             <th style="width:120px">Actions</th>
                                         </tr>
                                     </thead>
@@ -180,8 +180,15 @@
                                                 <td>${d.apply.note}</td>
                                                 <td>
                                                     <div class="d-flex gap-2 ">
-                                                        <a class="btn btn-sm btn-warning me-2" href="viewCV?id=${d.cv.CVID}">View CV</a>
-                                                        <a class="btn btn-sm btn-warning me-2" href="downloadCV?id=${d.cv.CVID}">Download CV</a>
+                                                        <a class="btn btn-sm btn-warning me-2"
+                                                           href="${pageContext.request.contextPath}/${d.cv.fileData}"
+                                                           target="_blank">View CV</a>
+                                                        <a class="btn btn-sm btn-warning me-2" 
+                                                           href="downloadCV?id=${d.cv.CVID}" 
+                                                           download>
+                                                            Download CV
+                                                        </a>
+
                                                         <a class="btn btn-sm btn-warning me-2 noteBtn"
                                                            href="#"
                                                            data-apply-id="${d.apply.applyId}">Note
@@ -222,6 +229,24 @@
 
 
         <script>
+            // Chọn tất cả checkbox
+            const selectAllCheckbox = document.getElementById("selectAll");
+            const rowCheckboxes = document.querySelectorAll(".jobCheckbox");
+
+            selectAllCheckbox.addEventListener("change", function () {
+                rowCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+
+// Nếu muốn, khi người dùng tick/un-tick riêng lẻ, cập nhật checkbox header
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function () {
+                    // Nếu có checkbox nào chưa tick, header bỏ tick
+                    selectAllCheckbox.checked = Array.from(rowCheckboxes).every(cb => cb.checked);
+                });
+            });
+
             const contextPath = "${pageContext.request.contextPath}";
             document.querySelectorAll(".status-select").forEach(select => {
                 select.addEventListener("change", function () {
