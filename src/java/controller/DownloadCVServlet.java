@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.ApplyDAO;
 import dal.CVDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -70,13 +71,14 @@ public class DownloadCVServlet extends HttpServlet {
             return;
         }
 
-        String[] idStrs = idsParam.split(",");
-        CVDAO cvDAO = new CVDAO();
+        String[] applyIdStrs = idsParam.split(",");
+        
+        ApplyDAO appDAO = new ApplyDAO();
 
-        if (idStrs.length == 1) {
-            // === Case 1: chỉ có 1 CV ===
-            int cvId = Integer.parseInt(idStrs[0].trim());
-            CV cv = cvDAO.getCVById(cvId);
+        if (applyIdStrs.length == 1) {
+            // === Case 1: chỉ 1 CV ===
+            int applyId = Integer.parseInt(applyIdStrs[0].trim());
+            CV cv = appDAO.getCVByApplyId(applyId); // ✅ Lấy CV từ applyId
             if (cv != null && cv.getFileData() != null) {
                 File file = new File(getServletContext().getRealPath("") + File.separator + cv.getFileData());
                 if (file.exists()) {
@@ -95,15 +97,15 @@ public class DownloadCVServlet extends HttpServlet {
             }
             response.getWriter().write("File not found");
         } else {
-            // === Case 2: nhiều CV => tạo file ZIP ===
+            // === Case 2: nhiều CV => tạo ZIP ===
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition", "attachment; filename=CVs.zip");
 
             try (ZipOutputStream zos = new ZipOutputStream(response.getOutputStream())) {
-                for (String idStr : idStrs) {
+                for (String applyIdStr : applyIdStrs) {
                     try {
-                        int cvId = Integer.parseInt(idStr.trim());
-                        CV cv = cvDAO.getCVById(cvId);
+                        int applyId = Integer.parseInt(applyIdStr.trim());
+                        CV cv = cvDAO.getCVByApplyId(applyId); // ✅ Lấy CV từ applyId
                         if (cv != null && cv.getFileData() != null) {
                             String filePath = getServletContext().getRealPath("") + File.separator + cv.getFileData();
                             File file = new File(filePath);

@@ -182,7 +182,7 @@ public class CVDAO extends DBContext {
         return cvList;
     }
 
-    public CV getCVById(int cvId) {
+    public CV getCVByCVId(int cvId) {
         String sql = "SELECT * FROM CV WHERE CVID = ?";
         try {
             PreparedStatement ps = c.prepareStatement(sql);

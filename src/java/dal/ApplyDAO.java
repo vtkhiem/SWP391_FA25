@@ -163,7 +163,7 @@ public class ApplyDAO {
         return null;
     }
 
-    public CV getCVById(int cvId) {
+    public CV getCVByApplyId(int cvId) {
         String sql = "SELECT * FROM CV WHERE CVID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, cvId);
