@@ -120,7 +120,11 @@
                 <option value="Rejected">Rejected</option>
             </select>
 
+            <button id="clearFilterBtn" class="btn btn-sm btn-warning me-2" style="height:38px;">Clear</button>
+
         </div>
+
+
 
 
         <div class="apply_listing_by_job">
@@ -184,8 +188,7 @@
                                                            href="${pageContext.request.contextPath}/${d.cv.fileData}"
                                                            target="_blank">View CV</a>
                                                         <a class="btn btn-sm btn-warning me-2" 
-                                                           href="downloadCV?id=${d.cv.CVID}" 
-                                                           download>
+                                                           href="${pageContext.request.contextPath}/downloadCV?ids=${d.cv.CVID}">
                                                             Download CV
                                                         </a>
 
@@ -208,6 +211,11 @@
                                 </table>
                             </div>
                         </form>
+                        <div d-flex align-items-center gap-2 mt-3 mb-3 px-3>
+                            <a class="btn btn-sm btn-warning me-2" id="downloadSelectedBtn" href="#">
+                                Download Selected
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -382,6 +390,30 @@
                 }
             });
 
+            // Clear filter
+            const clearFilterBtn = document.getElementById("clearFilterBtn");
+
+            clearFilterBtn.addEventListener("click", () => {
+                searchInput.value = "";
+                experienceFilter.value = "";
+                statusFilter.value = "";
+                filterTable(); // gọi lại hàm để reset bảng
+            });
+
+            document.getElementById("downloadSelectedBtn").addEventListener("click", function (e) {
+                e.preventDefault();
+                const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
+                        .map(cb => cb.value);
+
+                if (selected.length === 0) {
+                    alert("Vui lòng chọn ít nhất một CV để tải về.");
+                    return;
+                }
+
+                // Tạo query string ids=1,2,3
+                const url = "${pageContext.request.contextPath}/downloadCV?ids=" + selected.join(",");
+                window.location.href = url; // redirect sang servlet
+            });
         </script>
 
 

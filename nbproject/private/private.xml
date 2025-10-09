@@ -3,17 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391_FA25/web/employer_jobs.jsp</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/cv/EditCVServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/model/CV.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/SearchApply.java</file>
             <file>file:/D:/SWP391_FA25/web/apply.jsp</file>
-            <file>file:/D:/SWP391_FA25/web/jobs.jsp</file>
-            <file>file:/D:/SWP391_FA25/web/header.jsp</file>
-            <file>file:/D:/SWP391_FA25/src/java/dal/ApplyDAO.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/ViewApply.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/StatusServlet.java</file>
-            <file>file:/D:/SWP391_FA25/web/cv-edit.jsp</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/DownloadCVServlet.java</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/cv/CreateCVServlet.java</file>
         </group>
     </open-files>
 </project-private>
