@@ -86,7 +86,7 @@ public class ServicePromotionDAO extends DBContext {
  public List<Promotion> getPromotionsByServiceId(int serviceId) throws SQLException {
     List<Promotion> promotions = new ArrayList<>();
     String sql = """
-        SELECT p.PromotionID, p.Code, p.Discount, p.Description, p.DateSt, p.DateEn, p.DateCr
+        SELECT p.PromotionID, p.Code, p.Discount, p.Description, p.DateSt, p.DateEn, p.DateCr, p.Status
         FROM ServicePromotion sp
         JOIN Promotion p ON sp.PromotionID = p.PromotionID
         WHERE sp.ServiceID = ?
@@ -104,8 +104,12 @@ public class ServicePromotionDAO extends DBContext {
                 promotion.setDateSt(rs.getTimestamp("DateSt"));
                 promotion.setDateEn(rs.getTimestamp("DateEn"));
                 promotion.setDateCr(rs.getTimestamp("DateCr"));
+                promotion.setStatus(rs.getBoolean("Status"));
+                if(rs.getBoolean("Status")){
+                       promotions.add(promotion);
+                }
 
-                promotions.add(promotion);
+              
             }
         }
     }
