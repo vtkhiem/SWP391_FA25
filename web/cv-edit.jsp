@@ -122,7 +122,7 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Update CV</button>
-    <a href="<%= request.getContextPath() %>/cv-list" class="btn btn-secondary">Cancel</a>
+    <a href="<%= request.getContextPath() %>/list-cv" class="btn btn-secondary">Cancel</a>
 </form>
 
 

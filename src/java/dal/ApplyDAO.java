@@ -24,7 +24,7 @@ public class ApplyDAO {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
             st.setInt(3, apply.getCvId());
-            st.setDate(4, new java.sql.Date(apply.getDayCreate().getTime()));
+            st.setTimestamp(4, Timestamp.valueOf(apply.getDayCreate())); // LocalDateTime
             st.setString(5, apply.getStatus());
             st.setString(6, apply.getNote());
             st.executeUpdate();
@@ -71,10 +71,32 @@ public class ApplyDAO {
             st.setInt(1, apply.getJobPostId());
             st.setInt(2, apply.getCandidateId());
             st.setInt(3, apply.getCvId());
-            st.setDate(4, new java.sql.Date(apply.getDayCreate().getTime()));
+            st.setTimestamp(4, Timestamp.valueOf(apply.getDayCreate())); // LocalDateTime
             st.setString(5, apply.getStatus());
             st.setString(6, apply.getNote());
             st.setInt(7, apply.getApplyId());
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateApplyStatus(int applyId,String newStatus) {
+        String sql = "UPDATE Apply SET Status = ? WHERE ApplyID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setString(1, newStatus);
+            st.setInt(2, applyId);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void updateApplyNote(int applyId,String newNote) {
+        String sql = "UPDATE Apply SET Note = ? WHERE ApplyID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setString(1, newNote);
+            st.setInt(2, applyId);
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -99,7 +121,10 @@ public class ApplyDAO {
         apply.setJobPostId(rs.getInt("jobPostId"));
         apply.setCandidateId(rs.getInt("candidateId"));
         apply.setCvId(rs.getInt("cvId"));
-        apply.setDayCreate(rs.getDate("dayCreate"));
+        Timestamp ts = rs.getTimestamp("dayCreate");
+        if (ts != null) {
+            apply.setDayCreate(ts.toLocalDateTime());
+        }
         apply.setStatus(rs.getString("status"));   // String
         apply.setNote(rs.getString("note"));
         return apply;
@@ -193,29 +218,10 @@ public class ApplyDAO {
         return null;
     }
 
-    public List<Apply> searchApplyByCandidateName(String keyword) {
-        List<Apply> list = new ArrayList<>();
-        String sql = "SELECT a.* "
-                + "FROM Apply a "
-                + "JOIN Candidate c ON a.CandidateID = c.CandidateID "
-                + "WHERE c.CandidateName LIKE ?";
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setString(1, "%" + keyword + "%");
-            try (ResultSet rs = st.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapResultSet(rs));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-    // Lấy tất cả apply theo jobPostId
 
     public List<Apply> getApplyByJobPost(int jobPostId) {
         List<Apply> list = new ArrayList<>();
-        String sql = "SELECT * FROM Apply WHERE jobPostId = ?";
+        String sql = "SELECT * FROM Apply WHERE jobPostID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, jobPostId);
             try (ResultSet rs = st.executeQuery()) {
@@ -230,6 +236,6 @@ public class ApplyDAO {
     }
 
     public static void main(String[] args) {
-        System.out.println(new ApplyDAO().getAllApplies());
+        System.out.println(new ApplyDAO().getApplyByJobPost(1005));
     }
 }

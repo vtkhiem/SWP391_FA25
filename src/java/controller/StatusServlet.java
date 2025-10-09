@@ -80,49 +80,32 @@ public class StatusServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        response.setContentType("text/plain;charset=UTF-8");
+
         String applyIdStr = request.getParameter("applyId");
         String newStatus = request.getParameter("status");
+        
+        System.out.println("applyIdStr=" + applyIdStr + ", newStatus=" + newStatus);
 
         if (applyIdStr != null && !applyIdStr.isEmpty() && newStatus != null) {
             try {
                 int applyId = Integer.parseInt(applyIdStr);
                 ApplyDAO dao = new ApplyDAO();
 
-                // Lấy apply hiện tại
-                model.Apply apply = dao.getApplyById(applyId);
+                Apply apply = dao.getApplyById(applyId);
                 if (apply != null) {
-                    apply.setStatus(newStatus);  // Cập nhật status mới
-                    dao.updateApply(apply);      // Gọi DAO để update DB
+                    dao.updateApplyStatus(applyId, newStatus);
+
+                    response.getWriter().write("SUCCESS: Status updated to " + newStatus);
+                } else {
+                    response.getWriter().write("ERROR: Apply not found");
                 }
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                response.getWriter().write("ERROR: Invalid applyId");
             }
-        }
-
-        String jobIdStr = request.getParameter("jobId");
-
-        if (jobIdStr != null && !jobIdStr.isEmpty()) {
-            int jobId = Integer.parseInt(jobIdStr);
-            ApplyDAO dao = new ApplyDAO();
-            JobPostDAO jdao = new JobPostDAO();
-
-            List<Apply> applies = dao.getApplyByJobPost(jobId);
-            List<ApplyDetail> details = new ArrayList<>();
-
-            for (Apply apply : applies) {
-                Candidate can = dao.getCandidateById(apply.getCandidateId());
-                CV cv = dao.getCVById(apply.getCvId());
-                JobPost job = dao.getJobPostById(apply.getJobPostId());
-                details.add(new ApplyDetail(apply, can, cv, job));
-            }
-
-            List<JobPost> jobs = jdao.getAllJobPosts();
-            request.setAttribute("jobList", jobs);
-            request.setAttribute("applyDetails", details);
-            request.getRequestDispatcher("apply.jsp").forward(request, response);
         } else {
-            // Nếu không có jobId, redirect về trang job list
-            response.sendRedirect("viewApply");
+            response.getWriter().write("ERROR: Missing parameters");
         }
     }
 

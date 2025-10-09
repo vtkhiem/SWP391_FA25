@@ -6,6 +6,7 @@ package model;
 
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -18,14 +19,14 @@ public class Apply {
     private int jobPostId;
     private int candidateId;
     private int cvId;
-    private Date dayCreate;
+    private LocalDateTime dayCreate;
     private String status;
     private String note;
 
     public Apply() {
     }
 
-    public Apply(int applyId, int jobPostId, int candidateId, int cvId, Date dayCreate, String status, String note) {
+    public Apply(int applyId, int jobPostId, int candidateId, int cvId, LocalDateTime dayCreate, String status, String note) {
         this.applyId = applyId;
         this.jobPostId = jobPostId;
         this.candidateId = candidateId;
@@ -67,11 +68,11 @@ public class Apply {
         this.cvId = cvId;
     }
 
-    public Date getDayCreate() {
+    public LocalDateTime getDayCreate() {
         return dayCreate;
     }
 
-    public void setDayCreate(Date dayCreate) {
+    public void setDayCreate(LocalDateTime dayCreate) {
         this.dayCreate = dayCreate;
     }
 
@@ -95,6 +96,6 @@ public class Apply {
     public String toString() {
         return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", status=" + status + ", note=" + note + '}';
     }
-    
+
     
 }
