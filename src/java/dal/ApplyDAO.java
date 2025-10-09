@@ -131,7 +131,7 @@ public class ApplyDAO {
     }
 
     // Lấy job theo ID
-    public JobPost getJobPostByApplyId(int id) {
+    public JobPost getJobPostById(int id) {
         String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -163,38 +163,43 @@ public class ApplyDAO {
         return null;
     }
 
-    public CV getCVByApplyId(int cvId) {
-        String sql = "SELECT * FROM CV WHERE CVID = ?";
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, cvId);
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    CV cv = new CV();
-                    cv.setCVID(rs.getInt("CVID"));
-                    cv.setCandidateID(rs.getInt("CandidateID"));
-                    cv.setFullName(rs.getString("FullName"));
-                    cv.setAddress(rs.getString("Address"));
-                    cv.setEmail(rs.getString("Email"));
-                    cv.setPosition(rs.getString("Position"));
-                    cv.setNumberExp(rs.getInt("NumberExp"));
-                    cv.setEducation(rs.getString("Education"));
-                    cv.setField(rs.getString("Field"));
-                    cv.setCurrentSalary(rs.getBigDecimal("CurrentSalary"));
-                    cv.setBirthday(rs.getDate("Birthday"));
-                    cv.setNationality(rs.getString("Nationality"));
-                    cv.setGender(rs.getString("Gender"));
-                    cv.setFileData(rs.getString("FileData"));
-                    cv.setDayCreate(rs.getDate("DayCreate"));
-                    return cv;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    public CV getCVByApplyId(int applyId) {
+    String sql = "SELECT c.* " +
+                 "FROM CV c " +
+                 "INNER JOIN Apply a ON a.CVID = c.CVID " +
+                 "WHERE a.ApplyID = ?";
 
-    public Candidate getCandidateByApplyId(int candidateId) {
+    try (PreparedStatement st = con.prepareStatement(sql)) {
+        st.setInt(1, applyId);
+        try (ResultSet rs = st.executeQuery()) {
+            if (rs.next()) {
+                CV cv = new CV();
+                cv.setCVID(rs.getInt("CVID"));
+                cv.setCandidateID(rs.getInt("CandidateID"));
+                cv.setFullName(rs.getString("FullName"));
+                cv.setAddress(rs.getString("Address"));
+                cv.setEmail(rs.getString("Email"));
+                cv.setPosition(rs.getString("Position"));
+                cv.setNumberExp(rs.getInt("NumberExp"));
+                cv.setEducation(rs.getString("Education"));
+                cv.setField(rs.getString("Field"));
+                cv.setCurrentSalary(rs.getBigDecimal("CurrentSalary"));
+                cv.setBirthday(rs.getDate("Birthday"));
+                cv.setNationality(rs.getString("Nationality"));
+                cv.setGender(rs.getString("Gender"));
+                cv.setFileData(rs.getString("FileData"));
+                cv.setDayCreate(rs.getDate("DayCreate"));
+                return cv;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+
+    public Candidate getCandidateById(int candidateId) {
         String sql = "SELECT * FROM Candidate WHERE CandidateID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, candidateId);

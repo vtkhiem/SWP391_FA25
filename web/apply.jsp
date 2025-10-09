@@ -188,11 +188,11 @@
                                                            href="${pageContext.request.contextPath}/${d.cv.fileData}"
                                                            target="_blank">View CV</a>
                                                         <a class="btn btn-sm btn-warning me-2" 
-                                                           href="${pageContext.request.contextPath}/downloadCV?ids=${d.cv.CVID}">
+                                                           href="${pageContext.request.contextPath}/downloadCV?ids=${d.apply.applyId}">
                                                             Download CV
                                                         </a>
 
-                                                        <a class="btn btn-sm btn-warning me-2 noteBtn"
+                                                        <a class="btn btn-sm btn-warning me-2 noteBtn"  
                                                            href="#"
                                                            data-apply-id="${d.apply.applyId}">Note
                                                         </a>
@@ -400,7 +400,7 @@
                 filterTable(); // gọi lại hàm để reset bảng
             });
 
-            document.getElementById("downloadSelectedBtn").addEventListener("click", (e) {
+            document.getElementById("downloadSelectedBtn").addEventListener("click", function (e) {
                 e.preventDefault();
                 const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
                         .map(cb => cb.value);

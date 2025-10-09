@@ -5,6 +5,8 @@
 package controller;
 
 import dal.ApplyDAO;
+import dal.CVDAO;
+import dal.CandidateDAO;
 import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -83,14 +85,16 @@ public class ViewApply extends HttpServlet {
             int jobId = Integer.parseInt(jobIdStr);
             ApplyDAO dao = new ApplyDAO();
             JobPostDAO jdao = new JobPostDAO();
+            CandidateDAO cdao =new CandidateDAO();
+            CVDAO cvdao = new CVDAO();
 
             List<Apply> applies = dao.getApplyByJobPost(jobId);
             List<ApplyDetail> details = new ArrayList<>();
 
             for (Apply apply : applies) {
-                Candidate can = dao.getCandidateByApplyId(apply.getCandidateId());
-                CV cv = dao.getCVByApplyId(apply.getCvId());
-                JobPost job = dao.getJobPostByApplyId(apply.getJobPostId());
+                Candidate can = cdao.getCandidateById(apply.getCandidateId());
+                CV cv = cvdao.getCVById(apply.getCvId());
+                JobPost job = jdao.getJobPostById(apply.getJobPostId());
                 details.add(new ApplyDetail(apply, can, cv, job));
             }
 

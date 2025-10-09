@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import model.Apply;
 import model.CV;
 
 /**
@@ -78,7 +79,7 @@ public class DownloadCVServlet extends HttpServlet {
         if (applyIdStrs.length == 1) {
             // === Case 1: chỉ 1 CV ===
             int applyId = Integer.parseInt(applyIdStrs[0].trim());
-            CV cv = appDAO.getCVByApplyId(applyId); // ✅ Lấy CV từ applyId
+            CV cv = appDAO.getCVByApplyId(applyId);
             if (cv != null && cv.getFileData() != null) {
                 File file = new File(getServletContext().getRealPath("") + File.separator + cv.getFileData());
                 if (file.exists()) {
