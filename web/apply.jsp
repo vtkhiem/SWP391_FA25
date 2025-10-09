@@ -400,7 +400,7 @@
                 filterTable(); // gọi lại hàm để reset bảng
             });
 
-            document.getElementById("downloadSelectedBtn").addEventListener("click", function (e) {
+            document.getElementById("downloadSelectedBtn").addEventListener("click", (e) {
                 e.preventDefault();
                 const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
                         .map(cb => cb.value);

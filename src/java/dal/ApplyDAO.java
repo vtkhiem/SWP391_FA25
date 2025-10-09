@@ -131,7 +131,7 @@ public class ApplyDAO {
     }
 
     // Lấy job theo ID
-    public JobPost getJobPostById(int id) {
+    public JobPost getJobPostByApplyId(int id) {
         String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -163,7 +163,7 @@ public class ApplyDAO {
         return null;
     }
 
-    public CV getCVById(int cvId) {
+    public CV getCVByApplyId(int cvId) {
         String sql = "SELECT * FROM CV WHERE CVID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, cvId);
@@ -194,7 +194,7 @@ public class ApplyDAO {
         return null;
     }
 
-    public Candidate getCandidateById(int candidateId) {
+    public Candidate getCandidateByApplyId(int candidateId) {
         String sql = "SELECT * FROM Candidate WHERE CandidateID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, candidateId);
