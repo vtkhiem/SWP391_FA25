@@ -105,7 +105,7 @@ public class DownloadCVServlet extends HttpServlet {
                 for (String applyIdStr : applyIdStrs) {
                     try {
                         int applyId = Integer.parseInt(applyIdStr.trim());
-                        CV cv = cvDAO.getCVByApplyId(applyId); // ✅ Lấy CV từ applyId
+                        CV cv = appDAO.getCVByApplyId(applyId); // ✅ Lấy CV từ applyId
                         if (cv != null && cv.getFileData() != null) {
                             String filePath = getServletContext().getRealPath("") + File.separator + cv.getFileData();
                             File file = new File(filePath);

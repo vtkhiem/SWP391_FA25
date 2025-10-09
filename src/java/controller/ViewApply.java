@@ -88,9 +88,9 @@ public class ViewApply extends HttpServlet {
             List<ApplyDetail> details = new ArrayList<>();
 
             for (Apply apply : applies) {
-                Candidate can = dao.getCandidateById(apply.getCandidateId());
-                CV cv = dao.getCVById(apply.getCvId());
-                JobPost job = dao.getJobPostById(apply.getJobPostId());
+                Candidate can = dao.getCandidateByApplyId(apply.getCandidateId());
+                CV cv = dao.getCVByApplyId(apply.getCvId());
+                JobPost job = dao.getJobPostByApplyId(apply.getJobPostId());
                 details.add(new ApplyDetail(apply, can, cv, job));
             }
 
