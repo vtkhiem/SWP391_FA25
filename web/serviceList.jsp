@@ -20,7 +20,7 @@
     <div class="card shadow p-4 rounded-3">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="text-primary mb-0">Danh sách gói dịch vụ</h3>
-            <a href="addService.jsp" class="btn btn-success">+ Thêm dịch vụ mới</a>
+            <a href="loadAddService" class="btn btn-success">+ Thêm dịch vụ mới</a>
         </div>
 
         <!-- Thông báo -->

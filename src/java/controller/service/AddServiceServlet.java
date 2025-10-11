@@ -5,6 +5,8 @@
 
 package controller.service;
 
+import dal.ServiceDAO;
+import dal.ServicePromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +14,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import model.Service;
+import java.sql.SQLException;
+import model.ServicePromotion;
 
 /**
  *
@@ -68,7 +74,72 @@ public class AddServiceServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+           request.setCharacterEncoding("UTF-8"); // ✅ Đảm bảo nhận tiếng Việt đúng
+        response.setContentType("text/html;charset=UTF-8");
+
+        try {
+            // 🔹 Lấy dữ liệu từ form
+            String name = request.getParameter("serviceName");
+            String priceStr = request.getParameter("price");
+            String durationStr = request.getParameter("duration");
+            String description = request.getParameter("description");
+            String[] promoIds = request.getParameterValues("promotionID");
+            boolean isVisible = request.getParameter("isVisible") != null;
+   ServiceDAO serviceDAO = new ServiceDAO();
+            // 🔹 Kiểm tra dữ liệu đầu vào
+            if (name == null || name.trim().isEmpty()
+                    || priceStr == null || durationStr == null ) {
+                request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin dịch vụ!");
+                request.getRequestDispatcher("loadAddService").forward(request, response);
+                return;
+            }else if(serviceDAO.isServiceNameExists(name)){
+                                request.setAttribute("error", "ServiceName đã tồn tại");
+                request.getRequestDispatcher("loadAddService").forward(request, response);
+                return;
+            }
+
+            // 🔹 Chuyển đổi kiểu dữ liệu
+            BigDecimal price = new BigDecimal(priceStr);
+            int duration = Integer.parseInt(durationStr);
+         
+
+            // 🔹 Tạo đối tượng service
+            Service service = new Service();
+            service.setServiceName(name.trim());
+            service.setPrice(price);
+            service.setDescription(description != null ? description.trim() : "");
+            service.setDuration(duration);
+            service.setIsVisible(isVisible);
+
+         
+            ServicePromotionDAO spDAO = new ServicePromotionDAO();
+
+            // 🔹 Thêm service và lấy ID tự sinh
+            int newServiceId = serviceDAO.addServiceAndReturnId(service);
+
+            if (newServiceId > 0) {
+                // 🔹 Gắn service mới vào khuyến mãi (nếu có)
+                for (String promoId : promoIds) {
+                        if (promoId != null && !promoId.isEmpty()) {
+                            int pid = Integer.parseInt(promoId);
+                            ServicePromotion sp = new ServicePromotion(newServiceId, pid);
+                            spDAO.addServicePromotion(sp);
+                        }
+                    }
+
+                request.setAttribute("message", "✅ Thêm dịch vụ thành công!");
+            } else {
+                request.setAttribute("error", "❌ Thêm dịch vụ thất bại!");
+            }
+
+            // ✅ Chuyển hướng về danh sách
+            response.sendRedirect("listService");
+
+        } catch (NumberFormatException e) {
+            throw new ServletException("Dữ liệu không hợp lệ! Vui lòng kiểm tra giá, thời lượng hoặc mã khuyến mãi.", e);
+        } catch (SQLException e) {
+            throw new ServletException("Lỗi cơ sở dữ liệu khi thêm dịch vụ.", e);
+        }
     }
 
     /** 

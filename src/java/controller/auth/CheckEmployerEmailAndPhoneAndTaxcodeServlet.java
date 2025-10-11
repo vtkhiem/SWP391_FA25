@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.promotion;
+package controller.auth;
 
-import dal.PromotionDAO;
+import dal.RegisterEmployerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,15 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Promotion;
+import tool.ValidationRegister;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name="VerifyPromotionServlet", urlPatterns={"/verifyPromotion"})
-public class VerifyPromotionServlet extends HttpServlet {
+@WebServlet(name="CheckEmployerRmailAndPhoneAndTaxcodeServlet", urlPatterns={"/checkInputEmployer"})
+public class CheckEmployerEmailAndPhoneAndTaxcodeServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -38,10 +37,10 @@ public class VerifyPromotionServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet VerifyPromotionServlet</title>");  
+            out.println("<title>Servlet CheckEmployerRmailAndPhoneAndTaxcodeServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet VerifyPromotionServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet CheckEmployerRmailAndPhoneAndTaxcodeServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,17 +57,47 @@ public class VerifyPromotionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-         PromotionDAO dao = new PromotionDAO();
-           try {
-           
-            List<Promotion> list =dao.getAllPromotions();
+   response.setContentType("text/plain;charset=UTF-8");
+         String type = request.getParameter("type"); 
+        String value = request.getParameter("value");
+        ValidationRegister val = new ValidationRegister();
 
-            request.setAttribute("promotionList", list);
-            request.getRequestDispatcher("adminPromotionList.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("message", "❌ Lỗi khi tải danh sách khuyến mãi: " + e.getMessage());
-            request.getRequestDispatcher("adminPromotionList.jsp").forward(request, response);
+        RegisterEmployerDAO dao = new RegisterEmployerDAO();
+
+        if (value == null || value.trim().isEmpty()) {
+            response.getWriter().write("");
+            return;
+        }
+
+        if ("email".equalsIgnoreCase(type)) {
+            if (dao.isEmailEmployerExist(value)) {
+                response.getWriter().write("❌ Email này đã được sử dụng.");
+            } else {
+                response.getWriter().write("✅ Email hợp lệ, có thể đăng ký.");
+            }
+        } else if ("phone".equalsIgnoreCase(type)) {
+            if (dao.isPhoneEmployerExist(value)) {
+                response.getWriter().write("❌ Số điện thoại này đã được sử dụng.");
+            } else {
+                response.getWriter().write("✅ Số điện thoại hợp lệ, có thể đăng ký.");
+            }
+        }else if ("taxcode".equalsIgnoreCase(type)) {
+            if (dao.isTaxcodeEmployerExist(value)) {
+                response.getWriter().write("❌ Taxcode này đã được sử dụng.");
+            } else {
+                response.getWriter().write("✅ Taxcode hợp lệ, có thể đăng ký.");
+            }
+        }
+        else if ("taxcode1".equalsIgnoreCase(type)) {
+            if (val.checkTaxcode(value)) {
+                 response.getWriter().write("✅ Taxcode hợp lệ, có thể đăng ký.");
+               
+            } else {
+                response.getWriter().write("❌ Taxcode cần có 10 hoặc 13 kí tự.");
+            }
+        }
+        else {
+            response.getWriter().write("Tham số không hợp lệ!");
         }
     } 
 
@@ -82,22 +111,7 @@ public class VerifyPromotionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-       try {
-            int id = Integer.parseInt(request.getParameter("promotionId"));
-            String action = request.getParameter("action");
-
-            boolean newStatus = action.equals("approve"); // approve = true, reject = false
-
-            PromotionDAO dao = new PromotionDAO();
-            dao.updatePromotionStatus(id, newStatus);
-
-            response.sendRedirect("adminVerifyPromotion"); // reload danh sách
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("message", "❌ Lỗi khi duyệt khuyến mãi: " + e.getMessage());
-            request.getRequestDispatcher("adminPromotionList.jsp").forward(request, response);
-        }
-    
+        processRequest(request, response);
     }
 
     /** 

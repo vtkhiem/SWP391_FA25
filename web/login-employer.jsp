@@ -236,6 +236,7 @@
                        <p id="emailResult" style="font-size: 12px; color: red; margin: 0;"></p>
                        <input id="taxcode" type="text" name="taxcode" placeholder="Mã số thuế" value="${taxcode}" required />
                           <p id="taxcodeResult" style="font-size: 12px; color: red; margin: 0;"></p>
+                           <p id="taxcodeResult1" style="font-size: 12px; color: red; margin: 0;"></p>
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
                       <input type="hidden" name="role" value="employer"/>
@@ -365,6 +366,22 @@
         xhr.onload = function () {
             if (xhr.status === 200) {
                 document.getElementById("taxcodeResult").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+        document.getElementById("taxcode").addEventListener("keyup", function () {
+        let taxcode = this.value.trim();
+        if (taxcode.length === 0) {
+            document.getElementById("taxcodeResult1").innerText = "";
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "checkInputEmployer?type=taxcode1&value=" + encodeURIComponent(taxcode), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById("taxcodeResult1").innerText = xhr.responseText;
             }
         };
         xhr.send();

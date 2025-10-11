@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.auth;
+package controller.promotion;
 
-import dal.RegisterEmployerDAO;
+import dal.PromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,8 +18,8 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Admin
  */
-@WebServlet(name="CheckEmployerRmailAndPhoneAndTaxcodeServlet", urlPatterns={"/checkInputEmployer"})
-public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
+@WebServlet(name="AdminVerifyPromotionServlet", urlPatterns={"/verifyPromo"})
+public class AdminVerifyPromotionServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +36,10 @@ public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CheckEmployerRmailAndPhoneAndTaxcodeServlet</title>");  
+            out.println("<title>Servlet AdminVerifyPromotionServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CheckEmployerRmailAndPhoneAndTaxcodeServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet AdminVerifyPromotionServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -56,38 +56,12 @@ public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-   response.setContentType("text/plain;charset=UTF-8");
-         String type = request.getParameter("type"); 
-        String value = request.getParameter("value");
-
-        RegisterEmployerDAO dao = new RegisterEmployerDAO();
-
-        if (value == null || value.trim().isEmpty()) {
-            response.getWriter().write("");
-            return;
-        }
-
-        if ("email".equalsIgnoreCase(type)) {
-            if (dao.isEmailEmployerExist(value)) {
-                response.getWriter().write("❌ Email này đã được sử dụng.");
-            } else {
-                response.getWriter().write("✅ Email hợp lệ, có thể đăng ký.");
-            }
-        } else if ("phone".equalsIgnoreCase(type)) {
-            if (dao.isPhoneEmployerExist(value)) {
-                response.getWriter().write("❌ Số điện thoại này đã được sử dụng.");
-            } else {
-                response.getWriter().write("✅ Số điện thoại hợp lệ, có thể đăng ký.");
-            }
-        }else if ("taxcode".equalsIgnoreCase(type)) {
-            if (dao.isTaxcodeEmployerExist(value)) {
-                response.getWriter().write("❌ Taxcode này đã được sử dụng.");
-            } else {
-                response.getWriter().write("✅ Taxcode hợp lệ, có thể đăng ký.");
-            }
-        }
-        else {
-            response.getWriter().write("Tham số không hợp lệ!");
+       int id = Integer.parseInt(request.getParameter("promotionId"));
+    PromotionDAO dao = new PromotionDAO();
+        try {
+            dao.deletePromotion(id);
+             response.sendRedirect("adminPromotion");
+        } catch (Exception e) {
         }
     } 
 
@@ -101,7 +75,13 @@ public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        int id = Integer.parseInt(request.getParameter("promotionId"));
+    PromotionDAO dao = new PromotionDAO();
+        try {
+         dao.updatePromotionStatus(id, true);
+        response.sendRedirect("adminPromotion");
+        } catch (Exception e) {
+        }
     }
 
     /** 
