@@ -69,9 +69,9 @@ public class LoginServlet extends HttpServlet {
 
             if (candidateDAO.isEmailCandidateExist(inputValue)) {
                 boolean result = candidateDAO.loginCandidate(inputValue, password);
-                Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
 
                 if (result) {
+                    Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
                     session.setAttribute("email", inputValue);
                     session.setAttribute("role", "Candidate");
                     session.setAttribute("user", candidate);
@@ -83,21 +83,23 @@ public class LoginServlet extends HttpServlet {
                 }
             } // Kiểm tra employer
             else if (employerDAO.isEmailEmployerExist(inputValue)) {
-                
+
                 boolean result = employerDAO.loginEmployer(inputValue, password);
-                Employer employer = employerDAO.getEmployerByEmail(inputValue);
-                boolean passed = employerDAO.getEmployerStatusByEmail(inputValue);
+
                 if (result) {
-                    if(passed){
-                            session.setAttribute("email", inputValue);
-                    session.setAttribute("user", employer);
-                    session.setAttribute("role", "Employer");
-                    response.sendRedirect("employer.jsp");
-                    return;
-                    }else{
-                        status ="Tài khoản chưa dc duyệt";
+                    Employer employer = employerDAO.getEmployerByEmail(inputValue);
+                    boolean passed = employerDAO.getEmployerStatusByEmail(inputValue);
+
+                    if (passed) {
+                        session.setAttribute("email", inputValue);
+                        session.setAttribute("user", employer);
+                        session.setAttribute("role", "Employer");
+                        response.sendRedirect("employer.jsp");
+                        return;
+                    } else {
+                        status = "Tài khoản chưa dc duyệt";
                     }
-                    
+
                 } else {
                     status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
                 }

@@ -23,6 +23,9 @@ public class ValidationRegister {
     public boolean checkLength(String check) {
         return check.length() >= 8;
     }
+    public boolean checkTaxcode(String check) {
+        return (check.length() ==10 ||check.length()==13);
+    }
 
     public static boolean checkChar(String password) {
         return password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$");

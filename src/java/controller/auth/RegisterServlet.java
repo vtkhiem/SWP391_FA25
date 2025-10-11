@@ -151,14 +151,25 @@ public class RegisterServlet extends HttpServlet {
                 if (phone == null || phone.length() != 10) {
                     status = "Số điện thoại phải có đúng 10 chữ số!";
                     request.setAttribute("status", status);
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                request.getRequestDispatcher("login-employer.jsp").forward(request, response);
                     return;
                 } else if (employersDAO.isPhoneEmployerExist(phone)) {
                     status = "Số điện thoại đã được đăng ký với một tài khoản nhà tuyển dụng khác.";
                     request.setAttribute("status", status);
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                 request.getRequestDispatcher("login-employer.jsp").forward(request, response);
+                    return;
+                } else if(!validation.checkTaxcode(taxcode)){
+                      status = "Mã số thuế có 10 hoặc 13 kí tự.";
+                    request.setAttribute("status", status);
+                   request.getRequestDispatcher("login-employer.jsp").forward(request, response);
+                    return;
+                } else if(employersDAO.isTaxcodeEmployerExist(taxcode)){
+                       status = "Mã số thuế đã được đăng ký với một tài khoản nhà tuyển dụng khác.";
+                    request.setAttribute("status", status);
+                   request.getRequestDispatcher("login-employer.jsp").forward(request, response);
                     return;
                 }
+                
 
                 // Đăng ký Nhà tuyển dụng (Employer)
                 registrationResult = employersDAO.registerEmployer(name, email, phone, password, taxcode);

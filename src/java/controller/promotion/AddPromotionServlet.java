@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.auth;
+package controller.promotion;
 
-import dal.RegisterEmployerDAO;
+import dal.PromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,13 +13,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import model.Promotion;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name="CheckEmployerRmailAndPhoneAndTaxcodeServlet", urlPatterns={"/checkInputEmployer"})
-public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
+@WebServlet(name="AddPromotionServlet", urlPatterns={"/addPromotion"})
+public class AddPromotionServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +39,10 @@ public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CheckEmployerRmailAndPhoneAndTaxcodeServlet</title>");  
+            out.println("<title>Servlet AddPromotionServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CheckEmployerRmailAndPhoneAndTaxcodeServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet AddPromotionServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -56,39 +59,7 @@ public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-   response.setContentType("text/plain;charset=UTF-8");
-         String type = request.getParameter("type"); 
-        String value = request.getParameter("value");
-
-        RegisterEmployerDAO dao = new RegisterEmployerDAO();
-
-        if (value == null || value.trim().isEmpty()) {
-            response.getWriter().write("");
-            return;
-        }
-
-        if ("email".equalsIgnoreCase(type)) {
-            if (dao.isEmailEmployerExist(value)) {
-                response.getWriter().write("❌ Email này đã được sử dụng.");
-            } else {
-                response.getWriter().write("✅ Email hợp lệ, có thể đăng ký.");
-            }
-        } else if ("phone".equalsIgnoreCase(type)) {
-            if (dao.isPhoneEmployerExist(value)) {
-                response.getWriter().write("❌ Số điện thoại này đã được sử dụng.");
-            } else {
-                response.getWriter().write("✅ Số điện thoại hợp lệ, có thể đăng ký.");
-            }
-        }else if ("taxcode".equalsIgnoreCase(type)) {
-            if (dao.isTaxcodeEmployerExist(value)) {
-                response.getWriter().write("❌ Taxcode này đã được sử dụng.");
-            } else {
-                response.getWriter().write("✅ Taxcode hợp lệ, có thể đăng ký.");
-            }
-        }
-        else {
-            response.getWriter().write("Tham số không hợp lệ!");
-        }
+        processRequest(request, response);
     } 
 
     /** 
@@ -101,8 +72,41 @@ public class CheckEmployerRmailAndPhoneAndTaxcodeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+       try {
+            request.setCharacterEncoding("UTF-8");
+
+            String code = request.getParameter("code");
+            BigDecimal discount = new BigDecimal(request.getParameter("discount"));
+            String description = request.getParameter("description");
+
+            Timestamp dateSt = Timestamp.valueOf(request.getParameter("dateSt").replace("T", " ") + ":00");
+            Timestamp dateEn = Timestamp.valueOf(request.getParameter("dateEn").replace("T", " ") + ":00");
+
+            Promotion p = new Promotion();
+            p.setCode(code);
+            p.setDiscount(discount);
+            p.setDateSt(dateSt);
+            p.setDateEn(dateEn);
+            p.setDescription(description);
+            p.setStatus(false); // ❗ Luôn mặc định chờ Admin duyệt
+
+            PromotionDAO dao = new PromotionDAO();
+            boolean success = dao.addPromotion(p);
+
+            if (success) {
+                request.setAttribute("message", "✅ Thêm khuyến mãi thành công! Đang chờ Admin xác nhận.");
+            } else {
+                request.setAttribute("message", "❌ Thêm khuyến mãi thất bại!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "❌ Lỗi khi thêm khuyến mãi: " + e.getMessage());
+        }
+
+        request.getRequestDispatcher("addPromotion.jsp").forward(request, response);
     }
+    
 
     /** 
      * Returns a short description of the servlet.
