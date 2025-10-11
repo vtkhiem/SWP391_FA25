@@ -89,23 +89,6 @@ body {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* ===== BREADCRUMB ===== */
-.bradcam_area {
-    background: linear-gradient(135deg, #1489f1 0%, #0f6bb8 100%);
-    padding: 4rem 0;
-    text-align: center;
-    color: white;
-}
-
-.bradcam_text h3 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.breadcrumb {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.1rem;
-}
 
 /* ===== MAIN CONTENT ===== */
 .job_listing_area {
@@ -134,38 +117,7 @@ body {
     box-shadow: 0 5px 20px rgba(20, 137, 241, 0.1);
 }
 
-/* ===== DASHBOARD STATS ===== */
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
 
-.stat-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(20, 137, 241, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #1489f1;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    color: #666;
-    font-size: 1rem;
-}
 
 /* ===== BUTTONS & ACTIONS ===== */
 .btn {

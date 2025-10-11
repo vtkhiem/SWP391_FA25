@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/auth/ResetPasswordServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/employer/EmployerListServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/web/addPromotion.jsp</file>
@@ -75,6 +76,10 @@
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/auth/LogoutServlet.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/ViewApply.java</file>
             <file>file:/D:/SWPGIT/New%20folder/SWP391_FA25/src/java/controller/service/DeleteServiceServlet.java</file>
+            <file>file:/D:/SWP391_FA25/web/apply.jsp</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/DownloadCVServlet.java</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/cv/CreateCVServlet.java</file>
+
         </group>
     </open-files>
 </project-private>

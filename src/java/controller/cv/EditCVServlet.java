@@ -143,7 +143,7 @@ public class EditCVServlet extends HttpServlet {
         // ================= Update DB =================
         boolean updated = cvDao.updateFullCV(existingCV);
         if (updated) {
-            response.sendRedirect("cv-list");
+            response.sendRedirect("list-cv");
         } else {
             request.setAttribute("error", "Failed to update CV");
             request.setAttribute("cv", existingCV);
