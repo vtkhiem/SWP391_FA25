@@ -66,6 +66,12 @@
     <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/employers" class="nav-link">Employers</a>
+      <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link">Promotions</a>
+          
+          
 </div>
 
 <div class="searchbar-wrap">
