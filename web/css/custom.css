@@ -12,7 +12,7 @@
 }
 
 .job-explore {
-    padding-top: 32px;
+    padding-top: 90px;
     background-image: url("../img/banner/banner.png");
     background-size: cover;
     background-position: center;
@@ -74,8 +74,7 @@
     background: #00D363;
     color: #fff;
     border: 1px solid #00D363;
-    border-radius: 10px 0 0 10px;
-    margin-right: 1px;
+    border-radius: 10px;
     padding: 13px 28px;
     font-weight: 600;
     font-size: 15px;
@@ -88,25 +87,6 @@
     color: #00D363 !important;
     border: 1px solid #00D363;
     background: transparent;
-}
-
-.btn-advanced {
-    background: #f2f4f8;
-    color: #1976d2;
-    border: none;
-    border-radius: 0 10px 10px 0;
-    /* Bo gÃ³c pháº£i */
-    padding: 13px 22px;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    margin-left: -1px;
-}
-
-.btn-advanced:hover {
-    background: #e3eaf5;
-    color: #1565c0;
 }
 
 .popular_search {
@@ -631,6 +611,10 @@
     font-size: 15px;
 }
 
+.search_container {
+    margin-top: 30px;
+}
+
 .search_container,
 .job_listing_container {
     max-width: 1200px;
@@ -838,4 +822,25 @@
 
 .toast-message.error {
     background-color: #dc3545; /* đỏ cho lỗi */
+}
+
+button.save_job {
+    width: 40px;
+    height: 40px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border: none;
+    border-radius: 5px;
+    color: #00D363;
+    font-size: 14px;
+    line-height: 40px;
+    text-align: center;
+    display: inline-block;
+    background: #EFFDF5;
+}
+
+button.save_job:hover {
+    cursor: pointer;
+    background: #00D363;
+    color: #fff;
 }
