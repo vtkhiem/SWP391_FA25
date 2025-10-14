@@ -1,4 +1,5 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -71,8 +72,8 @@
                                 </div>
                                 <div class="jobs_right">
                                     <div class="apply_now">
-                                        <a class="heart_mark" href="#"><i class="ti-heart"></i></a>
-                                        <c:if test="${not empty sessionScope.user and sessionScope.user.employerId == job.employerID}">
+                                        <a class="heart_mark" href=""><i class="ti-heart"></i></a>
+                                            <c:if test="${not empty sessionScope.user and sessionScope.user.employerId == job.employerID}">
                                             <a href="job_edit?id=${job.jobPostID}" class="boxed-btn3 ml-2">Edit Job</a>
                                         </c:if>
                                     </div>
@@ -126,7 +127,16 @@
                             </div>
                             <div class="job_content">
                                 <ul>
-                                    <li>Published on: <span>${job.dayCreate}</span></li>
+                                    <%
+                                        java.time.LocalDateTime dc = ((model.JobPost) request.getAttribute("job")).getDayCreate();
+                                        java.time.LocalDateTime dd = ((model.JobPost) request.getAttribute("job")).getDueDate();
+                                        java.sql.Timestamp pubTs = (dc != null) ? java.sql.Timestamp.valueOf(dc) : null;
+                                        java.sql.Timestamp dueTs = (dd != null) ? java.sql.Timestamp.valueOf(dd) : null;
+                                        pageContext.setAttribute("publishedDate", pubTs);
+                                        pageContext.setAttribute("dueDateFmt", dueTs);
+                                    %>
+                                    <li>Published: <span><fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
+                                    <li>Due Date: <span><fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
                                     <li>Experience: <span>${job.numberExp} years</span></li>
                                     <li>Salary: <span>${job.offerMin} - ${job.offerMax}</span></li>
                                     <li>Location: <span>${job.location}</span></li>

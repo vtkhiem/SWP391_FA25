@@ -53,7 +53,7 @@
 
         <!-- job_listing_area -->
         <div class="job_listing_area">
-            <div class="container-fluid p-0">
+            <div class="container p-0">
                 <div class="row">
                     <div class="col-lg-12">
                         <form action="job_delete_bulk" method="post" onsubmit="return confirm('Are you sure want to delete selected jobs?');">

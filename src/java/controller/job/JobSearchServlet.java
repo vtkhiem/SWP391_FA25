@@ -35,13 +35,17 @@ public class JobSearchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String category = request.getParameter("category");
+        String category = (request.getParameter("category"));
         String location = request.getParameter("location");
         String keyword = request.getParameter("keyword");
 
         // Nếu không nhập thì để rỗng
-        if (category == null) {
+        if (category == null || category.trim().isEmpty()) {
             category = "";
+        } else {
+            category = category.trim();
+            category = category.replaceAll("[^a-zA-Z0-9\\s]", "");
+            category = category.replaceAll("\\s+", " ");
         }
         if (location == null) {
             location = "";
