@@ -4,3 +4,7 @@ nbproject/project.properties
 nbproject/genfiles.properties
 nbproject/project.xml
 nbproject/private/
+*.properties
+nbproject/private/private.properties
+nbproject/private/private.xml
+nbproject/project.properties
