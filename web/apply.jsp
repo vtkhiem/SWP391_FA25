@@ -157,17 +157,10 @@
                                                 </td>
                                                 <td>${st.index + 1}</td>
 
-                                                <td>${d.cv.fullName} <br>
-
-                                                    <div class="small text-muted" style="margin-top: 5px;">
-                                                        <%
-                                                        ApplyDetail d = (ApplyDetail) pageContext.getAttribute("d");
-                                                        if (d.getApply().getDayCreate() != null) {
-                                                            out.print("Applied:" + d.getApply().getDayCreate().format(dtf));
-                                                        } else {
-                                                            out.print("-");
-                                                        }
-                                                        %>
+                                                <td>
+                                                    ${d.cv.fullName}<br>
+                                                    <div class="small text-muted" style="margin-top:5px;">
+                                                        Applied: ${d.apply.dayCreateFormatted}
                                                     </div>
                                                 </td>
 

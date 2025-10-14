@@ -97,7 +97,7 @@ public class ViewApply extends HttpServlet {
                 JobPost job = jdao.getJobPostById(apply.getJobPostId());
                 details.add(new ApplyDetail(apply, can, cv, job));
             }
-
+            
             request.setAttribute("details", details);
             request.getRequestDispatcher("apply.jsp").forward(request, response);
         } else {

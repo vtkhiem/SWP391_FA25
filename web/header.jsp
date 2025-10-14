@@ -57,6 +57,7 @@
                                                                 <li><a href="list-cv">CV Management</a></li>
                                                             </ul>
                                                         </li>
+                                                        <li><a href="#">Apply</a></li>
                                                         <li><a href="contact.html">Contact</a></li>
                                                         </c:otherwise>
                                                     </c:choose>
