@@ -157,7 +157,7 @@
         <div class="job_listing_area plus_padding">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-9">
+                    <div class="col-lg-12">
                         <div class="recent_joblist_wrap">
                             <div class="recent_joblist white-bg ">
                                 <div class="row align-items-center">
@@ -194,24 +194,30 @@
                                             <div class="jobs_right">
                                                 <div class="apply_now justify-content-center">
                                                     <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Apply Now</a>
+                                                    <form action="save_job" method="post" style="display:inline;">
+                                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                        <button type="submit" class="save_job">
+                                                            <i class="ti-heart"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                                 <div class="date">
                                                     <%
                                                         model.JobPost jobObj = (model.JobPost) pageContext.getAttribute("job");
                                                         java.sql.Timestamp publishedTs = null;
-                                                        if (jobObj != null && jobObj.getDayCreate() != null) {
-                                                            publishedTs = java.sql.Timestamp.valueOf(jobObj.getDayCreate());
+                                                        java.sql.Timestamp dueTs = null;
+                                                        if (jobObj != null) {
+                                                            if (jobObj.getDayCreate() != null) {
+                                                                publishedTs = java.sql.Timestamp.valueOf(jobObj.getDayCreate());
+                                                            }
+                                                            if (jobObj.getDueDate() != null) {
+                                                                dueTs = java.sql.Timestamp.valueOf(jobObj.getDueDate());
+                                                            }
                                                         }
                                                         pageContext.setAttribute("publishedDate", publishedTs);
-                                                    %>
-                                                    <p>Published: <fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></p>
-                                                    <%
-                                                        java.sql.Timestamp dueTs = null;
-                                                        if (jobObj != null && jobObj.getDueDate() != null) {
-                                                            dueTs = java.sql.Timestamp.valueOf(jobObj.getDueDate());
-                                                        }
                                                         pageContext.setAttribute("dueDateFmt", dueTs);
                                                     %>
+                                                    <p>Published: <fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></p>
                                                     <p>Due Date: <fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></p>
                                                 </div>
                                             </div>
@@ -370,7 +376,6 @@
                 </form>
             </div>
         </div>
-
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

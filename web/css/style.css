@@ -2230,8 +2230,8 @@ h3 {
 
 /* line 10, ../../Arafath/CL/December/235. Job board/HTML/scss/_footer.scss */
 .footer .footer_top {
-  padding-top: 145px;
-  padding-bottom: 129px;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 @media (max-width: 767px) {
@@ -3234,8 +3234,8 @@ h3 {
 }
 
 /* line 4, ../../Arafath/CL/December/235. Job board/HTML/scss/_job_list.scss */
-.job_listing_area.plus_padding {
-  padding-top: 100px;
+.job_listing_area .plus_padding {
+  padding-top: 30px;
 }
 
 @media (max-width: 767px) {
@@ -3860,8 +3860,8 @@ h3 {
 /* line 1, ../../Arafath/CL/December/235. Job board/HTML/scss/_job_details.scss */
 .job_details_area {
   background: #F5F7FA;
-  padding-top: 100px;
-  padding-bottom: 100px;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 /* line 5, ../../Arafath/CL/December/235. Job board/HTML/scss/_job_details.scss */
