@@ -99,8 +99,8 @@ public class JobPostDAO extends DBContext {
     // Thêm job mới
     public boolean insertJobPost(JobPost job) {
         String sql = "INSERT INTO JobPost (EmployerID, Title, Description, Category, Position, Location, "
-                + "OfferMin, OfferMax, NumberExp, Visible, TypeJob, DayCreate) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "OfferMin, OfferMax, NumberExp, Visible, TypeJob, DayCreate, DueDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             setJobPostParams(ps, job);
@@ -132,12 +132,12 @@ public class JobPostDAO extends DBContext {
     // Cập nhật job
     public boolean updateJobPost(JobPost job) {
         String sql = "UPDATE JobPost SET EmployerID=?, Title=?, Description=?, Category=?, Position=?, "
-                + "Location=?, OfferMin=?, OfferMax=?, NumberExp=?, Visible=?, TypeJob=?, DayCreate=? "
+                + "Location=?, OfferMin=?, OfferMax=?, NumberExp=?, Visible=?, TypeJob=?, DayCreate=?, DueDate=? "
                 + "WHERE JobPostID=?";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             setJobPostParams(ps, job);
-            ps.setInt(13, job.getJobPostID());
+            ps.setInt(14, job.getJobPostID());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -172,9 +172,13 @@ public class JobPostDAO extends DBContext {
         job.setNumberExp(rs.getInt("NumberExp"));
         job.setVisible(rs.getBoolean("Visible"));
         job.setTypeJob(rs.getString("TypeJob"));
-        Timestamp ts = rs.getTimestamp("DayCreate");
-        if (ts != null) {
-            job.setDayCreate(ts.toLocalDateTime());
+        Timestamp dc = rs.getTimestamp("DayCreate");
+        if (dc != null) {
+            job.setDayCreate(dc.toLocalDateTime());
+        }
+        Timestamp dd = rs.getTimestamp("DueDate");
+        if (dd != null) {
+            job.setDueDate(dd.toLocalDateTime());
         }
         return job;
     }
@@ -195,6 +199,11 @@ public class JobPostDAO extends DBContext {
             ps.setTimestamp(12, Timestamp.valueOf(job.getDayCreate()));
         } else {
             ps.setTimestamp(12, null);
+        }
+        if (job.getDueDate() != null) {
+            ps.setTimestamp(13, Timestamp.valueOf(job.getDueDate()));
+        } else {
+            ps.setTimestamp(13, null);
         }
     }
 }

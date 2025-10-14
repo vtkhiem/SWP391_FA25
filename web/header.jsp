@@ -43,8 +43,7 @@
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
                                                         <li><a href="employer.jsp">DashBoard</a></li>
                                                         <li><a href="job_post.jsp">Create Job</a></li>
-                                                        <li><a href="employer_jobs?id=${sessionScope.user.employerId}">View Jobs</a></li>
-                                                        <li><a href="viewApply?id=${sessionScope.user.employerId}">View Apply</a></li>
+                                                        <li><a href="employer_jobs">View Jobs</a></li>
                                                         </c:when>
 
                                                     <%-- Nếu chưa login hoặc là Candidate --%>
@@ -74,7 +73,7 @@
                                                 <a href="login.jsp">Login</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="login.jsp">Employer</a>
+                                                <a class="boxed-btn3" href="login-employer.jsp">Employer</a>
                                             </div>
                                         </c:if>
 

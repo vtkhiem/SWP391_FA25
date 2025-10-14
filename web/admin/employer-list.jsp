@@ -59,6 +59,7 @@
   .col-phone { width:140px; }
   .col-loc { max-width:200px; }
   .col-web { max-width:280px; }
+  .col-tax { max-width:200px; }
   .col-status { width:140px; }
   .col-actions { width:210px; text-align:right; white-space:nowrap; }
 
@@ -103,9 +104,6 @@
     <div class="total-num">${total}</div>
   </div>
 
-<!--  <div class="toolbar">
-    <a class="btn" href="${pageContext.request.contextPath}/admin/employer/add">+ Thêm employer</a>
-  </div>-->
   <div class="table-card">
     <div class="table-head">Danh Sách Employer</div>
     <div class="table-scroll">
@@ -119,7 +117,7 @@
             <th class="col-phone">SĐT</th>
             <th class="col-loc">Địa điểm</th>
             <th class="col-web">Website</th>
-            <th class="col-web">TaxCode</th>
+            <th class="col-tax">TaxCode</th>
             <th class="col-status">Status</th>
             <th class="col-actions">Action</th>
           </tr>
@@ -141,7 +139,9 @@
                     </c:if>
                     <c:if test="${empty e.urlWebsite}">—</c:if>
                   </td>
-                  <td class="col-loc">${e.taxCode}</td>
+                  <td class="col-tax">${e.taxCode}</td>
+
+                  <!-- STATUS: boolean -->
                   <td class="col-status">
                     <c:choose>
                       <c:when test="${e.status}">
@@ -175,34 +175,35 @@
               </c:forEach>
             </c:when>
             <c:otherwise>
-              <tr><td colspan="9" style="color:#6b7280;padding:20px;">Không có dữ liệu</td></tr>
+              <tr><td colspan="10" style="color:#6b7280;padding:20px;">Không có dữ liệu</td></tr>
             </c:otherwise>
           </c:choose>
         </tbody>
       </table>
     </div>
- <div class="pagination">
-  <c:forEach var="i" begin="1" end="${totalPages}">
-    <c:url var="pageUrl" value="">
-      <c:param name="page" value="${i}"/>
-      <c:if test="${not empty q}">
-        <c:param name="q" value="${q}"/>
-      </c:if>
-      <c:if test="${not empty status}">
-        <c:param name="status" value="${status}"/>
-      </c:if>
-    </c:url>
 
-    <c:choose>
-      <c:when test="${i == page}">
-        <span class="active">${i}</span>
-      </c:when>
-      <c:otherwise>
-        <a href="${pageUrl}">${i}</a>
-      </c:otherwise>
-    </c:choose>
-  </c:forEach>
-</div>
+    <div class="pagination">
+      <c:forEach var="i" begin="1" end="${totalPages}">
+        <c:url var="pageUrl" value="">
+          <c:param name="page" value="${i}"/>
+          <c:if test="${not empty q}">
+            <c:param name="q" value="${q}"/>
+          </c:if>
+          <c:if test="${not empty status}">
+            <c:param name="status" value="${status}"/>
+          </c:if>
+        </c:url>
+
+        <c:choose>
+          <c:when test="${i == page}">
+            <span class="active">${i}</span>
+          </c:when>
+          <c:otherwise>
+            <a href="${pageUrl}">${i}</a>
+          </c:otherwise>
+        </c:choose>
+      </c:forEach>
+    </div>
   </div>
 </div>
 </body>

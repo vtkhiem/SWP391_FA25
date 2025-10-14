@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Đăng nhập & Đăng ký</title>
+        <title>Đăng nhập & Đăng ký cho Ứng Viên</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>
             body {
@@ -230,15 +230,13 @@
             <div class="form-container sign-up-container">
                 <form id="signupForm" action="register" method="post" autocomplete="off">
                     <input type="text" name="name" placeholder="Tên" value="${name}" required />
-                    <input type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
-                    <input type="email" name="email" placeholder="Email" value="${email}" required />
+                    <input id="phone" type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
+                     <p id="phoneResult" style="font-size: 12px; color: red; margin: 0;"></p>
+                     <input id="email" type="email" name="email" placeholder="Email" value="${email}" required />
+                      <p id="emailResult" style="font-size: 12px; color: red; margin: 0;"></p>
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
-                    <select id="role" name="role" required>
-                        <option value="" disabled selected>Chọn vai trò</option>
-                        <option value="candidate">Ứng viên</option>
-                        <option value="employer">Nhà tuyển dụng</option>
-                    </select>
+                     <input type="hidden" name="role" value="candidate"/>
                     <div id="passwordError" style="display:none;">Mật khẩu không trùng khớp!</div>
                     <button type="submit">Đăng ký</button>
                 </form>
@@ -317,5 +315,42 @@
                 }
             });
         </script>
+        <script>
+    // --- KIỂM TRA EMAIL ---
+    document.getElementById("email").addEventListener("keyup", function () {
+        let email = this.value.trim();
+        if (email.length === 0) {
+            document.getElementById("emailResult").innerText = "";
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "checkInput?type=email&value=" + encodeURIComponent(email), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById("emailResult").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+
+    // --- KIỂM TRA SỐ ĐIỆN THOẠI ---
+    document.getElementById("phone").addEventListener("keyup", function () {
+        let phone = this.value.trim();
+        if (phone.length === 0) {
+            document.getElementById("phoneResult").innerText = "";
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "checkInput?type=phone&value=" + encodeURIComponent(phone), true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                document.getElementById("phoneResult").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+</script>
     </body>
 </html>
