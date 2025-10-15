@@ -5,6 +5,7 @@
 
 package controller.service;
 
+import dal.ServiceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,13 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.SQLException;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name="EditServiceServlet", urlPatterns={"/editService"})
-public class EditServiceServlet extends HttpServlet {
+@WebServlet(name="EditServiceServlet", urlPatterns={"/editVisible"})
+public class EditVisibleServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -55,7 +57,15 @@ public class EditServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        int id = Integer.parseInt(request.getParameter("id"));
+        ServiceDAO dao = new ServiceDAO();
+        try {
+            dao.toggleVisibility(id);
+            request.getRequestDispatcher("listService").forward(request, response);
+        } catch (SQLException ex) {
+            System.getLogger(EditVisibleServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        
     } 
 
     /** 

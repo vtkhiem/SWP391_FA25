@@ -4,8 +4,8 @@
  */
 package controller.service;
 
-import dal.FunctionDAO;
 import dal.PromotionDAO;
+import dal.ServiceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,18 +13,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.*;
 import java.util.List;
-import model.Function;
 import model.Promotion;
+import model.Service;
 
 /**
  *
- * @author Admin
+ * @author vuthienkhiem
  */
-@WebServlet(name = "LoadPromotionAddServiceServlet", urlPatterns = {"/loadAddService"})
-public class LoadPromotionAddServiceServlet extends HttpServlet {
+@WebServlet(name = "BuyServiceServlet", urlPatterns = {"/buyService"})
+public class BuyServiceServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +41,10 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoadPromotionAddServiceServlet</title>");
+            out.println("<title>Servlet BuyServiceServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoadPromotionAddServiceServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet BuyServiceServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,50 +62,51 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PromotionDAO dao = new PromotionDAO();
-        FunctionDAO daoo = new FunctionDAO();
         try {
-            List<Function> functionList = daoo.getAllFunctions();
-            List<Promotion> promotionList = dao.getAllActivePromotions();
-            request.setAttribute("functionList", functionList);
-            request.setAttribute("promotionList", promotionList);
-            request.getRequestDispatcher("addService.jsp").forward(request, response);
-        } catch (SQLException e) {
-            throw new ServletException(e);
-        }
-}
+            int serviceID = Integer.parseInt(request.getParameter("serviceID"));
 
-/**
- * Handles the HTTP <code>POST</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-       PromotionDAO dao = new PromotionDAO();
-           FunctionDAO daoo = new FunctionDAO();
-        try {
-            String err=request.getParameter("error");
-              List<Function> functionList = daoo.getAllFunctions();
-            List<Promotion> promotionList = dao.getAllPromotions(); 
-            request.setAttribute("promotionList", promotionList);
-            request.setAttribute("error", err);
-            request.getRequestDispatcher("addService.jsp").forward(request, response);
-        } catch (SQLException e) {
-            throw new ServletException(e);
+            ServiceDAO serviceDAO = new ServiceDAO();
+            PromotionDAO promoDAO = new PromotionDAO();
+
+            // ✅ Lấy thông tin dịch vụ được chọn
+            Service service = serviceDAO.getServiceById(serviceID);
+
+            // ✅ Lấy danh sách khuyến mãi đang còn hiệu lực và được duyệt
+            List<Promotion> promotions = promoDAO.getAllActiveAndDatePromotions();
+
+            request.setAttribute("service", service);
+            request.setAttribute("promotionList", promotions);
+
+            // ✅ Forward sang trang nhập mã khuyến mãi / xác nhận thanh toán
+            request.getRequestDispatcher("buy_service.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
         }
     }
 
-    /** 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
-public String getServletInfo() {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
