@@ -211,7 +211,7 @@
                                 </table>
                             </div>
                         </form>
-                        <div d-flex align-items-center gap-2 mt-3 mb-3 px-3>
+                        <div class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
                             <a class="btn btn-sm btn-warning me-2" id="downloadSelectedBtn" href="#">
                                 Download Selected
                             </a>
