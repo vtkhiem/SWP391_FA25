@@ -1,9 +1,3 @@
-<%-- 
-    Document   : serviceList.jsp
-    Created on : Oct 9, 2025, 3:13:22 AM
-    Author     : Admin
---%>
-
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -36,6 +30,7 @@
                     <th>Giá (VNĐ)</th>
                     <th>Thời hạn (ngày)</th>
                     <th>Mô tả</th>
+                    <th>Chức năng đi kèm</th>
                     <th>Khuyến mãi áp dụng</th>
                     <th>Trạng thái hiển thị</th>
                     <th>Thao tác</th>
@@ -46,23 +41,39 @@
                     <tr>
                         <td>${s.serviceID}</td>
                         <td class="fw-bold text-start">${s.serviceName}</td>
-                        <td><fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></td>
+                        <td>
+                            <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+                        </td>
                         <td>${s.duration}</td>
                         <td class="text-start">${s.description}</td>
 
-                        <!-- Hiển thị danh sách khuyến mãi -->
+                        <!-- ✅ Danh sách chức năng -->
+                        <td class="text-start">
+                            <c:choose>
+                                <c:when test="${not empty s.functions}">
+                                    <ul class="list-unstyled mb-0">
+                                        <c:forEach var="f" items="${s.functions}">
+                                            <li>• ${f.functionName}</li>
+                                        </c:forEach>
+                                    </ul>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="text-muted">Không có</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+
+                        <!-- ✅ Danh sách khuyến mãi -->
                         <td class="text-start">
                             <c:choose>
                                 <c:when test="${not empty s.promotions}">
                                     <ul class="list-unstyled mb-0">
                                         <c:forEach var="p" items="${s.promotions}">
                                             <li>
-                                                <strong>${p.code}</strong> 
-                                                - Giảm <fmt:formatNumber value="${p.discount}" maxFractionDigits="0"/>% 
+                                                <strong>${p.code}</strong> - Giảm 
+                                                <fmt:formatNumber value="${p.discount}" maxFractionDigits="0"/>%
                                                 <br/>
-                                                <small class="text-muted">
-                                                    ${p.dateSt} → ${p.dateEn}
-                                                </small>
+                                                <small class="text-muted">${p.dateSt} → ${p.dateEn}</small>
                                             </li>
                                         </c:forEach>
                                     </ul>
@@ -73,7 +84,7 @@
                             </c:choose>
                         </td>
 
-                        <!-- Trạng thái hiển thị -->
+                        <!-- ✅ Trạng thái hiển thị -->
                         <td>
                             <c:choose>
                                 <c:when test="${s.isVisible}">
@@ -85,7 +96,7 @@
                             </c:choose>
                         </td>
 
-                        <!-- Nút thao tác -->
+                        <!-- ✅ Nút thao tác -->
                         <td>
                             <a href="ServiceController?action=edit&id=${s.serviceID}" class="btn btn-warning btn-sm">Sửa</a>
                             <a href="ServiceController?action=delete&id=${s.serviceID}" 

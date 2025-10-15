@@ -231,9 +231,9 @@
                 <form id="signupForm" action="register" method="post" autocomplete="off">
                     <input type="text" name="name" placeholder="Tên" value="${name}" required />
                     <input id="phone" type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
-                     <p id="phoneResult" style="font-size: 12px; color: red; margin: 0;"></p>
+                     <p id="phoneResult" style="font-size: 12px; color: green ; margin: 0;"></p>
                      <input id="email" type="email" name="email" placeholder="Email" value="${email}" required />
-                      <p id="emailResult" style="font-size: 12px; color: red; margin: 0;"></p>
+                      <p id="emailResult" style="font-size: 12px; color:green ; margin: 0;"></p>
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
                      <input type="hidden" name="role" value="candidate"/>
@@ -243,6 +243,7 @@
             </div>
             <div class="form-container sign-in-container">
                 <form action="login" method="post" autocomplete="off">
+                     <input type="hidden" name="role" value="candidate"/>
                     <input type="text" name="email" placeholder="Email" value="${username}" required />
                     <input type="password" name="password" placeholder="Mật khẩu" required />
                     <button type="submit">Đăng nhập</button>

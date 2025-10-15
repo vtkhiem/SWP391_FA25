@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-package controller.promotion;
+package controller.employer;
 
 import dal.PromotionDAO;
+import dal.ServiceDAO;
+import dal.ServiceFunctionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,44 +14,47 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.List;
 import model.Promotion;
+import model.Service;
 
 /**
  *
- * @author Admin
+ * @author vuthienkhiem
  */
-@WebServlet(name="AddPromotionServlet", urlPatterns={"/addPromotion"})
-public class AddPromotionServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+@WebServlet(name = "EmployerServiceServlet", urlPatterns = {"/employerServices"})
+public class EmployerServiceServlet extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddPromotionServlet</title>");  
+            out.println("<title>Servlet EmployerServiceServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddPromotionServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet EmployerServiceServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -58,12 +62,32 @@ public class AddPromotionServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+            throws ServletException, IOException {
+       try {
+            PromotionDAO promoDAO = new PromotionDAO();
+            ServiceDAO serviceDAO = new ServiceDAO();
+            ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
 
-    /** 
+            List<Promotion> promotionList = promoDAO.getAllActivePromotions(); 
+            List<Service> serviceList = serviceDAO.getAllVisibleServices();
+
+            for (Service s : serviceList) {
+                s.setFunctions(sfDAO.getFunctionsByServiceId(s.getServiceID()));
+            }
+
+            request.setAttribute("promotionList", promotionList);
+            request.setAttribute("serviceList", serviceList);
+            request.getRequestDispatcher("employer_service_promo.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            throw new ServletException("Lỗi khi tải dữ liệu dịch vụ và khuyến mãi", e);
+        }
+    
+    }
+
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -71,45 +95,13 @@ public class AddPromotionServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-       try {
-            request.setCharacterEncoding("UTF-8");
-
-            String code = request.getParameter("code");
-            BigDecimal discount = new BigDecimal(request.getParameter("discount"));
-            String description = request.getParameter("description");
-
-            Timestamp dateSt = Timestamp.valueOf(request.getParameter("dateSt").replace("T", " ") + ":00");
-            Timestamp dateEn = Timestamp.valueOf(request.getParameter("dateEn").replace("T", " ") + ":00");
-
-            Promotion p = new Promotion();
-            p.setCode(code);
-            p.setDiscount(discount);
-            p.setDateSt(dateSt);
-            p.setDateEn(dateEn);
-            p.setDescription(description);
-            p.setStatus(false); 
-            
-            PromotionDAO dao = new PromotionDAO();
-            boolean success = dao.addPromotion(p);
-
-            if (success) {
-                request.setAttribute("message", "✅ Thêm khuyến mãi thành công! Đang chờ Admin xác nhận.");
-            } else {
-                request.setAttribute("message", "❌ Thêm khuyến mãi thất bại!");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("message", "❌ Lỗi khi thêm khuyến mãi: " + e.getMessage());
-        }
-
-        request.getRequestDispatcher("addPromotion.jsp").forward(request, response);
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
-    
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

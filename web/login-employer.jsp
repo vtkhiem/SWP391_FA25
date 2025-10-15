@@ -229,6 +229,7 @@
         <div class="container" id="container">
             <div class="form-container sign-up-container">
                 <form id="signupForm" action="register" method="post" autocomplete="off">
+                  
                     <input type="text" name="name" placeholder="Tên" value="${name}" required />
                     <input id="phone"type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
                        <p id="phoneResult" style="font-size: 12px; color: red; margin: 0;"></p>
@@ -246,6 +247,7 @@
             </div>
             <div class="form-container sign-in-container">
                 <form action="login" method="post" autocomplete="off">
+                     <input type="hidden" name="role" value="employer"/>
                     <input type="text" name="email" placeholder="Email" value="${username}" required />
                     <input type="password" name="password" placeholder="Mật khẩu" required />
                     <button type="submit">Đăng nhập</button>
