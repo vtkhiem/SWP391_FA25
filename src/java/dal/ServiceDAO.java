@@ -71,7 +71,30 @@ public class ServiceDAO extends DBContext {
     }
 
     // ✅ Lấy tất cả service
-    public List<Service> getAllServices() throws SQLException {
+    public List<Service> getAllVisibleServices() throws SQLException {
+        List<Service> list = new ArrayList<>();
+        String sql = "SELECT * FROM Service Where IsVisible = 1 ORDER BY ServiceID DESC";
+        try (PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Service s = new Service(
+                        rs.getInt("ServiceID"),
+                        rs.getString("ServiceName"),
+                        rs.getBigDecimal("Price"),
+                        rs.getString("Description"),
+                        rs.getInt("Duration"),
+                        rs.getBoolean("IsVisible"),
+                        rs.getInt("JobPostAmount")
+                );
+              
+                s.setIsUnlimited(rs.getBoolean("IsUnlimited"));
+                list.add(s);
+            }
+        }
+        return list;
+    }
+        public List<Service> getAllServices() throws SQLException {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT * FROM Service ORDER BY ServiceID DESC";
         try (PreparedStatement ps = c.prepareStatement(sql);

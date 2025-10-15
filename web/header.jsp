@@ -41,6 +41,7 @@
                                                 <c:choose>
                                                     <%-- Nếu là Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
+                                                        <li><a href="employerServices">Home</a></li>
                                                         <li><a href="employer.jsp">DashBoard</a></li>
                                                         <li><a href="job_post.jsp">Create Job</a></li>
                                                         <li><a href="employer_jobs">View Jobs</a></li>

@@ -243,6 +243,7 @@
             </div>
             <div class="form-container sign-in-container">
                 <form action="login" method="post" autocomplete="off">
+                     <input type="hidden" name="role" value="candidate"/>
                     <input type="text" name="email" placeholder="Email" value="${username}" required />
                     <input type="password" name="password" placeholder="Mật khẩu" required />
                     <button type="submit">Đăng nhập</button>

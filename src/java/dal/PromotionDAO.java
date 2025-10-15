@@ -105,7 +105,7 @@ public class PromotionDAO extends DBContext {
     }
 
     // 🟣 Lấy promotion đang hoạt động (đang trong khoảng thời gian hiệu lực)
-    public List<Promotion> getActivePromotions() throws SQLException {
+    public List<Promotion> getAllActivePromotions() throws SQLException {
         List<Promotion> list = new ArrayList<>();
         String sql = """
             SELECT * FROM Promotion
