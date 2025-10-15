@@ -88,8 +88,8 @@ public class AddPromotionServlet extends HttpServlet {
             p.setDateSt(dateSt);
             p.setDateEn(dateEn);
             p.setDescription(description);
-            p.setStatus(false); // ❗ Luôn mặc định chờ Admin duyệt
-
+            p.setStatus(false); 
+            
             PromotionDAO dao = new PromotionDAO();
             boolean success = dao.addPromotion(p);
 
