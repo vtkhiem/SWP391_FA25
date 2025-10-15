@@ -1,165 +1,206 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"  %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
     String role = (String) session.getAttribute("role");
-    if (role == null || !"Sale".equalsIgnoreCase(role)) {
+    if (role == null || !role.equalsIgnoreCase("Sale")) {
         response.sendRedirect(request.getContextPath() + "/access-denied.jsp");
         return;
     }
-    if (request.getAttribute("orders") == null) {
-        response.sendRedirect(request.getContextPath() + "/sale");
-        return;
-    }
 %>
+<fmt:setLocale value="vi_VN" scope="session"/>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Sales Dashboard - Orders</title>
-    <style>
-        :root { --nav:#00366d; --bg:#f3f4f6; --txt:#111827; --card:#ffffff; --muted:#6b7280; }
-        * { box-sizing:border-box; }
-        body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f3f4f6; color:#111827; }
-        .navbar { background:#00366d; color:#fff; padding:10px 20px; display:flex; align-items:center; gap:10px; }
-        .navbar a { color:#fff; text-decoration:none; font-weight:bold; }
-        .container { width:100%; max-width:1180px; margin:18px auto; padding:0 16px; }
+<meta charset="UTF-8">
+<title>Sale - Danh sách đơn hàng</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{ --brand:#00366d; --muted:#6b7280; --bg:#f3f4f6; --card:#ffffff; --bd:#e5e7eb; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background:var(--bg); color:#111827; }
 
-        .totals { display:flex; gap:16px; flex-wrap:wrap; }
-        .total-card { flex:1 1 260px; background:#ffffff; border-radius:14px; padding:22px 20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,.06); border:1px solid #e5e7eb; }
-        .total-title { color:#6b7280; font-size:14px; margin-bottom:6px; }
-        .total-num { font-size:36px; font-weight:800; }
+  .navbar { background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; position:sticky; top:0; z-index:10; }
+  .brand a { color:#fff; text-decoration:none; font-weight:700; }
+  .container { max-width:1200px; margin:20px auto; padding:0 16px; }
 
-        .table-card { background:#ffffff; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); border:1px solid #e5e7eb; overflow:hidden; }
-        .table-head { padding:16px 16px 0 16px; font-weight:700; font-size:18px; }
-        table { width:100%; border-collapse:collapse; }
-        thead th { text-align:left; font-size:13px; color:#6b7280; padding:12px 16px; border-bottom:1px solid #e5e7eb; background:#fafafa; }
-        tbody td { padding:14px 16px; border-bottom:1px solid #f0f2f5; vertical-align:top; }
-        tbody tr:hover { background:#fafafa; }
-        .col-id { width:90px; font-variant-numeric:tabular-nums; color:#374151; }
-        .col-amount { width:160px; font-variant-numeric:tabular-nums; font-weight:700; text-align:right; }
-        .muted { color:#6b7280; font-size:12px; }
+  .cards { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin:16px 0; }
+  .card { background:var(--card); padding:16px; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .card h3 { margin:0 0 6px; font-size:15px; color:var(--muted); }
+  .card .value { font-size:22px; font-weight:700; }
 
-        .badge { display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; }
-        .badge.paid { background:#dcfce7; color:#166534; }
-        .badge.pending { background:#fef9c3; color:#854d0e; }
-        .badge.other { background:#e5e7eb; color:#374151; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  th, td { padding:10px 12px; border-bottom:1px solid #eee; text-align:left; font-size:14px; }
+  th { background:#fafafa; font-weight:600; }
+  tr:hover { background:#f9fafb; }
+  .clickable-row { cursor:pointer; }
 
-        .pagination { display:flex; gap:8px; align-items:center; justify-content:flex-end; padding:14px 16px; background:#fff; }
-        .pagination a, .pagination span { padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; text-decoration:none; color:inherit; }
-        .pagination .active { background:#00366d; color:#fff; border-color:#00366d; }
-        .empty { color:#6b7280; padding:20px; }
-    </style>
+  .status { padding:4px 8px; border-radius:10px; font-size:12px; display:inline-block; }
+  .status.pending { background:#fff7ed; color:#9a3412; }
+  .status.paid, .status.completed, .status.success { background:#ecfdf5; color:#065f46; }
+  .status.cancelled, .status.failed { background:#fef2f2; color:#991b1b; }
+
+  .pagination { display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:12px; flex-wrap:wrap; }
+  .page-link { padding:6px 10px; border:1px solid var(--bd); background:#fff; border-radius:8px; text-decoration:none; color:#111827; }
+  .page-link.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .muted { color:var(--muted); font-size:13px; }
+
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; }
+  .modal { width: 420px; max-width: 92vw; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); overflow: hidden; }
+  .modal header { padding:12px 16px; background:#00366d; color:#fff; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+  .modal .content { padding:16px; }
+  .modal .row { display:flex; gap:8px; margin-bottom:10px; }
+  .modal .label { width:120px; color:#6b7280; }
+  .modal .value { flex:1; font-weight:600; }
+  .modal .actions { padding:12px 16px; display:flex; justify-content:flex-end; gap:8px; background:#fafafa; }
+</style>
 </head>
 <body>
+  <div class="navbar">
+    <div class="brand"><a href="#">Sale Console</a></div>
+  </div>
 
-<div class="navbar">
-    <a href="<c:url value='/sale'/>">Sales Dashboard</a>
-</div>
-
-<div class="container">
-    <div class="totals">
-        <div class="total-card">
-            <div class="total-title">Tổng đơn (tất cả)</div>
-            <div class="total-num">${totalItems}</div>
+  <div class="container">
+    <div class="cards">
+      <div class="card">
+        <h3>Tổng số đơn</h3>
+        <div class="value">${totalRows}</div>
+      
+      </div>
+      <div class="card">
+        <h3>Tổng doanh thu</h3>
+        <div class="value">
+          <fmt:formatNumber value="${revenue}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
         </div>
-        <div class="total-card">
-            <div class="total-title">Tổng doanh thu (tất cả)</div>
-            <div class="total-num">${totalRevenue}</div>
-        </div>
+       
+      </div>
     </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Ngày đặt</th>
+          <th>Nhà tuyển dụng</th>
+          <th>Gói</th>
+          <th>Số tiền gốc</th>
+          <th>Khuyến mãi</th>
+          <th>Giảm (%)</th>
+          <th>Giá sau KM</th>
+          <th>Phương thức</th>
+          <th>Thời lượng</th>
+          <th>Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <c:forEach var="o" items="${orders}">
+          <tr class="clickable-row"
+              data-buyer-name="${fn:escapeXml(o.employerName)}"
+              data-buyer-email="${fn:escapeXml(o.employerEmail)}">
+            <td>${o.orderId}</td>
+           
+            <td><c:out value="${o.date}"/></td>
+            <td><c:out value="${o.employerName}"/></td>
+            <td><c:out value="${o.serviceName}"/></td>
 
-    <div class="table-card">
-        <div class="table-head">Danh Sách Đơn Hàng</div>
-        <table>
-            <thead>
-                <tr>
-                    <th class="col-id">ID</th>
-                    <th>Employer</th>
-                    <th>Service</th>
-                    <th class="col-amount">Số tiền</th>
-                    <th>Pay Method</th>
-                    <th>Trạng thái</th>
-                    <th>Ngày tạo</th>
-                    <th>Duration</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:choose>
-                    <c:when test="${not empty orders}">
-                        <fmt:setLocale value="vi_VN"/>
-                        <c:forEach var="o" items="${orders}">
-                            <tr>
-                                <td class="col-id">${o.orderID}</td>
-                                <td>
-                                    <div>
-                                        <c:choose>
-                                            <c:when test="${employerNames[o.employerID] != null}">
-                                                ${employerNames[o.employerID]}
-                                            </c:when>
-                                            <c:otherwise>Employer #${o.employerID}</c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <c:choose>
-                                            <c:when test="${serviceNames[o.serviceID] != null}">
-                                                ${serviceNames[o.serviceID]}
-                                            </c:when>
-                                            <c:otherwise>Service #${o.serviceID}</c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                </td>
-                                <td class="col-amount">
-                                    <c:choose>
-                                        <c:when test="${not empty o.amount}">
-                                            <fmt:formatNumber value="${o.amount}" type="number" minFractionDigits="2" maxFractionDigits="2"/>
-                                        </c:when>
-                                        <c:otherwise>0,00</c:otherwise>
-                                    </c:choose>
-                                </td>
+            <td><fmt:formatNumber value="${o.amount}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></td>
 
-                                <td>${o.payMethod}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${o.status == 'paid' || o.status == 'completed'}"><span class="badge paid">${o.status}</span></c:when>
-                                        <c:when test="${o.status == 'pending'}"><span class="badge pending">pending</span></c:when>
-                                        <c:otherwise><span class="badge other">${o.status}</span></c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td><c:out value="${o.date}"/></td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${o.duration != null}">${o.duration}</c:when>
-                                        <c:otherwise>—</c:otherwise>
-                                    </c:choose>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <tr><td colspan="8" class="empty">Không có đơn hàng.</td></tr>
-                    </c:otherwise>
-                </c:choose>
-            </tbody>
-        </table>
+            <td>
+              <c:choose>
+                <c:when test="${not empty o.promotionCode}">
+                  <span title="Mã khuyến mãi"><c:out value="${o.promotionCode}"/></span>
+                </c:when>
+                <c:otherwise><span class="muted">Không áp dụng</span></c:otherwise>
+              </c:choose>
+            </td>
+            <td>
+              <c:choose>
+                <c:when test="${o.discountPercent != null}">
+                  <c:out value="${o.discountPercent}"/>%
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
+            </td>
 
-        <div class="pagination">
-            <c:forEach var="i" begin="1" end="${totalPages}">
-                <c:choose>
-                    <c:when test="${i == page}">
-                        <span class="active">${i}</span>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="?page=${i}">${i}</a>
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
-        </div>
+            <td><fmt:formatNumber value="${o.finalAmount}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></td>
+
+            <td><c:out value="${o.payMethod}"/></td>
+            <td>
+              <c:choose>
+                <c:when test="${o.duration != null}">
+                  <c:out value="${o.duration}"/> <span class="muted">ngày</span>
+                </c:when>
+                <c:otherwise>—</c:otherwise>
+              </c:choose>
+            </td>
+            <td><span class="status ${o.status}"><c:out value="${o.status}"/></span></td>
+          </tr>
+        </c:forEach>
+        <c:if test="${empty orders}">
+          <tr><td colspan="11" class="muted" style="text-align:center;">Không có dữ liệu</td></tr>
+        </c:if>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <c:forEach var="i" begin="1" end="${totalPages}">
+        <a class="page-link ${i==page?'active':''}" href="?page=${i}&size=${pageSize}">${i}</a>
+      </c:forEach>
     </div>
-</div>
+  </div>
+  <div id="buyerModal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="buyerModalTitle">
+     <header>
+      <div id="buyerModalTitle">Thông tin người mua</div>
+      </header>
+      <div class="content">
+        <div class="row">
+          <div class="label">Tên:</div>
+          <div class="value" id="buyerName">—</div>
+        </div>
+        <div class="row">
+          <div class="label">Email:</div>
+          <div class="value" id="buyerEmail">—</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="buyerModalOk" class="page-link" style="border-color:var(--brand);">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const modal = document.getElementById('buyerModal');
+    const nameEl = document.getElementById('buyerName');
+    const emailEl = document.getElementById('buyerEmail');
+    const okBtn = document.getElementById('buyerModalOk');
+
+    function openModal(name, email){
+      nameEl.textContent = name || '—';
+      emailEl.textContent = email || '—';
+      modal.style.display = 'flex';
+    }
+    function closeModal(){
+      modal.style.display = 'none';
+    }
+
+    document.querySelectorAll('tr.clickable-row').forEach(tr => {
+      tr.addEventListener('click', () => {
+        const name = tr.getAttribute('data-buyer-name');
+        const email = tr.getAttribute('data-buyer-email');
+        openModal(name, email);
+      });
+    });
+    okBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal(); 
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+    });
+  })();
+</script>
+
 </body>
 </html>

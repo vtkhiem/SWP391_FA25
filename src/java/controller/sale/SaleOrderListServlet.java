@@ -14,13 +14,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import model.Order;
+import model.OrderView;
 
 /**
  *
@@ -61,47 +57,47 @@ public class SaleOrderListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-      
+      private LocalDate parseDate(String s) {
+        try {
+            if (s == null || s.trim().isEmpty()) return null;
+            return LocalDate.parse(s); // định dạng yyyy-MM-dd
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private int parseIntOrDefault(String s, int def) {
+        try { return Integer.parseInt(s); } catch (Exception e) { return def; }
+    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
      throws ServletException, IOException {
-
-        String role = (String) req.getSession().getAttribute("role");
-        if (role == null || !(role.equalsIgnoreCase("Sale"))) {
+       String role = (String) req.getSession().getAttribute("role");
+        if (role == null || !role.equalsIgnoreCase("Sale")) {
             resp.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
-        int pagesize =10;
-        int page = 1;
-        try { page = Math.max(1, Integer.parseInt(req.getParameter("page"))); }
-        catch (Exception ignored) {}
+
+        int page     = parseIntOrDefault(req.getParameter("page"), 1);
+        int pageSize = parseIntOrDefault(req.getParameter("size"), 10);
 
         OrderDAO dao = new OrderDAO();
 
-        int totalItems  = dao.countOrders();
-        int totalPages  = (int) Math.ceil(totalItems / (double) pagesize);
+        int totalRows  = dao.countAll();
+        if (pageSize <= 0) pageSize = 10;
+        int totalPages = (int) Math.ceil(totalRows / (double) pageSize);
         if (totalPages == 0) totalPages = 1;
+        if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
 
-        List<Order> orders = dao.findOrdersPage(page, pagesize);
-
-        BigDecimal totalRevenue = dao.sumRevenue();
-        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
-
-        Set<Integer> employerIds = orders.stream().map(Order::getEmployerID).collect(Collectors.toSet());
-        Set<Integer> serviceIds  = orders.stream().map(Order::getServiceID).collect(Collectors.toSet());
-
+        List<OrderView> orders = dao.findPage(page, pageSize);
+        BigDecimal revenue = dao.totalRevenue(); 
         req.setAttribute("orders", orders);
-        req.setAttribute("totalRevenue", nf.format(totalRevenue));
-        req.setAttribute("employerNames", dao.employerNameMapByIds(employerIds));
-        req.setAttribute("serviceNames",  dao.serviceNameMapByIds(serviceIds));
-
+        req.setAttribute("revenue", revenue);
         req.setAttribute("page", page);
+        req.setAttribute("pageSize", pageSize);
         req.setAttribute("totalPages", totalPages);
-        req.setAttribute("totalItems", totalItems);
-
+        req.setAttribute("totalRows", totalRows);
         req.getRequestDispatcher("/sale.jsp").forward(req, resp);
     }
 
