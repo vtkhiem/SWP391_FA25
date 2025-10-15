@@ -60,56 +60,68 @@ public class LoginServlet extends HttpServlet {
         String status = null;  // Thay đổi: Khởi tạo null để dễ check
         String inputValue = request.getParameter("email");
         String password = request.getParameter("password");
+        String role = request.getParameter("role");
 
         try {
             RegisterCandidateDAO candidateDAO = new RegisterCandidateDAO();
             RegisterEmployerDAO employerDAO = new RegisterEmployerDAO();
 
             HttpSession session = request.getSession();
+            if (role.equalsIgnoreCase("candidate")) {
+                if (candidateDAO.isEmailCandidateExist(inputValue)) {
+                    boolean result = candidateDAO.loginCandidate(inputValue, password);
 
-            if (candidateDAO.isEmailCandidateExist(inputValue)) {
-                boolean result = candidateDAO.loginCandidate(inputValue, password);
-
-                if (result) {
-                    Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
-                    session.setAttribute("email", inputValue);
-                    session.setAttribute("role", "Candidate");
-                    session.setAttribute("user", candidate);
-                    session.setAttribute("candidateId", candidate.getCandidateId());
-                    response.sendRedirect("index.jsp");
-                    return;
-                } else {
-                    status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
-                }
-            } // Kiểm tra employer
-            else if (employerDAO.isEmailEmployerExist(inputValue)) {
-
-                boolean result = employerDAO.loginEmployer(inputValue, password);
-
-                if (result) {
-                    Employer employer = employerDAO.getEmployerByEmail(inputValue);
-                    boolean passed = employerDAO.getEmployerStatusByEmail(inputValue);
-
-                    if (passed) {
+                    if (result) {
+                        Candidate candidate = candidateDAO.getCandidateByEmail(inputValue);
                         session.setAttribute("email", inputValue);
-                        session.setAttribute("user", employer);
-                        session.setAttribute("role", "Employer");
-                        response.sendRedirect("employer.jsp");
+                        session.setAttribute("role", "Candidate");
+                        session.setAttribute("user", candidate);
+                        session.setAttribute("candidateId", candidate.getCandidateId());
+                        response.sendRedirect("index.jsp");
                         return;
                     } else {
-                        status = "Tài khoản chưa dc duyệt";
+                        status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
                     }
-
                 } else {
-                    status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
+                    status = "Tài Khoản không tồn tại";
                 }
-            } else {
-                status = "Tài Khoản không tồn tại";
+            } else if (role.equalsIgnoreCase("employer")) {
+                if (employerDAO.isEmailEmployerExist(inputValue)) {
+
+                    boolean result = employerDAO.loginEmployer(inputValue, password);
+
+                    if (result) {
+                        Employer employer = employerDAO.getEmployerByEmail(inputValue);
+                        boolean passed = employerDAO.getEmployerStatusByEmail(inputValue);
+
+                        if (passed) {
+                            session.setAttribute("email", inputValue);
+                            session.setAttribute("user", employer);
+                            session.setAttribute("role", "Employer");
+                            response.sendRedirect("employerServices");
+                            return;
+                        } else {
+                            status = "Tài khoản chưa dc duyệt";
+                        }
+
+                    } else {
+                        status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";
+                    }
+                } else {
+                    status = "Tài Khoản không tồn tại";
+                }
+
             }
 
-            request.setAttribute("status", status);
-            request.setAttribute("username", inputValue);
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            if (role.equalsIgnoreCase("candidate")) {
+                request.setAttribute("status", status);
+                request.setAttribute("username", inputValue);
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            } else if (role.equalsIgnoreCase("employer")) {
+                request.setAttribute("status", status);
+                request.setAttribute("username", inputValue);
+                request.getRequestDispatcher("login-employer.jsp").forward(request, response);
+            }
 
         } catch (Exception e) {  // Thay đổi: Đổi 's' thành 'e' chuẩn
             // Thêm: Luôn set status lỗi mặc định trong catch

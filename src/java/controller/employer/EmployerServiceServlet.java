@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.service;
+package controller.employer;
 
-import dal.FunctionDAO;
 import dal.PromotionDAO;
+import dal.ServiceDAO;
+import dal.ServiceFunctionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,18 +14,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.*;
 import java.util.List;
-import model.Function;
 import model.Promotion;
+import model.Service;
 
 /**
  *
- * @author Admin
+ * @author vuthienkhiem
  */
-@WebServlet(name = "LoadPromotionAddServiceServlet", urlPatterns = {"/loadAddService"})
-public class LoadPromotionAddServiceServlet extends HttpServlet {
+@WebServlet(name = "EmployerServiceServlet", urlPatterns = {"/employerServices"})
+public class EmployerServiceServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +42,10 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoadPromotionAddServiceServlet</title>");
+            out.println("<title>Servlet EmployerServiceServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoadPromotionAddServiceServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet EmployerServiceServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,50 +63,49 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PromotionDAO dao = new PromotionDAO();
-        FunctionDAO daoo = new FunctionDAO();
-        try {
-            List<Function> functionList = daoo.getAllFunctions();
-            List<Promotion> promotionList = dao.getAllPromotions();
-            request.setAttribute("functionList", functionList);
-            request.setAttribute("promotionList", promotionList);
-            request.getRequestDispatcher("addService.jsp").forward(request, response);
-        } catch (SQLException e) {
-            throw new ServletException(e);
-        }
-}
+       try {
+            PromotionDAO promoDAO = new PromotionDAO();
+            ServiceDAO serviceDAO = new ServiceDAO();
+            ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
 
-/**
- * Handles the HTTP <code>POST</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-       PromotionDAO dao = new PromotionDAO();
-           FunctionDAO daoo = new FunctionDAO();
-        try {
-            String err=request.getParameter("error");
-              List<Function> functionList = daoo.getAllFunctions();
-            List<Promotion> promotionList = dao.getAllPromotions(); 
+            List<Promotion> promotionList = promoDAO.getAllActivePromotions(); 
+            List<Service> serviceList = serviceDAO.getAllVisibleServices();
+
+            for (Service s : serviceList) {
+                s.setFunctions(sfDAO.getFunctionsByServiceId(s.getServiceID()));
+            }
+
             request.setAttribute("promotionList", promotionList);
-            request.setAttribute("error", err);
-            request.getRequestDispatcher("addService.jsp").forward(request, response);
-        } catch (SQLException e) {
-            throw new ServletException(e);
+            request.setAttribute("serviceList", serviceList);
+            request.getRequestDispatcher("employer_service_promo.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            throw new ServletException("Lỗi khi tải dữ liệu dịch vụ và khuyến mãi", e);
         }
+    
     }
 
-    /** 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
-public String getServletInfo() {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
