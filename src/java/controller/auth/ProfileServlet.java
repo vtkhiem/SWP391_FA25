@@ -96,10 +96,11 @@ public class ProfileServlet extends HttpServlet {
                 if (employer != null) {
                     session.setAttribute("employer", employer);
                 } 
-            } else {
+                 else {
                 request.setAttribute("status", "Không tìm thấy thông tin nhà tuyển dụng!");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 return;
+            }
             }
         }  else {
             request.setAttribute("status", "Vai trò không hợp lệ!");

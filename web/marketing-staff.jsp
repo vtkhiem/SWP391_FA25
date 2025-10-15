@@ -12,7 +12,7 @@
     }
     Admin admin = (Admin) session.getAttribute("user");
 
-   
+    
 %>
 <!DOCTYPE html>
 <html>
@@ -226,6 +226,11 @@
         .card:nth-child(2) {
             animation-delay: 0.2s;
         }
+        
+        /* Đảm bảo card mới có animation delay */
+        .card:nth-child(3) {
+            animation-delay: 0.4s; 
+        }
     </style>
 </head>
 <body>
@@ -247,6 +252,17 @@
             <p>Tạo mới và quản lý các tin khuyến mãi để thu hút ứng viên và nhà tuyển dụng. Tăng tương tác và hiệu quả marketing cho doanh nghiệp.</p>
             <a href="postPromotion" class="card-link">
                 ✨ Đăng tin khuyến mãi
+            </a>
+        </div>
+        
+        <div class="card">
+            <h2>
+                <div class="icon">📋</div>
+                Quản lý Khuyến mãi
+            </h2>
+            <p>Xem, chỉnh sửa, và kiểm soát trạng thái của tất cả các chương trình khuyến mãi đã đăng. Đảm bảo thông tin luôn chính xác và cập nhật.</p>
+            <a href="listPromotion" class="card-link">
+                🏷️ Xem danh sách khuyến mãi
             </a>
         </div>
         

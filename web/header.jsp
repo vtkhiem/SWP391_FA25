@@ -39,25 +39,31 @@
                                         <nav>
                                             <ul id="navigation">
                                                 <c:choose>
-                                                    <%-- Nếu là Employer --%>
+                                                    <%-- Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
+                                                        <li><a href="employerServices">Home</a></li>
                                                         <li><a href="employer.jsp">DashBoard</a></li>
                                                         <li><a href="job_post.jsp">Create Job</a></li>
                                                         <li><a href="employer_jobs">View Jobs</a></li>
                                                         </c:when>
 
-                                                    <%-- Nếu chưa login hoặc là Candidate --%>
+                                                    <%-- Candidate/Guest --%>
                                                     <c:otherwise>
-                                                        <li><a href="index.jsp">Home</a></li>
-                                                        <li><a href="jobs">Browse Job</a></li>
-                                                        <li><a href="#">Blog</a></li>
-                                                        <li><a href="#">CV<i class="ti-angle-down"></i></a>
+                                                        <li><a href="index.jsp">Trang chủ</a></li>
+                                                        <li><a href="jobs">Việc làm <i class="ti-angle-down"></i></a>
                                                             <ul class="submenu">
-                                                                <li><a href="cv-create.jsp">CV Create</a></li>
-                                                                <li><a href="list-cv">CV Management</a></li>
+                                                                <li><a href="jobs">Tìm việc làm</a></li>
+                                                                <li><a href="#">Việc làm đã lưu</a></li>
                                                             </ul>
                                                         </li>
-                                                        <li><a href="contact.html">Contact</a></li>
+                                                        <li><a href="#">CV <i class="ti-angle-down"></i></a>
+                                                            <ul class="submenu">
+                                                                <li><a href="cv-create.jsp">Tạo CV</a></li>
+                                                                <li><a href="list-cv">Quản lí CV</a></li>
+                                                            </ul>
+                                                        </li>
+                                                        <li><a href="#">Blog</a></li>
+                                                        <li><a href="contact.html">Liên hệ</a></li>
                                                         </c:otherwise>
                                                     </c:choose>
                                             </ul>
@@ -70,10 +76,10 @@
                                         <!-- Nếu chưa login thì hiện nút Login -->
                                         <c:if test="${empty sessionScope.user}">
                                             <div class="phone_num d-none d-xl-block">
-                                                <a href="login.jsp">Login</a>
+                                                <a href="login.jsp">Đăng nhập</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="login-employer.jsp">Employer</a>
+                                                <a class="boxed-btn3" href="login-employer.jsp">Nhà tuyển dụng</a>
                                             </div>
                                         </c:if>
 
@@ -94,7 +100,7 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </a> |
-                                                <a href="logout">Logout</a>
+                                                <a href="logout">Đăng xuất</a>
                                             </div>
                                         </c:if>
                                     </div>

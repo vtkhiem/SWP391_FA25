@@ -14,23 +14,30 @@ public class Service {
     private String description;
     private int duration;
     private boolean isVisible;
+     private int jobPostAmount;    
+    private boolean isUnlimited; 
 
-
-    private List<Promotion> promotions;
+   private List<Promotion> promotions;
+   private List<Function> functions;
 
    
     public Service() {
     }
 
-
-    public Service(int serviceID, String serviceName, BigDecimal price, String description, int duration, boolean isVisible) {
+    public Service(int serviceID, String serviceName, BigDecimal price, String description, int duration, boolean isVisible, int jobPostAmount) {
         this.serviceID = serviceID;
         this.serviceName = serviceName;
         this.price = price;
         this.description = description;
         this.duration = duration;
         this.isVisible = isVisible;
+        this.jobPostAmount = jobPostAmount;
+      
     }
+
+  
+
+
 
   
     public int getServiceID() {
@@ -89,6 +96,31 @@ public class Service {
         this.promotions = promotions;
     }
 
+    public int getJobPostAmount() {
+        return jobPostAmount;
+    }
+
+    public void setJobPostAmount(int jobPostAmount) {
+        this.jobPostAmount = jobPostAmount;
+    }
+
+    public boolean isIsUnlimited() {
+        return isUnlimited;
+    }
+
+    public void setIsUnlimited(boolean isUnlimited) {
+        this.isUnlimited = isUnlimited;
+    }
+
+    public List<Function> getFunctions() {
+        return functions;
+    }
+
+    public void setFunctions(List<Function> functions) {
+        this.functions = functions;
+    }
+    
+
     @Override
     public String toString() {
         return "Service{" +
@@ -98,7 +130,7 @@ public class Service {
                 ", description='" + description + '\'' +
                 ", duration=" + duration +
                 ", isVisible=" + isVisible +
-                ", promotions=" + (promotions != null ? promotions.size() : 0) +
+                ", promotions=" + (promotions != null ? promotions.size() : 0) +    
                 '}';
     }
 }

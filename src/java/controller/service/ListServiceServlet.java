@@ -5,6 +5,7 @@
 package controller.service;
 
 import dal.ServiceDAO;
+import dal.ServiceFunctionDAO;
 import dal.ServicePromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.Function;
 import model.Promotion;
 import model.Service;
 
@@ -62,27 +64,42 @@ public class ListServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+         request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
         try {
             ServiceDAO serviceDAO = new ServiceDAO();
             ServicePromotionDAO spDAO = new ServicePromotionDAO();
+            ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
 
-            // Lấy tất cả service
+
+            // 🔹 Lấy tất cả dịch vụ
             List<Service> serviceList = serviceDAO.getAllServices();
 
-            // Gắn danh sách promotion cho từng service
+            // 🔹 Gắn thêm promotion + function cho từng service
             for (Service s : serviceList) {
                 List<Promotion> promotions = spDAO.getPromotionsByServiceId(s.getServiceID());
-                s.setPromotions(promotions); // nhớ thêm List<Promotion> promotions vào model Service
+                s.setPromotions(promotions);
+
+                List<Function> functions = sfDAO.getFunctionsByServiceId(s.getServiceID());
+                s.setFunctions(functions);
             }
 
-            request.setAttribute("message", request.getParameter("message"));
-            // Gửi sang JSP
+            // 🔹 Lấy message nếu có (từ session hoặc query param)
+            String message = (String) request.getSession().getAttribute("message");
+            if (message == null) {
+                message = request.getParameter("message");
+            }
+            request.getSession().removeAttribute("message"); // Xóa để tránh hiện lại sau reload
+
+            // 🔹 Gửi dữ liệu sang JSP
             request.setAttribute("serviceList", serviceList);
+            request.setAttribute("message", message);
             request.getRequestDispatcher("serviceList.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "❌ Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
+            request.setAttribute("error", "❌ Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
             request.getRequestDispatcher("serviceList.jsp").forward(request, response);
         }
     }
