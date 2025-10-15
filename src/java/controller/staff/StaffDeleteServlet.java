@@ -4,6 +4,7 @@
  */
 
 package controller.staff;
+
 import dal.AdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,46 +13,41 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Admin;
 
 /**
  *
- * @author Admin
+ * @author ADMIN
  */
-@WebServlet(name = "LogSaleServlet", urlPatterns = {"/logSale"})
-public class LogSaleServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+@WebServlet(name="StaffDeleteServlet", urlPatterns={"/admin/staff/remove"})
+public class StaffDeleteServlet extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LogSaleServlet</title>");
+            out.println("<title>Servlet StaffDeleteServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LogSaleServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet StaffDeleteServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -59,38 +55,47 @@ public class LogSaleServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-       HttpSession session = request.getSession();
-    String username = (String) session.getAttribute("username");
- 
-        String role = request.getParameter("role");
-        AdminDAO adminDAO = new AdminDAO();
-        Admin admin = adminDAO.getAdminByUsername(username);
-        request.setAttribute("username", username);
- 
-        request.setAttribute("user", admin);
-        request.setAttribute("role", role);
-        response.sendRedirect("sale");
+    throws ServletException, IOException {
+        processRequest(request, response);
+    } 
 
-    }
-
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+     throws ServletException, IOException {
+
+        String idStr = req.getParameter("id");
+        if (idStr == null) {
+            req.getSession().setAttribute("message", "Thiếu tham số id.");
+            resp.sendRedirect(req.getContextPath() + "/admin/staffs");
+            return;
+        }
+
+        try {
+            int adminId = Integer.parseInt(idStr);
+            AdminDAO dao = new AdminDAO();
+            boolean ok = dao.deleteStaffById(adminId);
+            if (ok) {
+                req.getSession().setAttribute("message", "Đã gỡ staff (và xóa user nếu không còn vai trò).");
+            } else {
+                req.getSession().setAttribute("message", "Không tìm thấy role Marketing/Sale để gỡ.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            req.getSession().setAttribute("message", "Lỗi khi xóa: " + e.getMessage());
+        }
+
+        resp.sendRedirect(req.getContextPath() + "/admin/staffs");
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override

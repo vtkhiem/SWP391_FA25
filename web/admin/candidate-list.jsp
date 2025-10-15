@@ -70,6 +70,8 @@
           <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
            <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link">Promotions</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/admin/staffs" class="nav-link">Staffs</a>
           
           
 </div>
@@ -115,7 +117,7 @@
                                           style="display:inline-block;margin-left:8px;"
                                           onsubmit="return confirm('Banned ứng viên ${c.candidateName}?');">
                                         <input type="hidden" name="id" value="${c.candidateId}">
-                                        <button class="btn btn-danger" type="submit">Banned</button>
+                                        <button class="btn btn-danger" type="submit">Ban</button>
                                     </form>
                                 </td>
                             </tr>
