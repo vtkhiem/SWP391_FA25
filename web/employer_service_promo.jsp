@@ -11,12 +11,12 @@
 
 <%
     // ✅ Kiểm tra đăng nhập và phân quyền
-    String role =(String) session.getAttribute("role");
-    if(role==null || !role.equalsIgnoreCase("Employer") ){
-         response.sendRedirect("access-denied.jsp");
+    String role = (String) session.getAttribute("role");
+    if (role == null || !role.equalsIgnoreCase("Employer")) {
+        response.sendRedirect("access-denied.jsp");
         return;
     }
-    
+
 %>
 
 <!DOCTYPE html>
@@ -179,11 +179,14 @@
                                     <ul class="text-start small list-unstyled mt-3">
                                         <c:forEach var="f" items="${s.functions}">
                                             <li>• ${f.functionName}</li>
-                                        </c:forEach>
+                                            </c:forEach>
                                     </ul>
                                 </c:if>
 
-                                <button class="buy-btn">Mua ngay</button>
+                                <form action="buyService" method="get">
+                                    <input type="hidden" name="serviceID" value="${s.serviceID}">
+                                    <button type="submit" class="buy-btn">Mua ngay</button>
+                                </form>
                             </div>
                         </div>
                     </c:forEach>

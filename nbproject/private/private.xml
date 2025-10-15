@@ -2,62 +2,25 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-
         <group>
-
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/DBContext.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/ServicePromotion.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/ServiceEmployer.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/ServiceEmployerDAO.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Promotion.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Service.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/promotion/AdminVerifyPromotionServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/promotion/AdminPromotionServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/promotion/AddPromotionServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/login.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/CheckCandidateEmailAndPhoneServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/CheckEmployerEmailAndPhoneAndTaxcodeServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/addPromotion.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/PromotionDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/RegisterServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Function.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/ServiceFunction.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/PasswordResetToken.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/candidate.html</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/marketing-staff.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/PromotionPost.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Role.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/JobPost.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Feedback.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Candidate.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Admin.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Apply.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/ApplyDetail.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Employer.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/AdminRoleDefine.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/LoginAdminServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/AdminDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/ListServiceServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/ServiceDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/ServicePromotionDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/ServiceFunctionDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/AddServiceServlet.java</file>
-<<<<<<< HEAD
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/addService.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/LoadPromotionAddServiceServlet.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/serviceList.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/FunctionDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/login-employer.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/employer.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/employer_service_promo.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/header.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/LoginServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/adminPromotionList.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/BuyServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/buy_service.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/ListServiceServlet.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/employer/EmployerServiceServlet.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/index.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/ProfileServlet.java</file>
-=======
-
->>>>>>> fa5232dd91eb8afe447bf7766f46a574e14ab5ad
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/RegisterServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/promotion/AddPromotionServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/service_success.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/auth/LoginServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/ServiceDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
         </group>
-
     </open-files>
 </project-private>

@@ -5,6 +5,7 @@
 
 package dal;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,28 @@ public class PromotionDAO extends DBContext {
         }
         return list;
     }
+     public List<Promotion> getAllActivePromotions() throws SQLException {
+        List<Promotion> list = new ArrayList<>();
+        String sql = "SELECT * FROM Promotion where Status = 1 ORDER BY PromotionID DESC";
+        try (PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Promotion p = new Promotion(
+                        rs.getInt("PromotionID"),
+                        rs.getString("Code"),
+                        rs.getBigDecimal("Discount"),
+                        rs.getTimestamp("DateSt"),
+                        rs.getTimestamp("DateEn"),
+                        rs.getTimestamp("DateCr"),
+                        rs.getString("Description"),
+                        rs.getBoolean("Status")
+                );
+                list.add(p);
+            }
+        }
+        return list;
+    }
 
     // 🟢 Lấy promotion theo ID
     public Promotion getPromotionById(int id) throws SQLException {
@@ -105,7 +128,7 @@ public class PromotionDAO extends DBContext {
     }
 
     // 🟣 Lấy promotion đang hoạt động (đang trong khoảng thời gian hiệu lực)
-    public List<Promotion> getAllActivePromotions() throws SQLException {
+    public List<Promotion> getAllActiveAndDatePromotions() throws SQLException {
         List<Promotion> list = new ArrayList<>();
         String sql = """
             SELECT * FROM Promotion
@@ -154,4 +177,70 @@ public class PromotionDAO extends DBContext {
         return ps.executeUpdate() > 0;
     }
 }
+     public Promotion getPromotionByCode(String code) throws SQLException {
+        String sql = "SELECT * FROM Promotion WHERE Code = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, code);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Promotion(
+                            rs.getInt("PromotionID"),
+                            rs.getString("Code"),
+                            rs.getBigDecimal("Discount"),
+                            rs.getTimestamp("DateSt"),
+                            rs.getTimestamp("DateEn"),
+                            rs.getTimestamp("DateCr"),
+                            rs.getString("Description"),
+                            rs.getBoolean("Status")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+ public static void main(String[] args) {
+        PromotionDAO dao = new PromotionDAO();
+        try {
+            System.out.println("---- TEST PromotionDAO ----");
+
+            // 🟢 Tạo promotion mới
+            Promotion p = new Promotion();
+            p.setCode("TEST02");
+            p.setDiscount(new BigDecimal("10"));
+            p.setDateSt(Timestamp.valueOf("2025-10-01 00:00:00"));
+            p.setDateEn(Timestamp.valueOf("2025-12-31 23:59:59"));
+            p.setDescription("Test giảm giá 10%");
+            p.setStatus(true);
+
+            boolean added = dao.addPromotion(p);
+            System.out.println("✅ Thêm promotion: " + added);
+
+            // 🔍 Lấy theo code để kiểm tra discount
+            Promotion promo = dao.getPromotionByCode("TEST02");
+            if (promo != null) {
+                System.out.println("🎁 Mã: " + promo.getCode());
+                System.out.println("💸 Discount (BigDecimal): " + promo.getDiscount());
+
+                // 🧮 Tính thử giá sau khuyến mãi
+                BigDecimal price = new BigDecimal("100"); // 1 triệu
+                BigDecimal discountValue = price.multiply(promo.getDiscount());
+                BigDecimal finalPrice = price.subtract(discountValue);
+                System.out.println("💰 Giá gốc: " + price);
+                System.out.println("➡️ Sau giảm: " + finalPrice);
+            } else {
+                System.out.println("⚠️ Không tìm thấy promotion!");
+            }
+
+            // 📋 Lấy danh sách
+            List<Promotion> list = dao.getAllPromotions();
+            System.out.println("\nDanh sách Promotion:");
+            for (Promotion pr : list) {
+                System.out.println(pr.getPromotionID() + " | " + pr.getCode() + " | " + pr.getDiscount());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
