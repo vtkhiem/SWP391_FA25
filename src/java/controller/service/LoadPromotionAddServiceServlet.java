@@ -89,9 +89,10 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
 protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
        PromotionDAO dao = new PromotionDAO();
+           FunctionDAO daoo = new FunctionDAO();
         try {
             String err=request.getParameter("error");
-            
+              List<Function> functionList = daoo.getAllFunctions();
             List<Promotion> promotionList = dao.getAllPromotions(); 
             request.setAttribute("promotionList", promotionList);
             request.setAttribute("error", err);
