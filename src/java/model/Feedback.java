@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
  */
 public class Feedback {
      private int feedbackID;
-    private Integer employerID;       // có thể null
-    private Integer candidateID;      // có thể null
+    private Integer employerID;      
+    private Integer candidateID;     
     private String subject;
     private String content;
-    private String type;              // loại feedback: complaint, suggestion, etc.
+    private String type;             
     private LocalDateTime createdAt;
-    private String status;            // Pending / Resolved / In Progress
+    private String status;            
     private String adminResponse;
     private LocalDateTime respondedAt; 
 

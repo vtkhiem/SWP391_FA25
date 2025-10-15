@@ -4,6 +4,7 @@
  */
 package controller.service;
 
+import dal.FunctionDAO;
 import dal.PromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
+import model.Function;
 import model.Promotion;
 
 /**
@@ -63,8 +65,11 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PromotionDAO dao = new PromotionDAO();
+        FunctionDAO daoo = new FunctionDAO();
         try {
-            List<Promotion> promotionList = dao.getAllPromotions(); 
+            List<Function> functionList = daoo.getAllFunctions();
+            List<Promotion> promotionList = dao.getAllPromotions();
+            request.setAttribute("functionList", functionList);
             request.setAttribute("promotionList", promotionList);
             request.getRequestDispatcher("addService.jsp").forward(request, response);
         } catch (SQLException e) {
