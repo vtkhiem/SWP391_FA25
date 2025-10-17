@@ -70,7 +70,8 @@
           <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
            <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link">Promotions</a>
-          
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
           
 </div>
 
