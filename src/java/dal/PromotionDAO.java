@@ -155,6 +155,40 @@ public class PromotionDAO extends DBContext {
         }
         return list;
     }
+ public List<Promotion> getAllActiveAndDatePromotionsForAService(int serviceId) throws SQLException {
+    List<Promotion> list = new ArrayList<>();
+    String sql = """
+        SELECT p.*
+        FROM Promotion p
+        INNER JOIN ServicePromotion sp ON p.PromotionID = sp.PromotionID
+        WHERE sp.ServiceID = ?
+          AND p.Status = 1
+          AND GETDATE() BETWEEN p.DateSt AND p.DateEn
+        ORDER BY p.DateSt DESC
+    """;
+
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, serviceId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Promotion p = new Promotion(
+                        rs.getInt("PromotionID"),
+                        rs.getString("Code"),
+                        rs.getBigDecimal("Discount"),
+                        rs.getTimestamp("DateSt"),
+                        rs.getTimestamp("DateEn"),
+                        rs.getTimestamp("DateCr"),
+                        rs.getString("Description"),
+                        rs.getBoolean("Status")
+                );
+                list.add(p);
+            }
+        }
+    }
+    return list;
+}
+
+
 
     // 🔍 Kiểm tra mã khuyến mãi đã tồn tại chưa
     public boolean isCodeExists(String code) throws SQLException {
@@ -198,6 +232,22 @@ public class PromotionDAO extends DBContext {
         }
         return null;
     }
+     public Promotion getBestPromotionFromList(List<Promotion> promotions) {
+    if (promotions == null || promotions.isEmpty()) {
+        return null;
+    }
+
+    Promotion best = promotions.get(0);
+    for (Promotion p : promotions) {
+        // So sánh discount (giả sử discount là BigDecimal)
+        if (p.getDiscount().compareTo(best.getDiscount()) > 0) {
+            best = p;
+        }
+    }
+
+    return best;
+}
+
 
  public static void main(String[] args) {
         PromotionDAO dao = new PromotionDAO();

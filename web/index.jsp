@@ -382,6 +382,14 @@
                     </div>
                 </div>
             </div>
+            <div class="text-center my-5">
+                <form action="feedback_form.jsp" method="get">
+                    <input type="hidden" name="type" value="Service Feedback">
+                    <button type="submit" class="buy-btn">
+                        <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên
+                    </button>
+                </form>
+            </div>
             <!-- job_searcing_wrap end  -->
 
             <!-- footer -->

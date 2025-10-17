@@ -72,7 +72,7 @@ public class BuyServiceServlet extends HttpServlet {
             Service service = serviceDAO.getServiceById(serviceID);
 
             // ✅ Lấy danh sách khuyến mãi đang còn hiệu lực và được duyệt
-            List<Promotion> promotions = promoDAO.getAllActiveAndDatePromotions();
+            List<Promotion> promotions = promoDAO.getAllActiveAndDatePromotionsForAService(serviceID);
 
             request.setAttribute("service", service);
             request.setAttribute("promotionList", promotions);

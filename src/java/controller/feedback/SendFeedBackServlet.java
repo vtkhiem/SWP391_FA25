@@ -2,12 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.employer;
+package controller.feedback;
 
-import dal.PromotionDAO;
-import dal.ServiceDAO;
-import dal.ServiceFunctionDAO;
-import dal.ServicePromotionDAO;
+import dal.FeedbackDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,19 +12,19 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import model.Promotion;
-import model.Service;
+import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import model.Employer;
+import model.Feedback;
+import tool.EmailService;
 
 /**
  *
  * @author vuthienkhiem
  */
-@WebServlet(name = "EmployerServiceServlet", urlPatterns = {"/employerServices"})
-public class EmployerServiceServlet extends HttpServlet {
+@WebServlet(name = "SendFeedBackServlet", urlPatterns = {"/sendFeedback"})
+public class SendFeedBackServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +43,10 @@ public class EmployerServiceServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployerServiceServlet</title>");
+            out.println("<title>Servlet SendFeedBackServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EmployerServiceServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SendFeedBackServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,42 +64,7 @@ public class EmployerServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       try {
-            PromotionDAO promoDAO = new PromotionDAO();
-            ServiceDAO serviceDAO = new ServiceDAO();
-            ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
-            ServicePromotionDAO smDAO = new ServicePromotionDAO();
-
-
-Map<Integer, BigDecimal> serviceFinalPrice = new HashMap<>();
-
-
-
-            List<Promotion> promotionList = promoDAO.getAllActiveAndDatePromotions(); 
-            List<Service> serviceList = serviceDAO.getAllVisibleServices();
-   
-            for (Service s : serviceList) {
-                List<Promotion> servicePromotionList = promoDAO.getAllActiveAndDatePromotionsForAService(s.getServiceID());
-                s.setFunctions(sfDAO.getFunctionsByServiceId(s.getServiceID()));
-                
-               Promotion bestPromo=  promoDAO.getBestPromotionFromList(servicePromotionList);
-                 BigDecimal finalPrice = s.getPrice();
-                 if (bestPromo != null){
-        BigDecimal discount = bestPromo.getDiscount(); 
-        finalPrice = s.getPrice().subtract(s.getPrice().multiply(discount));
-    }
-                  serviceFinalPrice.put(s.getServiceID(), finalPrice);
-            }
-            
-request.setAttribute("finalPrices", serviceFinalPrice);
-            request.setAttribute("promotionList", promotionList);
-            request.setAttribute("serviceList", serviceList);
-            request.getRequestDispatcher("employer_service_promo.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            throw new ServletException("Lỗi khi tải dữ liệu dịch vụ và khuyến mãi", e);
-        }
-    
+        processRequest(request, response);
     }
 
     /**
@@ -116,7 +78,39 @@ request.setAttribute("finalPrices", serviceFinalPrice);
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+       
+            Employer emp = (Employer) request.getSession().getAttribute("user");
+            if (emp == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
+
+        Integer employerID = Integer.valueOf(emp.getEmployerId());
+        String subject = request.getParameter("subject");
+        String content = request.getParameter("content");
+        String type = request.getParameter("type");
+
+        Feedback feedback = new Feedback(employerID, null, subject, content, type);
+
+        try {
+            FeedbackDAO dao = new FeedbackDAO();
+            boolean success = dao.addFeedback(feedback);
+            if (success) {
+                EmailService tool = new EmailService();
+                tool.sendFeedbackToAdmin("vuthienkhiem2005@gmail.com", emp.getEmail(), subject, content);
+                
+                request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
+            } else {
+                request.setAttribute("error", "Không thể gửi phản hồi. Vui lòng thử lại.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+        }
+
+        request.getRequestDispatcher("feedback_success.jsp").forward(request, response);
     }
 
     /**

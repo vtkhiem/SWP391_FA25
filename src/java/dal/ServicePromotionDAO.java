@@ -115,4 +115,68 @@ public class ServicePromotionDAO extends DBContext {
     }
     return promotions;
 }
+  public List<Promotion> getPromotionsDateFineByServiceId(int serviceId) throws SQLException {
+    List<Promotion> promotions = new ArrayList<>();
+    String sql = """
+        SELECT p.PromotionID, p.Code, p.Discount, p.Description, p.DateSt, p.DateEn, p.DateCr, p.Status
+        FROM ServicePromotion sp
+        JOIN Promotion p ON sp.PromotionID = p.PromotionID
+        WHERE sp.ServiceID = ?
+                  AND GETDATE() BETWEEN p.DateSt AND p.DateEn
+    """;
+
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, serviceId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Promotion promotion = new Promotion();
+                promotion.setPromotionID(rs.getInt("PromotionID"));
+                promotion.setCode(rs.getString("Code"));
+                promotion.setDiscount(rs.getBigDecimal("Discount"));
+                promotion.setDescription(rs.getString("Description"));
+                promotion.setDateSt(rs.getTimestamp("DateSt"));
+                promotion.setDateEn(rs.getTimestamp("DateEn"));
+                promotion.setDateCr(rs.getTimestamp("DateCr"));
+                promotion.setStatus(rs.getBoolean("Status"));
+                if(rs.getBoolean("Status")){
+                       promotions.add(promotion);
+                }
+
+              
+            }
+        }
+    }
+    return promotions;
+}
+ public Promotion getBestPromotionForService(int serviceId) throws SQLException {
+    String sql = """
+        SELECT TOP 1 p.*
+        FROM Promotion p
+        INNER JOIN ServicePromotion sp ON p.PromotionID = sp.PromotionID
+        WHERE sp.ServiceID = ?
+          AND p.Status = 1
+          AND GETDATE() BETWEEN p.DateSt AND p.DateEn
+        ORDER BY p.Discount DESC, p.DateSt DESC
+    """;
+
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, serviceId);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return new Promotion(
+                        rs.getInt("PromotionID"),
+                        rs.getString("Code"),
+                        rs.getBigDecimal("Discount"),
+                        rs.getTimestamp("DateSt"),
+                        rs.getTimestamp("DateEn"),
+                        rs.getTimestamp("DateCr"),
+                        rs.getString("Description"),
+                        rs.getBoolean("Status")
+                );
+            }
+        }
+    }
+    return null; // không có khuyến mãi phù hợp
+}
+ 
 }
