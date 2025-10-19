@@ -25,18 +25,15 @@ public class Feedback {
     public Feedback() {
     }
 
-    public Feedback(int feedbackID, Integer employerID, Integer candidateID, String subject, String content, String type, LocalDateTime createdAt, String status, String adminResponse, LocalDateTime respondedAt) {
-        this.feedbackID = feedbackID;
+    public Feedback(Integer employerID, Integer candidateID, String subject, String content, String type) {
         this.employerID = employerID;
         this.candidateID = candidateID;
         this.subject = subject;
         this.content = content;
         this.type = type;
-        this.createdAt = createdAt;
-        this.status = status;
-        this.adminResponse = adminResponse;
-        this.respondedAt = respondedAt;
     }
+
+
 
     public int getFeedbackID() {
         return feedbackID;

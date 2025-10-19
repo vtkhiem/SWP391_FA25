@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import model.PasswordResetToken;
-import tool.ResetService;
+import tool.EmailService;
 
 /**
  *
@@ -78,7 +78,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         String email = request.getParameter("email");
         String role = request.getParameter("role"); // có thể null nếu mới nhập email
         PasswordDAO passwordDAO = new PasswordDAO();
-        ResetService resetService = new ResetService();
+        EmailService resetService = new EmailService();
 
         try {
             // Nếu email không tồn tại trong hệ thống

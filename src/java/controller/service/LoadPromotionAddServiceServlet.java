@@ -68,7 +68,7 @@ public class LoadPromotionAddServiceServlet extends HttpServlet {
         FunctionDAO daoo = new FunctionDAO();
         try {
             List<Function> functionList = daoo.getAllFunctions();
-            List<Promotion> promotionList = dao.getAllPromotions();
+            List<Promotion> promotionList = dao.getAllActivePromotions();
             request.setAttribute("functionList", functionList);
             request.setAttribute("promotionList", promotionList);
             request.getRequestDispatcher("addService.jsp").forward(request, response);

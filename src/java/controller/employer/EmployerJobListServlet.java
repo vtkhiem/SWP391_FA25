@@ -42,7 +42,7 @@ public class EmployerJobListServlet extends HttpServlet {
         if (session == null || session.getAttribute("user") == null
                 || !"Employer".equals(session.getAttribute("role"))) {
             // Nếu chưa login hoặc không phải employer thì chặn lại
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login-employer.jsp");
             return;
         }
 

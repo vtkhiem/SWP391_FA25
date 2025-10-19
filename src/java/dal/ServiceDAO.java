@@ -189,4 +189,11 @@ public class ServiceDAO extends DBContext {
         }
         return functions;
     }
+      public boolean toggleVisibility(int serviceID) throws SQLException {
+        String sql = "UPDATE Service SET IsVisible = CASE WHEN IsVisible = 1 THEN 0 ELSE 1 END WHERE ServiceID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, serviceID);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

@@ -70,25 +70,28 @@ public class ViewApply extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("user") == null
                 || !"Employer".equals(session.getAttribute("role"))) {
             // Nếu chưa login hoặc không phải employer thì chặn lại
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login-employer.jsp");
             return;
         }
 
         String jobIdStr = request.getParameter("jobId");
+        Employer employer = (Employer) session.getAttribute("user");
 
         if (jobIdStr != null && !jobIdStr.isEmpty()) {
             int jobId = Integer.parseInt(jobIdStr);
             ApplyDAO dao = new ApplyDAO();
             JobPostDAO jdao = new JobPostDAO();
-            CandidateDAO cdao =new CandidateDAO();
+            CandidateDAO cdao = new CandidateDAO();
             CVDAO cvdao = new CVDAO();
 
-            List<Apply> applies = dao.getApplyByJobPost(jobId);
+            List<Apply> applies = dao.getApplyByJobPost(jobId, employer.getEmployerId());
             List<ApplyDetail> details = new ArrayList<>();
 
             for (Apply apply : applies) {
@@ -97,7 +100,7 @@ public class ViewApply extends HttpServlet {
                 JobPost job = jdao.getJobPostById(apply.getJobPostId());
                 details.add(new ApplyDetail(apply, can, cv, job));
             }
-            
+
             request.setAttribute("details", details);
             request.getRequestDispatcher("apply.jsp").forward(request, response);
         } else {
@@ -117,7 +120,7 @@ public class ViewApply extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request,response);
+        processRequest(request, response);
     }
 
     /**

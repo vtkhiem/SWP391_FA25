@@ -87,7 +87,7 @@ public class LoginServlet extends HttpServlet {
                 }
             } else if (role.equalsIgnoreCase("employer")) {
                 if (employerDAO.isEmailEmployerExist(inputValue)) {
-
+                    
                     boolean result = employerDAO.loginEmployer(inputValue, password);
 
                     if (result) {

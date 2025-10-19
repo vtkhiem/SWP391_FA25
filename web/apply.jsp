@@ -121,7 +121,7 @@
             </select>
 
             <button id="clearFilterBtn" class="btn btn-sm btn-warning me-2" style="height:38px;">Clear</button>
-
+            <button id="applyFilterBtn" class="btn btn-sm btn-warning me-2" style="height:38px;">Apply</button> 
         </div>
 
 
@@ -230,6 +230,23 @@
 
 
         <script>
+            // Lấy các input và select
+            const searchInput = document.getElementById("searchInput");
+            const experienceFilter = document.getElementById("experienceFilter");
+            const statusFilter = document.getElementById("statusFilter");
+            //function filterTable()
+
+
+                    // Clear filter
+                    const clearFilterBtn = document.getElementById("clearFilterBtn");
+
+            clearFilterBtn.addEventListener("click", () => {
+                searchInput.value = "";
+                experienceFilter.value = "";
+                statusFilter.value = "";
+                filterTable(); // gọi lại hàm để reset bảng
+            });
+
             // Chọn tất cả checkbox
             const selectAllCheckbox = document.getElementById("selectAll");
             const rowCheckboxes = document.querySelectorAll(".jobCheckbox");
@@ -240,7 +257,7 @@
                 });
             });
 
-// Nếu muốn, khi người dùng tick/un-tick riêng lẻ, cập nhật checkbox header
+            //update checkbox header
             rowCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener("change", function () {
                     // Nếu có checkbox nào chưa tick, header bỏ tick
@@ -248,81 +265,40 @@
                 });
             });
 
-            const contextPath = "${pageContext.request.contextPath}";
-            document.querySelectorAll(".status-select").forEach(select => {
-                select.addEventListener("change", function () {
-                    let applyId = this.getAttribute("data-apply-id");
-                    let newStatus = this.value;
+            // Hàm cập nhật trạng thái ứng tuyển
+            function updateStatus() {
+                const contextPath = "${pageContext.request.contextPath}";
 
-                    fetch(contextPath + "/status", {// ✅ luôn đúng path
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: "applyId=" + encodeURIComponent(applyId)
-                                + "&status=" + encodeURIComponent(newStatus)
-                    })
-                            .then(response => response.text())
-                            .then(data => {
-                                console.log("Server response:", data);
-                                alert(data);
-                            })
-                            .catch(error => console.error("Lỗi:", error));
-                });
-            });
+                document.querySelectorAll(".status-select").forEach(select => {
+                    select.addEventListener("change", function () {
+                        const applyId = this.getAttribute("data-apply-id");
+                        const newStatus = this.value;
 
-            // Lấy các input và select
-            const searchInput = document.getElementById("searchInput");
-            const experienceFilter = document.getElementById("experienceFilter");
-            const statusFilter = document.getElementById("statusFilter");
-            const tableRows = document.querySelectorAll("tbody tr");
-
-            // Hàm lọc
-            function filterTable() {
-                const searchText = searchInput.value.toLowerCase();
-                const experienceText = experienceFilter.value; // "0-1", "2-3", "4-5", "5+"
-                const statusText = statusFilter.value.toLowerCase();
-
-                tableRows.forEach(row => {
-                    const candidateName = row.cells[2]?.textContent.toLowerCase() || "";
-                    const candidateEmail = row.cells[3]?.textContent.toLowerCase() || "";
-                    const candidateExp = parseInt(row.cells[4]?.textContent || "0"); // chuyển về số
-                    const candidateStatus = row.cells[6]?.querySelector("select")?.value.toLowerCase() || "";
-
-                    // Kiểm tra filter search
-                    const matchesSearch = candidateName.includes(searchText) || candidateEmail.includes(searchText);
-
-                    // Kiểm tra filter kinh nghiệm
-                    let matchesExperience = true;
-                    if (experienceText) {
-                        if (experienceText === "0-1") {
-                            matchesExperience = candidateExp >= 0 && candidateExp <= 1;
-                        } else if (experienceText === "2-3") {
-                            matchesExperience = candidateExp >= 2 && candidateExp <= 3;
-                        } else if (experienceText === "4-5") {
-                            matchesExperience = candidateExp >= 4 && candidateExp <= 5;
-                        } else if (experienceText === "5+") {
-                            matchesExperience = candidateExp > 5;
-                        }
-                    }
-
-                    // Kiểm tra filter status
-                    const matchesStatus = !statusText || candidateStatus === statusText;
-
-                    // Hiển thị hoặc ẩn dòng
-                    if (matchesSearch && matchesExperience && matchesStatus) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
+                        updateApplicationStatus(contextPath, applyId, newStatus);
+                    });
                 });
             }
 
+            // Hàm gửi yêu cầu cập nhật trạng thái lên server
+            function updateApplicationStatus(contextPath, applyId, newStatus) {
+                fetch(`${contextPath}/status`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "applyId=" + encodeURIComponent(applyId)
+                            + "&status=" + encodeURIComponent(newStatus)
+                })
+                        .then(response => response.text())
+                        .then(data => {
+                            console.log("Server response:", data);
+                            alert(data);
+                        })
+                        .catch(error => console.error("Lỗi:", error));
+            }
 
-            // Gắn sự kiện
-            searchInput.addEventListener("input", filterTable);
-            experienceFilter.addEventListener("change", filterTable);
-            statusFilter.addEventListener("change", filterTable);
+            // Gọi hàm khi trang đã tải xong
+            document.addEventListener("DOMContentLoaded", updateStatus);
 
             const noteModal = document.getElementById("noteModal");
             const noteText = document.getElementById("noteText");
@@ -330,7 +306,7 @@
             const cancelNoteBtn = document.getElementById("cancelNoteBtn");
             const saveNoteBtn = document.getElementById("saveNoteBtn");
 
-// Khi bấm nút Note
+            // Khi bấm nút Note
             let currentRow = null;
 
             document.querySelectorAll(".noteBtn").forEach(btn => {
@@ -349,10 +325,10 @@
                 });
             });
 
-            // Save note
-            saveNoteBtn.addEventListener("click", () => {
+            function saveNote() {
                 const applyId = noteApplyId.value;
                 const newNote = noteText.value;
+                const contextPath = "${pageContext.request.contextPath}";
 
                 fetch(contextPath + "/noteApply", {
                     method: "POST",
@@ -366,35 +342,35 @@
                                 alert(data);
                             }
 
+                            // Cập nhật bảng
                             if (currentRow) {
-                                currentRow.cells[7].textContent = newNote; // update cột Note
+                                currentRow.cells[7].textContent = newNote;
                             }
 
-                            noteModal.style.display = "none"; // đóng modal
+                            // Đóng modal
+                            noteModal.style.display = "none";
                             currentRow = null;
                         })
                         .catch(err => console.error("Lỗi:", err));
-            });
+            }
 
-            // Đóng modal khi click bên ngoài
-            window.addEventListener("click", (e) => {
-                if (e.target === noteModal) {
-                    noteModal.style.display = "none";
-                }
-            });
-
-            // Clear filter
-            const clearFilterBtn = document.getElementById("clearFilterBtn");
-
-            clearFilterBtn.addEventListener("click", () => {
-                searchInput.value = "";
-                experienceFilter.value = "";
-                statusFilter.value = "";
-                filterTable(); // gọi lại hàm để reset bảng
-            });
-
-            document.getElementById("downloadSelectedBtn").addEventListener("click", function (e) {
+            saveNoteBtn.addEventListener("click", function (e) {
                 e.preventDefault();
+                saveNote();
+            });
+
+
+            // Nút Cancel đóng modal
+            cancelNoteBtn.addEventListener("click", (e) => {
+                e.preventDefault(); // tránh submit form mặc định
+                noteModal.style.display = "none";
+                currentRow = null; // reset lại row đang chọn
+            });
+
+            // Hàm xử lý tải CV được chọn
+            function downloadSelected(event) {
+                event.preventDefault();
+
                 const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
                         .map(cb => cb.value);
 
@@ -404,9 +380,14 @@
                 }
 
                 // Tạo query string ids=1,2,3
+                const contextPath = "${pageContext.request.contextPath}";
                 const url = "${pageContext.request.contextPath}/downloadCV?ids=" + selected.join(",");
-                window.location.href = url; // redirect sang servlet
-            });
+                window.location.href = url; // chuyển hướng đến servlet tải file
+            }
+
+            // Gán sự kiện cho nút tải xuống
+            document.getElementById("downloadSelectedBtn").addEventListener("click", downloadSelected);
+
         </script>
 
 
