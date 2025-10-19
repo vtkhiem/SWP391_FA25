@@ -77,6 +77,7 @@ public class FeedbackDAO extends DBContext {
         }
         return null;
     }
+    
 
     // ✅ Lấy Feedback theo EmployerID
     public List<Feedback> getFeedbackByEmployer(int employerID) throws SQLException {
@@ -194,6 +195,29 @@ public class FeedbackDAO extends DBContext {
         }
         return list;
     }
+      // ✅ Lấy ID người gửi feedback (tức là EmployerID hoặc CandidateID)
+public Integer getSenderId(int feedbackID) throws SQLException {
+    String sql = """
+        SELECT 
+            CASE 
+                WHEN EmployerID IS NOT NULL THEN EmployerID
+                ELSE CandidateID
+            END AS SenderID
+        FROM Feedback
+        WHERE FeedbackID = ?
+    """;
+
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, feedbackID);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getObject("SenderID") != null ? rs.getInt("SenderID") : null;
+            }
+        }
+    }
+    return null;
+}
+
 
 
 }

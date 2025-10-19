@@ -69,6 +69,50 @@ props.put("mail.smtp.ssl.protocols", "TLSv1.2");
             e.printStackTrace();
         }
     }
+      public void sendEmailToUser(String to,String response, String subject) {
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true"); // sửa lỗi chính tả ở đây
+props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            // Authenticator
+            Authenticator auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(from, password);
+                }
+            };
+
+            Session session = Session.getInstance(props, auth);
+
+            // Soạn mail
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(from, "Support Team")); // hiển thị tên người gửi
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            msg.setSubject("Trả lời feedback");
+            
+            String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
+                + "<h3>📬 Có phản hồi mới gửi từ admin </h3>"
+                + "<p><b>Chủ đề:</b> " + subject + "</p>"
+                + "<p><b>Nội dung:</b><br>" + response + "</p>"
+                + "<hr>"
+                + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
+                + "Vui lòng không trả lời email này.</p>"
+                + "</div>";
+
+            msg.setContent(htmlContent, "text/html; charset=UTF-8");
+
+            // Gửi mail
+            Transport.send(msg);
+
+            System.out.println("Email đã được gửi thành công tới: " + to);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
   public void sendFeedbackToAdmin(String adminEmail, String senderName, String subject, String content) {
     try {
         Properties props = new Properties();

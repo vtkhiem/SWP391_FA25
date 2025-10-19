@@ -94,6 +94,14 @@
                                                 <div class="collapse mt-3" id="replyForm${fb.feedbackID}">
                                                     <form action="respondFeedback" method="post">
                                                         <input type="hidden" name="feedbackID" value="${fb.feedbackID}">
+                                                         <c:choose>
+                                            <c:when test="${not empty fb.employerID}">
+                                                <input type="hidden" name="role" value="employer">
+                                            </c:when>
+                                            <c:when test="${not empty fb.candidateID}">
+                                                <input type="hidden" name="role" value="candidate">
+                                            </c:when>
+                                        </c:choose>
                                                         <div class="mb-2">
                                                             <textarea name="adminResponse" class="form-control" rows="3" 
                                                                       placeholder="Nhập phản hồi của bạn..."></textarea>
@@ -157,6 +165,8 @@
                 <div class="collapse mt-3" id="replyForm${fb.feedbackID}">
                     <form action="respondFeedback" method="post">
                         <input type="hidden" name="feedbackID" value="${fb.feedbackID}">
+                        
+                          <input type="hidden" name="role" value="employer">
                         <div class="mb-2">
                             <textarea name="adminResponse" class="form-control" rows="3" 
                                       placeholder="Nhập phản hồi của bạn..."></textarea>
@@ -219,6 +229,7 @@
                 <!-- ✅ Form phản hồi ẩn -->
                 <div class="collapse mt-3" id="replyForm${fb.feedbackID}">
                     <form action="respondFeedback" method="post">
+                         <input type="hidden" name="role" value="candidate">
                         <input type="hidden" name="feedbackID" value="${fb.feedbackID}">
                         <div class="mb-2">
                             <textarea name="adminResponse" class="form-control" rows="3" 
