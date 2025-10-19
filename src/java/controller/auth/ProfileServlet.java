@@ -6,6 +6,8 @@
 package controller.auth;
 import dal.RegisterCandidateDAO;
 import dal.RegisterEmployerDAO;
+import dal.ServiceDAO;
+import dal.ServiceEmployerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,8 +16,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.List;
 import model.Candidate;
 import model.Employer;
+import model.Service;
+import model.ServiceEmployer;
 
 /**
  *
@@ -86,8 +92,18 @@ public class ProfileServlet extends HttpServlet {
             }
         } else if ("Employer".equals(role)) {
              RegisterEmployerDAO employerDAO = new RegisterEmployerDAO();
+             ServiceEmployerDAO dao = new ServiceEmployerDAO();
+             ServiceDAO svdao = new ServiceDAO();
                    Employer employer = (Employer) session.getAttribute("user");
-            // Employer: Query DB để lấy thông tin (sẽ implement getEmployerByEmail)
+            try {
+                 int sid =dao.getServiceIdByEmployerId(employer.getEmployerId());
+             Service s= svdao.getServiceById(sid);
+             session.setAttribute("service", s);
+               session.setAttribute("employer", employer);
+                // Employer: Query DB để lấy thông tin (sẽ implement getEmployerByEmail)
+            } catch (SQLException ex) {
+                System.getLogger(ProfileServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            }
 
             if (employer == null) {
                RegisterEmployerDAO candidateDAO = new RegisterEmployerDAO();
@@ -95,6 +111,7 @@ public class ProfileServlet extends HttpServlet {
                 employer = candidateDAO.getEmployerByEmail(email);
                 if (employer != null) {
                     session.setAttribute("employer", employer);
+                    
                 } 
                  else {
                 request.setAttribute("status", "Không tìm thấy thông tin nhà tuyển dụng!");
