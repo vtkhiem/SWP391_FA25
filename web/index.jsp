@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Trang chú - Job Board</title>
+        <title>Trang chủ - Job Board</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="search_buttons">
-                            <button type="submit" class="btn-find">Tìm</button>
+                            <button type="submit" class="btn-find"><i class="ti-search"></i></button>
                         </div>
                     </form>
                 </div>
@@ -382,14 +382,14 @@
                     </div>
                 </div>
             </div>
-            <div class="text-center my-5">
+<!--            <div class="text-center my-5">
                 <form action="feedback_form.jsp" method="get">
                     <input type="hidden" name="type" value="Service Feedback">
                     <button type="submit" class="buy-btn">
                         <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên
                     </button>
                 </form>
-            </div>
+            </div>-->
             <!-- job_searcing_wrap end  -->
 
             <!-- footer -->

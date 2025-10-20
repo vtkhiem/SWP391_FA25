@@ -29,9 +29,21 @@
                             <div class="row align-items-center">
                                 <div class="col-xl-3 col-lg-2">
                                     <div class="logo">
-                                        <a href="index.jsp">
-                                            <img src="img/logo.png" alt="">
-                                        </a>
+                                        <c:choose>
+                                            <%-- Employer --%>
+                                            <c:when test="${sessionScope.role eq 'Employer'}">
+                                                <a href="employerServices">
+                                                    <img src="img/logo.png" alt="">
+                                                </a>
+                                            </c:when>
+
+                                            <%-- Candidate/Guest --%>
+                                            <c:otherwise>
+                                                <a href="index.jsp">
+                                                    <img src="img/logo.png" alt="">
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-7">
@@ -41,11 +53,11 @@
                                                 <c:choose>
                                                     <%-- Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
-                                                        <li><a href="employerServices">Home</a></li>
+                                                        <li><a href="employerServices">Trang chủ</a></li>
                                                         <li><a href="employer.jsp">DashBoard</a></li>
-                                                        <li><a href="job_post.jsp">Create Job</a></li>
-                                                        <li><a href="employer_jobs">View Jobs</a></li>
-                                                        </c:when>
+                                                        <li><a href="job_add">Đăng Công Việc</a></li>
+                                                        <li><a href="employer_jobs">Xem Công Việc</a></li>
+                                                    </c:when>
 
                                                     <%-- Candidate/Guest --%>
                                                     <c:otherwise>
@@ -64,8 +76,8 @@
                                                         </li>
                                                         <li><a href="#">Blog</a></li>
                                                         <li><a href="contact.html">Liên hệ</a></li>
-                                                        </c:otherwise>
-                                                    </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </ul>
                                         </nav>
                                     </div>

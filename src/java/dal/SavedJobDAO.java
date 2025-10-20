@@ -5,7 +5,6 @@ import java.util.*;
 import model.JobPost;
 
 public class SavedJobDAO extends DBContext {
-
     public boolean saveJob(int candidateID, int jobPostID) {
         String sql = "INSERT INTO SavedJob (CandidateID, JobPostID, SavedDate) VALUES (?, ?, GETDATE())";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
