@@ -88,7 +88,7 @@ public class FilterApply extends HttpServlet {
         String txt = Validation.searchKey(request.getParameter("txt"));
         String exp = request.getParameter("exp");
         String status = request.getParameter("status");
-     
+
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(false);
 
@@ -108,10 +108,8 @@ public class FilterApply extends HttpServlet {
 
         int recordsPerPage = 10;
         int offSet = (page - 1) * recordsPerPage;
-        int totalRecords = dao.countApply(jobId);
-        int totalPage = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
-        List<Apply> applies = dao.filterApply(jobId,employer.getEmployerId(),Validation.searchKey(txt),status,exp,offSet,recordsPerPage);
+        List<Apply> applies = dao.filterApply(jobId, employer.getEmployerId(), Validation.searchKey(txt), status, exp, offSet, recordsPerPage);
         List<ApplyDetail> details = new ArrayList<>();
 
         for (Apply apply : applies) {
@@ -120,21 +118,25 @@ public class FilterApply extends HttpServlet {
             JobPost job = jdao.getJobPostById(apply.getJobPostId());
             details.add(new ApplyDetail(apply, can, cv, job));
         }
-
+        int totalRecords = details.size();
+        int totalPage = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+        
+        request.setAttribute("txt", txt);
+        request.setAttribute("exp", exp);
+        request.setAttribute("status", status);
         request.setAttribute("details", details);
         request.setAttribute("currentPage", page);
         request.setAttribute("noOfPages", totalPage);
         request.getRequestDispatcher("apply.jsp").forward(request, response);
     }
 
-
-/**
- * Returns a short description of the servlet.
- *
- * @return a String containing servlet description
- */
-@Override
-public String getServletInfo() {
-return "Short description";
-}// </editor-fold>
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
 }

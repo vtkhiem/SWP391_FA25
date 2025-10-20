@@ -103,13 +103,13 @@
 
             <!-- Search box -->
             <input type="text" class="form-control align-middle"
-                   name="txt" id="searchInput"
+                   name="txt" id="searchInput" value="${txt}"
                    placeholder="Search by name or email..."
                    style="height: 38px; min-width: 250px;">
 
             <!-- Filters -->
             <select class="form-control" name="exp" id="experienceFilter" style="height: 38px; min-width: 180px;">
-                <option value="">Filter by Experience</option>
+                <option value="${exp}">Filter by Experience</option>
                 <option value="0-1">0 - 1 years</option>
                 <option value="2-3">2 - 3 years</option>
                 <option value="4-5">4 - 5 years</option>
@@ -117,7 +117,7 @@
             </select>
 
             <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
-                <option value="">Filter by Status</option>
+                <option value="${status}">Filter by Status</option>
                 <option value="Pending">Pending</option>
                 <option value="Approved">Approved</option>
                 <option value="Rejected">Rejected</option>
@@ -379,9 +379,6 @@
                 }
             });
         </script>
-
-
-
 
     </body>
 </html>

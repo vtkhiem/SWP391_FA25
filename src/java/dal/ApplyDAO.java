@@ -256,7 +256,7 @@ public class ApplyDAO {
                 + "WHERE j.EmployerID = ? AND j.JobPostID = ? ");
 
         if (txt != null && !txt.isEmpty()) {
-            sql.append(" AND (can.Email LIKE ? OR can.CandidateName LIKE ?)");
+            sql.append(" AND (cv.Email LIKE ? OR can.CandidateName LIKE ?)");
         }
         if (status != null && !status.isEmpty()) {
             sql.append(" AND a.Status = ?");
@@ -300,6 +300,6 @@ public class ApplyDAO {
     }
 
     public static void main(String[] args) {
-        System.out.println(new ApplyDAO().filterApply(7, 5, "", "", "2-3", 0, 10));
+        System.out.println(new ApplyDAO().filterApply(13, 5, "shirosama@gmail.com", "", "", 0, 10));
     }
 }
