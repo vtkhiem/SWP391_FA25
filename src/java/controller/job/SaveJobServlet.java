@@ -60,12 +60,12 @@ public class SaveJobServlet extends HttpServlet {
             savedJobDAO.saveJob(candidateId, jobId);
         }
 
-        // Quay lại trang gốc
+        /* Quay lại trang gốc
         if (redirect != null && !redirect.isEmpty()) {
             response.sendRedirect(redirect);
         } else {
             response.sendRedirect("job_details?id=" + jobId);
-        }
+        }*/
     }
 
     @Override

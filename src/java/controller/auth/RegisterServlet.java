@@ -13,7 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tool.ValidationRegister;
+import tool.Validation;
 
 /**
  *
@@ -90,7 +90,7 @@ public class RegisterServlet extends HttpServlet {
             String role = request.getParameter("role");
             String taxcode = request.getParameter("taxcode");
 
-            ValidationRegister validation = new ValidationRegister();
+            Validation validation = new Validation();
             RegisterCandidateDAO candidateDAO = new RegisterCandidateDAO();
             RegisterEmployerDAO employersDAO = new RegisterEmployerDAO();
 

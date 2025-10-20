@@ -96,15 +96,19 @@
 
         <!-- Search & Filter Controls -->
         <!-- Container -->
-        <div class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
-            <!-- Search box -->
+        <form action="${pageContext.request.contextPath}/filterApply" method="post" class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
 
-            <input type="text" class="form-control align-middle" id="searchInput" placeholder="Search by name or email..." 
+            <!-- hidden field để truyền Job ID -->
+            <input type="hidden" name="jobId" value="${param.jobId}">
+
+            <!-- Search box -->
+            <input type="text" class="form-control align-middle"
+                   name="txt" id="searchInput"
+                   placeholder="Search by name or email..."
                    style="height: 38px; min-width: 250px;">
 
-
             <!-- Filters -->
-            <select class="form-control" id="experienceFilter" style="height: 38px; min-width: 180px;">
+            <select class="form-control" name="exp" id="experienceFilter" style="height: 38px; min-width: 180px;">
                 <option value="">Filter by Experience</option>
                 <option value="0-1">0 - 1 years</option>
                 <option value="2-3">2 - 3 years</option>
@@ -112,16 +116,18 @@
                 <option value="5+">5+ years</option>
             </select>
 
-            <select class="form-control" id="statusFilter" style="height: 38px; min-width: 150px;">
+            <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
                 <option value="">Filter by Status</option>
                 <option value="Pending">Pending</option>
                 <option value="Approved">Approved</option>
                 <option value="Rejected">Rejected</option>
             </select>
 
-            <button id="clearFilterBtn" class="btn btn-sm btn-warning me-2" style="height:38px;">Clear</button>
-            <button id="applyFilterBtn" class="btn btn-sm btn-warning me-2" style="height:38px;">Apply</button> 
-        </div>
+            <button type="submit" class="btn btn-sm btn-warning me-2" style="height:38px;">Apply</button>
+            <button type="reset" class="btn btn-sm btn-secondary" style="height:38px;">Clear</button>
+
+        </form>
+
 
 
 
@@ -210,6 +216,29 @@
                         </div>
                     </div>
                 </div>
+                <div class="pagination justify-content-center mt-4">
+                    <ul class="pagination">
+                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="?jobId=${param.jobId}&page=${currentPage-1}">
+                                &lt;
+                            </a>
+                        </li>
+
+                        <c:forEach var="i" begin="1" end="${noOfPages}">
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="?jobId=${param.jobId}&page=${i}">
+                                    ${i}
+                                </a>
+                            </li>
+                        </c:forEach>
+
+                        <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
+                            <a class="page-link" href="?jobId=${param.jobId}&page=${currentPage+1}">
+                                &gt;
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -229,168 +258,128 @@
 
 
         <script>
-            // Lấy các input và select
-            const searchInput = document.getElementById("searchInput");
-            const experienceFilter = document.getElementById("experienceFilter");
-            const statusFilter = document.getElementById("statusFilter");
-            //function filterTable()
-            function filterTable() {
-                const txt = searchInput.value;
-                const exp = experienceFilter.value;
-                const status = statusFilter.value;
+            document.addEventListener("DOMContentLoaded", () => {
                 const contextPath = "${pageContext.request.contextPath}";
-                fetch(contextPath + "/filterApply", {
-                    method : "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: "txt=" + encodeURIComponent(txt)
-                            + "&exp=" + encodeURIComponent(exp)
-                            + "&status=" + encodeURIComponent(status)
-                })
-                        .then(response => response.text())
-                        .then(data => {
-                            if (data.trim() !== "") {
-                                alert(data);
-                            }
-                        })
-            }
 
-            //Apply Filter
-            const applyFilterBtn = document.getElementById("applyFilterBtn");
-            applyFilterBtn.addEventListener("click", () => {
-                filterTable();
-            })
+                // --- 1. FILTER FORM ---
+                const form = document.querySelector("form[action$='filterApply']");
+                const searchInput = document.getElementById("searchInput");
+                const expFilter = document.getElementById("experienceFilter");
+                const statusFilter = document.getElementById("statusFilter");
 
-            // Clear filter
-            const clearFilterBtn = document.getElementById("clearFilterBtn");
-            clearFilterBtn.addEventListener("click", () => {
-                searchInput.value = "";
-                experienceFilter.value = "";
-                statusFilter.value = "";
-            });
-            // Chọn tất cả checkbox
-            const selectAllCheckbox = document.getElementById("selectAll");
-            const rowCheckboxes = document.querySelectorAll(".jobCheckbox");
-            selectAllCheckbox.addEventListener("change", function () {
-                rowCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAllCheckbox.checked;
-                });
-            });
-            //update checkbox header
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener("change", function () {
-                    // Nếu có checkbox nào chưa tick, header bỏ tick
-                    selectAllCheckbox.checked = Array.from(rowCheckboxes).every(cb => cb.checked);
-                });
-            });
-            // Hàm cập nhật trạng thái ứng tuyển
-            function updateStatus() {
-                const contextPath = "${pageContext.request.contextPath}";
-                document.querySelectorAll(".status-select").forEach(select => {
-                    select.addEventListener("change", function () {
-                        const applyId = this.getAttribute("data-apply-id");
-                        const newStatus = this.value;
-                        updateApplicationStatus(contextPath, applyId, newStatus);
-                    });
-                });
-            }
-
-            // Hàm gửi yêu cầu cập nhật trạng thái lên server
-            function updateApplicationStatus(contextPath, applyId, newStatus) {
-                fetch(`${contextPath}/status`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: "applyId=" + encodeURIComponent(applyId)
-                            + "&status=" + encodeURIComponent(newStatus)
-                })
-                        .then(response => response.text())
-                        .then(data => {
-                            console.log("Server response:", data);
-                            alert(data);
-                        })
-                        .catch(error => console.error("Lỗi:", error));
-            }
-
-            // Gọi hàm khi trang đã tải xong
-            document.addEventListener("DOMContentLoaded", updateStatus);
-            const noteModal = document.getElementById("noteModal");
-            const noteText = document.getElementById("noteText");
-            const noteApplyId = document.getElementById("noteApplyId");
-            const cancelNoteBtn = document.getElementById("cancelNoteBtn");
-            const saveNoteBtn = document.getElementById("saveNoteBtn");
-            // Khi bấm nút Note
-            let currentRow = null;
-            document.querySelectorAll(".noteBtn").forEach(btn => {
-                btn.addEventListener("click", function (e) {
+                // Xử lý nút Clear: reset form và reload lại danh sách gốc
+                const clearBtn = form.querySelector("button[type='reset']");
+                clearBtn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    const applyId = this.getAttribute("data-apply-id");
-                    const row = this.closest("tr"); // lấy row hiện tại
-                    const currentNote = row.cells[7]?.textContent.trim() || "";
-                    noteApplyId.value = applyId;
-                    noteText.value = currentNote;
-                    noteModal.style.display = "flex";
-                    currentRow = row; // lưu row để update sau này
+                    searchInput.value = "";
+                    expFilter.value = "";
+                    statusFilter.value = "";
+                    // Reload lại trang không có filter
+                    const jobId = form.querySelector("input[name='jobId']").value;
+                    window.location.href = contextPath + "/filterApply?jobId=" + jobId;
                 });
-            });
-            function saveNote() {
-                const applyId = noteApplyId.value;
-                const newNote = noteText.value;
-                const contextPath = "${pageContext.request.contextPath}";
-                fetch(contextPath + "/noteApply", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: "applyId=" + encodeURIComponent(applyId)
-                            + "&note=" + encodeURIComponent(newNote)
-                })
-                        .then(response => response.text())
-                        .then(data => {
-                            if (data.trim() !== "") {
-                                alert(data);
-                            }
 
-                            // Cập nhật bảng
-                            if (currentRow) {
-                                currentRow.cells[7].textContent = newNote;
-                            }
-
-                            // Đóng modal
-                            noteModal.style.display = "none";
-                            currentRow = null;
-                        })
-                        .catch(err => console.error("Lỗi:", err));
-            }
-
-            saveNoteBtn.addEventListener("click", function (e) {
-                e.preventDefault();
-                saveNote();
-            });
-            // Nút Cancel đóng modal
-            cancelNoteBtn.addEventListener("click", (e) => {
-                e.preventDefault(); // tránh submit form mặc định
-                noteModal.style.display = "none";
-                currentRow = null; // reset lại row đang chọn
-            });
-            // Hàm xử lý tải CV được chọn
-            function downloadSelected(event) {
-                event.preventDefault();
-                const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
-                        .map(cb => cb.value);
-                if (selected.length === 0) {
-                    alert("Vui lòng chọn ít nhất một CV để tải về.");
-                    return;
+                // --- 2. CHECKBOX SELECT ALL ---
+                const selectAll = document.getElementById("selectAll");
+                const checkboxes = document.querySelectorAll(".jobCheckbox");
+                if (selectAll) {
+                    selectAll.addEventListener("change", () => {
+                        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                    });
+                    checkboxes.forEach(cb => cb.addEventListener("change", () => {
+                            selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
+                        }));
                 }
 
-                // Tạo query string ids=1,2,3
-                const contextPath = "${pageContext.request.contextPath}";
-                const url = "${pageContext.request.contextPath}/downloadCV?ids=" + selected.join(",");
-                window.location.href = url; // chuyển hướng đến servlet tải file
-            }
+                // --- 3. UPDATE STATUS (AJAX) ---
+                document.querySelectorAll(".status-select").forEach(select => {
+                    select.addEventListener("change", () => {
+                        const applyId = select.dataset.applyId;
+                        const newStatus = select.value;
 
-            // Gán sự kiện cho nút tải xuống
-            document.getElementById("downloadSelectedBtn").addEventListener("click", downloadSelected);
+                        fetch(contextPath + "/status", {
+                            method: "POST",
+                            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                            body: "applyId=" + encodeURIComponent(applyId) +
+                                    "&status=" + encodeURIComponent(newStatus)
+                        })
+                                .then(res => res.text())
+                                .then(msg => {
+                                    if (msg.trim() !== "")
+                                        alert(msg);
+                                })
+                                .catch(err => console.error("Lỗi cập nhật trạng thái:", err));
+                    });
+                });
 
+                // --- 4. NOTE MODAL ---
+                const noteModal = document.getElementById("noteModal");
+                const noteText = document.getElementById("noteText");
+                const noteApplyId = document.getElementById("noteApplyId");
+                const cancelNoteBtn = document.getElementById("cancelNoteBtn");
+                const saveNoteBtn = document.getElementById("saveNoteBtn");
+                let currentRow = null;
+
+                document.querySelectorAll(".noteBtn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const applyId = btn.dataset.applyId;
+                        const row = btn.closest("tr");
+                        const currentNote = row.cells[7]?.textContent.trim() || "";
+
+                        noteApplyId.value = applyId;
+                        noteText.value = currentNote;
+                        noteModal.style.display = "flex";
+                        currentRow = row;
+                    });
+                });
+
+                cancelNoteBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    noteModal.style.display = "none";
+                    currentRow = null;
+                });
+
+                saveNoteBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const applyId = noteApplyId.value;
+                    const newNote = noteText.value;
+
+                    fetch(contextPath + "/noteApply", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                        body: "applyId=" + encodeURIComponent(applyId) +
+                                "&note=" + encodeURIComponent(newNote)
+                    })
+                            .then(res => res.text())
+                            .then(msg => {
+                                if (msg.trim() !== "")
+                                    alert(msg);
+                                if (currentRow)
+                                    currentRow.cells[7].textContent = newNote;
+                                noteModal.style.display = "none";
+                                currentRow = null;
+                            })
+                            .catch(err => console.error("Lỗi lưu ghi chú:", err));
+                });
+
+                // --- 5. DOWNLOAD SELECTED ---
+                const downloadBtn = document.getElementById("downloadSelectedBtn");
+                if (downloadBtn) {
+                    downloadBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
+                                .map(cb => cb.value);
+                        if (selected.length === 0) {
+                            alert("Vui lòng chọn ít nhất một CV để tải.");
+                            return;
+                        }
+                        window.location.href = contextPath + "/downloadCV?ids=" + selected.join(",");
+                    });
+                }
+            });
         </script>
+
 
 
 

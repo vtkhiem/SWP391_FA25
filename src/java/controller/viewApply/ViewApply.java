@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+     * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller.viewApply;
 
@@ -24,6 +24,7 @@ import model.CV;
 import model.Candidate;
 import model.Employer;
 import model.JobPost;
+import tool.Validation;
 
 /**
  *
@@ -57,7 +58,7 @@ public class ViewApply extends HttpServlet {
             out.println("</html>");
         }
     }
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -73,40 +74,41 @@ public class ViewApply extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(false);
 
-        String jobIdStr = request.getParameter("jobId");
+        int jobId = Validation.getId(request.getParameter("jobId"));
         Employer employer = (Employer) session.getAttribute("user");
+        int page = Validation.getPage(request.getParameter("page"));
 
-        //check jobId va truy xuat sql
-        if (jobIdStr != null && !jobIdStr.isEmpty()) {
-            try {
-                int jobId = Integer.parseInt(jobIdStr);
-                ApplyDAO dao = new ApplyDAO();
-                JobPostDAO jdao = new JobPostDAO();
-                CandidateDAO cdao = new CandidateDAO();
-                CVDAO cvdao = new CVDAO();
-
-                List<Apply> applies = dao.getApplyByJobPost(jobId, employer.getEmployerId());
-                List<ApplyDetail> details = new ArrayList<>();
-
-                for (Apply apply : applies) {
-                    Candidate can = cdao.getCandidateById(apply.getCandidateId());
-                    CV cv = cvdao.getCVById(apply.getCvId());
-                    JobPost job = jdao.getJobPostById(apply.getJobPostId());
-                    details.add(new ApplyDetail(apply, can, cv, job));
-                }
-
-                request.setAttribute("details", details);
-                request.getRequestDispatcher("apply.jsp").forward(request, response);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-        } else {
-            // Nếu không có jobId, redirect về trang job list
+        if (jobId == 0) {
             response.sendRedirect("employer_jobs");
+            return; // avoid “response already committed”
         }
-    }
 
+        ApplyDAO dao = new ApplyDAO();
+        JobPostDAO jdao = new JobPostDAO();
+        CandidateDAO cdao = new CandidateDAO();
+        CVDAO cvdao = new CVDAO();
+
+        int recordsPerPage = 10;
+        int offSet = (page - 1) * recordsPerPage;
+        int totalRecords = dao.countApply(jobId);
+        int totalPage = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
+        List<Apply> applies = dao.getApplyByJobPost(jobId, employer.getEmployerId(), offSet, recordsPerPage);
+        List<ApplyDetail> details = new ArrayList<>();
+
+        for (Apply apply : applies) {
+            Candidate can = cdao.getCandidateById(apply.getCandidateId());
+            CV cv = cvdao.getCVById(apply.getCvId());
+            JobPost job = jdao.getJobPostById(apply.getJobPostId());
+            details.add(new ApplyDetail(apply, can, cv, job));
+        }
+
+        request.setAttribute("details", details);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("noOfPages", totalPage);
+        request.getRequestDispatcher("apply.jsp").forward(request, response);
+    }
+    
     /**
      * Handles the HTTP <code>POST</code> method.
      *
