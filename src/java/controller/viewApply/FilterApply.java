@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.viewApply;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -50,7 +50,11 @@ out.println("</html>");
 @Override
 protected void doGet(HttpServletRequest request, HttpServletResponse response)
 throws ServletException, IOException {
-processRequest(request, response);
+String txt = request.getParameter("txt");
+String exp = request.getParameter("exp");
+String status = request.getParameter("status");
+
+
 }
 /**
 * Handles the HTTP <code>POST</code> method.

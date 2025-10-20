@@ -22,7 +22,7 @@ public class AuthFilter implements Filter {
         if (session == null || session.getAttribute("role") == null
                 || !"Employer".equals(session.getAttribute("role"))) {
             // bạn có thể thêm thông báo ?next= để redirect sau khi login
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login-employer.jsp");
             return;
         }
 

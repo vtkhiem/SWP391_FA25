@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="model.ApplyDetail, java.time.format.DateTimeFormatter"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
@@ -235,28 +234,47 @@
             const experienceFilter = document.getElementById("experienceFilter");
             const statusFilter = document.getElementById("statusFilter");
             //function filterTable()
+            function filterTable() {
+                const txt = searchInput.value;
+                const exp = experienceFilter.value;
+                const status = statusFilter.value;
+                const contextPath = "${pageContext.request.contextPath}";
+                fetch(contextPath + "/filterApply", {
+                    method : "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: "txt=" + encodeURIComponent(txt)
+                            + "&exp=" + encodeURIComponent(exp)
+                            + "&status=" + encodeURIComponent(status)
+                })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data.trim() !== "") {
+                                alert(data);
+                            }
+                        })
+            }
 
+            //Apply Filter
+            const applyFilterBtn = document.getElementById("applyFilterBtn");
+            applyFilterBtn.addEventListener("click", () => {
+                filterTable();
+            })
 
-                    // Clear filter
-                    const clearFilterBtn = document.getElementById("clearFilterBtn");
-
+            // Clear filter
+            const clearFilterBtn = document.getElementById("clearFilterBtn");
             clearFilterBtn.addEventListener("click", () => {
                 searchInput.value = "";
                 experienceFilter.value = "";
                 statusFilter.value = "";
-                filterTable(); // gọi lại hàm để reset bảng
             });
-
             // Chọn tất cả checkbox
             const selectAllCheckbox = document.getElementById("selectAll");
             const rowCheckboxes = document.querySelectorAll(".jobCheckbox");
-
             selectAllCheckbox.addEventListener("change", function () {
                 rowCheckboxes.forEach(checkbox => {
                     checkbox.checked = selectAllCheckbox.checked;
                 });
             });
-
             //update checkbox header
             rowCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener("change", function () {
@@ -264,16 +282,13 @@
                     selectAllCheckbox.checked = Array.from(rowCheckboxes).every(cb => cb.checked);
                 });
             });
-
             // Hàm cập nhật trạng thái ứng tuyển
             function updateStatus() {
                 const contextPath = "${pageContext.request.contextPath}";
-
                 document.querySelectorAll(".status-select").forEach(select => {
                     select.addEventListener("change", function () {
                         const applyId = this.getAttribute("data-apply-id");
                         const newStatus = this.value;
-
                         updateApplicationStatus(contextPath, applyId, newStatus);
                     });
                 });
@@ -299,37 +314,29 @@
 
             // Gọi hàm khi trang đã tải xong
             document.addEventListener("DOMContentLoaded", updateStatus);
-
             const noteModal = document.getElementById("noteModal");
             const noteText = document.getElementById("noteText");
             const noteApplyId = document.getElementById("noteApplyId");
             const cancelNoteBtn = document.getElementById("cancelNoteBtn");
             const saveNoteBtn = document.getElementById("saveNoteBtn");
-
             // Khi bấm nút Note
             let currentRow = null;
-
             document.querySelectorAll(".noteBtn").forEach(btn => {
                 btn.addEventListener("click", function (e) {
                     e.preventDefault();
                     const applyId = this.getAttribute("data-apply-id");
-
-                    const row = this.closest("tr");  // lấy row hiện tại
+                    const row = this.closest("tr"); // lấy row hiện tại
                     const currentNote = row.cells[7]?.textContent.trim() || "";
-
                     noteApplyId.value = applyId;
                     noteText.value = currentNote;
                     noteModal.style.display = "flex";
-
                     currentRow = row; // lưu row để update sau này
                 });
             });
-
             function saveNote() {
                 const applyId = noteApplyId.value;
                 const newNote = noteText.value;
                 const contextPath = "${pageContext.request.contextPath}";
-
                 fetch(contextPath + "/noteApply", {
                     method: "POST",
                     headers: {"Content-Type": "application/x-www-form-urlencoded"},
@@ -358,22 +365,17 @@
                 e.preventDefault();
                 saveNote();
             });
-
-
             // Nút Cancel đóng modal
             cancelNoteBtn.addEventListener("click", (e) => {
                 e.preventDefault(); // tránh submit form mặc định
                 noteModal.style.display = "none";
                 currentRow = null; // reset lại row đang chọn
             });
-
             // Hàm xử lý tải CV được chọn
             function downloadSelected(event) {
                 event.preventDefault();
-
                 const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
                         .map(cb => cb.value);
-
                 if (selected.length === 0) {
                     alert("Vui lòng chọn ít nhất một CV để tải về.");
                     return;

@@ -198,30 +198,6 @@ public class ApplyDAO {
         return null;
     }
 
-    public Candidate getCandidateById(int candidateId) {
-        String sql = "SELECT * FROM Candidate WHERE CandidateID = ?";
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, candidateId);
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    Candidate c = new Candidate();
-                    c.setCandidateId(rs.getInt("CandidateID"));
-                    c.setCandidateName(rs.getString("CandidateName"));
-                    c.setAddress(rs.getString("Address"));
-                    c.setEmail(rs.getString("Email"));
-                    c.setPhoneNumber(rs.getString("PhoneNumber"));
-                    c.setNationality(rs.getString("Nationality"));
-                    c.setPasswordHash(rs.getString("PasswordHash"));
-                    c.setAvatar(rs.getString("Avatar"));
-                    return c;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public List<Apply> getApplyByJobPost(int jobPostId, int employerId) {
         List<Apply> list = new ArrayList<>();
         String sql = "SELECT \n"
@@ -247,6 +223,41 @@ public class ApplyDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Apply> filterApply(String txt, int exp1, int exp2, String status) {
+        List<Apply> list = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "    a.ApplyID,\n"
+                + "	a.CandidateID,\n"
+                + "	a.CVID,\n"
+                + "	a.DayCreate,\n"
+                + "	a.JobPostID,\n"
+                + "	a.Note,\n"
+                + "	a.Status\n"
+                + "FROM Apply AS a\n"
+                + "JOIN Candidate AS can \n"
+                + "    ON a.CandidateID = can.CandidateID\n"
+                + "JOIN CV AS cv\n"
+                + "    ON a.CVID = cv.CVID\n"
+                + "WHERE (can.Email LIKE '%?%' OR can.CandidateName LIKE '%?%')\n"
+                + "AND a.Status = '?'\n"
+                + "AND cv.NumberExp >= ? AND cv.NumberExp <= ?;";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setString(1, txt);
+            st.setString(2,txt);
+            st.setString(3,status);
+            st.setInt(4, exp1);
+            st.setInt(5, exp2);
+            try (ResultSet rs = st.executeQuery()){
+                while(rs.next()){
+                    list.add(mapResultSet(rs));
+                }
+            }
+        }catch(Exception e){
+            e.getMessage();
         }
         return list;
     }
