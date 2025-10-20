@@ -50,8 +50,7 @@
         <div class="job_details_area">
             <div class="container">
                 <div class="row">
-                    <!-- Main job detail -->
-                    <div class="col-lg-7">
+                    <div class="col-lg-12">
                         <div class="job_details_header">
                             <div class="single_jobs white-bg d-flex justify-content-between">
                                 <div class="jobs_left d-flex align-items-center">
@@ -72,7 +71,13 @@
                                 </div>
                                 <div class="jobs_right">
                                     <div class="apply_now">
-                                        <a class="heart_mark" href=""><i class="ti-heart"></i></a>
+                                        <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
+                                        <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
+                                        <form action="job_delete" method="post" style="display:inline-block;"
+                                              onsubmit="return confirm('Are you sure you want to delete this job?');">
+                                            <input type="hidden" name="id" value="${job.jobPostID}"/>
+                                            <button type="submit" class="btn btn-sm btn-danger m-1"><i class="ti-trash"></i></button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -80,49 +85,13 @@
 
                         <!-- Description -->
                         <div class="descript_wrap white-bg">
-                            <div class="single_wrap">
-                                <h4>Mô tả công việc:</h4>
-                                <p>${job.description}</p>
-                            </div>
-                        </div>
-
-                        <!-- Apply form -->
-                        <div class="apply_job_form white-bg">
-                            <h4>Ứng tuyển công việc này?</h4>
-                            <form action="apply" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <input type="text" class="form-control" name="name" placeholder="Your name" required>
-                                    </div>
-                                    <div class="col-md-6 mb-2">
-                                        <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                    </div>
-                                    <div class="col-md-12 mb-2">
-                                        <input type="url" class="form-control" name="portfolio" placeholder="Portfolio link">
-                                    </div>
-                                    <div class="col-md-12 mb-2">
-                                        <input type="file" class="form-control" name="cvFile" required>
-                                    </div>
-                                    <div class="col-md-12 mb-2">
-                                        <textarea class="form-control" name="coverLetter" rows="5" placeholder="Cover letter"></textarea>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <button class="boxed-btn3 w-100" type="submit">Ứng tuyển ngay</button>
-                                    </div>
+                            <div class="single_wrap d-flex">
+                                <div class="col-6">
+                                    <h4>Mô tả công việc:</h4>
+                                    <p>${job.description}</p>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar -->
-                    <div class="col-lg-5">
-                        <div class="job_sumary">
-                            <div class="summery_header">
-                                <h3>Thông tin chi tiết</h3>
-                            </div>
-                            <div class="job_content">
-                                <ul>
+                                <div class="col-6">
+                                    <h4>Thông tin chi tiết:</h4>
                                     <%
                                         java.time.LocalDateTime dc = ((model.JobPost) request.getAttribute("job")).getDayCreate();
                                         java.time.LocalDateTime dd = ((model.JobPost) request.getAttribute("job")).getDueDate();
@@ -131,36 +100,27 @@
                                         pageContext.setAttribute("publishedDate", pubTs);
                                         pageContext.setAttribute("dueDateFmt", dueTs);
                                     %>
-                                    <li>Ngày đăng: <span><fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
-                                    <li>Hạn cuối: <span><fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
-                                    <li>Yêu cầu kinh nghiệm:
+                                    <p>Ngày đăng: <span><fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></span></p>
+                                    <p>Hạn cuối: <span><fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></span></p>
+                                    <p>Yêu cầu kinh nghiệm:
                                         <span>
                                             <c:choose>
                                                 <c:when test="${job.numberExp == 0}">Không yêu cầu kinh nghiệm</c:when>
                                                 <c:otherwise>${job.numberExp} năm </c:otherwise>
                                             </c:choose>
                                         </span>
-                                    </li>
-                                    <li>Mức lương:
+                                    </p>
+                                    <p>Mức lương:
                                         <span>
                                             <fmt:formatNumber value="${job.offerMin}" type="number" maxFractionDigits="0"/> -
                                             <fmt:formatNumber value="${job.offerMax}" type="number" maxFractionDigits="0"/> VNĐ
                                         </span>
-                                    </li>
-                                    <li>Vị trí công việc: <span>${job.position}</span></li>
-                                    <li>Hình thức làm việc: <span>${job.typeJob}</span></li>
-                                </ul>
+                                    </p>
+                                    <p>Vị trí công việc: <span>${job.position}</span></p>
+                                    <p>Hình thức làm việc: <span>${job.typeJob}</span></p>
+                                </div>
                             </div>
                         </div>
-
-                        <!--<div class="share_wrap d-flex">
-                            <span>Share at:</span>
-                            <ul>
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            </ul>
-                        </div>-->
                     </div>
                 </div>
             </div>

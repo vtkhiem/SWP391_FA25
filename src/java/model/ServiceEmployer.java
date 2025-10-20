@@ -8,18 +8,18 @@ public class ServiceEmployer {
     private Timestamp registerDate;
     private Timestamp expirationDate;
     private String paymentStatus;
-    private int jobPostCount;
+  
 
     public ServiceEmployer() {}
 
     public ServiceEmployer(int employerID, int serviceID, Timestamp registerDate,
-                           Timestamp expirationDate, String paymentStatus, int jobPostCount) {
+                           Timestamp expirationDate, String paymentStatus) {
         this.employerID = employerID;
         this.serviceID = serviceID;
         this.registerDate = registerDate;
         this.expirationDate = expirationDate;
         this.paymentStatus = paymentStatus;
-        this.jobPostCount = jobPostCount;
+     
     }
 
     public int getEmployerID() {
@@ -62,12 +62,5 @@ public class ServiceEmployer {
         this.paymentStatus = paymentStatus;
     }
 
-    public int getJobPostCount() {
-        return jobPostCount;
-    }
-
-    public void setJobPostCount(int jobPostCount) {
-        this.jobPostCount = jobPostCount;
-    }
-    
+   
 }

@@ -5,7 +5,6 @@
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
             <name>SWP391_FA25</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
-            <explicit-platform explicit-source-supported="true"/>
             <web-module-libraries>
                 <library dirs="200">
                     <file>${file.reference.jakarta.servlet.jsp.jstl-2.0.0.jar}</file>
@@ -50,9 +49,6 @@
                 <library dirs="200">
                     <file>${file.reference.smtp-1.6.2.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
-                    <file>${# Space-separated list of extra javac options}</file>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>

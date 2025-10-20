@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import model.Employer;
 import model.JobPost;
 
-@WebServlet(name = "JobDeleteServlet", urlPatterns = {"/job_delete"})
-public class JobDeleteServlet extends HttpServlet {
+@WebServlet(name = "EmployerJobDetailServlet", urlPatterns = {"/employer_job_details"})
+public class EmployerJobDetailServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -24,10 +24,10 @@ public class JobDeleteServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet JobDeleteServlet</title>");
+            out.println("<title>Servlet EmployerJobDetailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet JobDeleteServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet EmployerJobDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -35,12 +35,6 @@ public class JobDeleteServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Employer employer = (Employer) session.getAttribute("user");
@@ -51,35 +45,27 @@ public class JobDeleteServlet extends HttpServlet {
             return;
         }
 
-        try {
-            int jobId = Integer.parseInt(request.getParameter("id"));
-            JobPost job = jobPostDAO.getJobPostById(jobId);
+        int jobId = Integer.parseInt(request.getParameter("id"));
+        JobPost job = jobPostDAO.getJobPostById(jobId);
 
-            if (job == null) {
-                session.setAttribute("error", "Không tìm thấy công việc cần xoá.");
-                response.sendRedirect(request.getContextPath() + "/employer_jobs");
-                return;
-            }
-
+        if (job != null) {
             if (employer.getEmployerId() == job.getEmployerID()) {
-                session.setAttribute("error", "Bạn không có quyền xoá công việc này.");
-                response.sendRedirect(request.getContextPath() + "/employer_jobs");
-                return;
-            }
-
-            boolean deleted = jobPostDAO.deleteJobPost(jobId);;
-
-            if (deleted) {
-                session.setAttribute("message", "Xoá công việc thành công!");
+                request.setAttribute("job", job);
+                request.getRequestDispatcher("/employer_job_details.jsp").forward(request, response);
             } else {
-                session.setAttribute("error", "Xoá công việc thất bại. Vui lòng thử lại.");
+                session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
             }
-
-            response.sendRedirect(request.getContextPath() + "/employer_jobs");
-        } catch (NumberFormatException e) {
-            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+        } else {
+            session.setAttribute("error", "Không tìm thấy công việc.");
             response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     @Override

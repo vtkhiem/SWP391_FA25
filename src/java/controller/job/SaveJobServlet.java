@@ -43,15 +43,15 @@ public class SaveJobServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Candidate candidate = (Candidate) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
 
-        if (candidate == null) {
-            response.sendRedirect("login.jsp");
+        if (candidate == null || !"Candidate".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
         int candidateId = ((model.Candidate) candidate).getCandidateId();
         int jobId = Integer.parseInt(request.getParameter("jobId"));
-        String redirect = request.getParameter("redirect");
 
         boolean isSaved = savedJobDAO.isJobSaved(candidateId, jobId);
         if (isSaved) {

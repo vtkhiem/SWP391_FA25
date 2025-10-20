@@ -1,4 +1,4 @@
-package controller.employer;
+package controller.job;
 
 import dal.JobPostDAO;
 import java.io.IOException;
@@ -37,30 +37,56 @@ public class EmployerJobListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
 
-        if (session == null || session.getAttribute("user") == null
-                || !"Employer".equals(session.getAttribute("role"))) {
-            // Nếu chưa login hoặc không phải employer thì chặn lại
-            response.sendRedirect("login-employer.jsp");
+        HttpSession session = request.getSession();
+        Employer employer = (Employer) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+        
+        if (employer == null || !"Employer".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
             return;
         }
+        
+        int page = 1;
+        try {
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                page = Integer.parseInt(pageParam);
+            }
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        int recordsPerPage = 10;
+        int offset = (page - 1) * recordsPerPage;
 
-        // Lấy employer từ session
-        Employer employer = (Employer) session.getAttribute("user");
         int employerId = employer.getEmployerId();
 
-        // Gọi DAO để lấy job theo employerId
-        List<JobPost> jobs = jobPostDAO.getJobsByEmployer(employerId);
+        List<JobPost> jobs = jobPostDAO.getJobsByEmployer(employerId, offset, recordsPerPage);
+        int totalRecords = jobPostDAO.countJobsByEmployer(employerId);
+        int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
+        String message = (String) session.getAttribute("message");
+        if (message != null) {
+            request.setAttribute("message", message);
+            session.removeAttribute("message");
+        }
+        
+        String error = (String) session.getAttribute("error");
+        if (error != null) {
+            request.setAttribute("error", error);
+            session.removeAttribute("error");
+        }
+        
         request.setAttribute("jobs", jobs);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("noOfPages", noOfPages);
         request.getRequestDispatcher("employer_jobs.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doGet(request, response);
     }
 
     @Override

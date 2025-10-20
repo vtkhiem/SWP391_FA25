@@ -8,10 +8,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import model.Employer;
 import model.JobPost;
 
 @WebServlet(name = "JobAddServlet", urlPatterns = {"/job_add"})
@@ -38,44 +40,107 @@ public class JobAddServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+        Employer employer = (Employer) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+
+        if (employer == null || !"Employer".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
+            return;
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/job_post.jsp");
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                    try {
-            int employerId = Integer.parseInt(request.getParameter("employerId"));
+        HttpSession session = request.getSession();
+        Employer employer = (Employer) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+        
+        if (employer == null || !"Employer".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
+            return;
+        }
+
+        try {
             String title = request.getParameter("title");
-            String description = request.getParameter("description");
+            String desc1 = request.getParameter("description-1");
+            String desc2 = request.getParameter("description-2");
+            String desc3 = request.getParameter("description-3");
             String category = request.getParameter("category");
             String position = request.getParameter("position");
             String location = request.getParameter("location");
-            BigDecimal offerMin = new BigDecimal(request.getParameter("offerMin"));
-            BigDecimal offerMax = new BigDecimal(request.getParameter("offerMax"));
-            int numberExp = Integer.parseInt(request.getParameter("numberExp"));
-            boolean visible = true;
+            String offerMinStr = request.getParameter("offerMin");
+            String offerMaxStr = request.getParameter("offerMax");
+            String numberExpStr = request.getParameter("numberExp");
             String typeJob = request.getParameter("typeJob");
             String dueDateStr = request.getParameter("dueDate");
-            LocalDateTime dueDate = null;
-            if (dueDateStr != null && !dueDateStr.isEmpty()) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate localDate = LocalDate.parse(dueDateStr, formatter);
-                dueDate = localDate.atStartOfDay();
+            String employerIdStr = request.getParameter("employerId");
+
+            if (employerIdStr == null || employerIdStr.isEmpty()
+                    || Integer.parseInt(employerIdStr) != employer.getEmployerId()) {
+                request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
+                request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                return;
             }
 
-            JobPost job = new JobPost(0, employerId, title, description, category, position, location,
-                    offerMin, offerMax, numberExp, visible, typeJob, LocalDateTime.now(), dueDate);
+            if (title == null || title.trim().isEmpty()
+                    || desc1 == null || desc1.trim().isEmpty()
+                    || desc2 == null || desc2.trim().isEmpty()
+                    || desc3 == null || desc3.trim().isEmpty()
+                    || category == null || category.trim().isEmpty()
+                    || position == null || position.trim().isEmpty()
+                    || location == null || location.trim().isEmpty()
+                    || offerMinStr == null || offerMinStr.isEmpty()
+                    || offerMaxStr == null || offerMaxStr.isEmpty()
+                    || numberExpStr == null || numberExpStr.isEmpty()
+                    || typeJob == null || typeJob.trim().isEmpty()
+                    || dueDateStr == null || dueDateStr.isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
+                request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                return;
+            }
+
+            StringBuilder descriptionBuilder = new StringBuilder();
+            descriptionBuilder.append(desc1.trim()).append("<br>");
+            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append(desc2.trim()).append("<br>");
+            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append(desc3.trim());
+            String description = descriptionBuilder.toString().trim();
+
+            int employerId = Integer.parseInt(employerIdStr);
+            BigDecimal offerMin = new BigDecimal(offerMinStr);
+            BigDecimal offerMax = new BigDecimal(offerMaxStr);
+            int numberExp = Integer.parseInt(numberExpStr);
+
+            if (offerMax.compareTo(offerMin) < 0) {
+                request.setAttribute("error", "Mức lương tối đa không được nhỏ hơn tối thiểu.");
+                request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                return;
+            }
+
+            LocalDateTime dueDate = null;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(dueDateStr, formatter);
+            dueDate = localDate.atStartOfDay();
+
+            JobPost job = new JobPost(0, employerId, title.trim(), description.trim(),
+                    category.trim(), position.trim(), location.trim(),
+                    offerMin, offerMax, numberExp, true, typeJob.trim(),
+                    LocalDateTime.now(), dueDate);
 
             boolean success = jobPostDAO.insertJobPost(job);
 
             if (success) {
-                request.setAttribute("message", "Job added successfully!");
+                request.setAttribute("message", "Thêm công việc thành công!");
             } else {
-                request.setAttribute("message", "Failed to add job. Please try again.");
+                request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
             }
+
         } catch (Exception e) {
-            request.setAttribute("message", "Error: " + e.getMessage());
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi xử lý: " + e.getMessage());
         }
 
         request.getRequestDispatcher("job_post.jsp").forward(request, response);

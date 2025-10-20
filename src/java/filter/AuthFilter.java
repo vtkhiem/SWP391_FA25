@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-// Bắt các đường dẫn dành cho employer (chỉnh theo project)
-@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/employer_jobs"})
+@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/job_delete_bulk", "/employer_jobs", "/employer_search"})
 public class AuthFilter implements Filter {
 
     @Override

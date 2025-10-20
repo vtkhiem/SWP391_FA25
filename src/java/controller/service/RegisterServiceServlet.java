@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import model.Employer;
 import model.Promotion;
 import model.Service;
+import model.ServiceEmployer;
 
 /**
  *
@@ -124,15 +125,21 @@ public class RegisterServiceServlet extends HttpServlet {
             // ✅ Ghi vào bảng ServiceEmployer
             Timestamp registerDate = Timestamp.valueOf(LocalDateTime.now());
             Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().plus(service.getDuration(), ChronoUnit.DAYS));
+String paymentStatus = "Pending";
+int historyServiceId = seDAO.getServiceIdByEmployerId(employerId);
+ String actionType;
+if(historyServiceId==-1){
+    actionType = "REGISTER"; 
+}else if(historyServiceId==serviceId){
+      actionType = "RENEW";  
+}else{
+    actionType = "CHANGE";
+}
+           
 
-            boolean inserted = seDAO.registerService(
-                    employerId,
-                    serviceId,
-                    registerDate,
-                    expirationDate,
-                    "Pending", // trạng thái thanh toán
-                    0 // JobPostCount ban đầu = 0
-            );
+  
+
+            boolean inserted = seDAO.registerService(employerId, serviceId, registerDate, expirationDate,paymentStatus, actionType);
 
             if (inserted) {
                 request.setAttribute("service", service);

@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Post a Job - Job Board</title>
+        <title>Đăng công việc - Job Board</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -38,7 +38,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="bradcam_text">
-                            <h3>Post a New Job</h3>
+                            <h3>Tạo Công Việc Mới</h3>
                         </div>
                     </div>
                 </div>
@@ -49,10 +49,9 @@
         <div class="job_details_area">
             <div class="container">
                 <div class="row">
-                    <!-- Main form -->
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="white-bg p-4">
-                            <h4 class="mb-3">Add New Job</h4>
+                            <h4 class="mb-3">Nội Dung Công Việc Mới</h4>
 
                             <!-- Toast Notification -->
                             <c:if test="${not empty message}">
@@ -62,159 +61,162 @@
                                 <div class="toast-message error">${error}</div>
                             </c:if>
 
-                            <form action="job_add" method="post" onsubmit="return validateForm()">
+                            <form action="job_add" method="post">
                                 <input type="hidden" name="employerId" value="${sessionScope.user.employerId}"/>
 
                                 <div class="form-group">
-                                    <label>Title</label>
-                                    <input type="text" class="form-control" name="title" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Description</label>
-                                    <textarea class="form-control" name="description" rows="5" required></textarea>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Category</label>
-                                    <select class="form-control" name="category" required>
-                                        <option value="">-- Select Category --</option>
-                                        <option value="IT">IT</option>
-                                        <option value="Marketing">Marketing</option>
-                                        <option value="Finance">Finance</option>
-                                        <option value="Human Resources">Human Resources</option>
-                                        <option value="Design">Design</option>
-                                        <option value="Education">Education</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Position</label>
-                                    <input type="text" class="form-control" name="position">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Location</label>
-                                    <select name="location" required>
-                                        <option value="">-- Select Location --</option>
-                                        <option value="Hà Nội">Hà Nội</option>
-                                        <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                                        <option value="Hải Phòng">Hải Phòng</option>
-                                        <option value="Đà Nẵng">Đà Nẵng</option>
-                                        <option value="Cần Thơ">Cần Thơ</option>
-                                        <option value="An Giang">An Giang</option>
-                                        <option value="Bà Rịa - Vũng Tàu">Bà Rịa - Vũng Tàu</option>
-                                        <option value="Bắc Giang">Bắc Giang</option>
-                                        <option value="Bắc Kạn">Bắc Kạn</option>
-                                        <option value="Bạc Liêu">Bạc Liêu</option>
-                                        <option value="Bắc Ninh">Bắc Ninh</option>
-                                        <option value="Bến Tre">Bến Tre</option>
-                                        <option value="Bình Định">Bình Định</option>
-                                        <option value="Bình Dương">Bình Dương</option>
-                                        <option value="Bình Phước">Bình Phước</option>
-                                        <option value="Bình Thuận">Bình Thuận</option>
-                                        <option value="Cà Mau">Cà Mau</option>
-                                        <option value="Cao Bằng">Cao Bằng</option>
-                                        <option value="Đắk Lắk">Đắk Lắk</option>
-                                        <option value="Đắk Nông">Đắk Nông</option>
-                                        <option value="Điện Biên">Điện Biên</option>
-                                        <option value="Đồng Nai">Đồng Nai</option>
-                                        <option value="Đồng Tháp">Đồng Tháp</option>
-                                        <option value="Gia Lai">Gia Lai</option>
-                                        <option value="Hà Giang">Hà Giang</option>
-                                        <option value="Hà Nam">Hà Nam</option>
-                                        <option value="Hà Tĩnh">Hà Tĩnh</option>
-                                        <option value="Hải Dương">Hải Dương</option>
-                                        <option value="Hậu Giang">Hậu Giang</option>
-                                        <option value="Hòa Bình">Hòa Bình</option>
-                                        <option value="Hưng Yên">Hưng Yên</option>
-                                        <option value="Khánh Hòa">Khánh Hòa</option>
-                                        <option value="Kiên Giang">Kiên Giang</option>
-                                        <option value="Kon Tum">Kon Tum</option>
-                                        <option value="Lai Châu">Lai Châu</option>
-                                        <option value="Lâm Đồng">Lâm Đồng</option>
-                                        <option value="Lạng Sơn">Lạng Sơn</option>
-                                        <option value="Lào Cai">Lào Cai</option>
-                                        <option value="Long An">Long An</option>
-                                        <option value="Nam Định">Nam Định</option>
-                                        <option value="Nghệ An">Nghệ An</option>
-                                        <option value="Ninh Bình">Ninh Bình</option>
-                                        <option value="Ninh Thuận">Ninh Thuận</option>
-                                        <option value="Phú Thọ">Phú Thọ</option>
-                                        <option value="Phú Yên">Phú Yên</option>
-                                        <option value="Quảng Bình">Quảng Bình</option>
-                                        <option value="Quảng Nam">Quảng Nam</option>
-                                        <option value="Quảng Ngãi">Quảng Ngãi</option>
-                                        <option value="Quảng Ninh">Quảng Ninh</option>
-                                        <option value="Quảng Trị">Quảng Trị</option>
-                                        <option value="Sóc Trăng">Sóc Trăng</option>
-                                        <option value="Sơn La">Sơn La</option>
-                                        <option value="Tây Ninh">Tây Ninh</option>
-                                        <option value="Thái Bình">Thái Bình</option>
-                                        <option value="Thái Nguyên">Thái Nguyên</option>
-                                        <option value="Thanh Hóa">Thanh Hóa</option>
-                                        <option value="Thừa Thiên Huế">Thừa Thiên Huế</option>
-                                        <option value="Tiền Giang">Tiền Giang</option>
-                                        <option value="Trà Vinh">Trà Vinh</option>
-                                        <option value="Tuyên Quang">Tuyên Quang</option>
-                                        <option value="Vĩnh Long">Vĩnh Long</option>
-                                        <option value="Vĩnh Phúc">Vĩnh Phúc</option>
-                                        <option value="Yên Bái">Yên Bái</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Salary Range</label>
-                                    <div class="d-flex">
-                                        <input type="number" class="form-control mr-2" name="offerMin" step="0.01" placeholder="Min" required>
-                                        <input type="number" class="form-control" name="offerMax" step="0.01" placeholder="Max" required>
+                                    <label>Tiêu đề <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <input type="text" class="form-control" name="title" placeholder="Nhập tiêu đề công việc..." required>
+                                        <span class="error-message"></span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Years of Experience</label>
-                                    <select class="form-control" name="numberExp" required>
-                                        <option value="0">No Exp</option>
-                                        <option value="1">1 year</option>
-                                        <option value="2">2 years</option>
-                                        <option value="3">3 years</option>
-                                        <option value="5">5 years</option>
-                                        <option value="10">10+ years</option>
-                                    </select>
+                                    <label>Mô tả công việc <span style="color: red;">*</span></label>
+                                    <small class="form-text text-muted pb-3">
+                                        Phần mô tả dành cho công việc cần bao gồm:<br>
+                                        - Mô tả cụ thể cho công việc cần đăng tuyển.<br>
+                                        - Phần yêu cầu của công việc (yêu cầu về kĩ năng, bằng cấp, kinh nghiệm,...).<br>
+                                        - Những quyền lợi mà người lao động được hưởng khi ứng tuyển.
+                                    </small>
+                                    <div class="col-12">
+                                        <textarea class="form-control mb-2" name="description-1" rows="1" placeholder="Nhập mô tả công việc..." required></textarea>
+                                        <span class="error-message"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <textarea class="form-control mb-2" name="description-2" rows="1" placeholder="Nhập yêu cầu công việc..." required></textarea>
+                                        <span class="error-message"></span>
+                                    </div>
+                                    <div class="col-12">
+                                        <textarea class="form-control" name="description-3" rows="1" placeholder="Nhập quyền lợi công việc..." required></textarea>
+                                        <span class="error-message"></span>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Job Type</label>
-                                    <select class="form-control" name="typeJob">
-                                        <option value="Full-time">Full-time</option>
-                                        <option value="Part-time">Part-time</option>
-                                        <option value="Internship">Internship</option>
-                                    </select>
+                                    <label>Ngành nghề <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <select class="form-control" name="category" required>
+                                            <option value="" disabled selected hidden>Chọn ngành nghề...</option>
+                                            <option value="Công nghệ thông tin">Công nghệ thông tin</option>
+                                            <option value="Kinh doanh & Quản trị">Kinh doanh & Quản trị</option>
+                                            <option value="Thiết kế - Nghệ thuật - Truyền thông">Thiết kế - Nghệ thuật - Truyền thông</option>
+                                            <option value="Kỹ thuật – Cơ khí – Điện – Xây dựng">Kỹ thuật – Cơ khí – Điện – Xây dựng</option>
+                                            <option value="Y tế – Dược – Chăm sóc sức khỏe">Y tế – Dược – Chăm sóc sức khỏe</option>
+                                            <option value="Giáo dục – Đào tạo">Giáo dục – Đào tạo</option>
+                                            <option value="Du lịch – Nhà hàng – Khách sạn">Du lịch – Nhà hàng – Khách sạn</option>
+                                            <option value="Nông – Lâm – Ngư nghiệp">Nông – Lâm – Ngư nghiệp</option>
+                                            <option value="Luật – Hành chính – Chính trị">Luật – Hành chính – Chính trị</option>
+                                            <option value="Khác / Tự do">Khác / Tự do</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Due Date</label>
-                                    <input type="date" class="form-control" name="dueDate" required>
+                                    <label>Vị trí công việc <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <input type="text" class="form-control" name="position" placeholder="Nhập vị trí công việc..." required>
+                                        <span class="error-message"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Địa điểm <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <select class="form-control" name="location" required>
+                                            <option value="" disabled selected hidden>Chọn tỉnh thành...</option>
+                                            <option value="Hà Nội">TP. Hà Nội</option>
+                                            <option value="Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                                            <option value="Đà Nẵng">TP. Đà Nẵng</option>
+                                            <option value="Hải Phòng">TP. Hải Phòng</option>
+                                            <option value="Huế">TP. Huế</option>
+                                            <option value="Cần Thơ">TP. Cần Thơ</option>
+                                            <option value="An Giang">An Giang</option>
+                                            <option value="Bắc Ninh">Bắc Ninh</option>
+                                            <option value="Cà Mau">Cà Mau</option>
+                                            <option value="Cao Bằng">Cao Bằng</option>
+                                            <option value="Đắk Lắk">Đắk Lắk</option>
+                                            <option value="Điện Biên">Điện Biên</option>
+                                            <option value="Đồng Nai">Đồng Nai</option>
+                                            <option value="Đồng Tháp">Đồng Tháp</option>
+                                            <option value="Gia Lai">Gia Lai</option>
+                                            <option value="Hà Tĩnh">Hà Tĩnh</option>
+                                            <option value="Hưng Yên">Hưng Yên</option>
+                                            <option value="Khánh Hòa">Khánh Hòa</option>
+                                            <option value="Lai Châu">Lai Châu</option>
+                                            <option value="Lâm Đồng">Lâm Đồng</option>
+                                            <option value="Lạng Sơn">Lạng Sơn</option>
+                                            <option value="Lào Cai">Lào Cai</option>
+                                            <option value="Ninh Bình">Ninh Bình</option>
+                                            <option value="Nghệ An">Nghệ An</option>
+                                            <option value="Phú Thọ">Phú Thọ</option>
+                                            <option value="Quảng Ngãi">Quảng Ngãi</option>
+                                            <option value="Quảng Ninh">Quảng Ninh</option>
+                                            <option value="Quảng Trị">Quảng Trị</option>
+                                            <option value="Sơn La">Sơn La</option>
+                                            <option value="Tây Ninh">Tây Ninh</option>
+                                            <option value="Thái Nguyên">Thái Nguyên</option>
+                                            <option value="Thanh Hóa">Thanh Hóa</option>
+                                            <option value="Tuyên Quang">Tuyên Quang</option>
+                                            <option value="Vĩnh Long">Vĩnh Long</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Mức lương <span style="color: red;">*</span></label>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." required>
+                                            <span class="error-message"></span>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="number" class="form-control" name="offerMax" step="1" placeholder="Đến..." required>
+                                            <span class="error-message"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Yêu cầu kinh nghiệm <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <select class="form-control" name="numberExp" required>
+                                            <option value="" disabled selected hidden>Chọn yêu cầu kinh nghiệm...</option>
+                                            <option value="0">Không yêu cầu kinh nghiệm</option>
+                                            <option value="1">1 năm</option>
+                                            <option value="2">2 năm</option>
+                                            <option value="5">5 năm</option>
+                                            <option value="10">Trên 10 năm</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Hình thức làm việc <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <select class="form-control" name="typeJob" required>
+                                            <option value="" disabled selected hidden>Chọn hình thức làm việc...</option>
+                                            <option value="Full-time">Toàn thời gian (Full-time)</option>
+                                            <option value="Part-time">Bán thời gian (Part-time)</option>
+                                            <option value="Internship">Thực tập (Internship)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Ngày hết hạn <span style="color: red;">*</span></label>
+                                    <div class="col-12">
+                                        <input type="date" class="form-control" name="dueDate" required>
+                                        <span class="error-message"></span>
+                                    </div>
                                 </div>
 
                                 <div class="form-actions mt-3">
-                                    <button type="submit" class="btn btn-primary">Add Job</button>
-                                    <button type="button" class="btn btn-secondary" onclick="history.back()">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Thêm Công Việc</button>
+                                    <button type="button" class="btn btn-secondary" onclick="history.back()">Huỷ</button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-
-                    <!-- Sidebar -->
-                    <div class="col-lg-4">
-                        <div class="job_sumary white-bg p-3">
-                            <h3>Tips for Employers</h3>
-                            <ul>
-                                <li>Write clear and short job titles</li>
-                                <li>Be specific about required skills</li>
-                                <li>Provide realistic salary ranges</li>
-                                <li>Describe company culture</li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -226,35 +228,142 @@
         <!-- footer -->
 
         <script>
-            // Validate form
-            function validateForm() {
-                const min = parseFloat(document.querySelector("[name='offerMin']").value);
-                const max = parseFloat(document.querySelector("[name='offerMax']").value);
-                if (min > max) {
-                    alert("Minimum salary cannot be greater than maximum salary!");
-                    return false;
-                }
-                return true;
-            }
-
-            // Toast notification
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", () => {
                 const toasts = document.querySelectorAll(".toast-message");
                 toasts.forEach((toast, index) => {
-                    setTimeout(() => {
-                        toast.style.right = "20px";
-                    }, 200 + index * 100);
+                    Object.assign(toast.style, {
+                        position: "fixed",
+                        top: `${20 + index * 60}px`,
+                        right: "-350px",
+                        opacity: "1",
+                        transition: "all 0.6s ease",
+                        zIndex: "9999",
+                        padding: "12px 20px",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontWeight: "500",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        minWidth: "250px",
+                        textAlign: "center",
+                        backgroundColor: toast.classList.contains("success") ? "#28a745" : "#dc3545"
+                    });
+
+                    setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
+
                     setTimeout(() => {
                         toast.style.right = "-350px";
                         toast.style.opacity = "0";
-                    }, 4000 + index * 100);
+                    }, 4000 + index * 150);
                 });
 
-                // Set selected option
-                document.getElementById("categorySelect").value = "${job.category}";
-                document.getElementById("locationSelect").value = "${job.location}";
-                document.getElementById("expSelect").value = "${job.numberExp}";
-                document.getElementById("typeJobSelect").value = "${job.typeJob}";
+                const form = document.querySelector("form");
+
+                function showError(input, message) {
+                    const msgEl = input.parentElement.querySelector(".error-message");
+                    if (msgEl) {
+                        msgEl.textContent = message;
+                        msgEl.style.display = "block";
+                    }
+                    input.classList.add("is-invalid");
+                }
+
+                function clearError(input) {
+                    const msgEl = input.parentElement.querySelector(".error-message");
+                    if (msgEl)
+                        msgEl.style.display = "none";
+                    input.classList.remove("is-invalid");
+                }
+
+                function validateForm() {
+                    let isValid = true;
+                    const title = form.querySelector('[name="title"]');
+                    const position = form.querySelector('[name="position"]');
+                    const desc1 = form.querySelector('[name="description-1"]');
+                    const desc2 = form.querySelector('[name="description-2"]');
+                    const desc3 = form.querySelector('[name="description-3"]');
+                    const offerMin = form.querySelector('[name="offerMin"]');
+                    const offerMax = form.querySelector('[name="offerMax"]');
+                    const dueDate = form.querySelector('[name="dueDate"]');
+
+                    const inputs = [title, position, desc1, desc2, desc3, offerMin, offerMax, dueDate];
+                    inputs.forEach(clearError);
+
+                    const hasSpecialChar = (str) => /[!@#$%^&*(),.?":{}|<>]/.test(str);
+                    const trim = (s) => s.trim();
+
+                    if (!trim(title.value)) {
+                        showError(title, "Vui lòng nhập tiêu đề.");
+                        isValid = false;
+                    } else if (hasSpecialChar(title.value)) {
+                        showError(title, "Tiêu đề không được chứa ký tự đặc biệt.");
+                        isValid = false;
+                    }
+
+                    if (!trim(position.value)) {
+                        showError(position, "Vui lòng nhập vị trí công việc.");
+                        isValid = false;
+                    } else if (hasSpecialChar(position.value)) {
+                        showError(position, "Vị trí không được chứa ký tự đặc biệt.");
+                        isValid = false;
+                    }
+
+                    if (!trim(desc1.value)) {
+                        showError(desc1, "Vui lòng nhập mô tả cụ thể.");
+                        isValid = false;
+                    }
+
+                    if (!trim(desc2.value)) {
+                        showError(desc2, "Vui lòng nhập yêu cầu công việc.");
+                        isValid = false;
+                    }
+
+                    if (!trim(desc3.value)) {
+                        showError(desc3, "Vui lòng nhập quyền lợi.");
+                        isValid = false;
+                    }
+
+                    if (offerMin.value === "" || offerMax.value === "") {
+                        showError(offerMin, "Vui lòng nhập mức lương tối thiểu và tối đa.");
+                        showError(offerMax, "Vui lòng nhập mức lương tối thiểu và tối đa.");
+                        isValid = false;
+                    } else {
+                        const min = parseFloat(offerMin.value);
+                        const max = parseFloat(offerMax.value);
+                        if (min < 0 || max < 0) {
+                            if (min < 0) {
+                                showError(offerMin, "Mức lương không được là số âm.");
+                                isValid = false;
+                            }
+                            if (max < 0) {
+                                showError(offerMax, "Mức lương không được là số âm.");
+                                isValid = false;
+                            }
+                        } else if (max < min) {
+                            showError(offerMax, "Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu.");
+                            isValid = false;
+                        }
+                    }
+
+                    if (!dueDate.value) {
+                        showError(dueDate, "Vui lòng chọn ngày hết hạn.");
+                        isValid = false;
+                    } else {
+                        const today = new Date();
+                        const due = new Date(dueDate.value);
+                        today.setHours(0, 0, 0, 0);
+                        if (due < today) {
+                            showError(dueDate, "Ngày hết hạn phải từ hôm nay trở đi.");
+                            isValid = false;
+                        }
+                    }
+
+                    return isValid;
+                }
+
+                form.addEventListener("submit", (e) => {
+                    if (!validateForm())
+                        e.preventDefault();
+                });
             });
         </script>
     </body>
