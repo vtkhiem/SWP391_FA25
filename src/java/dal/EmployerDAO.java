@@ -192,6 +192,26 @@ public class EmployerDAO extends DBContext {
         }
         return null;
     }
+        public String getEmailByID(int id) {
+        String sql = """
+            SELECT  Email
+                  
+            FROM Employer
+            WHERE EmployerID = ?
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                  
+                    return rs.getString("Email");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 
    public int insertWithStatus(Employer e) {
     String sql = """
