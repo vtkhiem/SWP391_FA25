@@ -67,7 +67,7 @@ public class JobDeleteServlet extends HttpServlet {
                 return;
             }
 
-            boolean deleted = jobPostDAO.deleteJobPost(jobId);;
+            boolean deleted = jobPostDAO.deleteJobPost(jobId);
 
             if (deleted) {
                 session.setAttribute("message", "Xoá công việc thành công!");

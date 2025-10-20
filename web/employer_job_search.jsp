@@ -48,14 +48,6 @@
         </div>
         <!--/ bradcam_area  -->
 
-        <!-- Toast Notification -->
-        <c:if test="${not empty message}">
-            <div class="toast-message success">${message}</div>
-        </c:if>
-        <c:if test="${not empty error}">
-            <div class="toast-message error">${error}</div>
-        </c:if>
-
         <%
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm");
         %>
@@ -322,35 +314,6 @@
                         minInput.classList.remove("is-invalid");
                         maxInput.classList.remove("is-invalid");
                     }
-                });
-            });
-
-            document.addEventListener("DOMContentLoaded", () => {
-                const toasts = document.querySelectorAll(".toast-message");
-                toasts.forEach((toast, index) => {
-                    Object.assign(toast.style, {
-                        position: "fixed",
-                        top: `${20 + index * 60}px`,
-                        right: "-350px",
-                        opacity: "1",
-                        transition: "all 0.6s ease",
-                        zIndex: "9999",
-                        padding: "12px 20px",
-                        borderRadius: "6px",
-                        color: "#fff",
-                        fontWeight: "500",
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                        minWidth: "250px",
-                        textAlign: "center",
-                        backgroundColor: toast.classList.contains("success") ? "#28a745" : "#dc3545"
-                    });
-
-                    setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
-
-                    setTimeout(() => {
-                        toast.style.right = "-350px";
-                        toast.style.opacity = "0";
-                    }, 4000 + index * 150);
                 });
             });
         </script>

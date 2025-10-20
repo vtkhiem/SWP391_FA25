@@ -269,7 +269,7 @@ public class JobPostDAO extends DBContext {
         return 0;
     }
     
-    public List<JobPost> searchJobsbyEmployer(int employerId, String category, String location,
+    public List<JobPost> searchJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
             int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
@@ -339,7 +339,7 @@ public class JobPostDAO extends DBContext {
         return list;
     }
     
-    public int countSearchedJobsbyEmployer(int employerId, String category, String location,
+    public int countSearchedJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?");
 

@@ -65,7 +65,7 @@
                                                         <li><a href="jobs">Việc làm <i class="ti-angle-down"></i></a>
                                                             <ul class="submenu">
                                                                 <li><a href="jobs">Tìm việc làm</a></li>
-                                                                <li><a href="#">Việc làm đã lưu</a></li>
+                                                                <li><a href="saved_jobs">Việc làm đã lưu</a></li>
                                                             </ul>
                                                         </li>
                                                         <li><a href="#">CV <i class="ti-angle-down"></i></a>

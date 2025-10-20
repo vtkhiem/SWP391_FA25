@@ -47,6 +47,14 @@
         </div>
         <!--/ bradcam_area -->
 
+        <!-- Toast Notification -->
+        <c:if test="${not empty message}">
+            <div class="toast-message success">${message}</div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="toast-message error">${error}</div>
+        </c:if>
+
         <div class="job_details_area">
             <div class="container">
                 <div class="row">
@@ -72,7 +80,24 @@
                                 </div>
                                 <div class="jobs_right">
                                     <div class="apply_now">
-                                        <a class="heart_mark" href=""><i class="ti-heart"></i></a>
+                                        <c:choose>
+                                            <c:when test="${isSaved}">
+                                                <form action="unsave_job" method="post" style="display:inline;">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="save_job saved">
+                                                        <i class="ti-heart-broken"></i>
+                                                    </button>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="save_job" method="post" style="display:inline;">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="save_job">
+                                                        <i class="ti-heart"></i>
+                                                    </button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </div>
@@ -152,15 +177,6 @@
                                 </ul>
                             </div>
                         </div>
-
-                        <!--<div class="share_wrap d-flex">
-                            <span>Share at:</span>
-                            <ul>
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            </ul>
-                        </div>-->
                     </div>
                 </div>
             </div>
@@ -169,5 +185,36 @@
         <!-- footer -->
         <jsp:include page="footer.jsp"/>
         <!-- footer -->
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toasts = document.querySelectorAll(".toast-message");
+                toasts.forEach((toast, index) => {
+                    Object.assign(toast.style, {
+                        position: "fixed",
+                        top: `${20 + index * 60}px`,
+                        right: "-350px",
+                        opacity: "1",
+                        transition: "all 0.6s ease",
+                        zIndex: "9999",
+                        padding: "12px 20px",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontWeight: "500",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        minWidth: "250px",
+                        textAlign: "center",
+                        backgroundColor: toast.classList.contains("success") ? "#28a745" : "#dc3545"
+                    });
+
+                    setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
+
+                    setTimeout(() => {
+                        toast.style.right = "-350px";
+                        toast.style.opacity = "0";
+                    }, 4000 + index * 150);
+                });
+            });
+        </script>
     </body>
 </html>

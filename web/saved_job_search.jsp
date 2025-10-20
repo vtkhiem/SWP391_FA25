@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Việc làm khả dụng - Job Board</title>
+        <title>Tìm kiếm danh sách việc làm yêu thích - Job Board</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -39,7 +39,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="bradcam_text">
-                            <h3>Việc làm khả dụng</h3>
+                            <h3>Việc làm yêu thích</h3>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="col-lg-3 col-md-4">
                         <div class="job_filter white-bg p-3 rounded shadow-sm">
                             <h4 class="mb-3">Bộ lọc</h4>
-                            <form id="filterForm" action="search" method="get">
+                            <form id="filterForm" action="saved_job_search" method="get">
                                 <div class="form-group mb-3">
                                     <label>Vị trí tuyển dụng</label>
                                     <input type="text" name="keyword" placeholder="Vị trí tuyển dụng..." class="form-control">
@@ -163,7 +163,7 @@
                             <div class="recent_joblist white-bg mb-3">
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
-                                        <h4>Danh sách việc làm</h4>
+                                        <h4>Danh sách việc làm yêu thích</h4>
                                     </div>
                                 </div>
                             </div>
@@ -171,7 +171,7 @@
 
                         <div class="job_lists m-0">
                             <div class="row">
-                                <c:forEach var="job" items="${jobs}">
+                                <c:forEach var="job" items="${savedJobs}">
                                     <div class="col-lg-12 col-md-12 mb-3">
                                         <div class="single_jobs white-bg d-flex justify-content-between p-3 rounded shadow-sm">
                                             <div class="jobs_left d-flex align-items-center">
@@ -195,6 +195,12 @@
                                             <div class="jobs_right">
                                                 <div class="apply_now justify-content-center">
                                                     <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Xem Ngay</a>
+                                                    <form action="unsave_job" method="post" style="display:inline;">
+                                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                        <button type="submit" class="save_job">
+                                                            <i class="ti-heart-broken"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
