@@ -170,7 +170,7 @@
                                         <label>Mức lương <span style="color: red;">*</span></label>
                                         <div class="d-flex">
                                             <div class="col-6">
-                                            <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." value="${job.offerMin}" required>
+                                                <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." value="${job.offerMin}" required>
                                             <span class="error-message"></span>
                                         </div>
                                         <div class="col-6">
@@ -223,10 +223,26 @@
 
                         <div class="white-bg p-4 mt-3">
                             <h4>Các Chức Năng Khác</h4>
-                            <form action="job_delete" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xoá công việc này?');">
-                                <input type="hidden" name="id" value="${job.jobPostID}"/>
-                                <button type="submit" class="btn btn-danger"><i class="ti-trash"></i><b style="color: white"> Xoá Công Việc</b></button>
-                            </form>
+                            <c:choose>
+                                <c:when test="${job.visible}">
+                                    <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
+                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                        <button type="submit" class="btn btn-sm btn-danger m-1">
+                                            <i class="ti-lock"></i>
+                                            <b style="color: white"> Ẩn công việc này?</b>
+                                        </button>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <form action="visible_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hiện công việc này?');">
+                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                        <button type="submit" class="btn btn-sm btn-success m-1">
+                                            <i class="ti-unlock"></i>
+                                            <b style="color: white"> Hiện công việc này?</b>
+                                        </button>
+                                    </form>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>

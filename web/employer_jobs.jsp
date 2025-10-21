@@ -237,7 +237,7 @@
                                                 <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
                                                 <c:choose>
                                                     <c:when test="${job.visible}">
-                                                        <form action="hide_job" method="post" style="display:inline;">
+                                                        <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
                                                             <input type="hidden" name="jobId" value="${job.jobPostID}">
                                                             <button type="submit" class="btn btn-sm btn-danger m-1">
                                                                 <i class="ti-lock"></i>
@@ -245,7 +245,7 @@
                                                         </form>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <form action="visible_job" method="post" style="display:inline;">
+                                                        <form action="visible_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hiện công việc này?');">
                                                             <input type="hidden" name="jobId" value="${job.jobPostID}">
                                                             <button type="submit" class="btn btn-sm btn-success m-1">
                                                                 <i class="ti-unlock"></i>
