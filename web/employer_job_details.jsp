@@ -99,11 +99,11 @@
                         <!-- Description -->
                         <div class="descript_wrap white-bg">
                             <div class="single_wrap d-flex">
-                                <div class="col-6">
+                                <div class="col-8">
                                     <h4>Mô tả công việc:</h4>
                                     <p>${job.description}</p>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <h4>Thông tin chi tiết:</h4>
                                     <%
                                         java.time.LocalDateTime dc = ((model.JobPost) request.getAttribute("job")).getDayCreate();

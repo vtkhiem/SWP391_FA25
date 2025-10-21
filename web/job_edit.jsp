@@ -145,7 +145,7 @@
                                             <option value="Gia Lai" <c:if test="${job.location eq 'Gia Lai'}">selected</c:if>>Gia Lai</option>
                                             <option value="Hà Tĩnh" <c:if test="${job.location eq 'Hà Tĩnh'}">selected</c:if>>Hà Tĩnh</option>
                                             <option value="Hưng Yên" <c:if test="${job.location eq 'Hưng Yên'}">selected</c:if>>Hưng Yên</option>
-                                            <option value="Khánh Hòa" <c:if test="${job.location eq 'Khánh Hoà'}">selected</c:if>>Khánh Hòa</option>
+                                            <option value="Khánh Hòa" <c:if test="${job.location eq 'Khánh Hòa'}">selected</c:if>>Khánh Hòa</option>
                                             <option value="Lai Châu" <c:if test="${job.location eq 'Lai Châu'}">selected</c:if>>Lai Châu</option>
                                             <option value="Lâm Đồng" <c:if test="${job.location eq 'Lâm Đồng'}">selected</c:if>>Lâm Đồng</option>
                                             <option value="Lạng Sơn" <c:if test="${job.location eq 'Lạng Sơn'}">selected</c:if>>Lạng Sơn</option>
@@ -159,7 +159,7 @@
                                             <option value="Sơn La" <c:if test="${job.location eq 'Sơn La'}">selected</c:if>>Sơn La</option>
                                             <option value="Tây Ninh" <c:if test="${job.location eq 'Tây Ninh'}">selected</c:if>>Tây Ninh</option>
                                             <option value="Thái Nguyên" <c:if test="${job.location eq 'Thái Nguyên'}">selected</c:if>>Thái Nguyên</option>
-                                            <option value="Thanh Hóa" <c:if test="${job.location eq 'Thanh Hoá'}">selected</c:if>>Thanh Hóa</option>
+                                            <option value="Thanh Hóa" <c:if test="${job.location eq 'Thanh Hóa'}">selected</c:if>>Thanh Hóa</option>
                                             <option value="Tuyên Quang" <c:if test="${job.location eq 'Tuyên Quang'}">selected</c:if>>Tuyên Quang</option>
                                             <option value="Vĩnh Long" <c:if test="${job.location eq 'Vĩnh Long'}">selected</c:if>>Vĩnh Long</option>
                                             </select>

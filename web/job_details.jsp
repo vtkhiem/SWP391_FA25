@@ -59,7 +59,7 @@
             <div class="container">
                 <div class="row">
                     <!-- Main job detail -->
-                    <div class="col-lg-7">
+                    <div class="col-lg-8">
                         <div class="job_details_header">
                             <div class="single_jobs white-bg d-flex justify-content-between">
                                 <div class="jobs_left d-flex align-items-center">
@@ -141,7 +141,7 @@
                     </div>
 
                     <!-- Sidebar -->
-                    <div class="col-lg-5">
+                    <div class="col-lg-4">
                         <div class="job_sumary">
                             <div class="summery_header">
                                 <h3>Thông tin chi tiết</h3>

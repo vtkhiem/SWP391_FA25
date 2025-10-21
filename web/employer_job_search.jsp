@@ -1,4 +1,5 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page import="model.JobPost, java.time.format.DateTimeFormatter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -257,30 +258,30 @@
                                 </tbody>
                             </table>
                         </div>
+                        
                         <div class="pagination justify-content-center mt-4">
                             <ul class="pagination">
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage-1}">
+                                    <a class="page-link" href="?page=${currentPage-1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                         &lt;
                                     </a>
                                 </li>
 
                                 <c:forEach var="i" begin="1" end="${noOfPages}">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="?page=${i}">
+                                        <a class="page-link" href="?page=${i}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                             ${i}
                                         </a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage+1}">
+                                    <a class="page-link" href="?page=${currentPage+1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                         &gt;
                                     </a>
                                 </li>
                             </ul>
                         </div>
-
                     </div>
                 </div>
             </div>
