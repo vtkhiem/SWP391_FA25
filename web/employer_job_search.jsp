@@ -162,112 +162,125 @@
                     </div>
 
                     <div class="col-lg-9 col-md-8">
-                        <form action="job_delete_bulk" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xoá mục đã chọn?');">
-                            <div class="table-responsive mt-3">
-                                <table class="table table-hover table-bordered">
-                                    <thead class="thead-light">
+                        <div class="table-responsive mt-3">
+                            <table class="table table-hover table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th style="width:40px">
+                                            <input type="checkbox" id="selectAll"/>
+                                        </th>
+                                        <th style="width:48px">No</th>
+                                        <th style="width:160px">Tiêu đề</th>
+                                        <th style="width:160px">Vị trí</th>
+                                        <th style="width:120px">Loại</th>
+                                        <th style="width:160px">Mức lương</th>
+                                        <th style="width:160px">Ngày hết hạn</th>
+                                        <th style="width:160px">Ngày đăng</th>
+                                        <th style="width:220px">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="job" items="${jobs}" varStatus="st">
                                         <tr>
-                                            <th style="width:40px">
-                                                <input type="checkbox" id="selectAll"/>
-                                            </th>
-                                            <th style="width:48px">No</th>
-                                            <th style="width:160px">Tiêu đề</th>
-                                            <th style="width:160px">Vị trí</th>
-                                            <th style="width:120px">Loại</th>
-                                            <th style="width:160px">Mức lương</th>
-                                            <th style="width:160px">Ngày hết hạn</th>
-                                            <th style="width:160px">Ngày đăng</th>
-                                            <th style="width:220px">Hành động</th>
+                                            <td>
+                                                <input type="checkbox" name="jobIds" value="${job.jobPostID}" class="jobCheckbox"/>
+                                            </td>
+                                            <td>${st.index + 1}</td>
+
+                                            <td>
+                                                ${job.title}
+                                                <div class="small text-muted">
+                                                    ${job.category} — ${job.position}
+                                                </div>
+                                            </td>
+
+                                            <td>${job.location}</td>
+                                            <td>${job.typeJob}</td>
+
+                                            <td>
+                                                <fmt:formatNumber value="${job.offerMin}" type="number" maxFractionDigits="0"/> -
+                                                <fmt:formatNumber value="${job.offerMax}" type="number" maxFractionDigits="0"/> VNĐ
+                                            </td>
+
+                                            <td>
+                                                <%
+                                                    JobPost j = (JobPost) pageContext.getAttribute("job");
+                                                    if (j != null && j.getDueDate() != null) {
+                                                        out.print(j.getDueDate().format(dtf));
+                                                    } else {
+                                                        out.print("-");
+                                                    }
+                                                %>
+                                            </td>
+
+                                            <td>
+                                                <%
+                                                    JobPost j2 = (JobPost) pageContext.getAttribute("job");
+                                                    if (j2 != null && j2.getDayCreate() != null) {
+                                                        out.print(j2.getDayCreate().format(dtf));
+                                                    } else {
+                                                        out.print("-");
+                                                    }
+                                                %>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
+                                                <a class="btn btn-sm btn-primary m-1" href="employer_job_details?id=${job.jobPostID}"><i class="ti-eye"></i></a>
+                                                <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
+                                                <c:choose>
+                                                    <c:when test="${job.visible}">
+                                                        <form action="hide_job" method="post" style="display:inline;">
+                                                            <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                            <button type="submit" class="btn btn-sm btn-danger m-1">
+                                                                <i class="ti-lock"></i>
+                                                            </button>
+                                                        </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <form action="visible_job" method="post" style="display:inline;">
+                                                            <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                            <button type="submit" class="btn btn-sm btn-success m-1">
+                                                                <i class="ti-unlock"></i>
+                                                            </button>
+                                                        </form>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="job" items="${jobs}" varStatus="st">
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" name="jobIds" value="${job.jobPostID}" class="jobCheckbox"/>
-                                                </td>
-                                                <td>${st.index + 1}</td>
-
-                                                <td>
-                                                    ${job.title}
-                                                    <div class="small text-muted">
-                                                        ${job.category} — ${job.position}
-                                                    </div>
-                                                </td>
-
-                                                <td>${job.location}</td>
-                                                <td>${job.typeJob}</td>
-
-                                                <td>
-                                                    <fmt:formatNumber value="${job.offerMin}" type="number" maxFractionDigits="0"/> -
-                                                    <fmt:formatNumber value="${job.offerMax}" type="number" maxFractionDigits="0"/> VNĐ
-                                                </td>
-
-                                                <td>
-                                                    <%
-                                                        JobPost j = (JobPost) pageContext.getAttribute("job");
-                                                        if (j != null && j.getDueDate() != null) {
-                                                            out.print(j.getDueDate().format(dtf));
-                                                        } else {
-                                                            out.print("-");
-                                                        }
-                                                    %>
-                                                </td>
-
-                                                <td>
-                                                    <%
-                                                        JobPost j2 = (JobPost) pageContext.getAttribute("job");
-                                                        if (j2 != null && j2.getDayCreate() != null) {
-                                                            out.print(j2.getDayCreate().format(dtf));
-                                                        } else {
-                                                            out.print("-");
-                                                        }
-                                                    %>
-                                                </td>
-                                                <td>
-                                                    <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
-                                                    <a class="btn btn-sm btn-primary m-1" href="employer_job_details?id=${job.jobPostID}"><i class="ti-eye"></i></a>
-                                                    <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
-                                                    <button type="button" class="btn btn-sm btn-danger m-1" onclick="confirmDelete(${job.jobPostID})"><i class="ti-trash"></i></button>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-
-                                        <c:if test="${empty jobs}">
-                                            <tr>
-                                                <td colspan="9" class="text-center">Không tìm thấy công việc nào.</td>
-                                            </tr>
-                                        </c:if>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="pagination justify-content-center mt-4">
-                                <ul class="pagination">
-                                    <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                        <a class="page-link" href="?page=${currentPage-1}">
-                                            &lt;
-                                        </a>
-                                    </li>
-
-                                    <c:forEach var="i" begin="1" end="${noOfPages}">
-                                        <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                            <a class="page-link" href="?page=${i}">
-                                                ${i}
-                                            </a>
-                                        </li>
                                     </c:forEach>
 
-                                    <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                        <a class="page-link" href="?page=${currentPage+1}">
-                                            &gt;
+                                    <c:if test="${empty jobs}">
+                                        <tr>
+                                            <td colspan="9" class="text-center">Không tìm thấy công việc nào.</td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination justify-content-center mt-4">
+                            <ul class="pagination">
+                                <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="?page=${currentPage-1}">
+                                        &lt;
+                                    </a>
+                                </li>
+
+                                <c:forEach var="i" begin="1" end="${noOfPages}">
+                                    <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                        <a class="page-link" href="?page=${i}">
+                                            ${i}
                                         </a>
                                     </li>
-                                </ul>
-                            </div>
-                            <button type="submit" class="btn btn-sm btn-danger mt-2 p-2">
-                                <b style="color: white">Xoá Mục Đã Chọn</b>
-                            </button>
-                        </form>
+                                </c:forEach>
+
+                                <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="?page=${currentPage+1}">
+                                        &gt;
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -278,18 +291,7 @@
         <jsp:include page="footer.jsp"/>
         <!-- footer -->
 
-        <form id="singleDeleteForm" action="job_delete" method="post" style="display:none;">
-            <input type="hidden" name="id" id="deleteJobId">
-        </form>
-
         <script>
-            function confirmDelete(id) {
-                if (confirm('Bạn có chắc chắn muốn xoá công việc này?')) {
-                    document.getElementById('deleteJobId').value = id;
-                    document.getElementById('singleDeleteForm').submit();
-                }
-            }
-
             document.getElementById("selectAll").addEventListener("click", function () {
                 const checkboxes = document.querySelectorAll(".jobCheckbox");
                 checkboxes.forEach(cb => cb.checked = this.checked);

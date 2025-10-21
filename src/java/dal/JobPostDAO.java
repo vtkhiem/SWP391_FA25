@@ -433,8 +433,19 @@ public class JobPostDAO extends DBContext {
         return false;
     }
 
-    public boolean deleteJobPost(int id) {
-        String sql = "DELETE FROM JobPost WHERE JobPostID = ?";
+    public boolean hideJobPost(int id) {
+        String sql = "UPDATE JobPost SET Visible = 0 WHERE JobPostID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean visibleJobPost(int id) {
+        String sql = "UPDATE JobPost SET Visible = 1 WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;

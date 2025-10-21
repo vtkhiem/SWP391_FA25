@@ -84,7 +84,7 @@
                                             <c:when test="${isSaved}">
                                                 <form action="unsave_job" method="post" style="display:inline;">
                                                     <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                                    <button type="submit" class="save_job saved">
+                                                    <button type="submit" class="save_job">
                                                         <i class="ti-heart-broken"></i>
                                                     </button>
                                                 </form>
