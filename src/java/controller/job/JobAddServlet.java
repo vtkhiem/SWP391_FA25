@@ -144,9 +144,9 @@ public class JobAddServlet extends HttpServlet {
             }
 
             StringBuilder descriptionBuilder = new StringBuilder();
-            descriptionBuilder.append(desc1.trim()).append("<br>");
-            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append(desc2.trim()).append("<br>");
-            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append(desc3.trim());
+            descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n","<br>"));
             String description = descriptionBuilder.toString().trim();
 
             int employerId = Integer.parseInt(employerIdStr);

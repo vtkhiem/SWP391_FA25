@@ -81,7 +81,7 @@ public class JobEditServlet extends HttpServlet {
         String desc3 = "";
 
         for (int i = 0; i < parts.length; i++) {
-            String clean = parts[i].replaceAll("(?i)<br>", "").trim();
+            String clean = parts[i].replaceAll("(?i)<br>", "\n").trim();
 
             switch (i) {
                 case 0:
@@ -146,9 +146,9 @@ public class JobEditServlet extends HttpServlet {
                 description = oldJob.getDescription();
             } else {
                 StringBuilder descriptionBuilder = new StringBuilder();
-                descriptionBuilder.append(desc1.trim()).append("<br>");
-                descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append(desc2.trim()).append("<br>");
-                descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append(desc3.trim());
+                descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+                descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+                descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n","<br>"));
                 description = descriptionBuilder.toString().trim();
             }
 
