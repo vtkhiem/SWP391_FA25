@@ -4,6 +4,7 @@
  */
 package dal;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Order;
@@ -111,5 +112,47 @@ public class OrderDAO extends DBContext{
             ps.setInt(1, orderID);
             return ps.executeUpdate() > 0;
         }
+    }
+       public int insertOrder(Order order) throws SQLException {
+        String sql = "INSERT INTO Orders (employerID, serviceID, amount, payMethod, status, date, duration) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, order.getEmployerID());
+            ps.setInt(2, order.getServiceID());
+            ps.setBigDecimal(3, order.getAmount());
+            ps.setString(4, order.getPayMethod());
+            ps.setString(5, order.getStatus());
+            
+            // Convert LocalDateTime -> Timestamp
+            LocalDateTime date = order.getDate();
+            if (date != null) {
+                ps.setTimestamp(6, Timestamp.valueOf(date));
+            } else {
+                ps.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            }
+
+            if (order.getDuration() != null) {
+                ps.setInt(7, order.getDuration());
+            } else {
+                ps.setNull(7, Types.INTEGER);
+            }
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); // trả về orderID được sinh tự động
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return -1; // nếu lỗi
     }
 }
