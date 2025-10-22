@@ -195,12 +195,6 @@
                                             <div class="jobs_right">
                                                 <div class="apply_now justify-content-center">
                                                     <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Xem Ngay</a>
-                                                    <form action="save_job" method="post" style="display:inline;">
-                                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                                        <button type="submit" class="save_job">
-                                                            <i class="ti-heart"></i>
-                                                        </button>
-                                                    </form>
                                                 </div>
                                             </div>
                                         </div>

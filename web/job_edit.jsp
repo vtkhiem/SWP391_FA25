@@ -145,7 +145,7 @@
                                             <option value="Gia Lai" <c:if test="${job.location eq 'Gia Lai'}">selected</c:if>>Gia Lai</option>
                                             <option value="Hà Tĩnh" <c:if test="${job.location eq 'Hà Tĩnh'}">selected</c:if>>Hà Tĩnh</option>
                                             <option value="Hưng Yên" <c:if test="${job.location eq 'Hưng Yên'}">selected</c:if>>Hưng Yên</option>
-                                            <option value="Khánh Hòa" <c:if test="${job.location eq 'Khánh Hoà'}">selected</c:if>>Khánh Hòa</option>
+                                            <option value="Khánh Hòa" <c:if test="${job.location eq 'Khánh Hòa'}">selected</c:if>>Khánh Hòa</option>
                                             <option value="Lai Châu" <c:if test="${job.location eq 'Lai Châu'}">selected</c:if>>Lai Châu</option>
                                             <option value="Lâm Đồng" <c:if test="${job.location eq 'Lâm Đồng'}">selected</c:if>>Lâm Đồng</option>
                                             <option value="Lạng Sơn" <c:if test="${job.location eq 'Lạng Sơn'}">selected</c:if>>Lạng Sơn</option>
@@ -159,7 +159,7 @@
                                             <option value="Sơn La" <c:if test="${job.location eq 'Sơn La'}">selected</c:if>>Sơn La</option>
                                             <option value="Tây Ninh" <c:if test="${job.location eq 'Tây Ninh'}">selected</c:if>>Tây Ninh</option>
                                             <option value="Thái Nguyên" <c:if test="${job.location eq 'Thái Nguyên'}">selected</c:if>>Thái Nguyên</option>
-                                            <option value="Thanh Hóa" <c:if test="${job.location eq 'Thanh Hoá'}">selected</c:if>>Thanh Hóa</option>
+                                            <option value="Thanh Hóa" <c:if test="${job.location eq 'Thanh Hóa'}">selected</c:if>>Thanh Hóa</option>
                                             <option value="Tuyên Quang" <c:if test="${job.location eq 'Tuyên Quang'}">selected</c:if>>Tuyên Quang</option>
                                             <option value="Vĩnh Long" <c:if test="${job.location eq 'Vĩnh Long'}">selected</c:if>>Vĩnh Long</option>
                                             </select>
@@ -170,7 +170,7 @@
                                         <label>Mức lương <span style="color: red;">*</span></label>
                                         <div class="d-flex">
                                             <div class="col-6">
-                                            <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." value="${job.offerMin}" required>
+                                                <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." value="${job.offerMin}" required>
                                             <span class="error-message"></span>
                                         </div>
                                         <div class="col-6">
@@ -223,10 +223,26 @@
 
                         <div class="white-bg p-4 mt-3">
                             <h4>Các Chức Năng Khác</h4>
-                            <form action="job_delete" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xoá công việc này?');">
-                                <input type="hidden" name="id" value="${job.jobPostID}"/>
-                                <button type="submit" class="btn btn-danger"><i class="ti-trash"></i><b style="color: white"> Xoá Công Việc</b></button>
-                            </form>
+                            <c:choose>
+                                <c:when test="${job.visible}">
+                                    <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
+                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                        <button type="submit" class="btn btn-sm btn-danger m-1">
+                                            <i class="ti-lock"></i>
+                                            <b style="color: white"> Ẩn công việc này?</b>
+                                        </button>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <form action="visible_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hiện công việc này?');">
+                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                        <button type="submit" class="btn btn-sm btn-success m-1">
+                                            <i class="ti-unlock"></i>
+                                            <b style="color: white"> Hiện công việc này?</b>
+                                        </button>
+                                    </form>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>

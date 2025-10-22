@@ -1,6 +1,6 @@
 package controller.job;
 
-import dal.JobPostDAO;
+import dal.SavedJobDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -10,13 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Employer;
+import model.Candidate;
 import model.JobPost;
 
-@WebServlet(name = "EmployerJobListServlet", urlPatterns = {"/employer_jobs"})
-public class EmployerJobListServlet extends HttpServlet {
-    JobPostDAO jobPostDAO = new JobPostDAO();
-    
+@WebServlet(name = "SavedJobListServlet", urlPatterns = {"/saved_jobs"})
+public class SavedJobListServlet extends HttpServlet {
+    private SavedJobDAO savedJobDAO = new SavedJobDAO();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -25,10 +25,10 @@ public class EmployerJobListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployerJobListServlet</title>");
+            out.println("<title>Servlet SavedJobListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EmployerJobListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SavedJobListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -37,13 +37,12 @@ public class EmployerJobListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         HttpSession session = request.getSession();
-        Employer employer = (Employer) session.getAttribute("user");
+        Candidate candidate = (Candidate) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
         
-        if (employer == null || !"Employer".equals(role)) {
-            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
+        if (candidate == null || !"Candidate".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
         
@@ -58,11 +57,11 @@ public class EmployerJobListServlet extends HttpServlet {
         }
         int recordsPerPage = 10;
         int offset = (page - 1) * recordsPerPage;
-
-        List<JobPost> jobs = jobPostDAO.getJobsByEmployer(employer.getEmployerId(), offset, recordsPerPage);
-        int totalRecords = jobPostDAO.countJobsByEmployer(employer.getEmployerId());
+        
+        List<JobPost> savedJobs = savedJobDAO.getSavedJobsByCandidate(candidate.getCandidateId(), offset, recordsPerPage);
+        int totalRecords = savedJobDAO.countSavedJobsByCandidate(candidate.getCandidateId());
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
-
+        
         String message = (String) session.getAttribute("message");
         if (message != null) {
             request.setAttribute("message", message);
@@ -75,16 +74,16 @@ public class EmployerJobListServlet extends HttpServlet {
             session.removeAttribute("error");
         }
         
-        request.setAttribute("jobs", jobs);
+        request.setAttribute("savedJobs", savedJobs);
         request.setAttribute("currentPage", page);
         request.setAttribute("noOfPages", noOfPages);
-        request.getRequestDispatcher("employer_jobs.jsp").forward(request, response);
+        request.getRequestDispatcher("/saved_jobs.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        processRequest(request, response);
     }
 
     @Override

@@ -73,11 +73,24 @@
                                     <div class="apply_now">
                                         <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
                                         <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
-                                        <form action="job_delete" method="post" style="display:inline-block;"
-                                              onsubmit="return confirm('Are you sure you want to delete this job?');">
-                                            <input type="hidden" name="id" value="${job.jobPostID}"/>
-                                            <button type="submit" class="btn btn-sm btn-danger m-1"><i class="ti-trash"></i></button>
-                                        </form>
+                                        <c:choose>
+                                            <c:when test="${job.visible}">
+                                                <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="btn btn-sm btn-danger m-1">
+                                                        <i class="ti-lock"></i>
+                                                    </button>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="visible_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hiện công việc này?');">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="btn btn-sm btn-success m-1">
+                                                        <i class="ti-unlock"></i>
+                                                    </button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </div>
@@ -86,11 +99,11 @@
                         <!-- Description -->
                         <div class="descript_wrap white-bg">
                             <div class="single_wrap d-flex">
-                                <div class="col-6">
+                                <div class="col-8">
                                     <h4>Mô tả công việc:</h4>
                                     <p>${job.description}</p>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <h4>Thông tin chi tiết:</h4>
                                     <%
                                         java.time.LocalDateTime dc = ((model.JobPost) request.getAttribute("job")).getDayCreate();

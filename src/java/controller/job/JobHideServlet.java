@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import model.Employer;
 import model.JobPost;
 
-@WebServlet(name = "JobDeleteServlet", urlPatterns = {"/job_delete"})
-public class JobDeleteServlet extends HttpServlet {
+@WebServlet(name = "JobHideServlet", urlPatterns = {"/hide_job"})
+public class JobHideServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -52,32 +52,32 @@ public class JobDeleteServlet extends HttpServlet {
         }
 
         try {
-            int jobId = Integer.parseInt(request.getParameter("id"));
+            int jobId = Integer.parseInt(request.getParameter("jobId"));
             JobPost job = jobPostDAO.getJobPostById(jobId);
 
             if (job == null) {
-                session.setAttribute("error", "Không tìm thấy công việc cần xoá.");
+                session.setAttribute("error", "Không tìm thấy công việc cần ẩn.");
                 response.sendRedirect(request.getContextPath() + "/employer_jobs");
                 return;
             }
 
-            if (employer.getEmployerId() == job.getEmployerID()) {
-                session.setAttribute("error", "Bạn không có quyền xoá công việc này.");
+            if (employer.getEmployerId() != job.getEmployerID()) {
+                session.setAttribute("error", "Bạn không có quyền ẩn công việc này.");
                 response.sendRedirect(request.getContextPath() + "/employer_jobs");
                 return;
             }
 
-            boolean deleted = jobPostDAO.deleteJobPost(jobId);;
+            boolean hide = jobPostDAO.hideJobPost(jobId);
 
-            if (deleted) {
-                session.setAttribute("message", "Xoá công việc thành công!");
+            if (hide) {
+                session.setAttribute("message", "Ẩn công việc thành công!");
             } else {
-                session.setAttribute("error", "Xoá công việc thất bại. Vui lòng thử lại.");
+                session.setAttribute("error", "Ấn công việc thất bại. Vui lòng thử lại.");
             }
 
             response.sendRedirect(request.getContextPath() + "/employer_jobs");
         } catch (NumberFormatException e) {
-            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện." + e);
             response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
     }

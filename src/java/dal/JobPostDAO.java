@@ -269,7 +269,23 @@ public class JobPostDAO extends DBContext {
         return 0;
     }
     
-    public List<JobPost> searchJobsbyEmployer(int employerId, String category, String location,
+    public int countJobsByEmployerAndDayCreate(int employerId) {
+        String sql = "SELECT COUNT(*) FROM JobPost jp JOIN ServiceEmployer se ON jp.EmployerID = se.EmployerID WHERE jp.EmployerID = ? AND jp.DayCreate BETWEEN se.RegisterDate AND se.ExpirationDate";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, employerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    public List<JobPost> searchJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
             int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
@@ -339,7 +355,7 @@ public class JobPostDAO extends DBContext {
         return list;
     }
     
-    public int countSearchedJobsbyEmployer(int employerId, String category, String location,
+    public int countSearchedJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?");
 
@@ -417,8 +433,19 @@ public class JobPostDAO extends DBContext {
         return false;
     }
 
-    public boolean deleteJobPost(int id) {
-        String sql = "DELETE FROM JobPost WHERE JobPostID = ?";
+    public boolean hideJobPost(int id) {
+        String sql = "UPDATE JobPost SET Visible = 0 WHERE JobPostID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean visibleJobPost(int id) {
+        String sql = "UPDATE JobPost SET Visible = 1 WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;

@@ -1,14 +1,12 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@page import="model.JobPost, java.time.format.DateTimeFormatter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Nhà tuyển dụng tìm kiếm- Job Board</title>
+        <title>Danh sách việc làm yêu thích - Job Board</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -41,7 +39,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="bradcam_text">
-                            <h3>Danh Sách Công Việc</h3>
+                            <h3>Việc làm yêu thích</h3>
                         </div>
                     </div>
                 </div>
@@ -49,18 +47,23 @@
         </div>
         <!--/ bradcam_area  -->
 
-        <%
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm");
-        %>
+        <!-- Toast Notification -->
+        <c:if test="${not empty message}">
+            <div class="toast-message success">${message}</div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="toast-message error">${error}</div>
+        </c:if>
 
         <!-- job_listing_area -->
-        <div class="job_listing_area">
-            <div class="container p-0">
+        <div class="job_listing_area plus_padding">
+            <div class="container">
                 <div class="row">
+                    <!-- Bộ lọc bên trái -->
                     <div class="col-lg-3 col-md-4">
                         <div class="job_filter white-bg p-3 rounded shadow-sm">
                             <h4 class="mb-3">Bộ lọc</h4>
-                            <form id="filterForm" action="employer_search" method="get">
+                            <form id="filterForm" action="saved_job_search" method="get">
                                 <div class="form-group mb-3">
                                     <label>Vị trí tuyển dụng</label>
                                     <input type="text" name="keyword" placeholder="Vị trí tuyển dụng..." class="form-control">
@@ -162,121 +165,76 @@
                         </div>
                     </div>
 
+                    <!-- Danh sách việc làm -->
                     <div class="col-lg-9 col-md-8">
-                        <div class="table-responsive mt-3">
-                            <table class="table table-hover table-bordered">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th style="width:40px">
-                                            <input type="checkbox" id="selectAll"/>
-                                        </th>
-                                        <th style="width:48px">No</th>
-                                        <th style="width:160px">Tiêu đề</th>
-                                        <th style="width:160px">Vị trí</th>
-                                        <th style="width:120px">Loại</th>
-                                        <th style="width:160px">Mức lương</th>
-                                        <th style="width:160px">Ngày hết hạn</th>
-                                        <th style="width:160px">Ngày đăng</th>
-                                        <th style="width:220px">Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="job" items="${jobs}" varStatus="st">
-                                        <tr>
-                                            <td>
-                                                <input type="checkbox" name="jobIds" value="${job.jobPostID}" class="jobCheckbox"/>
-                                            </td>
-                                            <td>${st.index + 1}</td>
-
-                                            <td>
-                                                ${job.title}
-                                                <div class="small text-muted">
-                                                    ${job.category} — ${job.position}
-                                                </div>
-                                            </td>
-
-                                            <td>${job.location}</td>
-                                            <td>${job.typeJob}</td>
-
-                                            <td>
-                                                <fmt:formatNumber value="${job.offerMin}" type="number" maxFractionDigits="0"/> -
-                                                <fmt:formatNumber value="${job.offerMax}" type="number" maxFractionDigits="0"/> VNĐ
-                                            </td>
-
-                                            <td>
-                                                <%
-                                                    JobPost j = (JobPost) pageContext.getAttribute("job");
-                                                    if (j != null && j.getDueDate() != null) {
-                                                        out.print(j.getDueDate().format(dtf));
-                                                    } else {
-                                                        out.print("-");
-                                                    }
-                                                %>
-                                            </td>
-
-                                            <td>
-                                                <%
-                                                    JobPost j2 = (JobPost) pageContext.getAttribute("job");
-                                                    if (j2 != null && j2.getDayCreate() != null) {
-                                                        out.print(j2.getDayCreate().format(dtf));
-                                                    } else {
-                                                        out.print("-");
-                                                    }
-                                                %>
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
-                                                <a class="btn btn-sm btn-primary m-1" href="employer_job_details?id=${job.jobPostID}"><i class="ti-eye"></i></a>
-                                                <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
-                                                <c:choose>
-                                                    <c:when test="${job.visible}">
-                                                        <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
-                                                            <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                                            <button type="submit" class="btn btn-sm btn-danger m-1">
-                                                                <i class="ti-lock"></i>
-                                                            </button>
-                                                        </form>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <form action="visible_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn hiện công việc này?');">
-                                                            <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                                            <button type="submit" class="btn btn-sm btn-success m-1">
-                                                                <i class="ti-unlock"></i>
-                                                            </button>
-                                                        </form>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-
-                                    <c:if test="${empty jobs}">
-                                        <tr>
-                                            <td colspan="9" class="text-center">Không tìm thấy công việc nào.</td>
-                                        </tr>
-                                    </c:if>
-                                </tbody>
-                            </table>
+                        <div class="recent_joblist_wrap">
+                            <div class="recent_joblist white-bg mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h4>Danh sách việc làm yêu thích</h4>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        
+
+                        <div class="job_lists m-0">
+                            <div class="row">
+                                <c:forEach var="job" items="${savedJobs}">
+                                    <div class="col-lg-12 col-md-12 mb-3">
+                                        <div class="single_jobs white-bg d-flex justify-content-between p-3 rounded shadow-sm">
+                                            <div class="jobs_left d-flex align-items-center">
+                                                <div class="thumb me-3">
+                                                    <img src="img/svg_icon/1.svg" alt="">
+                                                </div>
+                                                <div class="jobs_conetent">
+                                                    <a href="job_details?id=${job.jobPostID}">
+                                                        <h4>${job.title}</h4>
+                                                    </a>
+                                                    <div class="links_locat d-flex align-items-center">
+                                                        <div class="location me-3">
+                                                            <p><i class="fa fa-map-marker"></i> ${job.location}</p>
+                                                        </div>
+                                                        <div class="location">
+                                                            <p><i class="fa fa-clock-o"></i> ${job.typeJob}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="jobs_right">
+                                                <div class="apply_now justify-content-center">
+                                                    <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Xem Ngay</a>
+                                                    <form action="unsave_job" method="post" style="display:inline;">
+                                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                        <button type="submit" class="save_job">
+                                                            <i class="ti-heart-broken"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+
                         <div class="pagination justify-content-center mt-4">
                             <ul class="pagination">
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage-1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
+                                    <a class="page-link" href="?page=${currentPage-1}">
                                         &lt;
                                     </a>
                                 </li>
 
                                 <c:forEach var="i" begin="1" end="${noOfPages}">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="?page=${i}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
+                                        <a class="page-link" href="?page=${i}">
                                             ${i}
                                         </a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage+1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
+                                    <a class="page-link" href="?page=${currentPage+1}">
                                         &gt;
                                     </a>
                                 </li>
@@ -286,18 +244,13 @@
                 </div>
             </div>
         </div>
-        <!-- job_listing_area_end -->
+        <!-- job_listing_area_end  -->
 
         <!-- footer -->
         <jsp:include page="footer.jsp"/>
         <!-- footer -->
 
         <script>
-            document.getElementById("selectAll").addEventListener("click", function () {
-                const checkboxes = document.querySelectorAll(".jobCheckbox");
-                checkboxes.forEach(cb => cb.checked = this.checked);
-            });
-
             document.addEventListener("DOMContentLoaded", function () {
                 const form = document.getElementById("filterForm");
                 const minInput = document.querySelector('input[name="minSalary"]');
@@ -317,6 +270,35 @@
                         minInput.classList.remove("is-invalid");
                         maxInput.classList.remove("is-invalid");
                     }
+                });
+            });
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const toasts = document.querySelectorAll(".toast-message");
+                toasts.forEach((toast, index) => {
+                    Object.assign(toast.style, {
+                        position: "fixed",
+                        top: `${20 + index * 60}px`,
+                        right: "-350px",
+                        opacity: "1",
+                        transition: "all 0.6s ease",
+                        zIndex: "9999",
+                        padding: "12px 20px",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontWeight: "500",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        minWidth: "250px",
+                        textAlign: "center",
+                        backgroundColor: toast.classList.contains("success") ? "#28a745" : "#dc3545"
+                    });
+
+                    setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
+
+                    setTimeout(() => {
+                        toast.style.right = "-350px";
+                        toast.style.opacity = "0";
+                    }, 4000 + index * 150);
                 });
             });
         </script>

@@ -1,6 +1,8 @@
 package controller.job;
 
 import dal.JobPostDAO;
+import dal.ServiceDAO;
+import dal.ServiceEmployerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -10,11 +12,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import model.Employer;
 import model.JobPost;
+import model.Service;
+import model.ServiceEmployer;
 
 @WebServlet(name = "JobAddServlet", urlPatterns = {"/job_add"})
 public class JobAddServlet extends HttpServlet {
@@ -48,8 +54,42 @@ public class JobAddServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
             return;
         }
-        
-        response.sendRedirect(request.getContextPath() + "/job_post.jsp");
+
+        ServiceEmployerDAO serviceEmployerDAO = new ServiceEmployerDAO();
+        try {
+            int serviceId = serviceEmployerDAO.getServiceIdByEmployerId(employer.getEmployerId());
+            if (serviceId == -1) {
+                session.setAttribute("error", "Chưa đăng kí dịch vụ. Vui lòng đăng kí.");
+                response.sendRedirect(request.getContextPath() + "/employerServices");
+                return;
+            } else {
+                ServiceEmployer se = serviceEmployerDAO.getByEmployerAndService(employer.getEmployerId(), serviceId);
+                if (!se.getExpirationDate().after(new Timestamp(System.currentTimeMillis()))) {
+                    session.setAttribute("error", "Dịch vụ đã hết hạn. Vui lòng đăng kí mới.");
+                    response.sendRedirect(request.getContextPath() + "/employerServices");
+                    return;
+                } else {
+                    ServiceDAO serviceDAO = new ServiceDAO();
+                    Service s = serviceDAO.getServiceById(serviceId);
+                    if (s.isIsUnlimited()) {
+                        response.sendRedirect(request.getContextPath() + "/job_post.jsp");
+                    } else {
+                        int amount = s.getJobPostAmount();
+                        int jobCount = jobPostDAO.countJobsByEmployerAndDayCreate(serviceId);
+                        if (amount <= jobCount) {
+                            session.setAttribute("error", "Đã đạt đến giới hạn đăng bài.");
+                            response.sendRedirect(request.getContextPath() + "/employerServices");
+                            return;
+                        } else {
+                            response.sendRedirect(request.getContextPath() + "/job_post.jsp");
+                        }
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            session.setAttribute("error", "Dịch vụ đã hết hạn. Vui lòng đăng kí mới.");
+            response.sendRedirect(request.getContextPath() + "/employerServices");
+        }
     }
 
     @Override
@@ -58,7 +98,7 @@ public class JobAddServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employer employer = (Employer) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
-        
+
         if (employer == null || !"Employer".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
             return;
@@ -104,9 +144,9 @@ public class JobAddServlet extends HttpServlet {
             }
 
             StringBuilder descriptionBuilder = new StringBuilder();
-            descriptionBuilder.append(desc1.trim()).append("<br>");
-            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append(desc2.trim()).append("<br>");
-            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append(desc3.trim());
+            descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n","<br>"));
             String description = descriptionBuilder.toString().trim();
 
             int employerId = Integer.parseInt(employerIdStr);
