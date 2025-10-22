@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.apply;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 *
 * @author shiro
 */
-@WebServlet(name="EditProfile", urlPatterns={"/editProfile"})
-public class EditProfile extends HttpServlet {
+@WebServlet(name="ApplyJob", urlPatterns={"/applyJob"})
+public class ApplyJob extends HttpServlet {
 /**
 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
 * @param request servlet request
@@ -31,10 +31,10 @@ try (PrintWriter out = response.getWriter()) {
 out.println("<!DOCTYPE html>");
 out.println("<html>");
 out.println("<head>");
-out.println("<title>Servlet EditProfile</title>");
+out.println("<title>Servlet ApplyJob</title>");
 out.println("</head>");
 out.println("<body>");
-out.println("<h1>Servlet EditProfile at " + request.getContextPath () + "</h1>");
+out.println("<h1>Servlet ApplyJob at " + request.getContextPath () + "</h1>");
 out.println("</body>");
 out.println("</html>");
 }
@@ -50,7 +50,7 @@ out.println("</html>");
 @Override
 protected void doGet(HttpServletRequest request, HttpServletResponse response)
 throws ServletException, IOException {
-
+processRequest(request, response);
 }
 /**
 * Handles the HTTP <code>POST</code> method.

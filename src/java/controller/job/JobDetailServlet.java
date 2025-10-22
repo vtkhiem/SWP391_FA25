@@ -34,6 +34,8 @@ public class JobDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        
         int jobId = Integer.parseInt(request.getParameter("id"));
         JobPost job = jobPostDAO.getJobPostById(jobId);
 

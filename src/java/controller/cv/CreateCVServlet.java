@@ -51,11 +51,6 @@ public class CreateCVServlet extends HttpServlet {
         try {
             // Get session and check login status
             HttpSession session = request.getSession(false);
-            if (session == null) {
-                System.out.println("ERROR: No session found");
-                response.sendRedirect("login.jsp");
-                return;
-            }
 
             Part filePart = request.getPart("cvFile");
             String fileName = "";

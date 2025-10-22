@@ -228,6 +228,32 @@ public class CandidateDAO extends DBContext {
             return false;
         }
     }
+        // Cập nhật hồ sơ ứng viên
+    public boolean updateCandidateProfile(Candidate candidate) {
+        String sql = """
+            UPDATE Candidate
+               SET CandidateName = ?,
+                   Address = ?,
+                   PhoneNumber = ?,
+                   Nationality = ?
+             WHERE CandidateID = ?
+            """;
+        try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
+
+            ps.setString(1, candidate.getCandidateName());
+            ps.setString(2, candidate.getAddress());
+            ps.setString(3, candidate.getPhoneNumber());
+            ps.setString(4, candidate.getNationality());
+            ps.setInt(5, candidate.getCandidateId());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     private Candidate mapRow(ResultSet rs) throws SQLException {
         Candidate cd = new Candidate();

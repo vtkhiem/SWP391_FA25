@@ -115,7 +115,7 @@ public class ProfileServlet extends HttpServlet {
                 } 
                  else {
                 request.setAttribute("status", "Không tìm thấy thông tin nhà tuyển dụng!");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                request.getRequestDispatcher("login-employer.jsp").forward(request, response);
                 return;
             }
             }
@@ -140,7 +140,7 @@ public class ProfileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        response.sendRedirect(request.getContextPath() + "/profile");
     }
 
     /** 

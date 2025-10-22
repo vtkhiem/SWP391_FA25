@@ -28,6 +28,80 @@
         <link rel="stylesheet" href="css/custom.css"> 
     </head>
 
+    <style>
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .error {
+            color: #ff4444;
+            text-align: center;
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            padding: 15px 20px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .notification.error {
+            background-color: #e53935;
+        }
+
+        /*button*/
+        .button-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #1d2671;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #c33764;
+            transform: scale(1.05);
+        }
+    </style>
+
     <body>
         <!-- header_start -->
         <jsp:include page="header.jsp"/>
@@ -86,33 +160,14 @@
                             </div>
                         </div>
 
-                        <!-- Apply form -->
-                        <div class="apply_job_form white-bg">
-                            <h4>Ứng tuyển công việc này?</h4>
-                            <form action="apply" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <input type="text" class="form-control" name="name" placeholder="Your name" required>
-                                    </div>
-                                    <div class="col-md-6 mb-2">
-                                        <input type="email" class="form-control" name="email" placeholder="Email" required>
-                                    </div>
-                                    <div class="col-md-12 mb-2">
-                                        <input type="url" class="form-control" name="portfolio" placeholder="Portfolio link">
-                                    </div>
-                                    <div class="col-md-12 mb-2">
-                                        <input type="file" class="form-control" name="cvFile" required>
-                                    </div>
-                                    <div class="col-md-12 mb-2">
-                                        <textarea class="form-control" name="coverLetter" rows="5" placeholder="Cover letter"></textarea>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <button class="boxed-btn3 w-100" type="submit">Ứng tuyển ngay</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                            <c:if test="${not empty sessionScope.role}">
+                                <form action="selectCV" method="post">
+                                    <input type="hidden" name="role" value="${sessionScope.role}">
+                                    <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>    
+                                </form>
+                            </c:if>
+
+
                     </div>
 
                     <!-- Sidebar -->
