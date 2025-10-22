@@ -4,6 +4,8 @@
  */
 package controller.feedback;
 
+import dal.CandidateDAO;
+import dal.EmployerDAO;
 import dal.FeedbackDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,6 +15,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import model.Feedback;
+import tool.EmailService;
 
 /**
  *
@@ -73,16 +77,34 @@ public class RespondFeedbackServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        FeedbackDAO feedbackDAO = new FeedbackDAO();
-           int feedbackID = Integer.parseInt(request.getParameter("feedbackID"));
-        String adminResponse = request.getParameter("adminResponse");
-        String newStatus = request.getParameter("newStatus");
-
         try {
-            feedbackDAO.respondToFeedback(feedbackID, adminResponse, newStatus);
-            response.sendRedirect("adminFeedbackList"); // reload list
-        } catch (SQLException e) {
-            throw new ServletException("Lỗi khi phản hồi feedback", e);
+            FeedbackDAO feedbackDAO = new FeedbackDAO();
+            int feedbackID = Integer.parseInt(request.getParameter("feedbackID"));
+            String adminResponse = request.getParameter("adminResponse");
+            String newStatus = request.getParameter("newStatus");
+            String role = request.getParameter("role");
+            int id=feedbackDAO.getSenderId(feedbackID);
+            EmailService email = new EmailService();
+            Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);
+            if(role.equalsIgnoreCase("employer")){
+                EmployerDAO dao = new EmployerDAO();
+                email.sendEmailToUser(dao.getEmailByID(id), adminResponse, feedback.getSubject());
+            }else if(role.equalsIgnoreCase("candidate")){
+                CandidateDAO dao = new CandidateDAO();
+                email.sendEmailToUser(dao.getCandidateById(id).getEmail(), adminResponse, feedback.getSubject());
+            }
+            
+            
+            
+            
+            try {
+                feedbackDAO.respondToFeedback(feedbackID, adminResponse, newStatus);
+                response.sendRedirect("adminFeedbackList"); // reload list
+            } catch (SQLException e) {
+                throw new ServletException("Lỗi khi phản hồi feedback", e);
+            }
+        } catch (SQLException ex) {
+            System.getLogger(RespondFeedbackServlet.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
 
