@@ -76,6 +76,8 @@
                     <option value="Dịch vụ">Dịch vụ</option>
                     <option value="Khuyến mãi">Khuyến mãi</option>
                     <option value="Hệ thống">Hệ thống</option>
+                      <option value="Yêu cầu hỗ trợ">Yêu cầu hỗ trợ</option>
+                        <option value="Góp ý">Góp ý</option>
                     <option value="Khác">Khác</option>
                 </select>
             </div>
@@ -104,10 +106,11 @@
                 <label class="form-label fw-bold">Loại phản hồi</label>
                 <select name="type" class="form-select" required>
                     <option value="">-- Chọn loại phản hồi --</option>
-                    <option value="Dịch vụ">Dịch vụ</option>
-                    <option value="Khuyến mãi">Khuyến mãi</option>
+             
                     <option value="Hệ thống">Hệ thống</option>
-                    <option value="Khác">Khác</option>
+                    <option value="Yêu cầu hỗ trợ">Yêu cầu hỗ trợ</option>
+                      <option value="Góp ý">Góp ý</option>
+                         <option value="Khác">Khác</option>
                 </select>
             </div>
 
