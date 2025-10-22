@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import model.Feedback;
 
@@ -66,8 +67,15 @@ public class AdminListFeedbackServlet extends HttpServlet {
             List<Feedback> listAll = feedbackDAO.getAllFeedback();
             List<Feedback> listEmployers = feedbackDAO.getAllFeedbackFromEmployers();
             List<Feedback> listCandidates = feedbackDAO.getAllFeedbackFromCandidates();
-
+              List<Feedback> listRequestSupport = new ArrayList<>();
+            
+  for (Feedback f : listAll) {
+            if (f.getType() != null && f.getType().equalsIgnoreCase("Yêu cầu hỗ trợ")) {
+                listRequestSupport.add(f);
+            }
+        }
             request.setAttribute("listAll", listAll);
+              request.setAttribute("listRequestSupport", listRequestSupport);
             request.setAttribute("listEmployers", listEmployers);
             request.setAttribute("listCandidates", listCandidates);
 

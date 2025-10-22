@@ -274,4 +274,6 @@ public class EmployerDAO extends DBContext {
     public boolean verify(int employerId) {
         return updateStatus(employerId, 1);
     }
+
+  
 }
