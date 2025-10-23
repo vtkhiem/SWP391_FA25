@@ -3,23 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.candidate;
+package controller.blog;
 
-import dal.CandidateDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import dal.BlogPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Candidate;
+import model.BlogPost;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="CandidateListServlet", urlPatterns={"/admin/candidates"})
-public class CandidateListServlet extends HttpServlet {
+@WebServlet(name="BlogListMSServlet", urlPatterns={"/blog-list"})
+public class BlogListMSServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +38,10 @@ public class CandidateListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateListServlet</title>");  
+            out.println("<title>Servlet BlogListMSServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateListServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet BlogListMSServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,38 +55,31 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
     throws ServletException, IOException {
-
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
-        String q = req.getParameter("q");        
-        int pageSize = 10;
-        int page = 1;
+    int page = 1;
+    int pagesize =10;
         try {
-            String p = req.getParameter("page");
-            if (p != null) page = Math.max(1, Integer.parseInt(p));
-        } catch (NumberFormatException ignored) {}
+            page = Integer.parseInt(req.getParameter("page"));
+            if (page < 1) page = 1;
+        } catch (Exception ignore) {}
 
-        CandidateDAO dao = new CandidateDAO();
-        int total = dao.countAll(q);                  
-        int totalPages = (int) Math.ceil(total / (double) pageSize);
-        if (totalPages == 0) totalPages = 1;
-        if (page > totalPages) page = totalPages;
+        int offset = (page - 1) * pagesize;
 
-        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
+        try {
+            BlogPostDAO dao = new BlogPostDAO();
+            List<BlogPost> items = dao.findAll(offset, pagesize);
+            int total = dao.countAll();
+            int totalPages = (int) Math.ceil(total / (double) pagesize);
 
-        req.setAttribute("q", q);             
-        req.setAttribute("page", page);
-        req.setAttribute("totalPages", totalPages);
-        req.setAttribute("total", total);
-        req.setAttribute("candidates", candidates);
-
-        req.getRequestDispatcher("/admin/candidate-list.jsp")
-               .forward(req, resp);
+            req.setAttribute("items", items);
+            req.setAttribute("page", page);
+            req.setAttribute("totalPages", totalPages);
+            req.getRequestDispatcher("/blog-list.jsp").forward(req, resp);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 
     /** 

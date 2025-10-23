@@ -159,31 +159,7 @@ public class CandidateDAO extends DBContext {
         }
     }
 
-       public int insert(Candidate cd) {
-        String sql = """
-            INSERT INTO Candidate (CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar)
-            OUTPUT INSERTED.CandidateID
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
-        try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
-            ps.setString(1, cd.getCandidateName());
-            ps.setString(2, cd.getAddress());
-            ps.setString(3, cd.getEmail());
-            ps.setString(4, cd.getPhoneNumber());
-            ps.setString(5, cd.getNationality());
-            ps.setString(6, cd.getPasswordHash());
-            if (cd.getAvatar() == null) ps.setNull(7, Types.NVARCHAR);
-            else ps.setString(7, cd.getAvatar());
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
+ 
     public Candidate checkLogin(String email, String passwordHash) {
         String sql = """
             SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar

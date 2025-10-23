@@ -3,23 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.candidate;
+package controller.blog;
 
-import dal.CandidateDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import dal.BlogPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import model.Candidate;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import model.BlogPost;
+import model.BlogPostDetail;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="CandidateListServlet", urlPatterns={"/admin/candidates"})
-public class CandidateListServlet extends HttpServlet {
+@WebServlet(name="BlogDetailServlet", urlPatterns={"/blogs/*"})
+public class BlogDetailServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +38,10 @@ public class CandidateListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateListServlet</title>");  
+            out.println("<title>Servlet BlogDetailServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateListServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet BlogDetailServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,39 +55,45 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
     throws ServletException, IOException {
 
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
+        String ctx  = req.getContextPath();         
+        String uri  = req.getRequestURI();           
+        String path = uri.substring(ctx.length());   
+        if (path.startsWith("/bai-viet/")) {
+            String slugOnly = path.replaceFirst("^/bai-viet", ""); 
+            resp.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+            resp.setHeader("Location", ctx + slugOnly);
+            return;
+        }
+        String lookupPath = path.replaceFirst("^/blogs", ""); 
+        if (lookupPath.isEmpty() || "/".equals(lookupPath)) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
-        String q = req.getParameter("q");        
-        int pageSize = 10;
-        int page = 1;
         try {
-            String p = req.getParameter("page");
-            if (p != null) page = Math.max(1, Integer.parseInt(p));
-        } catch (NumberFormatException ignored) {}
+            BlogPostDAO dao = new BlogPostDAO();
+            BlogPostDetail[] holder = new BlogPostDetail[1];
+            BlogPost post = dao.getByUrlWithDetail(lookupPath, holder); // << query theo "/slug"
 
-        CandidateDAO dao = new CandidateDAO();
-        int total = dao.countAll(q);                  
-        int totalPages = (int) Math.ceil(total / (double) pageSize);
-        if (totalPages == 0) totalPages = 1;
-        if (page > totalPages) page = totalPages;
+            if (post == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
 
-        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
+            dao.increaseView(lookupPath); 
 
-        req.setAttribute("q", q);             
-        req.setAttribute("page", page);
-        req.setAttribute("totalPages", totalPages);
-        req.setAttribute("total", total);
-        req.setAttribute("candidates", candidates);
-
-        req.getRequestDispatcher("/admin/candidate-list.jsp")
-               .forward(req, resp);
+            req.setAttribute("post", post);
+            req.setAttribute("detail", holder[0]);
+            req.getRequestDispatcher("/blog-detail.jsp").forward(req, resp);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
+    
 
     /** 
      * Handles the HTTP <code>POST</code> method.

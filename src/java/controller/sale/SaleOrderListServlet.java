@@ -3,23 +3,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.candidate;
+package controller.sale;
 
-import dal.CandidateDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import dal.OrderDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-import model.Candidate;
+import model.OrderView;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="CandidateListServlet", urlPatterns={"/admin/candidates"})
-public class CandidateListServlet extends HttpServlet {
+@WebServlet(name="SaleOrderListServlet", urlPatterns={"/sale"})
+public class SaleOrderListServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +40,10 @@ public class CandidateListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateListServlet</title>");  
+            out.println("<title>Servlet SaleOrderListServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateListServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet SaleOrderListServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,38 +57,48 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+      private LocalDate parseDate(String s) {
+        try {
+            if (s == null || s.trim().isEmpty()) return null;
+            return LocalDate.parse(s); // định dạng yyyy-MM-dd
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
+    private int parseIntOrDefault(String s, int def) {
+        try { return Integer.parseInt(s); } catch (Exception e) { return def; }
+    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-    throws ServletException, IOException {
+     throws ServletException, IOException {
+       String role = (String) req.getSession().getAttribute("role");
+        if (role == null || !role.equalsIgnoreCase("Sale")) {
+            resp.sendRedirect(req.getContextPath() + "/access-denied.jsp");
+            return;
+        }
 
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
+        int page     = parseIntOrDefault(req.getParameter("page"), 1);
+        int pageSize = parseIntOrDefault(req.getParameter("size"), 10);
 
-        String q = req.getParameter("q");        
-        int pageSize = 10;
-        int page = 1;
-        try {
-            String p = req.getParameter("page");
-            if (p != null) page = Math.max(1, Integer.parseInt(p));
-        } catch (NumberFormatException ignored) {}
+        OrderDAO dao = new OrderDAO();
 
-        CandidateDAO dao = new CandidateDAO();
-        int total = dao.countAll(q);                  
-        int totalPages = (int) Math.ceil(total / (double) pageSize);
+        int totalRows  = dao.countAll();
+        if (pageSize <= 0) pageSize = 10;
+        int totalPages = (int) Math.ceil(totalRows / (double) pageSize);
         if (totalPages == 0) totalPages = 1;
+        if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
 
-        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
-
-        req.setAttribute("q", q);             
+        List<OrderView> orders = dao.findPage(page, pageSize);
+        BigDecimal revenue = dao.totalRevenue(); 
+        req.setAttribute("orders", orders);
+        req.setAttribute("revenue", revenue);
         req.setAttribute("page", page);
+        req.setAttribute("pageSize", pageSize);
         req.setAttribute("totalPages", totalPages);
-        req.setAttribute("total", total);
-        req.setAttribute("candidates", candidates);
-
-        req.getRequestDispatcher("/admin/candidate-list.jsp")
-               .forward(req, resp);
+        req.setAttribute("totalRows", totalRows);
+        req.getRequestDispatcher("/sale.jsp").forward(req, resp);
     }
 
     /** 

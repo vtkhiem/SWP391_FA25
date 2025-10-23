@@ -3,23 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.candidate;
+package controller.blog;
 
-import dal.CandidateDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import dal.BlogPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Candidate;
+import model.BlogPost;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="CandidateListServlet", urlPatterns={"/admin/candidates"})
-public class CandidateListServlet extends HttpServlet {
+@WebServlet(name="BlogListServlet", urlPatterns={"/blogs"})
+public class BlogListServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +38,10 @@ public class CandidateListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateListServlet</title>");  
+            out.println("<title>Servlet BlogListServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateListServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet BlogListServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,39 +55,38 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
-        String q = req.getParameter("q");        
-        int pageSize = 10;
+        
         int page = 1;
+        int pagesize = 10;
         try {
-            String p = req.getParameter("page");
-            if (p != null) page = Math.max(1, Integer.parseInt(p));
-        } catch (NumberFormatException ignored) {}
+            String p = request.getParameter("page");
+            if (p != null) page = Integer.parseInt(p);
+            if (page < 1) page = 1;
+        } catch (Exception ignored) {}
 
-        CandidateDAO dao = new CandidateDAO();
-        int total = dao.countAll(q);                  
-        int totalPages = (int) Math.ceil(total / (double) pageSize);
-        if (totalPages == 0) totalPages = 1;
-        if (page > totalPages) page = totalPages;
+        try {
+            BlogPostDAO dao = new BlogPostDAO();
+            List<BlogPost> featured = dao.getFeaturedTop4();
+            int total = dao.countPublished();
+            int totalPages = (int) Math.ceil(total / (double) pagesize);
+            if (page > totalPages && totalPages > 0) page = totalPages;
 
-        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
+            List<BlogPost> pageData = dao.getPage(page, pagesize);
 
-        req.setAttribute("q", q);             
-        req.setAttribute("page", page);
-        req.setAttribute("totalPages", totalPages);
-        req.setAttribute("total", total);
-        req.setAttribute("candidates", candidates);
+            request.setAttribute("featured", featured);
+            request.setAttribute("items", pageData);
+            request.setAttribute("page", page);
+            request.setAttribute("totalPages", totalPages);
 
-        req.getRequestDispatcher("/admin/candidate-list.jsp")
-               .forward(req, resp);
+            request.getRequestDispatcher("/blogs.jsp").forward(request, response);
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
     }
+     
 
     /** 
      * Handles the HTTP <code>POST</code> method.
