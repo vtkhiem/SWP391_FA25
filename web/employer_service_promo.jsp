@@ -1,9 +1,3 @@
-<%-- 
-    Document   : employer_service_promo
-    Created on : Oct 15, 2025, 7:34:40 PM
-    Author     : vuthienkhiem
---%>
-
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -11,12 +5,11 @@
 
 <%
     // ✅ Kiểm tra đăng nhập và phân quyền
-    String role =(String) session.getAttribute("role");
-    if(role==null || !role.equalsIgnoreCase("Employer") ){
-         response.sendRedirect("access-denied.jsp");
+    String role = (String) session.getAttribute("role");
+    if (role == null || !role.equalsIgnoreCase("Employer")) {
+        response.sendRedirect("access-denied.jsp");
         return;
     }
-    
 %>
 
 <!DOCTYPE html>
@@ -38,85 +31,288 @@
 
         <style>
             body {
-                background-color: #f8f9fa;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
             }
-
-            /* ===== BREADCRUMB ===== */
+            
             .bradcam_area {
                 background: linear-gradient(135deg, #1489f1 0%, #0f6bb8 100%);
                 padding: 3rem 0;
                 text-align: center;
                 color: white;
+                margin-bottom: 50px;
             }
-
+            
             .bradcam_text h3 {
-                font-size: 2.2rem;
-                margin-bottom: 0.5rem;
+                font-size: 2.5rem;
+                margin-bottom: 0.8rem;
+                font-weight: 700;
+            }
+            
+            .bradcam_text p {
+                font-size: 1.1rem;
+                opacity: 0.95;
             }
 
-            /* ===== PROMOTION SECTION ===== */
-            .promo-section {
-                margin-top: 3rem;
+            .section-header {
+                margin: 60px 0 35px 0;
+                display: flex;
+                align-items: center;
+                gap: 12px;
             }
 
-            .promo-card {
-                background: #fff;
-                border-radius: 15px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                padding: 1.5rem;
-                transition: transform 0.3s ease;
+            .section-header h4 {
+                font-size: 1.8rem;
+                font-weight: 600;
+                margin: 0;
+                color: #172b4d;
             }
 
-            .promo-card:hover {
-                transform: translateY(-5px);
+            .section-header.promo h4 {
+                color: #00875a;
             }
 
-            .promo-code {
-                font-weight: bold;
-                color: #0d6efd;
+            .section-header i {
+                font-size: 2rem;
             }
 
-            /* ===== SERVICE SECTION ===== */
-            .service-section {
-                margin-top: 4rem;
+            .pricing-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 30px;
+                margin-bottom: 40px;
             }
 
             .service-card {
-                background: #fff;
-                border-radius: 15px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                padding: 2rem;
-                text-align: center;
-                transition: transform 0.3s ease;
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                border: 2px solid transparent;
             }
 
             .service-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-8px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            }
+
+            .service-card.promo {
+                border-color: #00d68f;
+                position: relative;
+            }
+
+            .service-card.promo::before {
+                content: '🎁 KHUYẾN MÃI';
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: linear-gradient(135deg, #00d68f 0%, #00b875 100%);
+                color: white;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 700;
+                z-index: 10;
+            }
+
+            .card-header-custom {
+                background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
+                padding: 25px;
+                color: white;
+                border-top: 4px solid #1489f1;
+            }
+
+            .service-card.promo .card-header-custom {
+                border-top-color: #00d68f;
+            }
+
+            .card-header-custom h5 {
+                font-size: 1.4rem;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .card-body-custom {
+                padding: 30px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .price-section {
+                margin-bottom: 20px;
             }
 
             .service-price {
-                font-size: 1.8rem;
-                font-weight: bold;
+                font-size: 1.1rem;
+                color: #8993a4;
+                text-decoration: line-through;
+                margin-bottom: 8px;
+            }
+
+            .final-price {
+                font-size: 2.2rem;
+                font-weight: 700;
                 color: #1489f1;
-                margin: 1rem 0;
+                margin-bottom: 10px;
+            }
+
+            .service-card.promo .final-price {
+                color: #e74c3c;
+            }
+
+            .discount-badge {
+                display: inline-block;
+                background: linear-gradient(135deg, #00d68f 0%, #00b875 100%);
+                color: white;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 15px;
             }
 
             .service-duration {
-                color: #666;
+                color: #5e6c84;
+                font-size: 15px;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .service-duration::before {
+                content: '⏱';
+                font-size: 18px;
+            }
+
+            .service-description {
+                color: #8993a4;
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .features-title {
+                color: #8993a4;
+                font-size: 13px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+            }
+
+            .feature-list {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 25px 0;
+                flex: 1;
+            }
+
+            .feature-list li {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 10px;
+                font-size: 14px;
+                line-height: 1.5;
+                color: #172b4d;
+            }
+
+            .feature-list li::before {
+                content: '✓';
+                color: #00d68f;
+                font-weight: bold;
+                font-size: 16px;
+                margin-right: 10px;
+                flex-shrink: 0;
+                margin-top: 2px;
             }
 
             .buy-btn {
-                margin-top: 1rem;
-                padding: 0.5rem 1.5rem;
-                border-radius: 30px;
-                background-color: #0d6efd;
-                color: white;
+                width: 100%;
+                padding: 14px;
                 border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
                 transition: all 0.3s ease;
+                background: linear-gradient(135deg, #1489f1 0%, #0f6bb8 100%);
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
             .buy-btn:hover {
-                background-color: #095bb5;
+                background: linear-gradient(135deg, #0f6bb8 0%, #0a5a9e 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(20, 137, 241, 0.4);
+            }
+
+            .service-card.promo .buy-btn {
+                background: linear-gradient(135deg, #00d68f 0%, #00b875 100%);
+            }
+
+            .service-card.promo .buy-btn:hover {
+                background: linear-gradient(135deg, #00b875 0%, #009960 100%);
+                box-shadow: 0 6px 20px rgba(0, 214, 143, 0.4);
+            }
+
+            .empty-message {
+                text-align: center;
+                color: #8993a4;
+                font-size: 16px;
+                padding: 60px 20px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .feedback-section {
+                text-align: center;
+                margin: 80px 0 60px 0;
+            }
+
+            .feedback-btn {
+                padding: 16px 40px;
+                border: none;
+                border-radius: 30px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background: linear-gradient(135deg, #5e72e4 0%, #4c63d2 100%);
+                color: white;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 4px 15px rgba(94, 114, 228, 0.3);
+            }
+
+            .feedback-btn:hover {
+                background: linear-gradient(135deg, #4c63d2 0%, #3b52c1 100%);
+                transform: translateY(-3px);
+                box-shadow: 0 6px 20px rgba(94, 114, 228, 0.4);
+            }
+
+            @media (max-width: 768px) {
+                .pricing-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .bradcam_text h3 {
+                    font-size: 2rem;
+                }
+
+                .section-header h4 {
+                    font-size: 1.5rem;
+                }
+
+                .final-price {
+                    font-size: 1.8rem;
+                }
             }
         </style>
     </head>
@@ -137,61 +333,146 @@
         </div>
 
         <div class="container">
-
-            <!-- ✅ PROMOTIONS -->
-            <div class="promo-section">
-                <h4 class="text-primary mb-4"><i class="ti-gift"></i> Khuyến mãi đang diễn ra</h4>
-
-                <div class="row g-4">
-                    <c:forEach var="promo" items="${promotionList}">
-                        <div class="col-md-6 col-lg-4">
-                            <div class="promo-card">
-                                <h5 class="promo-code">${promo.code}</h5>
-                                <p>Giảm <strong><fmt:formatNumber value="${promo.discount * 100}" maxFractionDigits="0"/>%</strong></p>
-                                <p class="text-muted small">Từ ${promo.dateSt} đến ${promo.dateEn}</p>
-                                <p>${promo.description}</p>
-                            </div>
-                        </div>
-                    </c:forEach>
-
-                    <c:if test="${empty promotionList}">
-                        <p class="text-muted text-center">Hiện chưa có khuyến mãi nào.</p>
-                    </c:if>
-                </div>
+            <!-- ======= DỊCH VỤ CÓ KHUYẾN MÃI ======= -->
+            <div class="section-header promo">
+                <i class="ti-gift"></i>
+                <h4>Dịch vụ đang được khuyến mãi</h4>
             </div>
 
-            <!-- ✅ SERVICES -->
-            <div class="service-section">
-                <h4 class="text-primary mb-4"><i class="ti-briefcase"></i> Bảng giá dịch vụ</h4>
+            <div class="pricing-grid">
+                <c:forEach var="s" items="${serviceList}">
+                    <c:set var="finalPrice" value="${finalPrices[s.serviceID]}" />
 
-                <div class="row g-4">
-                    <c:forEach var="s" items="${serviceList}">
-                        <div class="col-md-4">
-                            <div class="service-card">
-                                <h5 class="fw-bold">${s.serviceName}</h5>
-                                <div class="service-price">
-                                    <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+                    <c:if test="${finalPrice lt s.price}">
+                        <div class="service-card promo">
+                            <div class="card-header-custom">
+                                <h5>${s.serviceName}</h5>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="price-section">
+                                    <!-- Giá gốc -->
+                                    <div class="service-price">
+                                        <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+                                    </div>
+
+                                    <!-- Giá sau giảm -->
+                                    <div class="final-price">
+                                        <fmt:formatNumber value="${finalPrice}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+                                    </div>
+
+                                    <!-- Phần trăm tiết kiệm -->
+                                    <div class="discount-badge">
+                                        Tiết kiệm 
+                                        <fmt:formatNumber 
+                                            value="${(1 - finalPrice / s.price) * 100}" 
+                                            maxFractionDigits="0"
+                                        />%
+                                    </div>
                                 </div>
-                                <p class="service-duration">${s.duration} ngày sử dụng</p>
-                                <p class="small text-muted">${s.description}</p>
+
+                                <div class="service-duration">${s.duration} ngày sử dụng</div>
+                                
+                                <c:if test="${not empty s.description}">
+                                    <div class="service-description">${s.description}</div>
+                                </c:if>
 
                                 <c:if test="${not empty s.functions}">
-                                    <ul class="text-start small list-unstyled mt-3">
+                                    <div class="features-title">Quyền lợi đặc biệt</div>
+                                    <ul class="feature-list">
                                         <c:forEach var="f" items="${s.functions}">
-                                            <li>• ${f.functionName}</li>
+                                            <li>${f.functionName}</li>
                                         </c:forEach>
                                     </ul>
                                 </c:if>
 
-                                <button class="buy-btn">Mua ngay</button>
+                                <form action="buyService" method="get">
+                                    <input type="hidden" name="serviceID" value="${s.serviceID}">
+                                    <button type="submit" class="buy-btn">Mua ngay</button>
+                                </form>
                             </div>
                         </div>
-                    </c:forEach>
-
-                    <c:if test="${empty serviceList}">
-                        <p class="text-muted text-center">Chưa có gói dịch vụ nào được mở bán.</p>
                     </c:if>
-                </div>
+                </c:forEach>
+            </div>
+
+            <c:set var="hasPromo" value="false" />
+            <c:forEach var="s" items="${serviceList}">
+                <c:if test="${finalPrices[s.serviceID] lt s.price}">
+                    <c:set var="hasPromo" value="true" />
+                </c:if>
+            </c:forEach>
+
+            <c:if test="${empty serviceList or hasPromo eq 'false'}">
+                <div class="empty-message">Hiện chưa có dịch vụ nào được giảm giá.</div>
+            </c:if>
+
+            <!-- ======= DỊCH VỤ GIÁ GỐC ======= -->
+            <div class="section-header">
+                <i class="ti-briefcase"></i>
+                <h4>Dịch vụ không có khuyến mãi</h4>
+            </div>
+
+            <div class="pricing-grid">
+                <c:forEach var="s" items="${serviceList}">
+                    <c:set var="finalPrice" value="${finalPrices[s.serviceID]}" />
+
+                    <c:if test="${finalPrice eq s.price}">
+                        <div class="service-card">
+                            <div class="card-header-custom">
+                                <h5>${s.serviceName}</h5>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="price-section">
+                                    <div class="final-price">
+                                        <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+                                    </div>
+                                </div>
+
+                                <div class="service-duration">${s.duration} ngày sử dụng</div>
+                                
+                                <c:if test="${not empty s.description}">
+                                    <div class="service-description">${s.description}</div>
+                                </c:if>
+
+                                <c:if test="${not empty s.functions}">
+                                    <div class="features-title">Quyền lợi đặc biệt</div>
+                                    <ul class="feature-list">
+                                        <c:forEach var="f" items="${s.functions}">
+                                            <li>${f.functionName}</li>
+                                        </c:forEach>
+                                    </ul>
+                                </c:if>
+
+                                <form action="buyService" method="get">
+                                    <input type="hidden" name="serviceID" value="${s.serviceID}">
+                                    <button type="submit" class="buy-btn">Mua ngay</button>
+                                </form>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </div>
+
+            <c:set var="hasNonPromo" value="false" />
+            <c:forEach var="s" items="${serviceList}">
+                <c:if test="${finalPrices[s.serviceID] eq s.price}">
+                    <c:set var="hasNonPromo" value="true" />
+                </c:if>
+            </c:forEach>
+
+            <c:if test="${empty serviceList or hasNonPromo eq 'false'}">
+                <div class="empty-message">Hiện chưa có dịch vụ nào không giảm giá.</div>
+            </c:if>
+
+            <!-- ======= Feedback Section ======= -->
+            <div class="feedback-section">
+                <form action="feedback_form.jsp" method="get">
+                    <input type="hidden" name="type" value="Service Feedback">
+                    <button type="submit" class="feedback-btn">
+                        <i class="ti-comment-alt"></i>
+                        <span>Gửi phản hồi cho quản trị viên</span>
+                    </button>
+                </form>
             </div>
         </div>
 

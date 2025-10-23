@@ -88,18 +88,25 @@
                         <td>
                             <c:choose>
                                 <c:when test="${s.isVisible}">
-                                    <span class="badge bg-success">Hiển thị</span>
+                                    <span class="badge bg-success mb-2">Hiển thị</span><br>
+                                    <a href="editVisible?id=${s.serviceID}" 
+                                       class="btn btn-outline-secondary btn-sm">
+                                        Ẩn đi
+                                    </a>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="badge bg-secondary">Ẩn</span>
+                                    <span class="badge bg-secondary mb-2">Đang ẩn</span><br>
+                                    <a href="editVisible?id=${s.serviceID}" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        Hiển thị
+                                    </a>
                                 </c:otherwise>
                             </c:choose>
                         </td>
 
                         <!-- ✅ Nút thao tác -->
                         <td>
-                            <a href="ServiceController?action=edit&id=${s.serviceID}" class="btn btn-warning btn-sm">Sửa</a>
-                            <a href="ServiceController?action=delete&id=${s.serviceID}" 
+                            <a href="deleteService?id=${s.serviceID}" 
                                class="btn btn-danger btn-sm"
                                onclick="return confirm('Bạn có chắc muốn xóa dịch vụ này không?')">Xóa</a>
                         </td>

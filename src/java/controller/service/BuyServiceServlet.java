@@ -2,12 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.employer;
+package controller.service;
 
 import dal.PromotionDAO;
 import dal.ServiceDAO;
-import dal.ServiceFunctionDAO;
-import dal.ServicePromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,10 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import model.Promotion;
 import model.Service;
 
@@ -26,8 +21,8 @@ import model.Service;
  *
  * @author vuthienkhiem
  */
-@WebServlet(name = "EmployerServiceServlet", urlPatterns = {"/employerServices"})
-public class EmployerServiceServlet extends HttpServlet {
+@WebServlet(name = "BuyServiceServlet", urlPatterns = {"/buyService"})
+public class BuyServiceServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +41,10 @@ public class EmployerServiceServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployerServiceServlet</title>");
+            out.println("<title>Servlet BuyServiceServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EmployerServiceServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet BuyServiceServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,42 +62,28 @@ public class EmployerServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       try {
-            PromotionDAO promoDAO = new PromotionDAO();
+        try {
+            int serviceID = Integer.parseInt(request.getParameter("serviceID"));
+
             ServiceDAO serviceDAO = new ServiceDAO();
-            ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
-            ServicePromotionDAO smDAO = new ServicePromotionDAO();
+            PromotionDAO promoDAO = new PromotionDAO();
 
+            // ✅ Lấy thông tin dịch vụ được chọn
+            Service service = serviceDAO.getServiceById(serviceID);
 
-Map<Integer, BigDecimal> serviceFinalPrice = new HashMap<>();
+            // ✅ Lấy danh sách khuyến mãi đang còn hiệu lực và được duyệt
+            List<Promotion> promotions = promoDAO.getAllActiveAndDatePromotionsForAService(serviceID);
 
+            request.setAttribute("service", service);
+            request.setAttribute("promotionList", promotions);
 
-
-            List<Promotion> promotionList = promoDAO.getAllActiveAndDatePromotions(); 
-            List<Service> serviceList = serviceDAO.getAllVisibleServices();
-   
-            for (Service s : serviceList) {
-                List<Promotion> servicePromotionList = promoDAO.getAllActiveAndDatePromotionsForAService(s.getServiceID());
-                s.setFunctions(sfDAO.getFunctionsByServiceId(s.getServiceID()));
-                
-               Promotion bestPromo=  promoDAO.getBestPromotionFromList(servicePromotionList);
-                 BigDecimal finalPrice = s.getPrice();
-                 if (bestPromo != null){
-        BigDecimal discount = bestPromo.getDiscount(); 
-        finalPrice = s.getPrice().subtract(s.getPrice().multiply(discount));
-    }
-                  serviceFinalPrice.put(s.getServiceID(), finalPrice);
-            }
-            
-request.setAttribute("finalPrices", serviceFinalPrice);
-            request.setAttribute("promotionList", promotionList);
-            request.setAttribute("serviceList", serviceList);
-            request.getRequestDispatcher("employer_service_promo.jsp").forward(request, response);
+            // ✅ Forward sang trang nhập mã khuyến mãi / xác nhận thanh toán
+            request.getRequestDispatcher("buy_service.jsp").forward(request, response);
 
         } catch (Exception e) {
-            throw new ServletException("Lỗi khi tải dữ liệu dịch vụ và khuyến mãi", e);
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
         }
-    
     }
 
     /**

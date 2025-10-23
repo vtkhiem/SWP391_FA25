@@ -73,6 +73,8 @@
            <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/admin/staffs" class="nav-link">Staffs</a>
           
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
           
 </div>
 
