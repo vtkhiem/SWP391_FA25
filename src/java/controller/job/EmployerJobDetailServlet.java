@@ -1,7 +1,6 @@
 package controller.job;
 
 import dal.JobPostDAO;
-import dal.SavedJobDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -10,12 +9,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Candidate;
+import model.Employer;
 import model.JobPost;
-import model.SavedJob;
 
-@WebServlet(name = "JobDetailServlet", urlPatterns = {"/job_details"})
-public class JobDetailServlet extends HttpServlet {
+@WebServlet(name = "EmployerJobDetailServlet", urlPatterns = {"/employer_job_details"})
+public class EmployerJobDetailServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -26,10 +24,10 @@ public class JobDetailServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet JobDetailServlet</title>");
+            out.println("<title>Servlet EmployerJobDetailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet JobDetailServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet EmployerJobDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -38,23 +36,29 @@ public class JobDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Employer employer = (Employer) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+
+        if (employer == null || !"Employer".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
+            return;
+        }
+
         int jobId = Integer.parseInt(request.getParameter("id"));
         JobPost job = jobPostDAO.getJobPostById(jobId);
 
         if (job != null) {
-            HttpSession session = request.getSession();
-            Candidate candidate = (Candidate) session.getAttribute("user");
-            if (candidate != null) {
-                SavedJobDAO savedJobDAO = new SavedJobDAO();
-                SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
-                request.setAttribute("isSaved", savedJob != null);
+            if (employer.getEmployerId() == job.getEmployerID()) {
+                request.setAttribute("job", job);
+                request.getRequestDispatcher("/employer_job_details.jsp").forward(request, response);
             } else {
-                request.setAttribute("isSaved", false);
+                session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
             }
-            request.setAttribute("job", job);
-            request.getRequestDispatcher("/job_details.jsp").forward(request, response);
         } else {
-            response.sendRedirect(request.getContextPath() + "/jobs");
+            session.setAttribute("error", "Không tìm thấy công việc.");
+            response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
     }
 

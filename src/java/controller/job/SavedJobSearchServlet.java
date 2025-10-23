@@ -1,6 +1,6 @@
 package controller.job;
 
-import dal.JobPostDAO;
+import dal.SavedJobDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -8,13 +8,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.text.Normalizer;
 import java.util.List;
+import model.Candidate;
 import model.JobPost;
 
-@WebServlet(name = "JobSearchServlet", urlPatterns = {"/search"})
-public class JobSearchServlet extends HttpServlet {
-    private JobPostDAO jobPostDAO = new JobPostDAO();
+@WebServlet(name = "SavedJobSearchServlet", urlPatterns = {"/saved_job_search"})
+public class SavedJobSearchServlet extends HttpServlet {
+    private SavedJobDAO savedJobDAO = new SavedJobDAO();
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -36,6 +38,15 @@ public class JobSearchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Candidate candidate = (Candidate) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+
+        if (candidate == null || !"Candidate".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        
         String category = (request.getParameter("category"));
         String location = request.getParameter("location");
         String keyword = request.getParameter("keyword");
@@ -109,14 +120,15 @@ public class JobSearchServlet extends HttpServlet {
         int recordsPerPage = 10;
         int offset = (page - 1) * recordsPerPage;
         
-        List<JobPost> jobs = jobPostDAO.searchJobs(category, location, min, max, keyword, numExp, jobType, offset, recordsPerPage);
-        int totalRecords = jobPostDAO.countJobsSearched(category, location, min, max, keyword, numExp, jobType);
+        List<JobPost> jobs = savedJobDAO.searchSavedJobs(candidate.getCandidateId(), category, location, min, max, keyword, numExp, jobType, offset, recordsPerPage);
+        int totalRecords = savedJobDAO.countSearchedSavedJobs(candidate.getCandidateId(), category, location, min, max, keyword, numExp, jobType);
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
         
-        request.setAttribute("jobs", jobs);
+        request.setAttribute("savedJobs", jobs);
         request.setAttribute("currentPage", page);
         request.setAttribute("noOfPages", noOfPages);
-        request.getRequestDispatcher("job_search.jsp").forward(request, response);
+        request.getRequestDispatcher("saved_job_search.jsp").forward(request, response);
     }
     
     @Override

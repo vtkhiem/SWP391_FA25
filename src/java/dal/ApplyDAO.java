@@ -13,7 +13,6 @@ import model.Candidate;
 import model.JobPost;
 
 public class ApplyDAO {
-
     Connection con = new DBContext().c;
 
     // CREATE
@@ -233,6 +232,22 @@ public class ApplyDAO {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    public boolean checkHasApply(int jobId) {
+        String sql = "SELECT COUNT(*) FROM Apply WHERE JobPostID =?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setInt(1, jobId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void main(String[] args) {
