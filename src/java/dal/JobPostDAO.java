@@ -25,7 +25,7 @@ public class JobPostDAO extends DBContext {
 
     public List<JobPost> getJobPosts(int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-        String sql = "SELECT * FROM JobPost WHERE Visible = 1 ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT * FROM JobPost WHERE Visible = 1 AND DueDate >= GETDATE() ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, offset);
@@ -45,7 +45,7 @@ public class JobPostDAO extends DBContext {
     }
     
     public int countJobs() {
-        String sql = "SELECT COUNT(*) FROM JobPost WHERE Visible = 1";
+        String sql = "SELECT COUNT(*) FROM JobPost WHERE Visible = 1 AND DueDate >= GETDATE()";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             try (ResultSet rs = ps.executeQuery()) {
@@ -60,7 +60,7 @@ public class JobPostDAO extends DBContext {
     }
 
     public JobPost getJobPostById(int id) {
-        String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
+        String sql = "SELECT * FROM JobPost WHERE JobPostID = ? AND DueDate >= GETDATE()";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
