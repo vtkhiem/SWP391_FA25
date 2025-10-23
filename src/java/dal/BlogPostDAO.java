@@ -27,25 +27,27 @@ public class BlogPostDAO extends DBContext{
         b.setPublishedDate(d != null ? new Date(d.getTime()) : null);
         b.setCoverImageUrl(rs.getNString("CoverImageUrl"));
         b.setExcerpt(rs.getNString("Excerpt"));
-        b.setContent(rs.getNString("Content"));
-        b.setFeatured(rs.getBoolean("IsFeatured"));
+               b.setFeatured(rs.getBoolean("IsFeatured"));
         int fo = rs.getInt("FeaturedOrder");
         b.setFeaturedOrder(rs.wasNull() ? null : fo);
-        int rm = rs.getInt("ReadMinutes");
-        b.setReadMinutes(rs.wasNull() ? null : rm);
+      
         b.setStatus(rs.getBoolean("Status"));
         b.setViewCount(rs.getInt("ViewCount"));
         return b;
     }
 
-    public List<BlogPost> getFeaturedTop4() throws Exception {
-        String sql = """
-            SELECT TOP (4) * FROM dbo.BlogPost
-            WHERE Status = 1 AND IsFeatured = 1
-            ORDER BY FeaturedOrder ASC, PostID DESC
-        """;
-        try (
-             PreparedStatement ps = c.prepareStatement(sql);
+     public List<BlogPost> getFeaturedTop4() throws Exception {
+       String sql = """
+    SELECT TOP (4)
+           PostID, Title, Url, CategoryName, AuthorName, PublishedDate,
+           CoverImageUrl, Excerpt, IsFeatured, FeaturedOrder, Status, ViewCount
+    FROM dbo.BlogPost
+    WHERE Status = 1 AND IsFeatured = 1
+    ORDER BY ISNULL(CONVERT(INT, FeaturedOrder), 2147483647),
+             PublishedDate DESC, PostID DESC
+""";
+
+        try (PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             List<BlogPost> list = new ArrayList<>();
             while (rs.next()) list.add(map(rs));
@@ -86,37 +88,34 @@ public class BlogPostDAO extends DBContext{
     
     public BlogPost getByUrlWithDetail(String url, BlogPostDetail[] detailHolder) throws Exception {
         String sql = """
-            SELECT p.*, d.DetailID, d.SeoTitle, d.SeoDescription, d.OGImageUrl, d.ContentHtml, d.Status AS DetailStatus
+            SELECT p.PostID, p.Title, p.Url, p.CategoryName, p.AuthorName, p.PublishedDate,
+                   p.CoverImageUrl, p.Excerpt, p.IsFeatured, p.FeaturedOrder,
+                   p.Status, p.ViewCount,
+                   d.DetailID, d.ContentHtml, d.Status AS DetailStatus
             FROM dbo.BlogPost p
             LEFT JOIN dbo.BlogPostDetail d ON d.PostID = p.PostID AND d.Status = 1
             WHERE p.Url = ? AND p.Status = 1
         """;
-        try (
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setNString(1, url);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) return null;
-
-                BlogPost b = map(rs); 
+                BlogPost b = map(rs);
                 BlogPostDetail det = null;
                 int did = rs.getInt("DetailID");
                 if (!rs.wasNull()) {
                     det = new BlogPostDetail();
                     det.setDetailID(did);
                     det.setPostID(b.getPostID());
-                    det.setSeoTitle(rs.getNString("SeoTitle"));
-                    det.setSeoDescription(rs.getNString("SeoDescription"));
-                    det.setOgImageUrl(rs.getNString("OGImageUrl"));
                     det.setContentHtml(rs.getNString("ContentHtml"));
-                    det.setStatus(true);
+                    det.setStatus(rs.getBoolean("DetailStatus"));
                 }
-                if (detailHolder != null && detailHolder.length > 0) {
-                    detailHolder[0] = det;
-                }
+                if (detailHolder != null && detailHolder.length > 0) detailHolder[0] = det;
                 return b;
             }
         }
     }
+
 
     public void increaseView(String url) throws Exception {
         String sql = "UPDATE dbo.BlogPost SET ViewCount = ViewCount + 1 WHERE Url = ?";
@@ -135,5 +134,117 @@ public class BlogPostDAO extends DBContext{
             return rs.next();
         }
     }
+    }
+      public List<BlogPost> findAll(int offset, int limit) throws Exception {
+        String sql = """
+            SELECT PostID, Title, Url, CategoryName, AuthorName, PublishedDate, Status
+            FROM dbo.BlogPost
+            ORDER BY PostID ASC
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
+        List<BlogPost> list = new ArrayList<>();
+        try (
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    BlogPost p = new BlogPost();
+                    p.setPostID(rs.getInt("PostID"));
+                    p.setTitle(rs.getNString("Title"));
+                    p.setUrl(rs.getNString("Url"));
+                    p.setCategoryName(rs.getNString("CategoryName"));
+                    java.sql.Date d = rs.getDate("PublishedDate");
+                    p.setPublishedDate(new java.util.Date(d.getTime()));
+                    p.setStatus(rs.getBoolean("Status"));
+                    list.add(p);
+                }
+            }
+        }
+        return list;
+    }
+
+    public int countAll() throws Exception {
+        String sql = "SELECT COUNT(*) FROM dbo.BlogPost";
+        try (
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            rs.next();
+            return rs.getInt(1);
+        }
+    }
+        public BlogPost getById(int id) throws Exception {
+        String sql = """
+            SELECT PostID, Title, Url, CategoryName, AuthorName, PublishedDate,
+                   CoverImageUrl, Excerpt, IsFeatured, FeaturedOrder,
+                   Status, ViewCount
+            FROM dbo.BlogPost
+            WHERE PostID = ?
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                return map(rs);
+            }
+        }
+    }
+
+ public void updateAdmin(int id, String title, String categoryName, boolean status) throws Exception {
+        String sql = """
+            UPDATE dbo.BlogPost
+               SET Title = ?, CategoryName = ?, Status = ?,
+                   UpdatedAt = SYSUTCDATETIME()
+             WHERE PostID = ?
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setNString(1, title);
+            ps.setNString(2, categoryName);
+            ps.setBoolean(3, status);
+            ps.setInt(4, id);
+            ps.executeUpdate();
+        }
+    }
+
+  public BlogPostDetail getDetailByPostId(int postId) throws Exception {
+        String sql = """
+            SELECT DetailID, PostID, ContentHtml, Status, CreatedAt, UpdatedAt
+            FROM dbo.BlogPostDetail WHERE PostID = ?
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, postId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                BlogPostDetail d = new BlogPostDetail();
+                d.setDetailID(rs.getInt("DetailID"));
+                d.setPostID(rs.getInt("PostID"));
+                d.setContentHtml(rs.getNString("ContentHtml"));
+                d.setStatus(rs.getBoolean("Status"));
+                return d;
+            }
+        }
+    }
+
+    public void upsertDetail(int postId, String contentHtml, boolean status) throws Exception {
+        String sql = """
+        IF EXISTS (SELECT 1 FROM dbo.BlogPostDetail WHERE PostID = ?)
+            UPDATE dbo.BlogPostDetail
+               SET ContentHtml = ?, Status = ?, UpdatedAt = SYSUTCDATETIME()
+             WHERE PostID = ?
+        ELSE
+            INSERT INTO dbo.BlogPostDetail (PostID, ContentHtml, Status)
+            VALUES (?, ?, ?)
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            int i = 1;
+            ps.setInt(i++, postId);                 // exists
+            ps.setNString(i++, contentHtml);        // update set
+            ps.setBoolean(i++, status);
+            ps.setInt(i++, postId);                 // update where
+            ps.setInt(i++, postId);                 // insert values
+            ps.setNString(i++, contentHtml);
+            ps.setBoolean(i++, status);
+            ps.executeUpdate();
+        }
     }
 }

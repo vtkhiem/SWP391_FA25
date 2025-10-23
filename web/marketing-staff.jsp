@@ -19,16 +19,10 @@
 
   .navbar { background:#00366d; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; position:sticky; top:0; z-index:10; }
   .brand a { color:#fff; text-decoration:none; font-weight:700; }
-  .navbar .links a { color:#fff; text-decoration:none; margin-left:14px; }
   .navbar .right { display:flex; gap:12px; align-items:center; }
-  .navbar .right .hello { opacity:.9; }
   .navbar .right a { color:#fff; text-decoration:none; }
 
   .container { width:100%; max-width:1000px; margin:18px auto; padding:0 16px; }
-
-  .total-card { background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,.06); margin-bottom:16px; }
-  .total-title { color:#6b7280; font-size:14px; margin-bottom:6px; }
-  .total-num { font-size:24px; font-weight:800; line-height:1; }
 
   .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px; }
 
@@ -40,10 +34,6 @@
   .btn { padding:10px 14px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-weight:600; text-decoration:none; color:#111827; display:inline-block; }
   .btn:hover { box-shadow:0 2px 6px rgba(0,0,0,.08) }
   .btn.primary { background:#ff7a00; color:#fff; border-color:#ff7a00; }
-
-  .table-card { background:#ffffff; border-radius:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); border:1px solid #e5e7eb; overflow:hidden; margin-top:16px; }
-  .table-head { padding:16px 16px 0 16px; font-weight:700; font-size:18px; }
-  .empty { color:#6b7280; padding:20px; }
 </style>
 </head>
 <body>
@@ -52,13 +42,13 @@
     <a>Marketing Dashboard</a>
   </div>
   <div class="right">
-   
     <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
   </div>
 </div>
 
 <div class="container">
   <div class="cards">
+    <!-- Khuyến mãi -->
     <div class="card">
       <h3>Đăng tin khuyến mãi</h3>
       <p>Tạo mới tin khuyến mãi để thu hút ứng viên & nhà tuyển dụng.</p>
@@ -80,6 +70,14 @@
       <p>Phân tích hiệu quả các chiến dịch theo thời gian.</p>
       <div class="actions">
         <a class="btn primary" href="${pageContext.request.contextPath}/marketingStatistics">Xem thống kê</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Quản lý Blog Post</h3>
+      <p>Soạn thảo, xuất bản và sắp xếp các bài viết trên trang Blog.</p>
+      <div class="actions">
+        <a class="btn primary" href="${pageContext.request.contextPath}/blog-list">Xem danh sách bài viết</a>
       </div>
     </div>
   </div>

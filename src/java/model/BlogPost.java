@@ -19,17 +19,15 @@ public class BlogPost {
     private Date publishedDate;
     private String coverImageUrl;
     private String excerpt;
-    private String content;
     private boolean isFeatured;
     private Integer featuredOrder;
-    private Integer readMinutes;
     private boolean status;        
     private int viewCount;
 
     public BlogPost() {
     }
 
-    public BlogPost(int postID, String title, String url, String categoryName, String authorName, Date publishedDate, String coverImageUrl, String excerpt, String content, boolean isFeatured, Integer featuredOrder, Integer readMinutes, boolean status, int viewCount) {
+    public BlogPost(int postID, String title, String url, String categoryName, String authorName, Date publishedDate, String coverImageUrl, String excerpt, boolean isFeatured, Integer featuredOrder,boolean status, int viewCount) {
         this.postID = postID;
         this.title = title;
         this.url = url;
@@ -38,10 +36,8 @@ public class BlogPost {
         this.publishedDate = publishedDate;
         this.coverImageUrl = coverImageUrl;
         this.excerpt = excerpt;
-        this.content = content;
         this.isFeatured = isFeatured;
         this.featuredOrder = featuredOrder;
-        this.readMinutes = readMinutes;
         this.status = status;
         this.viewCount = viewCount;
     }
@@ -110,13 +106,6 @@ public class BlogPost {
         this.excerpt = excerpt;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 
     public boolean IsFeatured() {
         return isFeatured;
@@ -134,13 +123,6 @@ public class BlogPost {
         this.featuredOrder = featuredOrder;
     }
 
-    public Integer getReadMinutes() {
-        return readMinutes;
-    }
-
-    public void setReadMinutes(Integer readMinutes) {
-        this.readMinutes = readMinutes;
-    }
 
     public boolean isStatus() {
         return status;
