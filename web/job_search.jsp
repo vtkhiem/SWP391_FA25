@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Việc làm khả dụng - Job Board</title>
+        <title>Tìm kiếm việc làm - Job Board</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -39,7 +39,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="bradcam_text">
-                            <h3>Việc làm khả dụng</h3>
+                            <h3>Tìm kiếm việc làm</h3>
                         </div>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                                         <div class="alert alert-danger">${errorMessage}</div>
                                     </c:if>
                                 </div>
-
+                                
                                 <div class="form-group mb-3">
                                     <label>Yêu cầu kinh nghiệm</label>
                                     <select name="numberExp" class="form-control">
@@ -206,21 +206,21 @@
                         <div class="pagination justify-content-center mt-4">
                             <ul class="pagination">
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage-1}">
+                                    <a class="page-link" href="?page=${currentPage-1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                         &lt;
                                     </a>
                                 </li>
 
                                 <c:forEach var="i" begin="1" end="${noOfPages}">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="?page=${i}">
+                                        <a class="page-link" href="?page=${i}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                             ${i}
                                         </a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage+1}">
+                                    <a class="page-link" href="?page=${currentPage+1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                         &gt;
                                     </a>
                                 </li>

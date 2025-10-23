@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-// Bắt các đường dẫn dành cho employer (chỉnh theo project)
-@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/employer_jobs"})
+@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/job_delete_bulk", "/employer_jobs", "/employer_search"})
 public class AuthFilter implements Filter {
 
     @Override
@@ -22,7 +21,7 @@ public class AuthFilter implements Filter {
         if (session == null || session.getAttribute("role") == null
                 || !"Employer".equals(session.getAttribute("role"))) {
             // bạn có thể thêm thông báo ?next= để redirect sau khi login
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login-employer.jsp");
             return;
         }
 

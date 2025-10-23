@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -67,34 +68,44 @@ public class EmployerServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       try {
+        try {
+            HttpSession session = request.getSession();
             PromotionDAO promoDAO = new PromotionDAO();
             ServiceDAO serviceDAO = new ServiceDAO();
             ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
             ServicePromotionDAO smDAO = new ServicePromotionDAO();
 
+            Map<Integer, BigDecimal> serviceFinalPrice = new HashMap<>();
 
-Map<Integer, BigDecimal> serviceFinalPrice = new HashMap<>();
-
-
-
-            List<Promotion> promotionList = promoDAO.getAllActiveAndDatePromotions(); 
+            List<Promotion> promotionList = promoDAO.getAllActiveAndDatePromotions();
             List<Service> serviceList = serviceDAO.getAllVisibleServices();
-   
+
             for (Service s : serviceList) {
                 List<Promotion> servicePromotionList = promoDAO.getAllActiveAndDatePromotionsForAService(s.getServiceID());
                 s.setFunctions(sfDAO.getFunctionsByServiceId(s.getServiceID()));
-                
-               Promotion bestPromo=  promoDAO.getBestPromotionFromList(servicePromotionList);
-                 BigDecimal finalPrice = s.getPrice();
-                 if (bestPromo != null){
-        BigDecimal discount = bestPromo.getDiscount(); 
-        finalPrice = s.getPrice().subtract(s.getPrice().multiply(discount));
-    }
-                  serviceFinalPrice.put(s.getServiceID(), finalPrice);
+
+                Promotion bestPromo = promoDAO.getBestPromotionFromList(servicePromotionList);
+                BigDecimal finalPrice = s.getPrice();
+                if (bestPromo != null) {
+                    BigDecimal discount = bestPromo.getDiscount();
+                    finalPrice = s.getPrice().subtract(s.getPrice().multiply(discount));
+                }
+                serviceFinalPrice.put(s.getServiceID(), finalPrice);
             }
-            
-request.setAttribute("finalPrices", serviceFinalPrice);
+
+            String message = (String) session.getAttribute("message");
+            if (message != null) {
+                request.setAttribute("message", message);
+                session.removeAttribute("message");
+            }
+
+            String error = (String) session.getAttribute("error");
+            if (error != null) {
+                request.setAttribute("error", error);
+                session.removeAttribute("error");
+            }
+
+            request.setAttribute("finalPrices", serviceFinalPrice);
             request.setAttribute("promotionList", promotionList);
             request.setAttribute("serviceList", serviceList);
             request.getRequestDispatcher("employer_service_promo.jsp").forward(request, response);
@@ -102,7 +113,7 @@ request.setAttribute("finalPrices", serviceFinalPrice);
         } catch (Exception e) {
             throw new ServletException("Lỗi khi tải dữ liệu dịch vụ và khuyến mãi", e);
         }
-    
+
     }
 
     /**
@@ -128,5 +139,4 @@ request.setAttribute("finalPrices", serviceFinalPrice);
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

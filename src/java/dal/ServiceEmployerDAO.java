@@ -5,7 +5,6 @@ import java.sql.*;
 import model.ServiceEmployer;
 
 public class ServiceEmployerDAO extends DBContext {
-
     // ✅ 1. Thêm đăng ký dịch vụ mới
     public boolean addServiceForEmployer(ServiceEmployer se) throws SQLException {
         String sql = """
@@ -19,28 +18,26 @@ public class ServiceEmployerDAO extends DBContext {
             ps.setTimestamp(3, se.getRegisterDate());
             ps.setTimestamp(4, se.getExpirationDate());
             ps.setString(5, se.getPaymentStatus());
-          
+
             return ps.executeUpdate() > 0;
         }
     }
 
     // ✅ 2. Lấy tất cả dịch vụ mà Employer đã đăng ký
     public int getServiceIdByEmployerId(int employerID) throws SQLException {
-       
         String sql = "SELECT ServiceID FROM ServiceEmployer WHERE EmployerID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerID);
             try (ResultSet rs = ps.executeQuery()) {
-                if(rs.next()){
+                if (rs.next()) {
                     return rs.getInt("ServiceID");
-                }else{
+                } else {
                     return -1;
                 }
             }
         }
-     
+
     }
- 
 
     // ✅ 3. Lấy chi tiết 1 đăng ký
     public ServiceEmployer getByEmployerAndService(int employerID, int serviceID) throws SQLException {
@@ -79,8 +76,6 @@ public class ServiceEmployerDAO extends DBContext {
         }
     }
 
-
-
     // ✅ 7. Xóa đăng ký
     public boolean deleteServiceEmployer(int employerID, int serviceID) throws SQLException {
         String sql = "DELETE FROM ServiceEmployer WHERE EmployerID = ? AND ServiceID = ?";
@@ -115,20 +110,20 @@ public class ServiceEmployerDAO extends DBContext {
                 rs.getTimestamp("RegisterDate"),
                 rs.getTimestamp("ExpirationDate"),
                 rs.getString("PaymentStatus")
-             
         );
     }
-public boolean registerService(int employerId, int serviceId, 
-                               Timestamp registerDate, Timestamp expirationDate,
-                               String paymentStatus,
-                               String actionType) throws SQLException {
-    String insertHistorySQL = """
+
+    public boolean registerService(int employerId, int serviceId,
+            Timestamp registerDate, Timestamp expirationDate,
+            String paymentStatus,
+            String actionType) throws SQLException {
+        String insertHistorySQL = """
         INSERT INTO ServiceEmployerHistory 
         (EmployerID, ServiceID, RegisterDate, ExpirationDate, PaymentStatus, ActionType)
         VALUES (?, ?, ?, ?, ?, ?)
     """;
 
-    String upsertCurrentSQL = """
+        String upsertCurrentSQL = """
         MERGE ServiceEmployer AS target
         USING (SELECT ? AS EmployerID, ? AS ServiceID, ? AS RegisterDate, ? AS ExpirationDate, ? AS PaymentStatus) AS src
         ON target.EmployerID = src.EmployerID
@@ -141,39 +136,37 @@ public boolean registerService(int employerId, int serviceId,
             VALUES (src.EmployerID, src.ServiceID, src.RegisterDate, src.ExpirationDate, src.PaymentStatus);
     """;
 
-    try {
-        c.setAutoCommit(false);
+        try {
+            c.setAutoCommit(false);
 
-        try (PreparedStatement ps1 = c.prepareStatement(insertHistorySQL)) {
-            ps1.setInt(1, employerId);
-            ps1.setInt(2, serviceId);
-            ps1.setTimestamp(3, registerDate);
-            ps1.setTimestamp(4, expirationDate);
-            ps1.setString(5, paymentStatus);
-        
-            ps1.setString(6, actionType);
-            ps1.executeUpdate();
+            try (PreparedStatement ps1 = c.prepareStatement(insertHistorySQL)) {
+                ps1.setInt(1, employerId);
+                ps1.setInt(2, serviceId);
+                ps1.setTimestamp(3, registerDate);
+                ps1.setTimestamp(4, expirationDate);
+                ps1.setString(5, paymentStatus);
+
+                ps1.setString(6, actionType);
+                ps1.executeUpdate();
+            }
+
+            try (PreparedStatement ps2 = c.prepareStatement(upsertCurrentSQL)) {
+                ps2.setInt(1, employerId);
+                ps2.setInt(2, serviceId);
+                ps2.setTimestamp(3, registerDate);
+                ps2.setTimestamp(4, expirationDate);
+                ps2.setString(5, paymentStatus);
+
+                ps2.executeUpdate();
+            }
+
+            c.commit();
+            return true;
+        } catch (SQLException e) {
+            c.rollback();
+            throw e;
+        } finally {
+            c.setAutoCommit(true);
         }
-
-        try (PreparedStatement ps2 = c.prepareStatement(upsertCurrentSQL)) {
-            ps2.setInt(1, employerId);
-            ps2.setInt(2, serviceId);
-            ps2.setTimestamp(3, registerDate);
-            ps2.setTimestamp(4, expirationDate);
-            ps2.setString(5, paymentStatus);
-      
-            ps2.executeUpdate();
-        }
-
-        c.commit();
-        return true;
-    } catch (SQLException e) {
-        c.rollback();
-        throw e;
-    } finally {
-        c.setAutoCommit(true);
     }
-}
-
-
 }

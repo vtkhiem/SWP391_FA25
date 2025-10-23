@@ -1,5 +1,6 @@
 package controller.job;
 
+import dal.ApplyDAO;
 import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,92 +42,144 @@ public class JobEditServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Employer employer = (Employer) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+        
+        if (employer == null || !"Employer".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
+            return;
+        }
+
         String idParam = request.getParameter("id");
         if (idParam == null || idParam.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/jobs?error=noIdProvided");
+            response.sendRedirect(request.getContextPath() + "/employer_jobs");
             return;
         }
 
-        int jobId;
         try {
+            int jobId;
             jobId = Integer.parseInt(idParam);
-        } catch (NumberFormatException ex) {
-            response.sendRedirect(request.getContextPath() + "/jobs?error=invalidId");
-            return;
-        }
+            
+            JobPost job = jobPostDAO.getJobPostById(jobId);
+            if (job == null) {
+                session.setAttribute("error", "Không tìm thấy công việc cần chỉnh sửa.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                return;
+            }
 
-        JobPost job = jobPostDAO.getJobPostById(jobId);
-        if (job == null) {
-            response.sendRedirect(request.getContextPath() + "/jobs?error=notfound");
-            return;
-        }
+            if (job.getEmployerID() != employer.getEmployerId()) {
+                session.setAttribute("error", "Bạn không có quyền chỉnh sửa công việc này.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                return;
+            }
+            
+            ApplyDAO applyDAO = new ApplyDAO();
+            if (applyDAO.checkHasApply(jobId)) {
+                session.setAttribute("error", "Đã có ứng viên ứng tuyển. Bạn không thể chỉnh sửa công việc này.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                return;
+            } else {
+                if (job.isVisible()) {
+                    session.setAttribute("error", "Công việc đang mở. Bạn không thể chỉnh sửa công việc này.");
+                    response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                    return;
+                } else {
+                    String[] parts = job.getDescription().split("<b>.*?</b>");
+                    String desc1 = "";
+                    String desc2 = "";
+                    String desc3 = "";
 
-        // Kiểm tra session employer (chỉ employer mới được edit)
-        HttpSession session = request.getSession(false);
-        Employer employer = (session != null) ? (Employer) session.getAttribute("user") : null;
-        if (employer == null) {
-            // chưa đăng nhập hoặc không phải employer
-            response.sendRedirect(request.getContextPath() + "/login?next=job_edit&id=" + jobId);
-            return;
-        }
+                    for (int i = 0; i < parts.length; i++) {
+                        String clean = parts[i].replaceAll("(?i)<br>", "\n").trim();
 
-        if (job.getEmployerID() != employer.getEmployerId()) {
-            // Không phải chủ job -> forbidden
-            response.sendRedirect(request.getContextPath() + "/jobs?error=forbidden");
-            return;
-        }
+                        switch (i) {
+                            case 0:
+                                desc1 = clean;
+                                break;
+                            case 1:
+                                desc2 = clean;
+                                break;
+                            case 2:
+                                desc3 = clean;
+                                break;
+                        }
+                    }
 
-        request.setAttribute("job", job);
-        request.getRequestDispatcher("/job_edit.jsp").forward(request, response);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String dueDateFormatted = "";
+                    if (job.getDueDate() != null) {
+                        dueDateFormatted = job.getDueDate().format(formatter);
+                    }
+                    request.setAttribute("dueDateFormatted", dueDateFormatted);
+                    request.setAttribute("desc1", desc1);
+                    request.setAttribute("desc2", desc2);
+                    request.setAttribute("desc3", desc3);
+                    request.setAttribute("job", job);
+                    request.getRequestDispatcher("/job_edit.jsp").forward(request, response);
+                }
+            }
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+            response.sendRedirect(request.getContextPath() + "/employer_jobs");
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        Employer employer = (session != null) ? (Employer) session.getAttribute("user") : null;
-        if (employer == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        HttpSession session = request.getSession();
+        Employer employer = (Employer) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+        
+        if (employer == null || !"Employer".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
             return;
         }
 
         try {
             int jobId = Integer.parseInt(request.getParameter("id"));
-
-            // Lấy job cũ và kiểm tra quyền
             JobPost oldJob = jobPostDAO.getJobPostById(jobId);
-            if (oldJob == null) {
-                response.sendRedirect(request.getContextPath() + "/jobs?error=notfound");
-                return;
-            }
-            if (oldJob.getEmployerID() != employer.getEmployerId()) {
-                response.sendRedirect(request.getContextPath() + "/jobs?error=forbidden");
+            
+            if (oldJob == null || oldJob.getEmployerID() != employer.getEmployerId()) {
+                session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
                 return;
             }
 
-            // Parsing / lấy input (nếu rỗng => giữ giá trị cũ)
             String title = request.getParameter("title");
-            if (title == null) {
+            if (title == null || title.trim().isEmpty()) {
                 title = oldJob.getTitle();
             }
 
-            String description = request.getParameter("description");
-            if (description == null) {
+            String description = "";
+            String desc1 = request.getParameter("description-1");
+            String desc2 = request.getParameter("description-2");
+            String desc3 = request.getParameter("description-3");
+            if (desc1 == null || desc1.trim().isEmpty()
+                    || desc2 == null || desc2.trim().isEmpty()
+                    || desc3 == null || desc3.trim().isEmpty()) {
                 description = oldJob.getDescription();
+            } else {
+                StringBuilder descriptionBuilder = new StringBuilder();
+                descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+                descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n","<br>")).append("<br>");
+                descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n","<br>"));
+                description = descriptionBuilder.toString().trim();
             }
 
             String category = request.getParameter("category");
-            if (category == null) {
+            if (category == null || category.trim().isEmpty()) {
                 category = oldJob.getCategory();
             }
 
             String position = request.getParameter("position");
-            if (position == null) {
+            if (position == null || position.trim().isEmpty()) {
                 position = oldJob.getPosition();
             }
 
             String location = request.getParameter("location");
-            if (location == null) {
+            if (location == null || location.trim().isEmpty()) {
                 location = oldJob.getLocation();
             }
 
@@ -149,12 +202,11 @@ public class JobEditServlet extends HttpServlet {
             }
 
             String typeJob = request.getParameter("typeJob");
-            if (typeJob == null) {
+            if (typeJob == null || typeJob.trim().isEmpty()) {
                 typeJob = oldJob.getTypeJob();
             }
 
-            // DueDate: xử lý an toàn (yyyy-MM-dd)
-            LocalDateTime dueDate = oldJob.getDueDate(); // giữ giá trị cũ nếu user không nhập
+            LocalDateTime dueDate = oldJob.getDueDate();
             String dueParam = request.getParameter("dueDate");
             if (dueParam != null && !dueParam.trim().isEmpty()) {
                 try {
@@ -162,19 +214,23 @@ public class JobEditServlet extends HttpServlet {
                     LocalDate localDate = LocalDate.parse(dueParam.trim(), formatter);
                     dueDate = localDate.atStartOfDay();
                 } catch (DateTimeException dtEx) {
-                    // invalid format -> redirect về form với error
-                    response.sendRedirect(request.getContextPath() + "/job_edit?id=" + jobId + "&error=invalidDueDate");
+                    request.setAttribute("error", "Chỉnh sửa công việc thất bại. Vui lòng thử lại.");
+                    request.getRequestDispatcher(request.getContextPath() + "/job_edit?id=" + jobId).forward(request, response);
                     return;
                 }
             }
 
-            // Giữ DayCreate cũ (không overwrite)
             LocalDateTime dayCreate = oldJob.getDayCreate();
             if (dayCreate == null) {
                 dayCreate = LocalDateTime.now();
             }
 
-            // Tạo job object để cập nhật (dùng oldJob để giữ các trường khác)
+            if (offerMax.compareTo(offerMin) < 0) {
+                request.setAttribute("error", "Mức lương tối đa không được nhỏ hơn tối thiểu.");
+                request.getRequestDispatcher(request.getContextPath() + "/job_edit?id=" + jobId).forward(request, response);
+                return;
+            }
+
             JobPost job = oldJob;
             job.setTitle(title);
             job.setDescription(description);
@@ -185,24 +241,22 @@ public class JobEditServlet extends HttpServlet {
             job.setOfferMax(offerMax);
             job.setNumberExp(numberExp);
             job.setTypeJob(typeJob);
-            job.setVisible(true); // hoặc giữ oldJob.isVisible()
+            job.setVisible(oldJob.isVisible());
             job.setDayCreate(dayCreate);
             job.setDueDate(dueDate);
 
             boolean updated = jobPostDAO.updateJobPost(job);
 
             if (updated) {
-                // redirect sang detail (PRG) để tránh resubmit
-                response.sendRedirect(request.getContextPath() + "/job_details?id=" + jobId + "&message=updated");
+                session.setAttribute("message", "Chỉnh sửa công việc thành công!");
+                response.sendRedirect(request.getContextPath() +"/employer_jobs");
             } else {
-                response.sendRedirect(request.getContextPath() + "/job_edit?id=" + jobId + "&error=updateFailed");
+                request.setAttribute("error", "Chỉnh sửa công việc thất bại. Vui lòng thử lại.");
+                request.getRequestDispatcher("/job_edit").forward(request, response);
             }
-
-        } catch (NumberFormatException nfe) {
-            response.sendRedirect(request.getContextPath() + "/job_edit?error=invalidInput");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/job_edit?error=serverError");
+        } catch (ServletException | IOException | NumberFormatException e) {
+            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+            response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
     }
 

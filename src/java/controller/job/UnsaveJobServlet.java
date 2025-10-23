@@ -10,9 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Candidate;
+import model.SavedJob;
 
-@WebServlet(name = "SaveJobServlet", urlPatterns = {"/save_job"})
-public class SaveJobServlet extends HttpServlet {
+@WebServlet(name = "UnsaveJobServlet", urlPatterns = {"/unsave_job"})
+public class UnsaveJobServlet extends HttpServlet {
     private SavedJobDAO savedJobDAO = new SavedJobDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -23,10 +24,10 @@ public class SaveJobServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SaveJobServlet</title>");
+            out.println("<title>Servlet UnsaveJobServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SaveJobServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UnsaveJobServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -44,7 +45,7 @@ public class SaveJobServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Candidate candidate = (Candidate) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
-
+        
         if (candidate == null || !"Candidate".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
@@ -52,17 +53,31 @@ public class SaveJobServlet extends HttpServlet {
         
         try {
             int jobId = Integer.parseInt(request.getParameter("jobId"));
-            boolean saved = savedJobDAO.saveJob(candidate.getCandidateId(), jobId);
+            SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
             
-            if (saved) {
-                session.setAttribute("message", "Lưu công việc vào danh sách yêu thích thành công!");
+            if (savedJob == null) {
+                session.setAttribute("error", "Không tìm thấy công việc cần xoá.");
+                response.sendRedirect(request.getContextPath() + "/saved_jobs");
+                return;
+            }
+            
+            if (candidate.getCandidateId() != savedJob.getCandidateID()) {
+                session.setAttribute("error", "Bạn không có quyền xoá việc làm khỏi danh sách yêu thích.");
+                response.sendRedirect(request.getContextPath() + "/saved_jobs");
+                return;
+            }
+            
+            boolean deleted = savedJobDAO.removeSavedJob(candidate.getCandidateId(), jobId);
+        
+            if (deleted) {
+                session.setAttribute("message", "Xoá công việc khỏi danh sách yêu thích thành công!");
             } else {
-                session.setAttribute("error", "Công việc này đã được lưu trước đó hoặc xảy ra lỗi.");
+                session.setAttribute("error", "Xoá công việc thất bại. Vui lòng thử lại.");
             }
         
             response.sendRedirect(request.getContextPath() + "/saved_jobs");
         } catch (NumberFormatException e) {
-            session.setAttribute("error", "Lưu công việc thất bại. Vui lòng thử lại.");
+            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
             response.sendRedirect(request.getContextPath() + "/saved_jobs");
         }
     }
