@@ -96,8 +96,8 @@
 
         <!-- Search & Filter Controls -->
         <!-- Container -->
-        <form action="${pageContext.request.contextPath}/filterApply" method="post" class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
-
+        <form action="${pageContext.request.contextPath}/filterApply" method="get"
+              class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
             <!-- hidden field để truyền Job ID -->
             <input type="hidden" name="jobId" value="${param.jobId}">
 
@@ -107,54 +107,53 @@
                    placeholder="Search by name or email..."
                    style="height: 38px; min-width: 250px;">
 
-            <!-- Filters -->
             <select class="form-control" name="exp" id="experienceFilter" style="height: 38px; min-width: 180px;">
-                <option value="${exp}">Filter by Experience</option>
-                <option value="0-1">0 - 1 years</option>
-                <option value="2-3">2 - 3 years</option>
-                <option value="4-5">4 - 5 years</option>
-                <option value="5+">5+ years</option>
-            </select>
+                <option value="" disabled <c:if test="${empty exp}">selected</c:if> hidden>Filter by Experience</option>
+                <option value="0-1" <c:if test="${exp eq '0-1'}">selected</c:if>>0 - 1 years</option>
+                <option value="2-3" <c:if test="${exp eq '2-3'}">selected</c:if>>2 - 3 years</option>
+                <option value="4-5" <c:if test="${exp eq '4-5'}">selected</c:if>>4 - 5 years</option>
+                <option value="5+" <c:if test="${exp eq '5+'}">selected</c:if>>5+ years</option>
+                </select>
 
-            <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
-                <option value="${status}">Filter by Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-            </select>
+                <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
+                    <option value="" disabled <c:if test="${empty status}">selected</c:if> hidden>Filter by Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
 
-            <button type="submit" class="btn btn-sm btn-warning me-2" style="height:38px;">Apply</button>
-            <button type="reset" class="btn btn-sm btn-secondary" style="height:38px;">Clear</button>
+                <button type="submit" class="btn btn-sm btn-warning me-2" style="height:38px;">Apply</button>
+                <button type="reset" class="btn btn-sm btn-secondary" style="height:38px;">Clear</button>
 
-        </form>
-
-
+            </form>
 
 
 
-        <div class="apply_listing_by_job">
-            <div class="container-fluid p-0">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <form action="job_delete_bulk" method="post" onsubmit="return confirm('Are you sure want to delete selected jobs?');">
-                            <div class="table-responsive mt-3">
-                                <table class="table table-hover table-bordered">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th style="width:40px">
-                                                <input type="checkbox" id="selectAll"/>
-                                            </th>
-                                            <th style="width:48px">No</th>
-                                            <th style="width:160px">Candidate</th>
-                                            <th style="width:160px">Email</th>
-                                            <th style="width:50px">Experience</th>
-                                            <th style="width:60px">Current salary</th>
-                                            <th style="width:120px">Status</th>
-                                            <th style="width:160px">Note</th>
-                                            <th style="width:120px">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+
+
+            <div class="apply_listing_by_job">
+                <div class="container-fluid p-0">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form action="job_delete_bulk" method="post" onsubmit="return confirm('Are you sure want to delete selected jobs?');">
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-hover table-bordered">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th style="width:40px">
+                                                    <input type="checkbox" id="selectAll"/>
+                                                </th>
+                                                <th style="width:48px">No</th>
+                                                <th style="width:160px">Candidate</th>
+                                                <th style="width:160px">Email</th>
+                                                <th style="width:50px">Experience</th>
+                                                <th style="width:60px">Current salary</th>
+                                                <th style="width:120px">Status</th>
+                                                <th style="width:160px">Note</th>
+                                                <th style="width:120px">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
                                         <c:forEach var="d" items="${details}" varStatus="st">
                                             <tr>
                                                 <td>
@@ -218,25 +217,52 @@
                 </div>
                 <div class="pagination justify-content-center mt-4">
                     <ul class="pagination">
+                        <c:url var="prevUrl" value="filterApply">
+                            <c:param name="jobId" value="${param.jobId}" />
+                            <c:param name="txt" value="${param.txt}" />
+                            <c:param name="exp" value="${param.exp}" />
+                            <c:param name="status" value="${param.status}" />
+                            <c:param name="page" value="${currentPage - 1}" />
+                        </c:url>
                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="?jobId=${param.jobId}&page=${currentPage-1}">
-                                &lt;
-                            </a>
+                            <a class="page-link" href="${prevUrl}">&lt;</a>
                         </li>
+
 
                         <c:forEach var="i" begin="1" end="${noOfPages}">
                             <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                <a class="page-link" href="?jobId=${param.jobId}&page=${i}">
-                                    ${i}
-                                </a>
+                                <c:url var="pageUrl" value="filterApply">
+                                    <c:param name="jobId" value="${param.jobId}" />
+                                    <c:if test="${not empty param.txt}">
+                                        <c:param name="txt" value="${param.txt}" />
+                                    </c:if>
+                                    <c:if test="${not empty param.exp}">
+                                        <c:param name="exp" value="${param.exp}" />
+                                    </c:if>
+                                    <c:if test="${not empty param.status}">
+                                        <c:param name="status" value="${param.status}" />
+                                    </c:if>
+                                    <c:param name="page" value="${i}" />
+                                </c:url>
+
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="${pageUrl}">${i}</a>
+                            </li>
+
                             </li>
                         </c:forEach>
 
-                        <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                            <a class="page-link" href="?jobId=${param.jobId}&page=${currentPage+1}">
-                                &gt;
-                            </a>
+                        <c:url var="nextUrl" value="filterApply">
+                            <c:param name="jobId" value="${param.jobId}" />
+                            <c:param name="txt" value="${param.txt}" />
+                            <c:param name="exp" value="${param.exp}" />
+                            <c:param name="status" value="${param.status}" />
+                            <c:param name="page" value="${currentPage + 1}" />
+                        </c:url>
+                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="${nextUrl}">&gt;</a>
                         </li>
+
                     </ul>
                 </div>
             </div>
@@ -276,7 +302,6 @@
                     statusFilter.value = "";
                     // Reload lại trang không có filter
                     const jobId = form.querySelector("input[name='jobId']").value;
-                    window.location.href = contextPath + "/filterApply?jobId=" + jobId;
                 });
 
                 // --- 2. CHECKBOX SELECT ALL ---

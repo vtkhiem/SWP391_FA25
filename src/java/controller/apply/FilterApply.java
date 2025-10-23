@@ -71,7 +71,7 @@ public class FilterApply extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request,response);
     }
 
     /**
@@ -94,12 +94,15 @@ public class FilterApply extends HttpServlet {
 
         int jobId = Validation.getId(request.getParameter("jobId"));
         Employer employer = (Employer) session.getAttribute("user");
+        int employerId = employer.getEmployerId();
         int page = Validation.getPage(request.getParameter("page"));
 
         if (jobId == 0) {
             response.sendRedirect("employer_jobs");
             return; // avoid “response already committed”
         }
+        
+        
 
         ApplyDAO dao = new ApplyDAO();
         JobPostDAO jdao = new JobPostDAO();
@@ -109,7 +112,7 @@ public class FilterApply extends HttpServlet {
         int recordsPerPage = 10;
         int offSet = (page - 1) * recordsPerPage;
 
-        List<Apply> applies = dao.filterApply(jobId, employer.getEmployerId(), Validation.searchKey(txt), status, exp, offSet, recordsPerPage);
+        List<Apply> applies = dao.filterApply(jobId, employerId, Validation.searchKey(txt), status, exp, offSet, recordsPerPage);
         List<ApplyDetail> details = new ArrayList<>();
 
         for (Apply apply : applies) {
@@ -118,15 +121,16 @@ public class FilterApply extends HttpServlet {
             JobPost job = jdao.getJobPostById(apply.getJobPostId());
             details.add(new ApplyDetail(apply, can, cv, job));
         }
-        int totalRecords = details.size();
-        int totalPage = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+        int totalRecords = dao.countFilteredApply(jobId, employerId, txt, status, exp);
+        int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
         
+        request.setAttribute("jobId",jobId);
         request.setAttribute("txt", txt);
         request.setAttribute("exp", exp);
         request.setAttribute("status", status);
         request.setAttribute("details", details);
         request.setAttribute("currentPage", page);
-        request.setAttribute("noOfPages", totalPage);
+        request.setAttribute("noOfPages", noOfPages);
         request.getRequestDispatcher("apply.jsp").forward(request, response);
     }
 

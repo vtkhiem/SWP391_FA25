@@ -19,10 +19,6 @@ public class EditCandidateProfile extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        if (session == null || !"Candidate".equals(session.getAttribute("role"))) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
 
         request.getRequestDispatcher("/profile").forward(request, response);
 
@@ -36,16 +32,8 @@ public class EditCandidateProfile extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null || !"Candidate".equals(session.getAttribute("role"))) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
-
         Candidate candidate = (Candidate) session.getAttribute("user");
-        if (candidate == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
+
 
         // Lấy dữ liệu từ form
         String candidateName = request.getParameter("candidateName");

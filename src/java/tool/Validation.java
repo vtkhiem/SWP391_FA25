@@ -42,6 +42,7 @@ public class Validation {
     }
 
     public static String searchKey(String key) {
+        if(key==null) return "";
         return key.trim().replaceAll("\\s+", " ");
     }
 

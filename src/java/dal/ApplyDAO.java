@@ -130,39 +130,6 @@ public class ApplyDAO {
         return apply;
     }
 
-    // Lấy job theo ID
-    public JobPost getJobPostById(int id) {
-        String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    JobPost job = new JobPost();
-                    job.setJobPostID(rs.getInt("JobPostID"));
-                    job.setEmployerID(rs.getInt("EmployerID"));
-                    job.setTitle(rs.getString("Title"));
-                    job.setDescription(rs.getString("Description"));
-                    job.setCategory(rs.getString("Category"));
-                    job.setPosition(rs.getString("Position"));
-                    job.setLocation(rs.getString("Location"));
-                    job.setOfferMin(rs.getBigDecimal("OfferMin"));
-                    job.setOfferMax(rs.getBigDecimal("OfferMax"));
-                    job.setNumberExp(rs.getInt("NumberExp"));
-                    job.setVisible(rs.getBoolean("Visible"));
-                    job.setTypeJob(rs.getString("TypeJob"));
-                    Timestamp ts = rs.getTimestamp("DayCreate");
-                    if (ts != null) {
-                        job.setDayCreate(ts.toLocalDateTime());
-                    }
-                    return job;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public CV getCVByApplyId(int applyId) {
         String sql = "SELECT c.* "
                 + "FROM CV c "
@@ -256,11 +223,70 @@ public class ApplyDAO {
                 + "WHERE j.EmployerID = ? AND j.JobPostID = ? ");
 
         if (txt != null && !txt.isEmpty()) {
-            sql.append(" AND (cv.Email LIKE ? OR can.CandidateName LIKE ?)");
+            sql.append(" AND (cv.Email LIKE ? OR cv.FullName LIKE ?)");
         }
         if (status != null && !status.isEmpty()) {
             sql.append(" AND a.Status = ?");
         }
+        if (exp != null && !exp.isEmpty()) {
+            switch (exp) {
+                case "0-1" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 0 AND 1");
+                case "2-3" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 2 AND 3");
+                case "4-5" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 4 AND 5");
+                case "5+" ->
+                    sql.append(" AND cv.NumberExp > 5");
+            }
+        }
+
+        sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            int i = 1;
+            st.setInt(i++, employerId);
+            st.setInt(i++, jobPostId);
+
+            if (txt != null && !txt.isEmpty()) {
+                st.setString(i++, "%" + txt + "%");
+                st.setString(i++, "%" + txt + "%");
+            }
+            if (status != null && !status.isEmpty()) {
+                st.setString(i++, status);
+            }
+
+            st.setInt(i++, offSet);
+            st.setInt(i++, recordsPerPage);
+
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countFilteredApply(int jobPostId, int employerId, String txt, String status, String exp) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS Total "
+                + "FROM Apply AS a "
+                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
+                + "JOIN Candidate AS can ON a.CandidateID = can.CandidateID "
+                + "JOIN CV AS cv ON a.CVID = cv.CVID "
+                + "WHERE j.EmployerID = ? AND j.JobPostID = ? ");
+
+        // Filter theo text
+        if (txt != null && !txt.isEmpty()) {
+            sql.append(" AND (cv.Email LIKE ? OR cv.FullName LIKE ?)");
+        }
+        // Filter theo status
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND a.Status = ?");
+        }
+        // Filter theo kinh nghiệm
         if (exp != null && !exp.isEmpty()) {
             switch (exp) {
                 case "0-1" ->
@@ -288,15 +314,15 @@ public class ApplyDAO {
             }
 
             try (ResultSet rs = st.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapResultSet(rs));
+                if (rs.next()) {
+                    return rs.getInt("Total");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return list;
+        return 0;
     }
 
     public static void main(String[] args) {
