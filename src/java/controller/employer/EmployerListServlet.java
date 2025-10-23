@@ -96,7 +96,7 @@ public class EmployerListServlet extends HttpServlet {
         List<Employer> employers = dao.findPage(page, size, qParam, statusFilter);
 
         req.setAttribute("q", qParam);
-        req.setAttribute("status", statusParam); // để <select> giữ selected
+        req.setAttribute("status", statusParam); 
         req.setAttribute("page", page);
         req.setAttribute("total", total);
         req.setAttribute("totalPages", totalPages);

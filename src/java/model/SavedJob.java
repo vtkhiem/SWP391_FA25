@@ -3,28 +3,27 @@ package model;
 import java.time.LocalDateTime;
 
 public class SavedJob {
-    private int savedID;
+    private int savedJobID;
     private int candidateID;
     private int jobPostID;
     private LocalDateTime savedDate;
-    private JobPost job;
 
     public SavedJob() {
     }
 
-    public SavedJob(int candidateID, int jobPostID, LocalDateTime savedDate) {
+    public SavedJob(int savedJobID, int candidateID, int jobPostID, LocalDateTime savedDate) {
+        this.savedJobID = savedJobID;
         this.candidateID = candidateID;
         this.jobPostID = jobPostID;
         this.savedDate = savedDate;
     }
 
-    // Getters & setters
-    public int getSavedID() {
-        return savedID;
+    public int getSavedJobID() {
+        return savedJobID;
     }
 
-    public void setSavedID(int savedID) {
-        this.savedID = savedID;
+    public void setSavedJobID(int savedID) {
+        this.savedJobID = savedID;
     }
 
     public int getCandidateID() {
@@ -49,13 +48,5 @@ public class SavedJob {
 
     public void setSavedDate(LocalDateTime savedDate) {
         this.savedDate = savedDate;
-    }
-
-    public JobPost getJob() {
-        return job;
-    }
-
-    public void setJob(JobPost job) {
-        this.job = job;
     }
 }

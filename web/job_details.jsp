@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>Details - Job Board</title>
+        <title>${job.title} - Job Board</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -39,13 +39,21 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="bradcam_text">
-                            <h3>Job Details</h3>
+                            <h3>Chi tiết công việc</h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!--/ bradcam_area -->
+
+        <!-- Toast Notification -->
+        <c:if test="${not empty message}">
+            <div class="toast-message success">${message}</div>
+        </c:if>
+        <c:if test="${not empty error}">
+            <div class="toast-message error">${error}</div>
+        </c:if>
 
         <div class="job_details_area">
             <div class="container">
@@ -72,27 +80,40 @@
                                 </div>
                                 <div class="jobs_right">
                                     <div class="apply_now">
-                                        <a class="heart_mark" href=""><i class="ti-heart"></i></a>
-                                            <c:if test="${not empty sessionScope.user and sessionScope.user.employerId == job.employerID}">
-                                            <a href="job_edit?id=${job.jobPostID}" class="boxed-btn3 ml-2">Edit Job</a>
-                                        </c:if>
+                                        <c:choose>
+                                            <c:when test="${isSaved}">
+                                                <form action="unsave_job" method="post" style="display:inline;">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="save_job">
+                                                        <i class="ti-heart-broken"></i>
+                                                    </button>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="save_job" method="post" style="display:inline;">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="save_job">
+                                                        <i class="ti-heart"></i>
+                                                    </button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
                         <!-- Description -->
                         <div class="descript_wrap white-bg">
                             <div class="single_wrap">
-                                <h4>Job Description</h4>
+                                <h4>Mô tả công việc:</h4>
                                 <p>${job.description}</p>
                             </div>
                         </div>
 
                         <!-- Apply form -->
                         <div class="apply_job_form white-bg">
-                            <h4>Apply for the job</h4>
+                            <h4>Ứng tuyển công việc này?</h4>
                             <form action="apply" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="jobId" value="${job.jobPostID}">
                                 <div class="row">
@@ -112,7 +133,7 @@
                                         <textarea class="form-control" name="coverLetter" rows="5" placeholder="Cover letter"></textarea>
                                     </div>
                                     <div class="col-md-12">
-                                        <button class="boxed-btn3 w-100" type="submit">Apply Now</button>
+                                        <button class="boxed-btn3 w-100" type="submit">Ứng tuyển ngay</button>
                                     </div>
                                 </div>
                             </form>
@@ -123,7 +144,7 @@
                     <div class="col-lg-4">
                         <div class="job_sumary">
                             <div class="summery_header">
-                                <h3>Job Summary</h3>
+                                <h3>Thông tin chi tiết</h3>
                             </div>
                             <div class="job_content">
                                 <ul>
@@ -135,22 +156,26 @@
                                         pageContext.setAttribute("publishedDate", pubTs);
                                         pageContext.setAttribute("dueDateFmt", dueTs);
                                     %>
-                                    <li>Published: <span><fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
-                                    <li>Due Date: <span><fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
-                                    <li>Experience: <span>${job.numberExp} years</span></li>
-                                    <li>Salary: <span>${job.offerMin} - ${job.offerMax}</span></li>
-                                    <li>Location: <span>${job.location}</span></li>
-                                    <li>Job Nature: <span>${job.typeJob}</span></li>
+                                    <li>Ngày đăng: <span><fmt:formatDate value="${publishedDate}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
+                                    <li>Hạn cuối: <span><fmt:formatDate value="${dueDateFmt}" pattern="dd/MM/yyyy, HH:mm"/></span></li>
+                                    <li>Yêu cầu kinh nghiệm:
+                                        <span>
+                                            <c:choose>
+                                                <c:when test="${job.numberExp == 0}">Không yêu cầu kinh nghiệm</c:when>
+                                                <c:otherwise>${job.numberExp} năm </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </li>
+                                    <li>Mức lương:
+                                        <span>
+                                            <fmt:formatNumber value="${job.offerMin}" type="number" maxFractionDigits="0"/> -
+                                            <fmt:formatNumber value="${job.offerMax}" type="number" maxFractionDigits="0"/> VNĐ
+                                        </span>
+                                    </li>
+                                    <li>Vị trí công việc: <span>${job.position}</span></li>
+                                    <li>Hình thức làm việc: <span>${job.typeJob}</span></li>
                                 </ul>
                             </div>
-                        </div>
-                        <div class="share_wrap d-flex">
-                            <span>Share at:</span>
-                            <ul>
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -160,5 +185,36 @@
         <!-- footer -->
         <jsp:include page="footer.jsp"/>
         <!-- footer -->
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toasts = document.querySelectorAll(".toast-message");
+                toasts.forEach((toast, index) => {
+                    Object.assign(toast.style, {
+                        position: "fixed",
+                        top: `${20 + index * 60}px`,
+                        right: "-350px",
+                        opacity: "1",
+                        transition: "all 0.6s ease",
+                        zIndex: "9999",
+                        padding: "12px 20px",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontWeight: "500",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        minWidth: "250px",
+                        textAlign: "center",
+                        backgroundColor: toast.classList.contains("success") ? "#28a745" : "#dc3545"
+                    });
+
+                    setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
+
+                    setTimeout(() => {
+                        toast.style.right = "-350px";
+                        toast.style.opacity = "0";
+                    }, 4000 + index * 150);
+                });
+            });
+        </script>
     </body>
 </html>

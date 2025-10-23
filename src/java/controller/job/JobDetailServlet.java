@@ -1,6 +1,7 @@
 package controller.job;
 
 import dal.JobPostDAO;
+import dal.SavedJobDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -8,12 +9,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Candidate;
 import model.JobPost;
+import model.SavedJob;
 
 @WebServlet(name = "JobDetailServlet", urlPatterns = {"/job_details"})
 public class JobDetailServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -38,10 +42,19 @@ public class JobDetailServlet extends HttpServlet {
         JobPost job = jobPostDAO.getJobPostById(jobId);
 
         if (job != null) {
+            HttpSession session = request.getSession();
+            Candidate candidate = (Candidate) session.getAttribute("user");
+            if (candidate != null) {
+                SavedJobDAO savedJobDAO = new SavedJobDAO();
+                SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
+                request.setAttribute("isSaved", savedJob != null);
+            } else {
+                request.setAttribute("isSaved", false);
+            }
             request.setAttribute("job", job);
             request.getRequestDispatcher("/job_details.jsp").forward(request, response);
         } else {
-            response.sendRedirect("jobs");
+            response.sendRedirect(request.getContextPath() + "/jobs");
         }
     }
 

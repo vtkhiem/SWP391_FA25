@@ -43,28 +43,27 @@ public class SaveJobServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Candidate candidate = (Candidate) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
 
-        if (candidate == null) {
-            response.sendRedirect("login.jsp");
+        if (candidate == null || !"Candidate".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
-
-        int candidateId = ((model.Candidate) candidate).getCandidateId();
-        int jobId = Integer.parseInt(request.getParameter("jobId"));
-        String redirect = request.getParameter("redirect");
-
-        boolean isSaved = savedJobDAO.isJobSaved(candidateId, jobId);
-        if (isSaved) {
-            savedJobDAO.removeSavedJob(candidateId, jobId);
-        } else {
-            savedJobDAO.saveJob(candidateId, jobId);
-        }
-
-        // Quay lại trang gốc
-        if (redirect != null && !redirect.isEmpty()) {
-            response.sendRedirect(redirect);
-        } else {
-            response.sendRedirect("job_details?id=" + jobId);
+        
+        try {
+            int jobId = Integer.parseInt(request.getParameter("jobId"));
+            boolean saved = savedJobDAO.saveJob(candidate.getCandidateId(), jobId);
+            
+            if (saved) {
+                session.setAttribute("message", "Lưu công việc vào danh sách yêu thích thành công!");
+            } else {
+                session.setAttribute("error", "Công việc này đã được lưu trước đó hoặc xảy ra lỗi.");
+            }
+        
+            response.sendRedirect(request.getContextPath() + "/saved_jobs");
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Lưu công việc thất bại. Vui lòng thử lại.");
+            response.sendRedirect(request.getContextPath() + "/saved_jobs");
         }
     }
 

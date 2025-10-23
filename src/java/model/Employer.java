@@ -17,7 +17,18 @@ public class Employer {
     public Employer() {
     }
 
-    public Employer(int employerId, String employerName, String email, String phoneNumber, String passwordHash, String companyName, String taxCode, String description, String location, String urlWebsite, String imgLogo, boolean status) {
+    public Employer(int employerId,
+                    String employerName,
+                    String email,
+                    String phoneNumber,
+                    String passwordHash,
+                    String companyName,
+                    String taxCode,
+                    String description,
+                    String location,
+                    String urlWebsite,
+                    String imgLogo,
+                    boolean status) {
         this.employerId = employerId;
         this.employerName = employerName;
         this.email = email;
@@ -32,101 +43,39 @@ public class Employer {
         this.status = status;
     }
 
-    public int getEmployerId() {
-        return employerId;
-    }
+    public int getEmployerId() { return employerId; }
+    public void setEmployerId(int employerId) { this.employerId = employerId; }
 
-    public void setEmployerId(int employerId) {
-        this.employerId = employerId;
-    }
+    public String getEmployerName() { return employerName; }
+    public void setEmployerName(String employerName) { this.employerName = employerName; }
 
-    public String getEmployerName() {
-        return employerName;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setEmployerName(String employerName) {
-        this.employerName = employerName;
-    }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getCompanyName() { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+    public String getTaxCode() { return taxCode; }
+    public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+    public String getUrlWebsite() { return urlWebsite; }
+    public void setUrlWebsite(String urlWebsite) { this.urlWebsite = urlWebsite; }
 
-    public String getCompanyName() {
-        return companyName;
-    }
+    public String getImgLogo() { return imgLogo; }
+    public void setImgLogo(String imgLogo) { this.imgLogo = imgLogo; }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getTaxCode() {
-        return taxCode;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getUrlWebsite() {
-        return urlWebsite;
-    }
-
-    public void setUrlWebsite(String urlWebsite) {
-        this.urlWebsite = urlWebsite;
-    }
-
-    public String getImgLogo() {
-        return imgLogo;
-    }
-
-    public void setImgLogo(String imgLogo) {
-        this.imgLogo = imgLogo;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-    
-
+    public boolean isStatus() { return status; }
+    public void setStatus(boolean status) { this.status = status; }
 }

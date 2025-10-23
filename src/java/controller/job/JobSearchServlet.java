@@ -8,13 +8,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.Normalizer;
 import java.util.List;
 import model.JobPost;
 
 @WebServlet(name = "JobSearchServlet", urlPatterns = {"/search"})
 public class JobSearchServlet extends HttpServlet {
     private JobPostDAO jobPostDAO = new JobPostDAO();
-
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -31,61 +32,99 @@ public class JobSearchServlet extends HttpServlet {
             out.println("</html>");
         }
     }
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String category = (request.getParameter("category"));
         String location = request.getParameter("location");
         String keyword = request.getParameter("keyword");
+        String jobType = request.getParameter("jobType");
 
         // Nếu không nhập thì để rỗng
-        if (category == null || category.trim().isEmpty()) {
+        if (category == null) {
             category = "";
-        } else {
-            category = category.trim();
-            category = category.replaceAll("[^a-zA-Z0-9\\s]", "");
-            category = category.replaceAll("\\s+", " ");
         }
         if (location == null) {
             location = "";
         }
         if (keyword == null) {
             keyword = "";
+        } else {
+            keyword = keyword.trim();
+            keyword = Normalizer.normalize(keyword, Normalizer.Form.NFD);
+            keyword = keyword.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+            keyword = keyword.replaceAll("[^\\p{L}\\p{N}\\s]", "");
+            keyword = keyword.replaceAll("\\s+", " ");
+        }
+        if (jobType == null) {
+            jobType = "";
         }
 
         // Salary filter (nếu không nhập thì set = -1 để bỏ qua)
         double min = -1;
         double max = -1;
-
+        int numExp = -1;
+        int page = 1;
+        
         try {
             String minParam = request.getParameter("minSalary");
             if (minParam != null && !minParam.isEmpty()) {
                 min = Double.parseDouble(minParam);
             }
-
+            
             String maxParam = request.getParameter("maxSalary");
             if (maxParam != null && !maxParam.isEmpty()) {
                 max = Double.parseDouble(maxParam);
+            }
+            
+            if (min > max) {
+                request.setAttribute("errorMessage", "Mức lương tối đa phải lớn hơn hoặc bằng mức lương tối thiểu!");
+                throw new NumberFormatException();
             }
         } catch (NumberFormatException e) {
             // Nếu parse lỗi thì bỏ qua filter
             min = -1;
             max = -1;
         }
-
-        List<JobPost> jobs = jobPostDAO.searchJobs(category, location, min, max, keyword);
-
+        
+        try {
+            String numParam = request.getParameter("numberExp");
+            if (numParam != null && !numParam.isEmpty()) {
+                numExp = Integer.parseInt(numParam);
+            }
+        } catch (NumberFormatException e) {
+            numExp = -1;
+        }
+        
+        try {
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                page = Integer.parseInt(pageParam);
+            }
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        
+        int recordsPerPage = 10;
+        int offset = (page - 1) * recordsPerPage;
+        
+        List<JobPost> jobs = jobPostDAO.searchJobs(category, location, min, max, keyword, numExp, jobType, offset, recordsPerPage);
+        int totalRecords = jobPostDAO.countJobsSearched(category, location, min, max, keyword, numExp, jobType);
+        int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+        
         request.setAttribute("jobs", jobs);
-        request.getRequestDispatcher("jobs.jsp").forward(request, response);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("noOfPages", noOfPages);
+        request.getRequestDispatcher("job_search.jsp").forward(request, response);
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
-
+    
     @Override
     public String getServletInfo() {
         return "Short description";
