@@ -173,8 +173,6 @@
                     <c:if test="${empty e.urlWebsite}">—</c:if>
                   </td>
                   <td class="col-tax">${e.taxCode}</td>
-
-                  <!-- STATUS: boolean -->
                   <td class="col-status">
                     <c:choose>
                       <c:when test="${e.status}">
