@@ -144,9 +144,9 @@ public class JobAddServlet extends HttpServlet {
             }
 
             StringBuilder descriptionBuilder = new StringBuilder();
-            descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n","<br>")).append("<br>");
-            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n","<br>")).append("<br>");
-            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n","<br>"));
+            descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
+            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
+            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n", "<br>"));
             String description = descriptionBuilder.toString().trim();
 
             int employerId = Integer.parseInt(employerIdStr);
@@ -165,19 +165,26 @@ public class JobAddServlet extends HttpServlet {
             LocalDate localDate = LocalDate.parse(dueDateStr, formatter);
             dueDate = localDate.atStartOfDay();
 
-            JobPost job = new JobPost(0, employerId, title.trim(), description.trim(),
-                    category.trim(), position.trim(), location.trim(),
-                    offerMin, offerMax, numberExp, true, typeJob.trim(),
-                    LocalDateTime.now(), dueDate);
-
-            boolean success = jobPostDAO.insertJobPost(job);
-
-            if (success) {
-                request.setAttribute("message", "Thêm công việc thành công!");
+            ServiceEmployerDAO serviceEmployerDAO = new ServiceEmployerDAO();
+            int serviceId = serviceEmployerDAO.getServiceIdByEmployerId(employer.getEmployerId());
+            ServiceEmployer se = serviceEmployerDAO.getByEmployerAndService(employerId, serviceId);
+            LocalDateTime expDate = se.getExpirationDate().toLocalDateTime();
+            if (dueDate.isAfter(expDate)) {
+                request.setAttribute("error", "Ngày hết hạn vi phạm thời hạn gói dịch vụ. Vui lòng chọn ngày trước ngày " + expDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             } else {
-                request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
-            }
+                JobPost job = new JobPost(0, employerId, title.trim(), description.trim(),
+                        category.trim(), position.trim(), location.trim(),
+                        offerMin, offerMax, numberExp, false, typeJob.trim(),
+                        LocalDateTime.now(), dueDate);
 
+                boolean success = jobPostDAO.insertJobPost(job);
+
+                if (success) {
+                    request.setAttribute("message", "Thêm công việc thành công!");
+                } else {
+                    request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi xử lý: " + e.getMessage());

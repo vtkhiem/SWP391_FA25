@@ -1,5 +1,6 @@
 package controller.job;
 
+import dal.ApplyDAO;
 import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -56,57 +57,72 @@ public class JobEditServlet extends HttpServlet {
             return;
         }
 
-        int jobId;
         try {
+            int jobId;
             jobId = Integer.parseInt(idParam);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/employer_jobs");
-            return;
-        }
-
-        JobPost job = jobPostDAO.getJobPostById(jobId);
-        if (job == null) {
-            response.sendRedirect(request.getContextPath() + "/employer_jobs");
-            return;
-        }
-
-        if (job.getEmployerID() != employer.getEmployerId()) {
-            response.sendRedirect(request.getContextPath() + "/employer_jobs");
-            return;
-        }
-
-        String[] parts = job.getDescription().split("<b>.*?</b>");
-        String desc1 = "";
-        String desc2 = "";
-        String desc3 = "";
-
-        for (int i = 0; i < parts.length; i++) {
-            String clean = parts[i].replaceAll("(?i)<br>", "\n").trim();
-
-            switch (i) {
-                case 0:
-                    desc1 = clean;
-                    break;
-                case 1:
-                    desc2 = clean;
-                    break;
-                case 2:
-                    desc3 = clean;
-                    break;
+            
+            JobPost job = jobPostDAO.getJobPostById(jobId);
+            if (job == null) {
+                session.setAttribute("error", "Không tìm thấy công việc cần chỉnh sửa.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                return;
             }
-        }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String dueDateFormatted = "";
-        if (job.getDueDate() != null) {
-            dueDateFormatted = job.getDueDate().format(formatter);
+            if (job.getEmployerID() != employer.getEmployerId()) {
+                session.setAttribute("error", "Bạn không có quyền chỉnh sửa công việc này.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                return;
+            }
+            
+            ApplyDAO applyDAO = new ApplyDAO();
+            if (applyDAO.checkHasApply(jobId)) {
+                session.setAttribute("error", "Đã có ứng viên ứng tuyển. Bạn không thể chỉnh sửa công việc này.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                return;
+            } else {
+                if (job.isVisible()) {
+                    session.setAttribute("error", "Công việc đang mở. Bạn không thể chỉnh sửa công việc này.");
+                    response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                    return;
+                } else {
+                    String[] parts = job.getDescription().split("<b>.*?</b>");
+                    String desc1 = "";
+                    String desc2 = "";
+                    String desc3 = "";
+
+                    for (int i = 0; i < parts.length; i++) {
+                        String clean = parts[i].replaceAll("(?i)<br>", "\n").trim();
+
+                        switch (i) {
+                            case 0:
+                                desc1 = clean;
+                                break;
+                            case 1:
+                                desc2 = clean;
+                                break;
+                            case 2:
+                                desc3 = clean;
+                                break;
+                        }
+                    }
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String dueDateFormatted = "";
+                    if (job.getDueDate() != null) {
+                        dueDateFormatted = job.getDueDate().format(formatter);
+                    }
+                    request.setAttribute("dueDateFormatted", dueDateFormatted);
+                    request.setAttribute("desc1", desc1);
+                    request.setAttribute("desc2", desc2);
+                    request.setAttribute("desc3", desc3);
+                    request.setAttribute("job", job);
+                    request.getRequestDispatcher("/job_edit.jsp").forward(request, response);
+                }
+            }
+        } catch (NumberFormatException e) {
+            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+            response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
-        request.setAttribute("dueDateFormatted", dueDateFormatted);
-        request.setAttribute("desc1", desc1);
-        request.setAttribute("desc2", desc2);
-        request.setAttribute("desc3", desc3);
-        request.setAttribute("job", job);
-        request.getRequestDispatcher("/job_edit.jsp").forward(request, response);
     }
 
     @Override
