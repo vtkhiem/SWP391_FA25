@@ -2,17 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-
-            <file>file:/D:/SWP391_FA25/web/employer_jobs.jsp</file>
-            <file>file:/D:/SWP391_FA25/web/profile.jsp</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/job/EmployerJobListServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/apply/ViewApply.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/cv/CreateCVServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/dal/ApplyDAO.java</file>
-            <file>file:/D:/SWP391_FA25/web/job_search.jsp</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/job/EmployerJobSearchServlet.java</file>
-
-        </group>
+        <group/>
     </open-files>
 </project-private>
