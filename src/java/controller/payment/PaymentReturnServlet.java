@@ -142,10 +142,14 @@ public class PaymentReturnServlet extends HttpServlet {
                 }
 
                 boolean inserted = serviceEmpDAO.registerService(employerId, serviceId, registerDate, expirationDate, paymentStatus, actionType);
-
-                // ✅ 7. Redirect tới trang thành công
+if(inserted){
+     
               response.sendRedirect("payment_success.jsp?" + request.getQueryString());
 
+}else{
+    //database 
+}
+             
             } else {
                 // ❌ Giao dịch thất bại
                 orderDAO.updateOrderStatus(orderId, "Failed");
