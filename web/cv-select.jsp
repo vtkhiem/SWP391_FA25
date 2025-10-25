@@ -12,6 +12,81 @@
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+
+        <style>
+            /* Modal */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                inset: 0;
+                background-color: rgba(0,0,0,0.5);
+            }
+
+            .modal-content {
+                background-color: #fff;
+                margin: 10% auto;
+                padding: 30px;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 400px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+
+            .modal-content input {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .error {
+                color: #ff4444;
+                text-align: center;
+                display: none;
+            }
+
+            .notification {
+                position: fixed;
+                top: 25px;
+                right: 25px;
+                padding: 15px 20px;
+                background-color: #28a745;
+                color: white;
+                border-radius: 5px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                display: none;
+            }
+
+            .notification.error {
+                background-color: #e53935;
+            }
+
+            /*button*/
+            .button-group {
+                margin-top: 20px;
+                text-align: center;
+            }
+
+            button {
+                background-color: #1d2671;
+                color: #fff;
+                border: none;
+                border-radius: 25px;
+                padding: 12px 25px;
+                margin: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: 0.3s;
+            }
+
+            button:hover {
+                background-color: #c33764;
+                transform: scale(1.05);
+            }
+        </style>
+        
     </head>
 
     <body>
@@ -61,8 +136,8 @@
                                             <div class="jobs_right">
                                                 <div class="apply_now">
                                                     <intput type="hidden" name="jobId" value=${jobId}>
-                                                    <input type="hidden" name="cvId" value="${cv.CVID}>">
-                                                    <button type="submit">Ứng tuyển</button>
+                                                        <input type="hidden" name="cvId" value="${cv.CVID}>">
+                                                        <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>
                                                 </div>
                                             </div>
                                         </div>

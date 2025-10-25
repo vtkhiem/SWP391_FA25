@@ -63,7 +63,7 @@ public class SelectCV extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
     /**
@@ -92,8 +92,9 @@ public class SelectCV extends HttpServlet {
         
         List<CV> cvList= cvdao.getCVsByCandidate(candidate.getCandidateId());
         
-        request.setAttribute("cvList",cvList);
+        
         request.setAttribute("jobId", jobId);
+        request.setAttribute("cvList",cvList);
         request.getRequestDispatcher("cv-select.jsp").forward(request,response);
     }   
     
