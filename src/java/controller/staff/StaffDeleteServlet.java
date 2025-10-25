@@ -3,23 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.candidate;
+package controller.staff;
 
-import dal.CandidateDAO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import dal.AdminDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import model.Candidate;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="CandidateListServlet", urlPatterns={"/admin/candidates"})
-public class CandidateListServlet extends HttpServlet {
+@WebServlet(name="StaffDeleteServlet", urlPatterns={"/admin/staff/remove"})
+public class StaffDeleteServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +36,10 @@ public class CandidateListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateListServlet</title>");  
+            out.println("<title>Servlet StaffDeleteServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateListServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet StaffDeleteServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -53,39 +53,11 @@ public class CandidateListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
-        String q = req.getParameter("q");        
-        int pageSize = 10;
-        int page = 1;
-        try {
-            String p = req.getParameter("page");
-            if (p != null) page = Math.max(1, Integer.parseInt(p));
-        } catch (NumberFormatException ignored) {}
-
-        CandidateDAO dao = new CandidateDAO();
-        int total = dao.countAll(q);                  
-        int totalPages = (int) Math.ceil(total / (double) pageSize);
-        if (totalPages == 0) totalPages = 1;
-        if (page > totalPages) page = totalPages;
-
-        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
-
-        req.setAttribute("q", q);             
-        req.setAttribute("page", page);
-        req.setAttribute("totalPages", totalPages);
-        req.setAttribute("total", total);
-        req.setAttribute("candidates", candidates);
-
-        req.getRequestDispatcher("/admin/candidate-list.jsp")
-               .forward(req, resp);
-    }
+        processRequest(request, response);
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -95,9 +67,31 @@ public class CandidateListServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+     throws ServletException, IOException {
+
+        String idStr = req.getParameter("id");
+        if (idStr == null) {
+            req.getSession().setAttribute("message", "Thiếu tham số id.");
+            resp.sendRedirect(req.getContextPath() + "/admin/staffs");
+            return;
+        }
+
+        try {
+            int adminId = Integer.parseInt(idStr);
+            AdminDAO dao = new AdminDAO();
+            boolean ok = dao.deleteStaffById(adminId);
+            if (ok) {
+                req.getSession().setAttribute("message", "Đã gỡ staff (và xóa user nếu không còn vai trò).");
+            } else {
+                req.getSession().setAttribute("message", "Không tìm thấy role Marketing/Sale để gỡ.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            req.getSession().setAttribute("message", "Lỗi khi xóa: " + e.getMessage());
+        }
+
+        resp.sendRedirect(req.getContextPath() + "/admin/staffs");
     }
 
     /** 

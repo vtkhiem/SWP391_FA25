@@ -10,6 +10,7 @@ import java.util.List;
 import model.Role;
 import tool.EncodePassword;
 import model.Admin;
+import model.StaffView;
 
 /**
  *
@@ -152,5 +153,124 @@ public class AdminDAO extends DBContext {
             System.out.println("Bug: Username không tồn tại mà vẫn login được!");
         }
     }
+public boolean usernameExists(String username) throws SQLException {
+        String sql = "SELECT 1 FROM Admin WHERE Username = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+    public boolean createAdminWithRole(String username, String plainPassword, int roleId) throws Exception {
+    if (roleId != 2 && roleId != 3) return false;
+
+    String insertAdmin = "INSERT INTO Admin (Username, PasswordHash) VALUES (?, ?)";
+    String insertMap   = "INSERT INTO Role_Table (AdminID, RoleID) VALUES (?, ?)";
+
+    boolean oldAuto = c.getAutoCommit();
+    c.setAutoCommit(false);
+    try (PreparedStatement psAdmin = c.prepareStatement(insertAdmin, Statement.RETURN_GENERATED_KEYS)) {
+        psAdmin.setString(1, username);
+        psAdmin.setString(2, plainPassword);
+
+        int affected = psAdmin.executeUpdate();
+        if (affected == 0) {
+            c.rollback();
+            c.setAutoCommit(oldAuto);
+            return false;
+        }
+
+        int newAdminId;
+        try (ResultSet keys = psAdmin.getGeneratedKeys()) {
+            if (!keys.next()) {
+                c.rollback();
+                c.setAutoCommit(oldAuto);
+                return false;
+            }
+            newAdminId = keys.getInt(1);
+        }
+
+        try (PreparedStatement psMap = c.prepareStatement(insertMap)) {
+            psMap.setInt(1, newAdminId);
+            psMap.setInt(2, roleId);
+            psMap.executeUpdate();
+        }
+
+        c.commit();
+        c.setAutoCommit(oldAuto);
+        return true;
+
+    } catch (Exception ex) {
+        c.rollback();
+        c.setAutoCommit(oldAuto);
+        throw ex;
+    }
+}
+public List<StaffView> findAllMarketingSale() throws SQLException {
+    String sql =
+        "SELECT a.AdminID, a.Username, a.PasswordHash AS Password, " +
+        "       STRING_AGG(r.RoleName, ', ') WITHIN GROUP (ORDER BY r.RoleName) AS Roles " +
+        "FROM Admin a " +
+        "JOIN Role_Table rt ON rt.AdminID = a.AdminID " +
+        "JOIN Roles r ON r.RoleID = rt.RoleID " +
+        "WHERE rt.RoleID IN (2,3) " +
+        "GROUP BY a.AdminID, a.Username, a.PasswordHash " +            
+        "ORDER BY a.AdminID";
+
+    List<StaffView> list = new ArrayList<>();
+    try (PreparedStatement ps = c.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            StaffView sv = new StaffView();
+            sv.setAdminId(rs.getInt("AdminID"));
+            sv.setUsername(rs.getString("Username"));
+            sv.setRoles(rs.getString("Roles"));
+            sv.setPassword(rs.getString("Password"));
+            list.add(sv);
+        }
+    }
+    return list;
+}
+
+public boolean deleteStaffById(int adminId) throws Exception {
+    String deleteRole = "DELETE FROM Role_Table WHERE AdminID = ? AND RoleID IN (2,3)";
+    String countRole  = "SELECT COUNT(*) FROM Role_Table WHERE AdminID = ?";
+    String deleteAdmin= "DELETE FROM Admin WHERE AdminID = ?";
+
+    boolean oldAuto = c.getAutoCommit();
+    c.setAutoCommit(false);
+    try (PreparedStatement psDelRole = c.prepareStatement(deleteRole)) {
+        psDelRole.setInt(1, adminId);
+        int removed = psDelRole.executeUpdate();
+        if (removed == 0) {
+            c.rollback();
+            c.setAutoCommit(oldAuto);
+            return false;
+        }
+        int remain = 0;
+        try (PreparedStatement psCount = c.prepareStatement(countRole)) {
+            psCount.setInt(1, adminId);
+            try (ResultSet rs = psCount.executeQuery()) {
+                if (rs.next()) remain = rs.getInt(1);
+            }
+        }
+        if (remain == 0) {
+            try (PreparedStatement psDelAdmin = c.prepareStatement(deleteAdmin)) {
+                psDelAdmin.setInt(1, adminId);
+                psDelAdmin.executeUpdate();
+            }
+        }
+
+        c.commit();
+        c.setAutoCommit(oldAuto);
+        return true;
+
+    } catch (Exception ex) {
+        c.rollback();
+        c.setAutoCommit(oldAuto);
+        throw ex;
+    }
+}
 
 }
