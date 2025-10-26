@@ -7,13 +7,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebFilter(urlPatterns = {"/create-cv", "/delete-cv", "/edit-cv", "/list-cv", "/profile","/editCandidateProfile", "/selectCV"})
+@WebFilter(urlPatterns = {"/create-cv", "/delete-cv", "/edit-cv", "/list-cv", "/profile","/editCandidateProfile", "/selectCV", "/applyJob"})
 public class AuthCandidateFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletRequest request = (HttpServletRequest) req; 
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
 

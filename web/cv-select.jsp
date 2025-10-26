@@ -86,10 +86,16 @@
                 transform: scale(1.05);
             }
         </style>
-        
+
     </head>
 
     <body>
+
+        <c:if test="${empty jobId}">
+            <script>
+                window.location.href = 'jobs';
+            </script>
+        </c:if>
         <!-- header-start -->
         <jsp:include page="header.jsp"/>
         <!-- header-end -->
@@ -115,6 +121,7 @@
                         <c:choose>
                             <c:when test="${not empty cvList}">
                                 <c:forEach var="cv" items="${cvList}">
+                                    <!-- Một form duy nhất -->
                                     <form action="applyJob" method="post">
                                         <div class="single_jobs white-bg d-flex justify-content-between mb-3 p-3 rounded shadow-sm">
                                             <div class="jobs_left d-flex align-items-center">
@@ -134,11 +141,9 @@
                                                 </div>
                                             </div>
                                             <div class="jobs_right">
-                                                <div class="apply_now">
-                                                    <intput type="hidden" name="jobId" value=${jobId}>
-                                                        <input type="hidden" name="cvId" value="${cv.CVID}>">
-                                                        <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>
-                                                </div>
+                                                <input type="hidden" name="jobId" value="${jobId}">
+                                                <input type="hidden" name="CVID" value="${cv.CVID}">
+                                                <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>
                                             </div>
                                         </div>
                                     </form>
@@ -159,6 +164,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- footer -->
         <footer class="footer">

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Apply;
@@ -13,19 +14,20 @@ import model.Candidate;
 import model.JobPost;
 
 public class ApplyDAO {
+
     Connection con = new DBContext().c;
 
     // CREATE
-    public void insertApply(Apply apply) {
+    public void insertApply(int jobId, int candidateId, int CVID, LocalDateTime dayCreate, String status, String note) {
         String sql = "INSERT INTO Apply (jobPostId, candidateID, CVID, dayCreate, status, note) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, apply.getJobPostId());
-            st.setInt(2, apply.getCandidateId());
-            st.setInt(3, apply.getCvId());
-            st.setTimestamp(4, Timestamp.valueOf(apply.getDayCreate())); // LocalDateTime
-            st.setString(5, apply.getStatus());
-            st.setString(6, apply.getNote());
+            st.setInt(1, jobId);
+            st.setInt(2, candidateId);
+            st.setInt(3, CVID);
+            st.setTimestamp(4, Timestamp.valueOf(dayCreate)); // LocalDateTime
+            st.setString(5, status);
+            st.setString(6,note);
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -195,7 +197,7 @@ public class ApplyDAO {
         }
         return list;
     }
-    
+
     public boolean checkHasApply(int jobId) {
         String sql = "SELECT COUNT(*) FROM Apply WHERE JobPostID =?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
@@ -340,7 +342,23 @@ public class ApplyDAO {
         return 0;
     }
 
+    public boolean isApplicable(int jobId, int candidateId) {
+        String sql = "SELECT 1 FROM Apply WHERE JobPostID = ? AND CandidateID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setInt(1, jobId);
+            st.setInt(2, candidateId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
-        System.out.println(new ApplyDAO().filterApply(13, 5, "shirosama@gmail.com", "", "", 0, 10));
+        System.out.println(new ApplyDAO().isApplicable(12,28));
     }
 }

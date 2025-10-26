@@ -4,6 +4,7 @@
  */
 package controller.apply;
 
+import dal.ApplyDAO;
 import dal.CVDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -81,23 +82,27 @@ public class SelectCV extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         int jobId = Validation.getId(request.getParameter("jobId"));
-        Candidate candidate = (Candidate)session.getAttribute("user");
-        
+        Candidate candidate = (Candidate) session.getAttribute("user");
+
         if (jobId == 0) {
-            response.sendRedirect("jobs");
+            session.setAttribute("error", "Công việc không còn khả dụng");
+            response.sendRedirect(request.getContextPath() + "/jobs");
+            return; // avoid “response already committed”
+        }
+        ApplyDAO dao = new ApplyDAO();
+        if (!dao.isApplicable(jobId, candidate.getCandidateId())) {
+            session.setAttribute("error", "Bạn đã ứng tuyển vào công việc này rồi");
+            response.sendRedirect(request.getContextPath() + "/jobs");
             return; // avoid “response already committed”
         }
         
         CVDAO cvdao = new CVDAO();
-        
-        List<CV> cvList= cvdao.getCVsByCandidate(candidate.getCandidateId());
-        
-        
+        List<CV> cvList = cvdao.getCVsByCandidate(candidate.getCandidateId());
+
         request.setAttribute("jobId", jobId);
-        request.setAttribute("cvList",cvList);
-        request.getRequestDispatcher("cv-select.jsp").forward(request,response);
-    }   
-    
+        request.setAttribute("cvList", cvList);
+        request.getRequestDispatcher("cv-select.jsp").forward(request, response);
+    }
 
     /**
      * Returns a short description of the servlet.
