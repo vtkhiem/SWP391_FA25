@@ -227,8 +227,6 @@ public class CreateCVServlet extends HttpServlet {
             request.setAttribute("error", "Error: " + e.getMessage());
             request.getRequestDispatcher("cv-create.jsp").forward(request, response);
         }
-
-        System.out.println("=== END CV CREATE SERVLET ===");
     }
 
     @Override

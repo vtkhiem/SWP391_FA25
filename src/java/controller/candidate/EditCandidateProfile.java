@@ -18,9 +18,7 @@ public class EditCandidateProfile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        request.getRequestDispatcher("/profile").forward(request, response);
+        doPost(request,response);
 
     }
 
@@ -47,13 +45,13 @@ public class EditCandidateProfile extends HttpServlet {
                 || nationality == null || nationality.trim().isEmpty()) {
 
             request.setAttribute("error", "Vui lòng điền đầy đủ thông tin.");
-            request.getRequestDispatcher("/profile").forward(request, response);
+            request.getRequestDispatcher("/candidateProfile").forward(request, response);
             return;
         }
 
         if (!Validation.isValidPhone(phoneNumber)) {
             request.setAttribute("error", "Số điện thoại không hợp lệ.");
-            request.getRequestDispatcher("/profile").forward(request, response);
+            request.getRequestDispatcher("/candidateProfile").forward(request, response);
             return;
         }
 
@@ -78,12 +76,12 @@ public class EditCandidateProfile extends HttpServlet {
             }
 
             // Forward về profile.jsp (thông qua ProfileServlet)
-            request.getRequestDispatcher("/profile").forward(request, response);
+            request.getRequestDispatcher("/candidateProfile").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Đã xảy ra lỗi trong quá trình cập nhật.");
-            request.getRequestDispatcher("/profile").forward(request, response);
+            request.getRequestDispatcher("/candidateProfile").forward(request, response);
         }
     }
 

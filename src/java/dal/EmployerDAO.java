@@ -9,117 +9,135 @@ import java.util.List;
 public class EmployerDAO extends DBContext {
 
     public int countAll(String keyword, Boolean statusFilter) {
-    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employer WHERE 1=1");
-    List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employer WHERE 1=1");
+        List<Object> params = new ArrayList<>();
 
-    if (keyword != null && !keyword.trim().isEmpty()) {
-        sql.append(" AND (EmployerName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? OR CompanyName LIKE ?)");
-        String like = "%" + keyword.trim() + "%";
-        params.add(like); params.add(like); params.add(like); params.add(like);
-    }
-    if (statusFilter != null) {
-        sql.append(" AND [Status] = ?");
-        params.add(statusFilter);
-    }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (EmployerName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? OR CompanyName LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
+            params.add(like);
+        }
+        if (statusFilter != null) {
+            sql.append(" AND [Status] = ?");
+            params.add(statusFilter);
+        }
 
-    try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
-        for (int i = 0; i < params.size(); i++) {
-            Object v = params.get(i);
-            if (v instanceof String)    ps.setString(i+1, (String) v);
-            else if (v instanceof Boolean) ps.setBoolean(i+1, (Boolean) v);
-            else ps.setObject(i+1, v);
+        try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object v = params.get(i);
+                if (v instanceof String) {
+                    ps.setString(i + 1, (String) v);
+                } else if (v instanceof Boolean) {
+                    ps.setBoolean(i + 1, (Boolean) v);
+                } else {
+                    ps.setObject(i + 1, v);
+                }
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return 0;
     }
-    return 0;
-}
 
     // Merged findPage: Uses Boolean for statusFilter (consistent with countAll)
     public List<Employer> findPage(int page, int pageSize, String keyword, Boolean statusFilter) {
-    List<Employer> list = new ArrayList<>();
-    StringBuilder sql = new StringBuilder();
-    // Combined SELECT columns from both versions (TaxCode from HEAD, PasswordHash from main, keeping all)
-    sql.append("""
+        List<Employer> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        // Combined SELECT columns from both versions (TaxCode from HEAD, PasswordHash from main, keeping all)
+        sql.append("""
         SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
                CompanyName, Description, Location, URLWebsite, TaxCode, ImgLogo, [Status]
         FROM Employer
         WHERE 1=1
     """);
 
-    List<Object> params = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
 
-    if (keyword != null && !keyword.trim().isEmpty()) {
-        sql.append(" AND (EmployerName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? OR CompanyName LIKE ?)");
-        String like = "%" + keyword.trim() + "%";
-        params.add(like); params.add(like); params.add(like); params.add(like);
-    }
-    if (statusFilter != null) {
-        sql.append(" AND [Status] = ?");
-        params.add(statusFilter);
-    }
-
-    sql.append(" ORDER BY EmployerID ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-    int offset = (Math.max(page, 1) - 1) * pageSize;
-    params.add(offset);
-    params.add(pageSize);
-
-    try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
-        int idx = 1;
-        for (Object v : params) {
-            // Robust parameter binding handling different types (String, Boolean, Integer for offset/pagesize)
-            if (v instanceof String)      ps.setString(idx++, (String) v);
-            else if (v instanceof Boolean)  ps.setBoolean(idx++, (Boolean) v);
-            else if (v instanceof Integer)  ps.setInt(idx++, (Integer) v);
-            else                          ps.setObject(idx++, v);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (EmployerName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? OR CompanyName LIKE ?)");
+            String like = "%" + keyword.trim() + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
+            params.add(like);
         }
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Employer e = new Employer();
-                e.setEmployerId(rs.getInt("EmployerID"));
-                e.setEmployerName(rs.getString("EmployerName"));
-                e.setEmail(rs.getString("Email"));
-                e.setPhoneNumber(rs.getString("PhoneNumber"));
-                
-                // PasswordHash might not be needed for all uses of this method, but include it if the model supports it.
-                // It was present in the main's SELECT list. Check if column exists before retrieving.
-                try {
-                     e.setPasswordHash(rs.getString("PasswordHash"));
-                } catch (SQLException ex) {
-                    // Ignore if the column 'PasswordHash' is not in the result set (e.g. if the final SELECT was simplified)
-                }
+        if (statusFilter != null) {
+            sql.append(" AND [Status] = ?");
+            params.add(statusFilter);
+        }
 
-                e.setCompanyName(rs.getString("CompanyName"));
-                e.setDescription(rs.getString("Description"));
-                e.setLocation(rs.getString("Location"));
-                e.setUrlWebsite(rs.getString("URLWebsite"));
-                
-                // TaxCode was only in HEAD's SELECT list.
-                try {
-                     e.setTaxCode(rs.getString("TaxCode"));
-                } catch (SQLException ex) {
-                    // Ignore if the column 'TaxCode' is not in the result set
+        sql.append(" ORDER BY EmployerID ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        int offset = (Math.max(page, 1) - 1) * pageSize;
+        params.add(offset);
+        params.add(pageSize);
+
+        try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            int idx = 1;
+            for (Object v : params) {
+                // Robust parameter binding handling different types (String, Boolean, Integer for offset/pagesize)
+                if (v instanceof String) {
+                    ps.setString(idx++, (String) v);
+                } else if (v instanceof Boolean) {
+                    ps.setBoolean(idx++, (Boolean) v);
+                } else if (v instanceof Integer) {
+                    ps.setInt(idx++, (Integer) v);
+                } else {
+                    ps.setObject(idx++, v);
                 }
-                
-                e.setImgLogo(rs.getString("ImgLogo"));
-                e.setStatus(rs.getBoolean("Status"));
-                list.add(e);
             }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Employer e = new Employer();
+                    e.setEmployerId(rs.getInt("EmployerID"));
+                    e.setEmployerName(rs.getString("EmployerName"));
+                    e.setEmail(rs.getString("Email"));
+                    e.setPhoneNumber(rs.getString("PhoneNumber"));
+
+                    // PasswordHash might not be needed for all uses of this method, but include it if the model supports it.
+                    // It was present in the main's SELECT list. Check if column exists before retrieving.
+                    try {
+                        e.setPasswordHash(rs.getString("PasswordHash"));
+                    } catch (SQLException ex) {
+                        // Ignore if the column 'PasswordHash' is not in the result set (e.g. if the final SELECT was simplified)
+                    }
+
+                    e.setCompanyName(rs.getString("CompanyName"));
+                    e.setDescription(rs.getString("Description"));
+                    e.setLocation(rs.getString("Location"));
+                    e.setUrlWebsite(rs.getString("URLWebsite"));
+
+                    // TaxCode was only in HEAD's SELECT list.
+                    try {
+                        e.setTaxCode(rs.getString("TaxCode"));
+                    } catch (SQLException ex) {
+                        // Ignore if the column 'TaxCode' is not in the result set
+                    }
+
+                    e.setImgLogo(rs.getString("ImgLogo"));
+                    e.setStatus(rs.getBoolean("Status"));
+                    list.add(e);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return list;
     }
-    return list;
-}
 
     // New method from 'main' branch
     public Employer findById(int id) {
         String sql = """
             SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
-                   CompanyName, Description, Location, URLWebsite, ImgLogo, [Status], TaxCode
+                           CompanyName, Description, Location, URLWebsite, TaxCode,
+                           ImgLogo, Status    
             FROM Employer
             WHERE EmployerID = ?
         """;
@@ -139,8 +157,9 @@ public class EmployerDAO extends DBContext {
                     e.setUrlWebsite(rs.getString("URLWebsite"));
                     // Added TaxCode based on the logic from the HEAD branch for consistency
                     try {
-                         e.setTaxCode(rs.getString("TaxCode")); 
-                    } catch (SQLException ignored) {}
+                        e.setTaxCode(rs.getString("TaxCode"));
+                    } catch (SQLException ignored) {
+                    }
                     e.setImgLogo(rs.getString("ImgLogo"));
                     e.setStatus(rs.getBoolean("Status")); // <— đọc status
                     return e;
@@ -151,7 +170,7 @@ public class EmployerDAO extends DBContext {
         }
         return null;
     }
-    
+
     // New method from 'main' branch
     public String getEmailByID(int id) {
         String sql = """
@@ -173,7 +192,7 @@ public class EmployerDAO extends DBContext {
     }
 
     public int insertWithStatus(Employer e) {
-    String sql = """
+        String sql = """
         INSERT INTO Employer (
             EmployerName, Email, PhoneNumber, PasswordHash,
             CompanyName, Description, Location, URLWebsite,
@@ -182,30 +201,37 @@ public class EmployerDAO extends DBContext {
         OUTPUT INSERTED.EmployerID
         VALUES (?,?,?,?,?,?,?,?,?,?,?)
     """;
-    try (PreparedStatement ps = c.prepareStatement(sql)) {
-        ps.setString(1, e.getEmployerName());
-        ps.setString(2, e.getEmail());
-        ps.setString(3, e.getPhoneNumber());
-        ps.setString(4, e.getPasswordHash());
-        ps.setString(5, e.getCompanyName());
-        ps.setString(6, e.getDescription());
-        ps.setString(7, e.getLocation());
-        ps.setString(8, e.getUrlWebsite());
-        if (e.getTaxCode() == null || e.getTaxCode().isBlank()) ps.setNull(9, Types.NVARCHAR);
-        else ps.setString(9, e.getTaxCode());
-        if (e.getImgLogo() == null || e.getImgLogo().isBlank()) ps.setNull(10, Types.NVARCHAR);
-        else ps.setString(10, e.getImgLogo());
-        ps.setBoolean(11, e.isStatus());
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, e.getEmployerName());
+            ps.setString(2, e.getEmail());
+            ps.setString(3, e.getPhoneNumber());
+            ps.setString(4, e.getPasswordHash());
+            ps.setString(5, e.getCompanyName());
+            ps.setString(6, e.getDescription());
+            ps.setString(7, e.getLocation());
+            ps.setString(8, e.getUrlWebsite());
+            if (e.getTaxCode() == null || e.getTaxCode().isBlank()) {
+                ps.setNull(9, Types.NVARCHAR);
+            } else {
+                ps.setString(9, e.getTaxCode());
+            }
+            if (e.getImgLogo() == null || e.getImgLogo().isBlank()) {
+                ps.setNull(10, Types.NVARCHAR);
+            } else {
+                ps.setString(10, e.getImgLogo());
+            }
+            ps.setBoolean(11, e.isStatus());
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+        return 0;
     }
-    return 0;
-}
-
 
     public boolean delete(int id) {
         String sql = "DELETE FROM Employer WHERE EmployerID = ?";
@@ -234,4 +260,34 @@ public class EmployerDAO extends DBContext {
         return updateStatus(employerId, 1);
     }
 
+    public boolean updateEmployerProfile(Employer employer) {
+        String sql = "UPDATE Employer\n"
+                + "SET CompanyName = ?,\n"
+                + "PhoneNumber = ?,\n"
+                + "Location = ?,\n"
+                + "Description = ?,\n"
+                + "URLWebsite =?\n"
+                + "WHERE EmployerID = ?";
+        
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, employer.getCompanyName());
+            ps.setString(2, employer.getPhoneNumber());
+            ps.setString(3, employer.getLocation());
+            ps.setString(4, employer.getDescription());
+            ps.setString(5, employer.getUrlWebsite());
+            ps.setInt(6, employer.getEmployerId());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new EmployerDAO().findById(5));
+    }
 }

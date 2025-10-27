@@ -178,6 +178,18 @@
         </style>
     </head>
     <body>
+
+        <!-- Toast Notification -->
+        <c:if test="${not empty sessionScope.error}">
+            <div class="toast-message error">${sessionScope.error}</div>
+            <c:remove var="error" scope="session"/>
+        </c:if>
+
+        <c:if test="${not empty sessionScope.message}">
+            <div class="toast-message success">${sessionScope.message}</div>
+            <c:remove var="message" scope="session"/>
+        </c:if>
+
         <div class="container">
             <h1>Hồ sơ người dùng</h1>
             <c:choose>
@@ -200,6 +212,14 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="button-group">
+                        <c:if test="${not empty sessionScope.role}">
+                            <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
+                            <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
+                        </c:if>
+                        <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
+                    </div>
                 </c:when>
 
 
@@ -213,16 +233,24 @@
                                 </c:if>
                             </div>
                             <div class="profile-info">
-                                <p><span class="info-label">Tên công ty:</span> ${sessionScope.employer.companyName}</p>
-                                <p><span class="info-label">Email:</span> ${sessionScope.employer.email}</p>
-                                <p><span class="info-label">Số điện thoại:</span> ${sessionScope.employer.phoneNumber}</p>
-                                <p><span class="info-label">Địa điểm:</span> ${sessionScope.employer.location}</p>
-                                <p><span class="info-label">Mã số thuế:</span> ${sessionScope.employer.taxCode}</p>
+                                <p><span class="info-label">Tên công ty:</span> ${employer.companyName}</p>
+                                <p><span class="info-label">Email:</span> ${employer.email}</p>
+                                <p><span class="info-label">Số điện thoại:</span> ${employer.phoneNumber}</p>
+                                <p><span class="info-label">Mã số thuế:</span> ${employer.taxCode}</p>
+                                <p><span class="info-label">Địa điểm:</span> ${employer.location}</p>
                                 <p><span class="info-label">Website:</span> 
-                                    <a href="${sessionScope.employer.urlWebsite}" target="_blank">${sessionScope.employer.urlWebsite}</a>
+                                    <a href="${employer.urlWebsite}" target="_blank">${employer.urlWebsite}</a>
                                 </p>
-                                <p><span class="info-label">Mô tả:</span> ${sessionScope.employer.description}</p>
+                                <p><span class="info-label">Mô tả:</span> ${employer.description}</p>
                             </div>
+                        </div>
+
+                        <div class="button-group">
+                            <c:if test="${not empty sessionScope.role}">
+                                <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
+                                <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
+                            </c:if>
+                            <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
                         </div>
                     </div>
 
@@ -234,7 +262,7 @@
                                 <p><span class="info-label">Tên gói:</span> ${sessionScope.service.serviceName}</p>
                                 <p><span class="info-label">Giá:</span> ${sessionScope.service.price} VNĐ</p>
                                 <p><span class="info-label">Thời hạn:</span> ${sessionScope.service.duration} ngày</p>
-                                <p><span class="info-label">Ngày đăng ký:</span> </p>
+                                <p><span class="info-label">Ngày đăng ký:</span>${sessionScope.serviceEmployer.registerDate} </p>
                                 <p><span class="info-label">Ngày hết hạn:</span> </p>
                                 <p><span class="info-label">Trạng thái thanh toán:</span> </p>
                             </div>
@@ -249,13 +277,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <div class="button-group">
-                <c:if test="${not empty sessionScope.role}">
-                    <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
-                    <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
-                </c:if>
-                <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
-            </div>
+
         </div>
 
         <!-- Modal đổi mật khẩu -->
@@ -278,7 +300,7 @@
             </div>
         </div>
 
-        <!-- Modal thêm thông tin -->
+        <!-- Modal thêm thông tin candidate -->
         <div id="editCandidateProfileModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeEditCandidateProfileModal()">&times;</span>
@@ -300,6 +322,29 @@
             </div>
         </div>
 
+        <!-- Modal thêm thông tin employer -->
+        <div id="editEmployerProfileModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditEmployerProfileModal()">&times;</span>
+                <h2>Thông tin người dùng</h2>
+                <form id="editEmployerProfileform" action="editEmployerProfile" method="post">
+                    <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty">
+                    <input type="text" name="email" value="${employer.email}" readonly="" placeholder="Email">
+                    <input id="phone" type="text" name="phoneNumber" 
+                           value="${employer.phoneNumber}" placeholder="Số điện thoại">
+                    <small id="phoneResult" style="color:red;font-size:13px;"></small>
+                    <input type="text" name="taxCode" value="${employer.taxCode}" readonly="" placeholder="Mã số thuế">
+                    <input type="text" name="location" value="${employer.location}" placeholder="Địa chỉ">
+                    <input type="text" name="urlWebsite" value="${employer.urlWebsite}" placeholder="Website">
+                    <input type="text" name="description" value="${employer.description}" placeholder="Mô tả">
+                    <div style="text-align:center;margin-top:15px;">
+                        <button type="submit">Cập nhật</button>
+                        <button type="button" onclick="closeEditEmployerProfileModal()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div id="notification" class="notification"></div>
 
         <script>
@@ -308,8 +353,18 @@
                 document.body.style.overflow = "hidden";
             }
 
+            function openEditEmployerProfileModal() {
+                document.getElementById("editEmployerProfileModal").style.display = "block";
+                document.body.style.overflow = "hidden";
+            }
+
             function closeEditCandidateProfileModal() {
                 document.getElementById("editCandidateProfileModal").style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+
+            function closeEditEmployerProfileModal() {
+                document.getElementById("editEmployerProfileModal").style.display = "none";
                 document.body.style.overflow = "auto";
             }
 
@@ -370,6 +425,34 @@
                 xhr.send();
             });
 
+            document.addEventListener("DOMContentLoaded", () => {
+                const toasts = document.querySelectorAll(".toast-message");
+                toasts.forEach((toast, index) => {
+                    Object.assign(toast.style, {
+                        position: "fixed",
+                        top: `${20 + index * 60}px`,
+                        right: "-350px",
+                        opacity: "1",
+                        transition: "all 0.6s ease",
+                        zIndex: "9999",
+                        padding: "12px 20px",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontWeight: "500",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        minWidth: "250px",
+                        textAlign: "center",
+                        backgroundColor: toast.classList.contains("success") ? "#28a745" : "#dc3545"
+                    });
+
+                    setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
+
+                    setTimeout(() => {
+                        toast.style.right = "-350px";
+                        toast.style.opacity = "0";
+                    }, 4000 + index * 150);
+                });
+            });
         </script>
     </body>
 </html>
