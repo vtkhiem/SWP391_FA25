@@ -60,7 +60,7 @@ public class JobPostDAO extends DBContext {
     }
 
     public JobPost getJobPostById(int id) {
-        String sql = "SELECT * FROM JobPost WHERE JobPostID = ? AND DueDate >= GETDATE()";
+        String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
