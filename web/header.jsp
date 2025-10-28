@@ -66,7 +66,11 @@
                                                             <ul class="submenu">
                                                                 <li><a href="jobs">Tìm việc làm</a></li>
                                                                 <li><a href="saved_jobs">Việc làm đã lưu</a></li>
+<<<<<<< HEAD
                                                                 <li><a href="viewApplyLog">Trạng thái ứng tuyển</a></li>
+=======
+                                                                <li><a href="viewApplyStatus">Trạng thái ứng tuyển</a></li>
+>>>>>>> f31e396 (gi gi gi)
                                                             </ul>
                                                         </li>
                                                         <li><a href="#">CV <i class="ti-angle-down"></i></a>
