@@ -383,7 +383,7 @@
                 </div>
             </div>
             <div class="text-center my-5">
-                <form action="feedback_form.jsp" >
+                <form action="prepare" method="get">
                    
                     <button type="submit" class="buy-btn">
                         <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên

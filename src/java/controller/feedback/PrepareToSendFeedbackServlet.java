@@ -65,7 +65,20 @@ public class PrepareToSendFeedbackServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+       try {
+           
+            TypeFeedbackDAO dao = new TypeFeedbackDAO();
+   
+      
+            // Lấy danh sách loại phản hồi cho Employer
+            List<TypeFeedback> typeFeedbackList = dao.getTypeFeedbackByRole("Candidate");
+          
+
+            request.setAttribute("typeFeedbackList", typeFeedbackList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        request.getRequestDispatcher("feedback_form.jsp").forward(request, response);
     }
 
     /**
@@ -80,6 +93,7 @@ public class PrepareToSendFeedbackServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
          try {
+          
             TypeFeedbackDAO dao = new TypeFeedbackDAO();
             ServiceDAO serviceDAO = new ServiceDAO();
             PromotionDAO promotionDAO = new PromotionDAO();
