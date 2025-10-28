@@ -36,12 +36,14 @@
 
             <div class="mb-3">
                 <label class="form-label">Ngày bắt đầu</label>
-                <input type="datetime-local" name="dateSt" class="form-control" required>
+                <input type="datetime-local" name="dateSt" class="form-control" required
+       min="<%= java.time.LocalDateTime.now().toString().substring(0,16) %>">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Ngày kết thúc</label>
-                <input type="datetime-local" name="dateEn" class="form-control" required>
+                <input type="datetime-local" name="dateEn" class="form-control" required
+       min="<%= java.time.LocalDateTime.now().toString().substring(0,16) %>">
             </div>
 
             <div class="mb-3">

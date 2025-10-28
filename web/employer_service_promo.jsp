@@ -378,7 +378,7 @@
                                     </div>
                                 </div>
 
-                                <div class="service-duration">${s.duration} ngày sử dụng</div>
+                                        <div class="service-duration"><b>${s.duration} ngày sử dụng</b></div>
                                 
                                 <c:if test="${not empty s.description}">
                                     <div class="service-description">${s.description}</div>

@@ -66,6 +66,7 @@
                                                             <ul class="submenu">
                                                                 <li><a href="jobs">Tìm việc làm</a></li>
                                                                 <li><a href="saved_jobs">Việc làm đã lưu</a></li>
+                                                                <li><a href="saved_jobs">Trạng thái ứng tuyển</a></li>
                                                             </ul>
                                                         </li>
                                                         <li><a href="#">CV <i class="ti-angle-down"></i></a>
@@ -76,8 +77,10 @@
                                                         </li>
                                                         <li><a href="blogs">Blog</a></li>
                                                         <li><a href="contact.html">Liên hệ</a></li>
-                                                    </c:otherwise>
-                                                </c:choose>
+
+                                                        </c:otherwise>
+                                                    </c:choose>
+
                                             </ul>
                                         </nav>
                                     </div>
@@ -98,21 +101,19 @@
                                         <!-- Nếu đã login thì hiện tên user + Logout -->
                                         <c:if test="${not empty sessionScope.user}">
                                             <div class="phone_num d-none d-xl-block">
-                                                Xin chào, 
-                                                <a href="profile">
+                                                
                                                     <c:choose>
                                                         <c:when test="${sessionScope.role eq 'Candidate'}">
-                                                            ${sessionScope.user.candidateName}
+                                                            <a href="candidateProfile">Xin chào, ${sessionScope.user.candidateName}</a>
                                                         </c:when>
                                                         <c:when test="${sessionScope.role eq 'Employer'}">
-                                                            ${sessionScope.user.employerName}
+                                                            <a href="employerProfile">Xin chào,  ${sessionScope.user.employerName}</a>
                                                         </c:when>
                                                         <c:otherwise>
                                                             ${sessionScope.user.username}
                                                         </c:otherwise>
                                                     </c:choose>
-                                                </a> |
-                                                <a href="logout">Đăng xuất</a>
+                                                <a href="logout">  |  Đăng xuất</a>
                                             </div>
                                         </c:if>
                                     </div>

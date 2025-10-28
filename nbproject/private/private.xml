@@ -3,9 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/controller/job/JobEditServlet.java</file>
-            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/controller/job/JobHideServlet.java</file>
-            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/web/employer_job_details.jsp</file>
+            <file>file:/D:/SWP391_FA25/web/profile.jsp</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/apply/SelectCV.java</file>
+            <file>file:/D:/SWP391_FA25/web/cv-select.jsp</file>
+            <file>file:/D:/SWP391_FA25/src/java/filter/AuthCandidateFilter.java</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/auth/ProfileServlet.java</file>
+            <file>file:/D:/SWP391_FA25/src/java/dal/ApplyDAO.java</file>
+            <file>file:/D:/SWP391_FA25/src/java/dal/CVDAO.java</file>
+            <file>file:/D:/SWP391_FA25/web/job_details.jsp</file>
+            <file>file:/D:/SWP391_FA25/src/java/controller/job/SaveJobServlet.java</file>
         </group>
     </open-files>
 </project-private>

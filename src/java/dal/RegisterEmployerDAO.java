@@ -153,7 +153,7 @@ public class RegisterEmployerDAO extends DBContext {
     public Employer getEmployerByEmail(String email) {
         try {
             String query = "SELECT [EmployerID], [EmployerName], [Email], [PhoneNumber], [PasswordHash], "
-                    + "[CompanyName], [Description], [Location], [TaxCode], [URLWebsite], [ImgLogo], [Status] "
+                    + "[CompanyName], [Description], [Location], [URLWebsite], [TaxCode], [ImgLogo], [Status] "
                     + "FROM [dbo].[Employer] "
                     + "WHERE Email = ?";
 
@@ -169,9 +169,9 @@ public class RegisterEmployerDAO extends DBContext {
                         rs.getString("PhoneNumber"),
                         rs.getString("PasswordHash"),
                         rs.getString("CompanyName"),
+                        rs.getString("TaxCode"),
                         rs.getString("Description"),
                         rs.getString("Location"),
-                        rs.getString("TaxCode"),
                         rs.getString("URLWebsite"),
                         rs.getString("ImgLogo"),
                         rs.getBoolean("Status")

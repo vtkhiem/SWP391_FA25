@@ -37,6 +37,7 @@ public class EmployerJobListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession();
         Employer employer = (Employer) session.getAttribute("user");
         String role = (String) session.getAttribute("role");

@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import tool.EncodePassword;
-import tool.ValidationRegister;
+import tool.Validation;
 /**
  *
  * @author Admin
@@ -84,7 +84,7 @@ public class ChangePasswordServlet extends HttpServlet {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmNewPassword = request.getParameter("confirmNewPassword");
-           ValidationRegister validation = new ValidationRegister();
+           Validation validation = new Validation();
         if(!validation.checkLength(newPassword)||!validation.checkChar(newPassword)){
                response.sendRedirect("profile?error=matkhauyeucautoithieu8kituvakitudacbiet");
                return;

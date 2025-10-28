@@ -315,8 +315,7 @@
                     passwordError.style.display = 'none';
                 }
             });
-        </script>
-        <script>
+            
     // --- KIỂM TRA EMAIL ---
     document.getElementById("email").addEventListener("keyup", function () {
         let email = this.value.trim();
