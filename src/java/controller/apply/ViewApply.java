@@ -7,6 +7,7 @@ package controller.apply;
 import dal.ApplyDAO;
 import dal.CVDAO;
 import dal.CandidateDAO;
+import dal.EmployerDAO;
 import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -87,6 +88,7 @@ public class ViewApply extends HttpServlet {
         JobPostDAO jdao = new JobPostDAO();
         CandidateDAO cdao = new CandidateDAO();
         CVDAO cvdao = new CVDAO();
+        EmployerDAO edao = new EmployerDAO();
 
         int recordsPerPage = 10;
         int offSet = (page - 1) * recordsPerPage;
@@ -100,7 +102,7 @@ public class ViewApply extends HttpServlet {
             Candidate can = cdao.getCandidateById(apply.getCandidateId());
             CV cv = cvdao.getCVById(apply.getCvId());
             JobPost job = jdao.getJobPostById(apply.getJobPostId());
-            details.add(new ApplyDetail(apply, can, cv, job));
+            details.add(new ApplyDetail(apply, can, cv, job, employer));
         }
 
         request.setAttribute("details", details);

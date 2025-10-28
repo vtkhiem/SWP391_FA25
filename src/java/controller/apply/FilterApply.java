@@ -119,7 +119,7 @@ public class FilterApply extends HttpServlet {
             Candidate can = cdao.getCandidateById(apply.getCandidateId());
             CV cv = cvdao.getCVById(apply.getCvId());
             JobPost job = jdao.getJobPostById(apply.getJobPostId());
-            details.add(new ApplyDetail(apply, can, cv, job));
+            details.add(new ApplyDetail(apply, can, cv, job, employer));
         }
         int totalRecords = dao.countFilteredApply(jobId, employerId, txt, status, exp);
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);

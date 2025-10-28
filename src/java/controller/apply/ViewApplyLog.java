@@ -2,9 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.candidate;
+package controller.apply;
 
-import dal.RegisterCandidateDAO;
+import dal.ApplyDAO;
+import dal.CVDAO;
+import dal.CandidateDAO;
+import dal.EmployerDAO;
+import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,14 +17,22 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import model.Apply;
+import model.ApplyDetail;
+import model.CV;
 import model.Candidate;
+import model.Employer;
+import model.JobPost;
+import tool.Validation;
 
 /**
  *
  * @author shiro
  */
-@WebServlet(name = "CandidateProfileServlet", urlPatterns = {"/candidateProfile"})
-public class CandidateProfileServlet extends HttpServlet {
+@WebServlet(name = "ViewApplyLog", urlPatterns = {"/viewApplyLog"})
+public class ViewApplyLog extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +51,10 @@ public class CandidateProfileServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateProfileServlet</title>");
+            out.println("<title>Servlet viewApplyStatus</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateProfileServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet viewApplyStatus at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,20 +72,38 @@ public class CandidateProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(false);
 
-        // Candidate: Dữ liệu đã có trong session từ LoginServlet
         Candidate candidate = (Candidate) session.getAttribute("user");
-        
-        System.out.println(session.getAttribute("error"));
-        if (candidate != null) {
-            request.setAttribute("candidate", candidate);
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
-        } else {
-            request.setAttribute("error", "Không tìm thấy thông tin ứng viên!");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-            return;
+        int page = Validation.getPage(request.getParameter("page"));
+
+        ApplyDAO dao = new ApplyDAO();
+        JobPostDAO jdao = new JobPostDAO();
+        CandidateDAO cdao = new CandidateDAO();
+        CVDAO cvdao = new CVDAO();
+        EmployerDAO edao = new EmployerDAO();
+
+        int recordsPerPage = 10;
+        int offSet = (page - 1) * recordsPerPage;
+        int totalRecords = dao.countCandidateApply(candidate.getCandidateId());
+        int totalPage = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
+        List<Apply> applies = dao.getApplyByCandidate(candidate.getCandidateId(), offSet, recordsPerPage);
+        List<ApplyDetail> details = new ArrayList<>();
+
+        for (Apply apply : applies) {
+            Candidate can = cdao.getCandidateById(apply.getCandidateId());
+            CV cv = cvdao.getCVById(apply.getCvId());
+            JobPost job = jdao.getJobPostById(apply.getJobPostId());
+            Employer employer = edao.findById(job.getEmployerID());
+            details.add(new ApplyDetail(apply, can, cv, job, employer));
         }
+
+        request.setAttribute("details", details);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("noOfPages", totalPage);
+        request.getRequestDispatcher("candidate-status-log.jsp").forward(request, response);
     }
 
     /**
@@ -87,7 +117,7 @@ public class CandidateProfileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        processRequest(request, response);
     }
 
     /**

@@ -71,6 +71,14 @@ public class Apply {
         return dayCreate;
     }
 
+    public String getDayCreateString() {
+        if (dayCreate == null) {
+            return "";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dayCreate.format(formatter);
+    }
+
     public void setDayCreate(LocalDateTime dayCreate) {
         this.dayCreate = dayCreate;
     }

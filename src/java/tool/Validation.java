@@ -42,8 +42,17 @@ public class Validation {
     }
 
     public static String searchKey(String key) {
-        if(key==null) return "";
-        return key.trim().replaceAll("\\s+", " ");
+        if (key == null) {
+            return "";
+        }
+
+        // B1: Xóa ký tự đặc biệt, chỉ giữ chữ, số và khoảng trắng
+        key = key.replaceAll("[^a-zA-Z0-9\\s]", "");
+        // B2: Xóa khoảng trắng thừa
+        key = key.replaceAll("\\s+", " ");
+        // B3: Xóa khoảng trắng ở đầu và cuối
+        key = key.trim();
+        return key;
     }
 
     public static Integer getId(String input) {
