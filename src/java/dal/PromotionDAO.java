@@ -126,7 +126,19 @@ public class PromotionDAO extends DBContext {
         }
         return null;
     }
-
+public String getCodeById(int id) throws SQLException {
+        String sql = "SELECT Code FROM Promotion WHERE PromotionID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+               if (rs.next()) return rs.getString("Code");
+            }
+                
+            }
+        return null;
+        }
+       
+    
     // 🟣 Lấy promotion đang hoạt động (đang trong khoảng thời gian hiệu lực)
     public List<Promotion> getAllActiveAndDatePromotions() throws SQLException {
         List<Promotion> list = new ArrayList<>();

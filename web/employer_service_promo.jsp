@@ -473,17 +473,16 @@
             </c:if>
 
             <!-- ======= Feedback Section ======= -->
-            <div class="feedback-section">
-                <form action="feedback_form.jsp" method="get">
-                    <input type="hidden" name="type" value="Service Feedback">
-                    <button type="submit" class="feedback-btn">
-                        <i class="ti-comment-alt"></i>
-                        <span>Gửi phản hồi cho quản trị viên</span>
+         <div class="text-center my-5">
+                <form action="prepare" method="post">
+                   
+                    <button type="submit" class="buy-btn">
+                        <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên
                     </button>
                 </form>
             </div>
         </div>
-
+ </body>
         <!-- ======= Footer ======= -->
         <jsp:include page="footer.jsp"/>
 
@@ -519,5 +518,5 @@
                 });
             });
         </script>
-    </body>
+   
 </html>

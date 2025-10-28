@@ -35,8 +35,6 @@ public class Promotion {
         this.status = status;
     }
 
-   
-
     public int getPromotionID() {
         return promotionID;
     }
@@ -44,6 +42,10 @@ public class Promotion {
     public void setPromotionID(int promotionID) {
         this.promotionID = promotionID;
     }
+
+   
+
+  
 
     public String getCode() {
         return code;
@@ -99,6 +101,11 @@ public class Promotion {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Promotion{" + "promotionID=" + promotionID + ", code=" + code + ", discount=" + discount + ", dateSt=" + dateSt + ", dateEn=" + dateEn + ", dateCr=" + dateCr + ", description=" + description + ", status=" + status + '}';
     }
     
      
