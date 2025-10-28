@@ -58,8 +58,7 @@ public class JobEditServlet extends HttpServlet {
         }
 
         try {
-            int jobId;
-            jobId = Integer.parseInt(idParam);
+            int jobId = Integer.parseInt(idParam);
             
             JobPost job = jobPostDAO.getJobPostById(jobId);
             if (job == null) {

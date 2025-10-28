@@ -44,17 +44,21 @@ public class JobDetailServlet extends HttpServlet {
         JobPost job = jobPostDAO.getJobPostById(jobId);
 
         if (job != null) {
-            HttpSession session = request.getSession();
-            Candidate candidate = (Candidate) session.getAttribute("user");
-            if (candidate != null) {
-                SavedJobDAO savedJobDAO = new SavedJobDAO();
-                SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
-                request.setAttribute("isSaved", savedJob != null);
+            if (job.isVisible()) {
+                HttpSession session = request.getSession();
+                Candidate candidate = (Candidate) session.getAttribute("user");
+                if (candidate != null) {
+                    SavedJobDAO savedJobDAO = new SavedJobDAO();
+                    SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
+                    request.setAttribute("isSaved", savedJob != null);
+                } else {
+                    request.setAttribute("isSaved", false);
+                }
+                request.setAttribute("job", job);
+                request.getRequestDispatcher("/job_details.jsp").forward(request, response);
             } else {
-                request.setAttribute("isSaved", false);
+                response.sendRedirect(request.getContextPath() + "/jobs");
             }
-            request.setAttribute("job", job);
-            request.getRequestDispatcher("/job_details.jsp").forward(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/jobs");
         }
