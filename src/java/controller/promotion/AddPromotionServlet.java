@@ -82,6 +82,18 @@ public class AddPromotionServlet extends HttpServlet {
             Timestamp dateSt = Timestamp.valueOf(request.getParameter("dateSt").replace("T", " ") + ":00");
             Timestamp dateEn = Timestamp.valueOf(request.getParameter("dateEn").replace("T", " ") + ":00");
 
+             Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (dateSt.before(now) || dateEn.before(now)) {
+            request.setAttribute("message", "❌ Ngày bắt đầu và kết thúc không được ở quá khứ!");
+            request.getRequestDispatcher("addPromotion.jsp").forward(request, response);
+            return;
+        }
+
+        if (dateEn.before(dateSt)) {
+            request.setAttribute("message", "❌ Ngày kết thúc phải sau ngày bắt đầu!");
+            request.getRequestDispatcher("addPromotion.jsp").forward(request, response);
+            return;
+        }
             Promotion p = new Promotion();
             p.setCode(code);
             p.setDiscount(discount);

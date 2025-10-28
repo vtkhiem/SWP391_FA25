@@ -25,7 +25,7 @@ public class ServiceEmployerDAO extends DBContext {
 
     // ✅ 2. Lấy tất cả dịch vụ mà Employer đã đăng ký
     public int getServiceIdByEmployerId(int employerID) throws SQLException {
-        String sql = "SELECT ServiceID FROM ServiceEmployer WHERE EmployerID = ?";
+        String sql = "SELECT ServiceID FROM ServiceEmployerHistory WHERE EmployerID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerID);
             try (ResultSet rs = ps.executeQuery()) {
@@ -41,7 +41,7 @@ public class ServiceEmployerDAO extends DBContext {
 
     // ✅ 3. Lấy chi tiết 1 đăng ký
     public ServiceEmployer getByEmployerAndService(int employerID, int serviceID) throws SQLException {
-        String sql = "SELECT * FROM ServiceEmployer WHERE EmployerID = ? AND ServiceID = ?";
+        String sql = "SELECT * FROM ServiceEmployerHistory WHERE EmployerID = ? AND ServiceID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerID);
             ps.setInt(2, serviceID);

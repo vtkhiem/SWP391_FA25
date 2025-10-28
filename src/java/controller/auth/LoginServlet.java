@@ -20,7 +20,7 @@ import java.util.List;
 import model.Candidate;
 import model.Employer;
 import model.Role;
-import tool.ValidationRegister;
+import tool.Validation;
 import model.Admin;
 import tool.AdminRoleDefine;
 

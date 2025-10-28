@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page import="model.ApplyDetail, java.time.format.DateTimeFormatter"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
@@ -97,59 +96,64 @@
 
         <!-- Search & Filter Controls -->
         <!-- Container -->
-        <div class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
-            <!-- Search box -->
+        <form action="${pageContext.request.contextPath}/filterApply" method="get"
+              class="d-flex align-items-center gap-2 mt-3 mb-3 px-3">
+            <!-- hidden field để truyền Job ID -->
+            <input type="hidden" name="jobId" value="${param.jobId}">
 
-            <input type="text" class="form-control align-middle" id="searchInput" placeholder="Search by name or email..." 
+            <!-- Search box -->
+            <input type="text" class="form-control align-middle"
+                   name="txt" id="searchInput" value="${txt}"
+                   placeholder="Search by name or email..."
                    style="height: 38px; min-width: 250px;">
 
+            <select class="form-control" name="exp" id="experienceFilter" style="height: 38px; min-width: 180px;">
+                <option value="" disabled <c:if test="${empty exp}">selected</c:if> hidden>Filter by Experience</option>
+                <option value="0-1" <c:if test="${exp eq '0-1'}">selected</c:if>>0 - 1 years</option>
+                <option value="2-3" <c:if test="${exp eq '2-3'}">selected</c:if>>2 - 3 years</option>
+                <option value="4-5" <c:if test="${exp eq '4-5'}">selected</c:if>>4 - 5 years</option>
+                <option value="5+" <c:if test="${exp eq '5+'}">selected</c:if>>5+ years</option>
+                </select>
 
-            <!-- Filters -->
-            <select class="form-control" id="experienceFilter" style="height: 38px; min-width: 180px;">
-                <option value="">Filter by Experience</option>
-                <option value="0-1">0 - 1 years</option>
-                <option value="2-3">2 - 3 years</option>
-                <option value="4-5">4 - 5 years</option>
-                <option value="5+">5+ years</option>
-            </select>
+                <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
+                    <option value="" disabled <c:if test="${empty status}">selected</c:if> hidden>Filter by Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
 
-            <select class="form-control" id="statusFilter" style="height: 38px; min-width: 150px;">
-                <option value="">Filter by Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-            </select>
+                <button type="submit" class="btn btn-sm btn-warning me-2" style="height:38px;">Apply</button>
+                <button type="reset" class="btn btn-sm btn-secondary" style="height:38px;">Clear</button>
 
-            <button id="clearFilterBtn" class="btn btn-sm btn-warning me-2" style="height:38px;">Clear</button>
-
-        </div>
-
+            </form>
 
 
 
-        <div class="apply_listing_by_job">
-            <div class="container-fluid p-0">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <form action="job_delete_bulk" method="post" onsubmit="return confirm('Are you sure want to delete selected jobs?');">
-                            <div class="table-responsive mt-3">
-                                <table class="table table-hover table-bordered">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th style="width:40px">
-                                                <input type="checkbox" id="selectAll"/>
-                                            </th>
-                                            <th style="width:48px">No</th>
-                                            <th style="width:160px">Candidate</th>
-                                            <th style="width:160px">Email</th>
-                                            <th style="width:50px">Experience</th>
-                                            <th style="width:60px">Current salary</th>
-                                            <th style="width:120px">Status</th>
-                                            <th style="width:160px">Note</th>
-                                            <th style="width:120px">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+
+
+            <div class="apply_listing_by_job">
+                <div class="container-fluid p-0">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form action="job_delete_bulk" method="post" onsubmit="return confirm('Are you sure want to delete selected jobs?');">
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-hover table-bordered">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th style="width:40px">
+                                                    <input type="checkbox" id="selectAll"/>
+                                                </th>
+                                                <th style="width:48px">No</th>
+                                                <th style="width:160px">Candidate</th>
+                                                <th style="width:160px">Email</th>
+                                                <th style="width:50px">Experience</th>
+                                                <th style="width:60px">Current salary</th>
+                                                <th style="width:120px">Status</th>
+                                                <th style="width:160px">Note</th>
+                                                <th style="width:120px">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
                                         <c:forEach var="d" items="${details}" varStatus="st">
                                             <tr>
                                                 <td>
@@ -157,17 +161,10 @@
                                                 </td>
                                                 <td>${st.index + 1}</td>
 
-                                                <td>${d.cv.fullName} <br>
-
-                                                    <div class="small text-muted" style="margin-top: 5px;">
-                                                        <%
-                                                        ApplyDetail d = (ApplyDetail) pageContext.getAttribute("d");
-                                                        if (d.getApply().getDayCreate() != null) {
-                                                            out.print("Applied:" + d.getApply().getDayCreate().format(dtf));
-                                                        } else {
-                                                            out.print("-");
-                                                        }
-                                                        %>
+                                                <td>
+                                                    ${d.cv.fullName}<br>
+                                                    <div class="small text-muted" style="margin-top:5px;">
+                                                        Applied: ${d.apply.dayCreateFormatted}
                                                     </div>
                                                 </td>
 
@@ -188,11 +185,11 @@
                                                            href="${pageContext.request.contextPath}/${d.cv.fileData}"
                                                            target="_blank">View CV</a>
                                                         <a class="btn btn-sm btn-warning me-2" 
-                                                           href="${pageContext.request.contextPath}/downloadCV?ids=${d.cv.CVID}">
+                                                           href="${pageContext.request.contextPath}/downloadCV?ids=${d.apply.applyId}">
                                                             Download CV
                                                         </a>
 
-                                                        <a class="btn btn-sm btn-warning me-2 noteBtn"
+                                                        <a class="btn btn-sm btn-warning me-2 noteBtn"  
                                                            href="#"
                                                            data-apply-id="${d.apply.applyId}">Note
                                                         </a>
@@ -218,6 +215,56 @@
                         </div>
                     </div>
                 </div>
+                <div class="pagination justify-content-center mt-4">
+                    <ul class="pagination">
+                        <c:url var="prevUrl" value="filterApply">
+                            <c:param name="jobId" value="${param.jobId}" />
+                            <c:param name="txt" value="${param.txt}" />
+                            <c:param name="exp" value="${param.exp}" />
+                            <c:param name="status" value="${param.status}" />
+                            <c:param name="page" value="${currentPage - 1}" />
+                        </c:url>
+                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="${prevUrl}">&lt;</a>
+                        </li>
+
+
+                        <c:forEach var="i" begin="1" end="${noOfPages}">
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <c:url var="pageUrl" value="filterApply">
+                                    <c:param name="jobId" value="${param.jobId}" />
+                                    <c:if test="${not empty param.txt}">
+                                        <c:param name="txt" value="${param.txt}" />
+                                    </c:if>
+                                    <c:if test="${not empty param.exp}">
+                                        <c:param name="exp" value="${param.exp}" />
+                                    </c:if>
+                                    <c:if test="${not empty param.status}">
+                                        <c:param name="status" value="${param.status}" />
+                                    </c:if>
+                                    <c:param name="page" value="${i}" />
+                                </c:url>
+
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="${pageUrl}">${i}</a>
+                            </li>
+
+                            </li>
+                        </c:forEach>
+
+                        <c:url var="nextUrl" value="filterApply">
+                            <c:param name="jobId" value="${param.jobId}" />
+                            <c:param name="txt" value="${param.txt}" />
+                            <c:param name="exp" value="${param.exp}" />
+                            <c:param name="status" value="${param.status}" />
+                            <c:param name="page" value="${currentPage + 1}" />
+                        </c:url>
+                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="${nextUrl}">&gt;</a>
+                        </li>
+
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -237,186 +284,126 @@
 
 
         <script>
-            // Chọn tất cả checkbox
-            const selectAllCheckbox = document.getElementById("selectAll");
-            const rowCheckboxes = document.querySelectorAll(".jobCheckbox");
+            document.addEventListener("DOMContentLoaded", () => {
+                const contextPath = "${pageContext.request.contextPath}";
 
-            selectAllCheckbox.addEventListener("change", function () {
-                rowCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAllCheckbox.checked;
-                });
-            });
+                // --- 1. FILTER FORM ---
+                const form = document.querySelector("form[action$='filterApply']");
+                const searchInput = document.getElementById("searchInput");
+                const expFilter = document.getElementById("experienceFilter");
+                const statusFilter = document.getElementById("statusFilter");
 
-// Nếu muốn, khi người dùng tick/un-tick riêng lẻ, cập nhật checkbox header
-            rowCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener("change", function () {
-                    // Nếu có checkbox nào chưa tick, header bỏ tick
-                    selectAllCheckbox.checked = Array.from(rowCheckboxes).every(cb => cb.checked);
-                });
-            });
-
-            const contextPath = "${pageContext.request.contextPath}";
-            document.querySelectorAll(".status-select").forEach(select => {
-                select.addEventListener("change", function () {
-                    let applyId = this.getAttribute("data-apply-id");
-                    let newStatus = this.value;
-
-                    fetch(contextPath + "/status", {// ✅ luôn đúng path
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: "applyId=" + encodeURIComponent(applyId)
-                                + "&status=" + encodeURIComponent(newStatus)
-                    })
-                            .then(response => response.text())
-                            .then(data => {
-                                console.log("Server response:", data);
-                                alert(data);
-                            })
-                            .catch(error => console.error("Lỗi:", error));
-                });
-            });
-
-            // Lấy các input và select
-            const searchInput = document.getElementById("searchInput");
-            const experienceFilter = document.getElementById("experienceFilter");
-            const statusFilter = document.getElementById("statusFilter");
-            const tableRows = document.querySelectorAll("tbody tr");
-
-            // Hàm lọc
-            function filterTable() {
-                const searchText = searchInput.value.toLowerCase();
-                const experienceText = experienceFilter.value; // "0-1", "2-3", "4-5", "5+"
-                const statusText = statusFilter.value.toLowerCase();
-
-                tableRows.forEach(row => {
-                    const candidateName = row.cells[2]?.textContent.toLowerCase() || "";
-                    const candidateEmail = row.cells[3]?.textContent.toLowerCase() || "";
-                    const candidateExp = parseInt(row.cells[4]?.textContent || "0"); // chuyển về số
-                    const candidateStatus = row.cells[6]?.querySelector("select")?.value.toLowerCase() || "";
-
-                    // Kiểm tra filter search
-                    const matchesSearch = candidateName.includes(searchText) || candidateEmail.includes(searchText);
-
-                    // Kiểm tra filter kinh nghiệm
-                    let matchesExperience = true;
-                    if (experienceText) {
-                        if (experienceText === "0-1") {
-                            matchesExperience = candidateExp >= 0 && candidateExp <= 1;
-                        } else if (experienceText === "2-3") {
-                            matchesExperience = candidateExp >= 2 && candidateExp <= 3;
-                        } else if (experienceText === "4-5") {
-                            matchesExperience = candidateExp >= 4 && candidateExp <= 5;
-                        } else if (experienceText === "5+") {
-                            matchesExperience = candidateExp > 5;
-                        }
-                    }
-
-                    // Kiểm tra filter status
-                    const matchesStatus = !statusText || candidateStatus === statusText;
-
-                    // Hiển thị hoặc ẩn dòng
-                    if (matchesSearch && matchesExperience && matchesStatus) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-            }
-
-
-            // Gắn sự kiện
-            searchInput.addEventListener("input", filterTable);
-            experienceFilter.addEventListener("change", filterTable);
-            statusFilter.addEventListener("change", filterTable);
-
-            const noteModal = document.getElementById("noteModal");
-            const noteText = document.getElementById("noteText");
-            const noteApplyId = document.getElementById("noteApplyId");
-            const cancelNoteBtn = document.getElementById("cancelNoteBtn");
-            const saveNoteBtn = document.getElementById("saveNoteBtn");
-
-// Khi bấm nút Note
-            let currentRow = null;
-
-            document.querySelectorAll(".noteBtn").forEach(btn => {
-                btn.addEventListener("click", function (e) {
+                // Xử lý nút Clear: reset form và reload lại danh sách gốc
+                const clearBtn = form.querySelector("button[type='reset']");
+                clearBtn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    const applyId = this.getAttribute("data-apply-id");
-
-                    const row = this.closest("tr");  // lấy row hiện tại
-                    const currentNote = row.cells[7]?.textContent.trim() || "";
-
-                    noteApplyId.value = applyId;
-                    noteText.value = currentNote;
-                    noteModal.style.display = "flex";
-
-                    currentRow = row; // lưu row để update sau này
+                    searchInput.value = "";
+                    expFilter.value = "";
+                    statusFilter.value = "";
+                    // Reload lại trang không có filter
+                    const jobId = form.querySelector("input[name='jobId']").value;
                 });
-            });
 
-            // Save note
-            saveNoteBtn.addEventListener("click", () => {
-                const applyId = noteApplyId.value;
-                const newNote = noteText.value;
+                // --- 2. CHECKBOX SELECT ALL ---
+                const selectAll = document.getElementById("selectAll");
+                const checkboxes = document.querySelectorAll(".jobCheckbox");
+                if (selectAll) {
+                    selectAll.addEventListener("change", () => {
+                        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+                    });
+                    checkboxes.forEach(cb => cb.addEventListener("change", () => {
+                            selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
+                        }));
+                }
 
-                fetch(contextPath + "/noteApply", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                    body: "applyId=" + encodeURIComponent(applyId)
-                            + "&note=" + encodeURIComponent(newNote)
-                })
-                        .then(response => response.text())
-                        .then(data => {
-                            if (data.trim() !== "") {
-                                alert(data);
-                            }
+                // --- 3. UPDATE STATUS (AJAX) ---
+                document.querySelectorAll(".status-select").forEach(select => {
+                    select.addEventListener("change", () => {
+                        const applyId = select.dataset.applyId;
+                        const newStatus = select.value;
 
-                            if (currentRow) {
-                                currentRow.cells[7].textContent = newNote; // update cột Note
-                            }
-
-                            noteModal.style.display = "none"; // đóng modal
-                            currentRow = null;
+                        fetch(contextPath + "/status", {
+                            method: "POST",
+                            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                            body: "applyId=" + encodeURIComponent(applyId) +
+                                    "&status=" + encodeURIComponent(newStatus)
                         })
-                        .catch(err => console.error("Lỗi:", err));
-            });
+                                .then(res => res.text())
+                                .then(msg => {
+                                    if (msg.trim() !== "")
+                                        alert(msg);
+                                })
+                                .catch(err => console.error("Lỗi cập nhật trạng thái:", err));
+                    });
+                });
 
-            // Đóng modal khi click bên ngoài
-            window.addEventListener("click", (e) => {
-                if (e.target === noteModal) {
+                // --- 4. NOTE MODAL ---
+                const noteModal = document.getElementById("noteModal");
+                const noteText = document.getElementById("noteText");
+                const noteApplyId = document.getElementById("noteApplyId");
+                const cancelNoteBtn = document.getElementById("cancelNoteBtn");
+                const saveNoteBtn = document.getElementById("saveNoteBtn");
+                let currentRow = null;
+
+                document.querySelectorAll(".noteBtn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const applyId = btn.dataset.applyId;
+                        const row = btn.closest("tr");
+                        const currentNote = row.cells[7]?.textContent.trim() || "";
+
+                        noteApplyId.value = applyId;
+                        noteText.value = currentNote;
+                        noteModal.style.display = "flex";
+                        currentRow = row;
+                    });
+                });
+
+                cancelNoteBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
                     noteModal.style.display = "none";
+                    currentRow = null;
+                });
+
+                saveNoteBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const applyId = noteApplyId.value;
+                    const newNote = noteText.value;
+
+                    fetch(contextPath + "/noteApply", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                        body: "applyId=" + encodeURIComponent(applyId) +
+                                "&note=" + encodeURIComponent(newNote)
+                    })
+                            .then(res => res.text())
+                            .then(msg => {
+                                if (msg.trim() !== "")
+                                    alert(msg);
+                                if (currentRow)
+                                    currentRow.cells[7].textContent = newNote;
+                                noteModal.style.display = "none";
+                                currentRow = null;
+                            })
+                            .catch(err => console.error("Lỗi lưu ghi chú:", err));
+                });
+
+                // --- 5. DOWNLOAD SELECTED ---
+                const downloadBtn = document.getElementById("downloadSelectedBtn");
+                if (downloadBtn) {
+                    downloadBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
+                                .map(cb => cb.value);
+                        if (selected.length === 0) {
+                            alert("Vui lòng chọn ít nhất một CV để tải.");
+                            return;
+                        }
+                        window.location.href = contextPath + "/downloadCV?ids=" + selected.join(",");
+                    });
                 }
-            });
-
-            // Clear filter
-            const clearFilterBtn = document.getElementById("clearFilterBtn");
-
-            clearFilterBtn.addEventListener("click", () => {
-                searchInput.value = "";
-                experienceFilter.value = "";
-                statusFilter.value = "";
-                filterTable(); // gọi lại hàm để reset bảng
-            });
-
-            document.getElementById("downloadSelectedBtn").addEventListener("click", function (e) {
-                e.preventDefault();
-                const selected = Array.from(document.querySelectorAll(".jobCheckbox:checked"))
-                        .map(cb => cb.value);
-
-                if (selected.length === 0) {
-                    alert("Vui lòng chọn ít nhất một CV để tải về.");
-                    return;
-                }
-
-                // Tạo query string ids=1,2,3
-                const url = "${pageContext.request.contextPath}/downloadCV?ids=" + selected.join(",");
-                window.location.href = url; // redirect sang servlet
             });
         </script>
-
-
 
     </body>
 </html>

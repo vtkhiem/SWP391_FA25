@@ -3,23 +3,24 @@ package model;
 import java.sql.Timestamp;
 
 public class ServiceEmployer {
+
     private int employerID;
     private int serviceID;
     private Timestamp registerDate;
     private Timestamp expirationDate;
     private String paymentStatus;
-  
 
-    public ServiceEmployer() {}
+    public ServiceEmployer() {
+    }
 
     public ServiceEmployer(int employerID, int serviceID, Timestamp registerDate,
-                           Timestamp expirationDate, String paymentStatus) {
+            Timestamp expirationDate, String paymentStatus) {
         this.employerID = employerID;
         this.serviceID = serviceID;
         this.registerDate = registerDate;
         this.expirationDate = expirationDate;
         this.paymentStatus = paymentStatus;
-     
+
     }
 
     public int getEmployerID() {
@@ -62,5 +63,4 @@ public class ServiceEmployer {
         this.paymentStatus = paymentStatus;
     }
 
-   
 }
