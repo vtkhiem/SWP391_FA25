@@ -170,11 +170,11 @@
                                         <label>Mức lương <span style="color: red;">*</span></label>
                                         <div class="d-flex">
                                             <div class="col-6">
-                                                <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." value="${job.offerMin}" required>
+                                                <input type="text" id="offerMin" class="form-control mr-2 money-input" name="offerMin" step="1" placeholder="Từ..." value="<fmt:formatNumber value='${job.offerMin}' type='number' maxFractionDigits='0'/>" required>
                                             <span class="error-message"></span>
                                         </div>
                                         <div class="col-6">
-                                            <input type="number" class="form-control" name="offerMax" step="1" placeholder="Đến..." value="${job.offerMax}" required>
+                                            <input type="text" id="offerMax" class="form-control money-input" name="offerMax" step="1" placeholder="Đến..." value="<fmt:formatNumber value='${job.offerMax}' type='number' maxFractionDigits='0'/>" required>
                                             <span class="error-message"></span>
                                         </div>
                                     </div>
@@ -386,11 +386,23 @@
                     return isValid;
                 }
 
+                document.querySelectorAll('.money-input').forEach(el => {
+                    el.addEventListener('input', () => formatNumber(el));
+                });
+
                 form.addEventListener("submit", (e) => {
+                    document.querySelectorAll('.moeny-input').forEach(el => {
+                        el.value = el.value.replace(/\./g, '');
+                    });
                     if (!validateForm())
                         e.preventDefault();
                 });
             });
+
+            function formatNumber(input) {
+                let value = input.value.replace(/\D/g, "");
+                input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
         </script>
     </body>
 </html>
