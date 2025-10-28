@@ -133,6 +133,7 @@ public class ServiceDAO extends DBContext {
                             rs.getInt("Duration"),
                             rs.getBoolean("IsVisible"),
                               rs.getInt("JobPostAmount")
+                         
                     );
                    
                     s.setIsUnlimited(rs.getBoolean("IsUnlimited"));
@@ -142,7 +143,21 @@ public class ServiceDAO extends DBContext {
         }
         return null;
     }
-
+   public String getServiceNameById(int id) throws SQLException {
+        String sql = "SELECT ServiceName FROM Service WHERE ServiceID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                 
+                       return    rs.getString("ServiceName");
+                        
+        
+                }
+            }
+        }
+        return null;
+    }
     // ✅ Lấy ID theo tên service
     public int getIdByServiceName(String name) throws SQLException {
         String sql = "SELECT ServiceID FROM Service WHERE ServiceName = ?";
