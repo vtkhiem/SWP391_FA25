@@ -67,7 +67,7 @@
                                                                 <li><a href="jobs">Tìm việc làm</a></li>
                                                                 <li><a href="saved_jobs">Việc làm đã lưu</a></li>
 
-                                                                <li><a href="viewApplyStatus">Trạng thái ứng tuyển</a></li>
+                                                                <li><a href="viewApplyLog">Trạng thái ứng tuyển</a></li>
 
                                                             </ul>
                                                         </li>
