@@ -4,8 +4,6 @@ import java.sql.*;
 import java.util.*;
 import model.Feedback;
 
-
- 
 public class FeedbackDAO extends DBContext {
 
     // ✅ Thêm phản hồi mới
@@ -30,7 +28,6 @@ public class FeedbackDAO extends DBContext {
 
             ps.setString(3, feedback.getSubject());
             ps.setString(4, feedback.getContent());
-            ps.setString(5, feedback.getType());
 
             return ps.executeUpdate() > 0;
         }
@@ -55,8 +52,7 @@ public class FeedbackDAO extends DBContext {
     public List<Feedback> getAllFeedback() throws SQLException {
         List<Feedback> list = new ArrayList<>();
         String sql = "SELECT * FROM Feedback ORDER BY CreatedAt DESC";
-        try (PreparedStatement ps = c.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(mapResultSetToFeedback(rs));
             }
@@ -77,7 +73,6 @@ public class FeedbackDAO extends DBContext {
         }
         return null;
     }
-    
 
     // ✅ Lấy Feedback theo EmployerID
     public List<Feedback> getFeedbackByEmployer(int employerID) throws SQLException {
@@ -126,19 +121,25 @@ public class FeedbackDAO extends DBContext {
         f.setCandidateID(rs.getObject("CandidateID") != null ? rs.getInt("CandidateID") : null);
         f.setSubject(rs.getString("Subject"));
         f.setContent(rs.getString("Content"));
-        f.setType(rs.getString("Type"));
+
         f.setStatus(rs.getString("Status"));
         f.setAdminResponse(rs.getString("AdminResponse"));
 
         Timestamp created = rs.getTimestamp("CreatedAt");
-        if (created != null) f.setCreatedAt(created.toLocalDateTime());
+        if (created != null) {
+            f.setCreatedAt(created.toLocalDateTime());
+        }
 
         Timestamp responded = rs.getTimestamp("RespondedAt");
-        if (responded != null) f.setRespondedAt(responded.toLocalDateTime());
-
+        if (responded != null) {
+            f.setRespondedAt(responded.toLocalDateTime());
+        }
+        f.setServiceID(rs.getObject("ServiceID") != null ? rs.getInt("ServiceID") : null);
+        f.setPromotionID(rs.getObject("PromotionID") != null ? rs.getInt("PromotionID") : null);
         return f;
     }
-        // ✅ Lấy tất cả Feedback của 1 người (có thể là Employer hoặc Candidate)
+    // ✅ Lấy tất cả Feedback của 1 người (có thể là Employer hoặc Candidate)
+
     public List<Feedback> getFeedbackByUser(int userID) throws SQLException {
         List<Feedback> list = new ArrayList<>();
         String sql = """
@@ -158,7 +159,8 @@ public class FeedbackDAO extends DBContext {
         }
         return list;
     }
-        // ✅ Lấy tất cả Feedback của 1 người (có thể là Employer hoặc Candidate)
+    // ✅ Lấy tất cả Feedback của 1 người (có thể là Employer hoặc Candidate)
+
     public List<Feedback> getAllFeedbackFromEmployers() throws SQLException {
         List<Feedback> list = new ArrayList<>();
         String sql = """
@@ -168,7 +170,7 @@ public class FeedbackDAO extends DBContext {
             ORDER BY CreatedAt DESC
         """;
         try (PreparedStatement ps = c.prepareStatement(sql)) {
-         
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSetToFeedback(rs));
@@ -177,7 +179,8 @@ public class FeedbackDAO extends DBContext {
         }
         return list;
     }
-      public List<Feedback> getAllFeedbackFromCandidates() throws SQLException {
+
+    public List<Feedback> getAllFeedbackFromCandidates() throws SQLException {
         List<Feedback> list = new ArrayList<>();
         String sql = """
             SELECT * 
@@ -186,7 +189,7 @@ public class FeedbackDAO extends DBContext {
             ORDER BY CreatedAt DESC
         """;
         try (PreparedStatement ps = c.prepareStatement(sql)) {
-         
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSetToFeedback(rs));
@@ -195,9 +198,10 @@ public class FeedbackDAO extends DBContext {
         }
         return list;
     }
-      // ✅ Lấy ID người gửi feedback (tức là EmployerID hoặc CandidateID)
-public Integer getSenderId(int feedbackID) throws SQLException {
-    String sql = """
+    // ✅ Lấy ID người gửi feedback (tức là EmployerID hoặc CandidateID)
+
+    public Integer getSenderId(int feedbackID) throws SQLException {
+        String sql = """
         SELECT 
             CASE 
                 WHEN EmployerID IS NOT NULL THEN EmployerID
@@ -207,17 +211,59 @@ public Integer getSenderId(int feedbackID) throws SQLException {
         WHERE FeedbackID = ?
     """;
 
-    try (PreparedStatement ps = c.prepareStatement(sql)) {
-        ps.setInt(1, feedbackID);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getObject("SenderID") != null ? rs.getInt("SenderID") : null;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, feedbackID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getObject("SenderID") != null ? rs.getInt("SenderID") : null;
+                }
             }
         }
+        return null;
     }
-    return null;
-}
 
+    public void insertFeedbackTypes(int feedbackID, List<String> typeFeedbackIDs) throws SQLException {
+        String sql = "INSERT INTO FeedbackTypes (FeedbackID, TypeFeedbackID) VALUES (?, ?)";
+        try (
+                PreparedStatement ps = c.prepareStatement(sql)) {
 
+            for (String id : typeFeedbackIDs) {
+                ps.setInt(1, feedbackID);
+                ps.setInt(2, Integer.parseInt(id));
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+
+    public int insertFeedbackAndReturnId(Feedback feedback) throws SQLException {
+        String sql = "INSERT INTO Feedback (EmployerID, Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?, ?, ?, ?, ?, GETDATE())";
+        try (
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, feedback.getEmployerID());
+            ps.setString(2, feedback.getSubject());
+            ps.setString(3, feedback.getContent());
+
+            if (feedback.getServiceID() != null) {
+                ps.setInt(4, feedback.getServiceID());
+            } else {
+                ps.setNull(4, java.sql.Types.INTEGER);
+            }
+
+            if (feedback.getPromotionID() != null) {
+                ps.setInt(5, feedback.getPromotionID());
+            } else {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            }
+
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
+    }
 
 }

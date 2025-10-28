@@ -4,10 +4,16 @@
  */
 package dal;
 
+import java.util.ArrayList;
+import java.util.List;
+import model.FeedbackType;
+import java.sql.*;
+
 /**
  *
- * @author shiro
+ * @author vuthienkhiem
  */
-public class StatusDAO {
+public class FeedbackTypeDAO extends DBContext{
     
-}
+    }
+

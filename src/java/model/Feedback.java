@@ -5,6 +5,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
@@ -16,23 +17,30 @@ public class Feedback {
     private Integer candidateID;     
     private String subject;
     private String content;
-    private String type;             
     private LocalDateTime createdAt;
     private String status;            
     private String adminResponse;
     private LocalDateTime respondedAt; 
+    private Integer serviceID;
+private Integer promotionID;
+private List<TypeFeedback> types;
 
     public Feedback() {
     }
 
-    public Feedback(Integer employerID, Integer candidateID, String subject, String content, String type) {
+    public Feedback( Integer employerID, Integer candidateID, String subject, String content,  Integer serviceID, Integer promotionID) {
+     
         this.employerID = employerID;
         this.candidateID = candidateID;
         this.subject = subject;
         this.content = content;
-        this.type = type;
+     
+      
+        this.serviceID = serviceID;
+        this.promotionID = promotionID;
     }
 
+ 
 
 
     public int getFeedbackID() {
@@ -75,13 +83,6 @@ public class Feedback {
         this.content = content;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -114,5 +115,30 @@ public class Feedback {
     public void setRespondedAt(LocalDateTime respondedAt) {
         this.respondedAt = respondedAt;
     }
+
+    public Integer getServiceID() {
+        return serviceID;
+    }
+
+    public void setServiceID(Integer serviceID) {
+        this.serviceID = serviceID;
+    }
+
+    public Integer getPromotionID() {
+        return promotionID;
+    }
+
+    public void setPromotionID(Integer promotionID) {
+        this.promotionID = promotionID;
+    }
+
+    public List<TypeFeedback> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<TypeFeedback> types) {
+        this.types = types;
+    }
+    
     
 }
