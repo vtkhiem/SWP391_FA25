@@ -55,7 +55,7 @@ public class Validation {
         return key;
     }
 
-    public static Integer getId(String input) {
+    public static int getId(String input) {
         if (input == null || input.trim().isEmpty()) {
             return 0;
         }
@@ -67,17 +67,17 @@ public class Validation {
         }
     }
 
-    public static Integer getPage(String input) {
-        if (input == null || input.trim().isEmpty()) {
-            return 1;
+        public static Integer getPage(String input) {
+            if (input == null || input.trim().isEmpty()) {
+                return 1;
+            }
+            try {
+                return Integer.parseInt(input.trim());
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid id: " + input);
+                return 1;
+            }
         }
-        try {
-            return Integer.parseInt(input.trim());
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid id: " + input);
-            return 1;
-        }
-    }
 
     // Regex kiểm tra số điện thoại Việt Nam: cho phép +84 hoặc 0 ở đầu, theo sau là 9 hoặc 10 chữ số
     private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+84|0)(\\d{9})$");

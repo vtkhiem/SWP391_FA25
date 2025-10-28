@@ -217,54 +217,68 @@
                 </div>
                 <div class="pagination justify-content-center mt-4">
                     <ul class="pagination">
+
+                        <!-- Nút Prev -->
                         <c:url var="prevUrl" value="filterApply">
                             <c:param name="jobId" value="${param.jobId}" />
-                            <c:param name="txt" value="${param.txt}" />
-                            <c:param name="exp" value="${param.exp}" />
-                            <c:param name="status" value="${param.status}" />
+                            <c:if test="${not empty param.txt}">
+                                <c:param name="txt" value="${param.txt}" />
+                            </c:if>
+                            <c:if test="${not empty param.exp}">
+                                <c:param name="exp" value="${param.exp}" />
+                            </c:if>
+                            <c:if test="${not empty param.status}">
+                                <c:param name="status" value="${param.status}" />
+                            </c:if>
                             <c:param name="page" value="${currentPage - 1}" />
                         </c:url>
                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="${prevUrl}">&lt;</a>
+                            <a class="page-link" href="${currentPage == 1 ? '#' : prevUrl}">&lt;</a>
                         </li>
 
-
+                        <!-- Các số trang -->
                         <c:forEach var="i" begin="1" end="${noOfPages}">
-                            <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                <c:url var="pageUrl" value="filterApply">
-                                    <c:param name="jobId" value="${param.jobId}" />
-                                    <c:if test="${not empty param.txt}">
-                                        <c:param name="txt" value="${param.txt}" />
-                                    </c:if>
-                                    <c:if test="${not empty param.exp}">
-                                        <c:param name="exp" value="${param.exp}" />
-                                    </c:if>
-                                    <c:if test="${not empty param.status}">
-                                        <c:param name="status" value="${param.status}" />
-                                    </c:if>
-                                    <c:param name="page" value="${i}" />
-                                </c:url>
+                            <c:url var="pageUrl" value="filterApply">
+                                <c:param name="jobId" value="${param.jobId}" />
+                                <c:if test="${not empty param.txt}">
+                                    <c:param name="txt" value="${param.txt}" />
+                                </c:if>
+                                <c:if test="${not empty param.exp}">
+                                    <c:param name="exp" value="${param.exp}" />
+                                </c:if>
+                                <c:if test="${not empty param.status}">
+                                    <c:param name="status" value="${param.status}" />
+                                </c:if>
+                                <c:param name="page" value="${i}" />
+                            </c:url>
 
                             <li class="page-item ${i == currentPage ? 'active' : ''}">
                                 <a class="page-link" href="${pageUrl}">${i}</a>
                             </li>
-
-                            </li>
                         </c:forEach>
 
+                        <!-- Nút Next -->
                         <c:url var="nextUrl" value="filterApply">
                             <c:param name="jobId" value="${param.jobId}" />
-                            <c:param name="txt" value="${param.txt}" />
-                            <c:param name="exp" value="${param.exp}" />
-                            <c:param name="status" value="${param.status}" />
+                            <c:if test="${not empty param.txt}">
+                                <c:param name="txt" value="${param.txt}" />
+                            </c:if>
+                            <c:if test="${not empty param.exp}">
+                                <c:param name="exp" value="${param.exp}" />
+                            </c:if>
+                            <c:if test="${not empty param.status}">
+                                <c:param name="status" value="${param.status}" />
+                            </c:if>
                             <c:param name="page" value="${currentPage + 1}" />
                         </c:url>
-                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                            <a class="page-link" href="${nextUrl}">&gt;</a>
+                        <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
+                            <a class="page-link" href="${currentPage == noOfPages ? '#' : nextUrl}">&gt;</a>
                         </li>
 
                     </ul>
                 </div>
+
+
             </div>
         </div>
 

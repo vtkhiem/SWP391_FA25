@@ -423,36 +423,31 @@
                 <div class="apply_container">
 
                     <!-- Filters -->
-                    <form>
+                    <form action="filterApplyLog" method="get">
                         <div class="apply_filters">
-                            <div class="filter_group">
-                                <label>Trạng thái</label>
-                                <select name="status">
+                            <!-- Search box -->
+                            <input type="text" class="form-control align-middle"
+                                   name="txt" id="searchInput" value="${txt}"
+                                   placeholder="Search by job title..."
+                                   style="height: 38px; min-width: 250px;">
 
-                                </select>
-                            </div>
                             <div class="filter_group">
-                                <label>Ngành nghề</label>
-                                <select name="category">
+                                <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
+                                    <option value="" disabled <c:if test="${empty status}">selected</c:if> hidden>Filter by Status</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                </div>
 
-                                </select>
+                                <button type="submit" class="btn btn-sm btn-warning me-2">
+                                    <i class="ti-filter"></i> Lọc
+                                </button>
                             </div>
-                            <div class="filter_group">
-                                <label>Từ ngày</label>
-                                <input type="date" name="from_date">
-                            </div>
-                            <div class="filter_group">
-                                <label>Đến ngày</label>
-                                <input type="date" name="to_date">
-                            </div>
-                            <button class="filter_button">
-                                <i class="ti-filter"></i> Lọc
-                            </button>
-                        </div>
-                    </form>
+                        </form>
 
 
-                    <!-- Apply List -->
+                        <!-- Apply List -->
 
                     <c:forEach var="d" items="${details}" varStatus="st">
                         <div class="apply_list">
