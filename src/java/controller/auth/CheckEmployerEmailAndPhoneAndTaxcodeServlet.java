@@ -13,7 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tool.ValidationRegister;
+import tool.Validation;
 
 /**
  *
@@ -60,7 +60,7 @@ public class CheckEmployerEmailAndPhoneAndTaxcodeServlet extends HttpServlet {
    response.setContentType("text/plain;charset=UTF-8");
          String type = request.getParameter("type"); 
         String value = request.getParameter("value");
-        ValidationRegister val = new ValidationRegister();
+        Validation val = new Validation();
 
         RegisterEmployerDAO dao = new RegisterEmployerDAO();
 

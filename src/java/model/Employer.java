@@ -78,4 +78,10 @@ public class Employer {
 
     public boolean isStatus() { return status; }
     public void setStatus(boolean status) { this.status = status; }
+
+    @Override
+    public String toString() {
+        return "Employer{" + "employerId=" + employerId + ", employerName=" + employerName + ", email=" + email + ", phoneNumber=" + phoneNumber + ", passwordHash=" + passwordHash + ", companyName=" + companyName + ", taxCode=" + taxCode + ", description=" + description + ", location=" + location + ", urlWebsite=" + urlWebsite + ", imgLogo=" + imgLogo + ", status=" + status + '}';
+    }
+    
 }

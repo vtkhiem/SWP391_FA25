@@ -4,17 +4,16 @@
  */
 package model;
 
-
-
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
 
 /**
  *
  * @author shiro
  */
 public class Apply {
+
     private int applyId;
     private int jobPostId;
     private int candidateId;
@@ -92,10 +91,13 @@ public class Apply {
         this.note = note;
     }
 
+    public String getDayCreateFormatted() {
+        return dayCreate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+
     @Override
     public String toString() {
         return "Apply{" + "applyId=" + applyId + ", jobPostId=" + jobPostId + ", candidateId=" + candidateId + ", cvId=" + cvId + ", dayCreate=" + dayCreate + ", status=" + status + ", note=" + note + '}';
     }
 
-    
 }

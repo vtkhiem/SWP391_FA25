@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Apply;
@@ -13,19 +14,20 @@ import model.Candidate;
 import model.JobPost;
 
 public class ApplyDAO {
+
     Connection con = new DBContext().c;
 
     // CREATE
-    public void insertApply(Apply apply) {
+    public void insertApply(int jobId, int candidateId, int CVID, LocalDateTime dayCreate, String status, String note) {
         String sql = "INSERT INTO Apply (jobPostId, candidateID, CVID, dayCreate, status, note) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, apply.getJobPostId());
-            st.setInt(2, apply.getCandidateId());
-            st.setInt(3, apply.getCvId());
-            st.setTimestamp(4, Timestamp.valueOf(apply.getDayCreate())); // LocalDateTime
-            st.setString(5, apply.getStatus());
-            st.setString(6, apply.getNote());
+            st.setInt(1, jobId);
+            st.setInt(2, candidateId);
+            st.setInt(3, CVID);
+            st.setTimestamp(4, Timestamp.valueOf(dayCreate)); // LocalDateTime
+            st.setString(5, status);
+            st.setString(6,note);
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,7 +82,7 @@ public class ApplyDAO {
         }
     }
 
-    public void updateApplyStatus(int applyId,String newStatus) {
+    public void updateApplyStatus(int applyId, String newStatus) {
         String sql = "UPDATE Apply SET Status = ? WHERE ApplyID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setString(1, newStatus);
@@ -90,8 +92,8 @@ public class ApplyDAO {
             e.printStackTrace();
         }
     }
-    
-    public void updateApplyNote(int applyId,String newNote) {
+
+    public void updateApplyNote(int applyId, String newNote) {
         String sql = "UPDATE Apply SET Note = ? WHERE ApplyID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setString(1, newNote);
@@ -129,43 +131,14 @@ public class ApplyDAO {
         return apply;
     }
 
-    // Lấy job theo ID
-    public JobPost getJobPostById(int id) {
-        String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    JobPost job = new JobPost();
-                    job.setJobPostID(rs.getInt("JobPostID"));
-                    job.setEmployerID(rs.getInt("EmployerID"));
-                    job.setTitle(rs.getString("Title"));
-                    job.setDescription(rs.getString("Description"));
-                    job.setCategory(rs.getString("Category"));
-                    job.setPosition(rs.getString("Position"));
-                    job.setLocation(rs.getString("Location"));
-                    job.setOfferMin(rs.getBigDecimal("OfferMin"));
-                    job.setOfferMax(rs.getBigDecimal("OfferMax"));
-                    job.setNumberExp(rs.getInt("NumberExp"));
-                    job.setVisible(rs.getBoolean("Visible"));
-                    job.setTypeJob(rs.getString("TypeJob"));
-                    Timestamp ts = rs.getTimestamp("DayCreate");
-                    if (ts != null) {
-                        job.setDayCreate(ts.toLocalDateTime());
-                    }
-                    return job;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    public CV getCVByApplyId(int applyId) {
+        String sql = "SELECT c.* "
+                + "FROM CV c "
+                + "INNER JOIN Apply a ON a.CVID = c.CVID "
+                + "WHERE a.ApplyID = ?";
 
-    public CV getCVById(int cvId) {
-        String sql = "SELECT * FROM CV WHERE CVID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, cvId);
+            st.setInt(1, applyId);
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
                     CV cv = new CV();
@@ -193,36 +166,27 @@ public class ApplyDAO {
         return null;
     }
 
-    public Candidate getCandidateById(int candidateId) {
-        String sql = "SELECT * FROM Candidate WHERE CandidateID = ?";
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, candidateId);
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    Candidate c = new Candidate();
-                    c.setCandidateId(rs.getInt("CandidateID"));
-                    c.setCandidateName(rs.getString("CandidateName"));
-                    c.setAddress(rs.getString("Address"));
-                    c.setEmail(rs.getString("Email"));
-                    c.setPhoneNumber(rs.getString("PhoneNumber"));
-                    c.setNationality(rs.getString("Nationality"));
-                    c.setPasswordHash(rs.getString("PasswordHash"));
-                    c.setAvatar(rs.getString("Avatar"));
-                    return c;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    public List<Apply> getApplyByJobPost(int jobPostId) {
+    public List<Apply> getApplyByJobPost(int jobPostId, int employerId, int offSet, int recordsPerPage) {
         List<Apply> list = new ArrayList<>();
-        String sql = "SELECT * FROM Apply WHERE jobPostID = ?";
+        String sql = "SELECT \n"
+                + "    a.ApplyID, \n"
+                + "    a.JobPostID, \n"
+                + "    a.CandidateID, \n"
+                + "    a.CVID, \n"
+                + "    a.DayCreate, \n"
+                + "    a.Status, \n"
+                + "    a.Note\n"
+                + "FROM Apply AS a\n"
+                + "JOIN JobPost AS j \n"
+                + "    ON a.JobPostID = j.JobPostID\n"
+                + "WHERE j.EmployerID = ? \n"
+                + "  AND j.JobPostID = ? "
+                + "  ORDER BY a.DayCreate OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setInt(1, jobPostId);
+            st.setInt(1, employerId);
+            st.setInt(2, jobPostId);
+            st.setInt(3, offSet);
+            st.setInt(4, recordsPerPage);
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSet(rs));
@@ -233,7 +197,7 @@ public class ApplyDAO {
         }
         return list;
     }
-    
+
     public boolean checkHasApply(int jobId) {
         String sql = "SELECT COUNT(*) FROM Apply WHERE JobPostID =?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
@@ -250,7 +214,151 @@ public class ApplyDAO {
         return false;
     }
 
+    public int countApply(int jobId) {
+        String sql = "SELECT COUNT (*) FROM Apply WHERE JobPostID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setInt(1, jobId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Apply> filterApply(int jobPostId, int employerId, String txt, String status, String exp, int offSet, int recordsPerPage) {
+        List<Apply> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT "
+                + "a.ApplyID, a.JobPostID, a.CandidateID, a.CVID, a.DayCreate, a.Status, a.Note "
+                + "FROM Apply AS a "
+                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
+                + "JOIN Candidate AS can ON a.CandidateID = can.CandidateID "
+                + "JOIN CV AS cv ON a.CVID = cv.CVID "
+                + "WHERE j.EmployerID = ? AND j.JobPostID = ? ");
+
+        if (txt != null && !txt.isEmpty()) {
+            sql.append(" AND (cv.Email LIKE ? OR cv.FullName LIKE ?)");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND a.Status = ?");
+        }
+        if (exp != null && !exp.isEmpty()) {
+            switch (exp) {
+                case "0-1" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 0 AND 1");
+                case "2-3" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 2 AND 3");
+                case "4-5" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 4 AND 5");
+                case "5+" ->
+                    sql.append(" AND cv.NumberExp > 5");
+            }
+        }
+
+        sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            int i = 1;
+            st.setInt(i++, employerId);
+            st.setInt(i++, jobPostId);
+
+            if (txt != null && !txt.isEmpty()) {
+                st.setString(i++, "%" + txt + "%");
+                st.setString(i++, "%" + txt + "%");
+            }
+            if (status != null && !status.isEmpty()) {
+                st.setString(i++, status);
+            }
+
+            st.setInt(i++, offSet);
+            st.setInt(i++, recordsPerPage);
+
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countFilteredApply(int jobPostId, int employerId, String txt, String status, String exp) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS Total "
+                + "FROM Apply AS a "
+                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
+                + "JOIN Candidate AS can ON a.CandidateID = can.CandidateID "
+                + "JOIN CV AS cv ON a.CVID = cv.CVID "
+                + "WHERE j.EmployerID = ? AND j.JobPostID = ? ");
+
+        // Filter theo text
+        if (txt != null && !txt.isEmpty()) {
+            sql.append(" AND (cv.Email LIKE ? OR cv.FullName LIKE ?)");
+        }
+        // Filter theo status
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND a.Status = ?");
+        }
+        // Filter theo kinh nghiệm
+        if (exp != null && !exp.isEmpty()) {
+            switch (exp) {
+                case "0-1" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 0 AND 1");
+                case "2-3" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 2 AND 3");
+                case "4-5" ->
+                    sql.append(" AND cv.NumberExp BETWEEN 4 AND 5");
+                case "5+" ->
+                    sql.append(" AND cv.NumberExp > 5");
+            }
+        }
+
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            int i = 1;
+            st.setInt(i++, employerId);
+            st.setInt(i++, jobPostId);
+
+            if (txt != null && !txt.isEmpty()) {
+                st.setString(i++, "%" + txt + "%");
+                st.setString(i++, "%" + txt + "%");
+            }
+            if (status != null && !status.isEmpty()) {
+                st.setString(i++, status);
+            }
+
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public boolean isApplicable(int jobId, int candidateId) {
+        String sql = "SELECT 1 FROM Apply WHERE JobPostID = ? AND CandidateID = ?";
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setInt(1, jobId);
+            st.setInt(2, candidateId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
-        System.out.println(new ApplyDAO().getApplyByJobPost(1005));
+        System.out.println(new ApplyDAO().isApplicable(12,28));
     }
 }

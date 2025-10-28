@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.apply;
 
+import dal.ApplyDAO;
 import dal.CVDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import model.Apply;
 import model.CV;
 
 /**
@@ -70,13 +72,14 @@ public class DownloadCVServlet extends HttpServlet {
             return;
         }
 
-        String[] idStrs = idsParam.split(",");
-        CVDAO cvDAO = new CVDAO();
+        String[] applyIdStrs = idsParam.split(",");
+        
+        ApplyDAO appDAO = new ApplyDAO();
 
-        if (idStrs.length == 1) {
-            // === Case 1: chỉ có 1 CV ===
-            int cvId = Integer.parseInt(idStrs[0].trim());
-            CV cv = cvDAO.getCVById(cvId);
+        if (applyIdStrs.length == 1) {
+            // === Case 1: chỉ 1 CV ===
+            int applyId = Integer.parseInt(applyIdStrs[0].trim());
+            CV cv = appDAO.getCVByApplyId(applyId);
             if (cv != null && cv.getFileData() != null) {
                 File file = new File(getServletContext().getRealPath("") + File.separator + cv.getFileData());
                 if (file.exists()) {
@@ -95,15 +98,15 @@ public class DownloadCVServlet extends HttpServlet {
             }
             response.getWriter().write("File not found");
         } else {
-            // === Case 2: nhiều CV => tạo file ZIP ===
+            // === Case 2: nhiều CV => tạo ZIP ===
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition", "attachment; filename=CVs.zip");
 
             try (ZipOutputStream zos = new ZipOutputStream(response.getOutputStream())) {
-                for (String idStr : idStrs) {
+                for (String applyIdStr : applyIdStrs) {
                     try {
-                        int cvId = Integer.parseInt(idStr.trim());
-                        CV cv = cvDAO.getCVById(cvId);
+                        int applyId = Integer.parseInt(applyIdStr.trim());
+                        CV cv = appDAO.getCVByApplyId(applyId); // ✅ Lấy CV từ applyId
                         if (cv != null && cv.getFileData() != null) {
                             String filePath = getServletContext().getRealPath("") + File.separator + cv.getFileData();
                             File file = new File(filePath);
@@ -138,7 +141,7 @@ public class DownloadCVServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+            processRequest(request,response);
     }
 
     /**

@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.apply;
 
 import dal.ApplyDAO;
-import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,21 +13,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 import model.Apply;
-import model.ApplyDetail;
-import model.CV;
 import model.Candidate;
-import model.Employer;
-import model.JobPost;
+import tool.Validation;
 
 /**
  *
  * @author shiro
  */
-@WebServlet(name = "ViewApply", urlPatterns = {"/viewApply"})
-public class ViewApply extends HttpServlet {
+@WebServlet(name = "ApplyJob", urlPatterns = {"/applyJob"})
+public class ApplyJob extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,10 +42,10 @@ public class ViewApply extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ViewApply</title>");
+            out.println("<title>Servlet ApplyJob</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ViewApply at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ApplyJob at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,38 +63,7 @@ public class ViewApply extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-
-        if (session == null || session.getAttribute("user") == null
-                || !"Employer".equals(session.getAttribute("role"))) {
-            // Nếu chưa login hoặc không phải employer thì chặn lại
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        String jobIdStr = request.getParameter("jobId");
-
-        if (jobIdStr != null && !jobIdStr.isEmpty()) {
-            int jobId = Integer.parseInt(jobIdStr);
-            ApplyDAO dao = new ApplyDAO();
-            JobPostDAO jdao = new JobPostDAO();
-
-            List<Apply> applies = dao.getApplyByJobPost(jobId);
-            List<ApplyDetail> details = new ArrayList<>();
-
-            for (Apply apply : applies) {
-                Candidate can = dao.getCandidateById(apply.getCandidateId());
-                CV cv = dao.getCVById(apply.getCvId());
-                JobPost job = dao.getJobPostById(apply.getJobPostId());
-                details.add(new ApplyDetail(apply, can, cv, job));
-            }
-
-            request.setAttribute("details", details);
-            request.getRequestDispatcher("apply.jsp").forward(request, response);
-        } else {
-            // Nếu không có jobId, redirect về trang job list
-            response.sendRedirect("employer_jobs");
-        }
+        doPost(request, response);
     }
 
     /**
@@ -113,7 +77,25 @@ public class ViewApply extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request,response);
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(false);
+        
+        int jobId = Validation.getId(request.getParameter("jobId"));
+        int CVID = Validation.getId(request.getParameter("CVID"));
+        Candidate candidate = (Candidate) session.getAttribute("user");
+        
+        if (jobId == 0 || CVID == 0) {
+            session.setAttribute("error", "Lỗi không mong muốn đã xảy ra");
+            response.sendRedirect(request.getContextPath() + "/jobs");
+            return; // avoid “response already committed”
+        }
+
+        //tao apply 
+        ApplyDAO dao = new ApplyDAO();
+        LocalDateTime dayCreate = LocalDateTime.now();
+        dao.insertApply(jobId, candidate.getCandidateId(), CVID, dayCreate, "Pending", "");
+        session.setAttribute("message", "Ứng tuyển vào công việc thành công");
+        response.sendRedirect(request.getContextPath() + "/jobs");
     }
 
     /**
