@@ -13,16 +13,14 @@ public class ApplyDetail {
     private Candidate candidate;
     private CV cv;
     private JobPost job;
+    private Employer employer;
 
-
-    public ApplyDetail() {
-    }
-
-    public ApplyDetail(Apply apply, Candidate candidate, CV cv, JobPost job) {
+    public ApplyDetail(Apply apply, Candidate candidate, CV cv, JobPost job, Employer employer) {
         this.apply = apply;
         this.candidate = candidate;
         this.cv = cv;
         this.job = job;
+        this.employer = employer;
     }
 
     public Apply getApply() {
@@ -57,13 +55,20 @@ public class ApplyDetail {
         this.job = job;
     }
 
+    public Employer getEmployer() {
+        return employer;
+    }
 
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
 
     @Override
     public String toString() {
-        return "ApplyDetail{" + "apply=" + apply + ", candidate=" + candidate + ", cv=" + cv + ", job=" + job + '}';
+        return "ApplyDetail{" + "apply=" + apply + ", candidate=" + candidate + ", cv=" + cv + ", job=" + job + ", employer=" + employer + '}';
     }
-
+    
+    
 }
     
 

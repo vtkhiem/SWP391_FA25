@@ -170,6 +170,7 @@ public class EmployerDAO extends DBContext {
         }
         return null;
     }
+    
 
     // New method from 'main' branch
     public String getEmailByID(int id) {
@@ -260,6 +261,7 @@ public class EmployerDAO extends DBContext {
         return updateStatus(employerId, 1);
     }
 
+
     public boolean updateEmployerProfile(Employer employer) {
         String sql = "UPDATE Employer\n"
                 + "SET CompanyName = ?,\n"
@@ -277,6 +279,26 @@ public class EmployerDAO extends DBContext {
             ps.setString(4, employer.getDescription());
             ps.setString(5, employer.getUrlWebsite());
             ps.setInt(6, employer.getEmployerId());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+        public boolean updateLogo(int employerId, String logoURL){
+        String sql = """
+            UPDATE Employer
+               SET ImgLogo = ?
+             WHERE EmployerID = ?
+            """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setString(1, logoURL);
+            ps.setInt(2, employerId);
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;

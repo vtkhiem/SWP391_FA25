@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebFilter(urlPatterns = {"/create-cv", "/delete-cv", "/edit-cv", "/list-cv","/editCandidateProfile", "/selectCV", "/applyJob", "/candidateProfile"})
+@WebFilter(urlPatterns = {"/create-cv", "/delete-cv", "/edit-cv", "/list-cv", "/selectCV", "/applyJob", "/candidateProfile","/editCandidateProfile", "/uploadCandidateImage", "/viewApplyLog"})
 public class AuthCandidateFilter implements Filter {
 
     @Override

@@ -243,4 +243,24 @@ public class CandidateDAO extends DBContext {
         cd.setAvatar(rs.getString("Avatar"));
         return cd;
     }
+    
+    public boolean updateAvatar(int candidateId, String imageURL){
+        String sql = """
+            UPDATE Candidate
+               SET Avatar = ?
+             WHERE CandidateID = ?
+            """;
+        try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
+
+            ps.setString(1, imageURL);
+            ps.setInt(2, candidateId);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

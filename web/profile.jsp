@@ -61,9 +61,12 @@
             }
 
             .profile-avatar img {
-                max-width: 160px;
-                border-radius: 50%;
-                border: 4px solid #c33764;
+                width: 150px;              /* kích thước avatar */
+                height: 150px;
+                object-fit: cover;         /* cắt ảnh cho vừa khung, không méo */
+                border: 2px solid #ddd;    /* viền nhẹ */
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                margin-top: 10px;
             }
 
             .profile-info {
@@ -199,25 +202,24 @@
                     <div class="profile-section">
                         <div class="profile-card">
                             <div class="profile-avatar">
-                                <c:if test="${not empty sessionScope.candidate.avatar}">
-                                    <img src="${sessionScope.candidate.avatar}" alt="Avatar">
+                                <c:if test="${not empty candidate.avatar}">
+                                    <img src="${candidate.avatar}" alt="Avatar">
                                 </c:if>
                             </div>
                             <div class="profile-info">
-                                <p><span class="info-label">Họ tên:</span> ${sessionScope.candidate.candidateName}</p>
-                                <p><span class="info-label">Email:</span> ${sessionScope.candidate.email}</p>
-                                <p><span class="info-label">Số điện thoại:</span> ${sessionScope.candidate.phoneNumber}</p>
-                                <p><span class="info-label">Địa chỉ:</span> ${sessionScope.candidate.address}</p>
-                                <p><span class="info-label">Quốc tịch:</span> ${sessionScope.candidate.nationality}</p>
+                                <p><span class="info-label">Họ tên:</span> ${candidate.candidateName}</p>
+                                <p><span class="info-label">Email:</span> ${candidate.email}</p>
+                                <p><span class="info-label">Số điện thoại:</span> ${candidate.phoneNumber}</p>
+                                <p><span class="info-label">Địa chỉ:</span> ${candidate.address}</p>
+                                <p><span class="info-label">Quốc tịch:</span> ${candidate.nationality}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="button-group">
-                        <c:if test="${not empty sessionScope.role}">
-                            <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
-                            <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
-                        </c:if>
+                        <button onclick="openUploadCandidateImageModal()">Avatar</button>
+                        <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
+                        <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                         <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
                     </div>
                 </c:when>
@@ -247,6 +249,7 @@
 
                         <div class="button-group">
                             <c:if test="${not empty sessionScope.role}">
+                                <button onclick="openUploadEmployerLogoModal()">Avatar</button>
                                 <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
                                 <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                             </c:if>
@@ -255,16 +258,16 @@
                     </div>
 
 
-                    <c:if test="${not empty sessionScope.service}">
+                    <c:if test="${not empty service}">
                         <div class="service-card">
                             <h2>Gói Dịch Vụ Hiện Tại</h2>
                             <div class="service-details">
-                                <p><span class="info-label">Tên gói:</span> ${sessionScope.service.serviceName}</p>
-                                <p><span class="info-label">Giá:</span> ${sessionScope.service.price} VNĐ</p>
-                                <p><span class="info-label">Thời hạn:</span> ${sessionScope.service.duration} ngày</p>
-                                <p><span class="info-label">Ngày đăng ký:</span>${sessionScope.serviceEmployer.registerDate} </p>
-                                <p><span class="info-label">Ngày hết hạn:</span> </p>
-                                <p><span class="info-label">Trạng thái thanh toán:</span> </p>
+                                <p><span class="info-label">Tên gói:</span> ${service.serviceName}</p>
+                                <p><span class="info-label">Giá:</span> ${service.price} VNĐ</p>
+                                <p><span class="info-label">Thời hạn:</span> ${service.duration} ngày</p>
+                                <p><span class="info-label">Ngày đăng ký:</span>${serviceEmployer.registerDate} </p>
+                                <p><span class="info-label">Ngày hết hạn:</span>${serviceEmployer.expirationDate} </p>
+                                <p><span class="info-label">Trạng thái thanh toán:</span> ${serviceEmployer.paymentStatus}</p>
                             </div>
                         </div>
                     </c:if>
@@ -306,17 +309,37 @@
                 <span class="close" onclick="closeEditCandidateProfileModal()">&times;</span>
                 <h2>Thông tin người dùng</h2>
                 <form id="editCandidateProfileform" action="editCandidateProfile" method="post">
-                    <input type="text" name="candidateName" value="${candidate.candidateName}" placeholder="Tên người dùng">
-                    <input type="text" name="email" value="${candidate.email}" readonly="" placeholder="Email">
+                    <input type="text" name="candidateName" value="${candidate.candidateName}" placeholder="Tên người dùng" required>
+                    <input type="text" name="email" value="${candidate.email}" readonly="" placeholder="Email" required>
                     <input id="phone" type="text" name="phoneNumber" 
-                           value="${candidate.phoneNumber}" placeholder="Số điện thoại">
+                           value="${candidate.phoneNumber}" placeholder="Số điện thoại" required>
                     <small id="phoneResult" style="color:red;font-size:13px;"></small>
 
-                    <input type="text" name="address" value="${candidate.address}" placeholder="Địa chỉ">
-                    <input type="text" name="nationality" value="${candidate.nationality}" placeholder="Quốc tịch">
+                    <input type="text" name="address" value="${candidate.address}" placeholder="Địa chỉ" required>
+                    <input type="text" name="nationality" value="${candidate.nationality}" placeholder="Quốc tịch" required>
                     <div style="text-align:center;margin-top:15px;">
                         <button type="submit">Cập nhật</button>
                         <button type="button" onclick="closeEditCandidateProfileModal()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!--Modal upload avt candidate-->
+        <div id="uploadCandidateImageModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeUploadCandidateImageModal()">&times;</span>
+                <h2>Avatar</h2>
+                <form id="uploadCandidateImage" action="uploadCandidateImage" method="post"  enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" class="form-control" name="candidateImage" accept="image/png, image/jpeg, image/jpg"
+                               required>
+                        <small class="form-text text-muted">Chỉ chấp nhận file: IMG,PNG,JPEG,JPG</small>
+                        <div style="text-align:center;margin-top:15px;">
+                            <button type="submit">Cập nhật</button>
+                            <button type="button" onclick="closeUploadCandidateImageModal()">Hủy</button>
+                        </div>
+
                     </div>
                 </form>
             </div>
@@ -328,15 +351,15 @@
                 <span class="close" onclick="closeEditEmployerProfileModal()">&times;</span>
                 <h2>Thông tin người dùng</h2>
                 <form id="editEmployerProfileform" action="editEmployerProfile" method="post">
-                    <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty">
-                    <input type="text" name="email" value="${employer.email}" readonly="" placeholder="Email">
+                    <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty" required >
+                    <input type="text" name="email" value="${employer.email}" readonly="" placeholder="Email" required>
                     <input id="phone" type="text" name="phoneNumber" 
-                           value="${employer.phoneNumber}" placeholder="Số điện thoại">
+                           value="${employer.phoneNumber}" placeholder="Số điện thoại" required>
                     <small id="phoneResult" style="color:red;font-size:13px;"></small>
-                    <input type="text" name="taxCode" value="${employer.taxCode}" readonly="" placeholder="Mã số thuế">
-                    <input type="text" name="location" value="${employer.location}" placeholder="Địa chỉ">
-                    <input type="text" name="urlWebsite" value="${employer.urlWebsite}" placeholder="Website">
-                    <input type="text" name="description" value="${employer.description}" placeholder="Mô tả">
+                    <input type="text" name="taxCode" value="${employer.taxCode}" readonly="" placeholder="Mã số thuế" required>
+                    <input type="text" name="location" value="${employer.location}" placeholder="Địa chỉ"required>
+                    <input type="text" name="urlWebsite" value="${employer.urlWebsite}" placeholder="Website" required>
+                    <input type="text" name="description" value="${employer.description}" placeholder="Mô tả" required>
                     <div style="text-align:center;margin-top:15px;">
                         <button type="submit">Cập nhật</button>
                         <button type="button" onclick="closeEditEmployerProfileModal()">Hủy</button>
@@ -345,6 +368,24 @@
             </div>
         </div>
 
+        <!--Modal upload logoEmployer-->
+        <div id="uploadEmployerLogoModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeUploadEmployerLogoModal()">&times;</span>
+                <h2>Avatar</h2>
+                <form id="uploadEmployerLogo" action="uploadEmployerLogo" method="post"  enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" class="form-control" name="employerLogo" accept="image/png, image/jpeg, image/jpg"
+                               required>
+                        <small class="form-text text-muted">Chỉ chấp nhận file: IMG,PNG,JPEG,JPG</small>
+                        <div style="text-align:center;margin-top:15px;">
+                            <button type="submit">Cập nhật</button>
+                            <button type="button" onclick="closeUploadEmployerLogoModal()">Hủy</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
         <div id="notification" class="notification"></div>
 
         <script>
@@ -352,19 +393,35 @@
                 document.getElementById("editCandidateProfileModal").style.display = "block";
                 document.body.style.overflow = "hidden";
             }
-
-            function openEditEmployerProfileModal() {
-                document.getElementById("editEmployerProfileModal").style.display = "block";
-                document.body.style.overflow = "hidden";
-            }
-
             function closeEditCandidateProfileModal() {
                 document.getElementById("editCandidateProfileModal").style.display = "none";
                 document.body.style.overflow = "auto";
             }
 
+            function openEditEmployerProfileModal() {
+                document.getElementById("editEmployerProfileModal").style.display = "block";
+                document.body.style.overflow = "hidden";
+            }
             function closeEditEmployerProfileModal() {
                 document.getElementById("editEmployerProfileModal").style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+
+            function openUploadEmployerLogoModal() {
+                document.getElementById("uploadEmployerLogoModal").style.display = "block";
+                document.body.style.overflow = "hidden";
+            }
+            function closeUploadEmployerLogoModal() {
+                document.getElementById("uploadEmployerLogoModal").style.display = "none";
+                document.body.style.overflow = "auto";
+            }
+            
+            function openUploadCandidateImageModal() {
+                document.getElementById("uploadCandidateImageModal").style.display = "block";
+                document.body.style.overflow = "hidden";
+            }
+            function closeUploadCandidateImageModal() {
+                document.getElementById("uploadCandidateImageModal").style.display = "none";
                 document.body.style.overflow = "auto";
             }
 
@@ -399,13 +456,6 @@
                 noti.style.display = "block";
                 setTimeout(() => noti.style.display = "none", 4000);
             }
-
-            <c:if test="${not empty success}">
-            showNotification('${success}');
-            </c:if>
-            <c:if test="${not empty error}">
-            showNotification('Lỗi: ${error}', true);
-            </c:if>
 
             document.getElementById("phone").addEventListener("keyup", function () {
                 const phone = this.value.trim();

@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 *
 * @author shiro
 */
-@WebServlet(name="ViewApplyStatus", urlPatterns={"/viewApplyStatus"})
-public class ViewApplyStatus extends HttpServlet {
+@WebServlet(name="FilterApplyLog", urlPatterns={"/filterApplyLog"})
+public class FilterApplyLog extends HttpServlet {
 /**
 * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
 * @param request servlet request
@@ -31,10 +31,10 @@ try (PrintWriter out = response.getWriter()) {
 out.println("<!DOCTYPE html>");
 out.println("<html>");
 out.println("<head>");
-out.println("<title>Servlet viewApplyStatus</title>");
+out.println("<title>Servlet FilterApplyLog</title>");
 out.println("</head>");
 out.println("<body>");
-out.println("<h1>Servlet viewApplyStatus at " + request.getContextPath () + "</h1>");
+out.println("<h1>Servlet FilterApplyLog at " + request.getContextPath () + "</h1>");
 out.println("</body>");
 out.println("</html>");
 }
@@ -50,7 +50,7 @@ out.println("</html>");
 @Override
 protected void doGet(HttpServletRequest request, HttpServletResponse response)
 throws ServletException, IOException {
-processRequest(request, response);
+
 }
 /**
 * Handles the HTTP <code>POST</code> method.

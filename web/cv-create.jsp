@@ -148,8 +148,6 @@
         </footer>
         <!--/ footer end  -->
 
-        <!-- JS here -->
-
     </body>
 
     </html>

@@ -1,6 +1,7 @@
 package model;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 public class JobPost {
@@ -172,5 +173,28 @@ public class JobPost {
                 + ", dayCreate=" + dayCreate
                 + ", dueDate=" + dueDate
                 + '}';
+    }
+    
+        public String getOfferMinFormatted() {
+        if (offerMin == null) return "";
+        return formatBigDecimal(offerMin);
+    }
+
+    public String getOfferMaxFormatted() {
+        if (offerMax == null) return "";
+        return formatBigDecimal(offerMax);
+    }
+    
+        // Hàm chung format
+    private String formatBigDecimal(BigDecimal value) {
+        // Bỏ số 0 thừa ở cuối
+        value = value.stripTrailingZeros();
+
+        // DecimalFormat với dấu chấm nhóm nghìn
+        DecimalFormat df = new DecimalFormat("#,###");
+        df.setGroupingUsed(true);
+        df.setGroupingSize(3);
+
+        return df.format(value);
     }
 }
