@@ -72,21 +72,40 @@ public class FilterApplyLog extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String txt = Validation.searchKey(request.getParameter("txt"));
-        String category = request.getParameter("catergory");
-        String offerMin= request.getParameter("min");
-        String offerMax = request.getParameter("max");
-        String status = request.getParameter("status");
-        String dayOrder = request.getParameter("dayOrder");
 
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
 
+        String txt = Validation.searchKey(request.getParameter("txt"));
+        String category = request.getParameter("category");
+        String status = request.getParameter("status");
 
+        // Salary filter (nếu không nhập thì set = -1 để bỏ qua)
+        double min = -1;
+        double max = -1;
+        try {
+            String minParam = request.getParameter("offerMin");
+            if (minParam != null && !minParam.isEmpty()) {
+                min = Double.parseDouble(minParam);
+            }
+
+            String maxParam = request.getParameter("offerMax");
+            if (maxParam != null && !maxParam.isEmpty()) {
+                max = Double.parseDouble(maxParam);
+            }
+
+            if (min > max) {
+                request.setAttribute("errorMessage", "Mức lương tối đa phải lớn hơn hoặc bằng mức lương tối thiểu!");
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            // Nếu parse lỗi thì bỏ qua filter
+            min = -1;
+            max = -1;
+        }
         Candidate candidate = (Candidate) session.getAttribute("user");
         int candidateId = candidate.getCandidateId();
         int page = Validation.getPage(request.getParameter("page"));
-
 
         ApplyDAO dao = new ApplyDAO();
         JobPostDAO jdao = new JobPostDAO();
@@ -97,7 +116,7 @@ public class FilterApplyLog extends HttpServlet {
         int recordsPerPage = 10;
         int offSet = (page - 1) * recordsPerPage;
 
-        List<Apply> applies = dao.filterApplyLog(candidateId, Validation.searchKey(txt),Validation.getId(category), status, dayOrder, offSet, recordsPerPage);
+        List<Apply> applies = dao.filterApplyLog(candidateId, Validation.searchKey(txt), category, status, min, max, offSet, recordsPerPage);
         List<ApplyDetail> details = new ArrayList<>();
 
         for (Apply apply : applies) {
@@ -110,11 +129,11 @@ public class FilterApplyLog extends HttpServlet {
         int totalRecords = dao.countFilteredApplyLog(candidateId, txt, Validation.getId(category), status);
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
-
         request.setAttribute("txt", txt);
         request.setAttribute("category", category);
         request.setAttribute("status", status);
-        request.setAttribute("dayOrder", dayOrder);
+        request.setAttribute("offerMin", min);
+        request.setAttribute("offerMax", max);
         request.setAttribute("details", details);
         request.setAttribute("currentPage", page);
         request.setAttribute("noOfPages", noOfPages);

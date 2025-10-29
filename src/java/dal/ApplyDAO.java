@@ -200,10 +200,10 @@ public class ApplyDAO {
 
     public List<Apply> getApplyByCandidate(int candidateId, int offSet, int recordsPerPage) {
         List<Apply> list = new ArrayList<>();
-        String sql = "SELECT *\n"
-                + "FROM Apply \n"
-                + "WHERE CandidateID = ? "
-                + "ORDER BY DayCreate OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT * \n"
+                + " FROM Apply \n"
+                + " WHERE CandidateID = ? "
+                + " ORDER BY DayCreate OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement st = con.prepareStatement(sql)) {
             st.setInt(1, candidateId);
             st.setInt(2, offSet);
@@ -323,91 +323,6 @@ public class ApplyDAO {
         return list;
     }
 
-    public List<Apply> filterApplyLog(int candidateId, String txt, int category, String status, String dayOrder, int offSet, int recordsPerPage) {
-        List<Apply> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT "
-                + "a.ApplyID, a.JobPostID, a.CandidateID, a.CVID, a.DayCreate, a.Status, a.Note "
-                + "FROM Apply AS a "
-                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
-                + "WHERE candidateID = ? ");
-
-        if (txt != null && !txt.isEmpty()) {
-            sql.append(" AND j.Title LIKE ? ");
-        }
-        if (status != null && !status.isEmpty()) {
-            sql.append(" AND a.Status = ?");
-        }
-        
-        sql.append("ORDER BY ");
-        if ("ASC".equals(dayOrder)) {
-            sql.append("a.DayCreate ASC ");
-        }
-        if ("DESC".equals(dayOrder)) {
-            sql.append("a.DayCreate DESC ");
-        }
-
-        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
-        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
-            int i = 1;
-            st.setInt(i++, candidateId);
-            if (txt != null && !txt.isEmpty()) {
-                st.setString(i++, "%" + txt + "%");
-            }
-            if (status != null && !status.isEmpty()) {
-                st.setString(i++, status);
-            }
-
-            st.setInt(i++, offSet);
-            st.setInt(i++, recordsPerPage);
-
-            try (ResultSet rs = st.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapResultSet(rs));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
-    public int countFilteredApplyLog(int candidateId, String txt, int category, String status) {
-        List<Apply> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS Total  "
-                + "FROM Apply AS a "
-                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
-                + "WHERE candidateID = ? ");
-
-        if (txt != null && !txt.isEmpty()) {
-            sql.append(" AND j.Title LIKE ? ");
-        }
-        if (status != null && !status.isEmpty()) {
-            sql.append(" AND a.Status = ?");
-        }
-
-        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
-            int i = 1;
-            st.setInt(i++, candidateId);
-            if (txt != null && !txt.isEmpty()) {
-                st.setString(i++, "%" + txt + "%");
-            }
-            if (status != null && !status.isEmpty()) {
-                st.setString(i++, status);
-            }
-
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("Total");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
-
     public int countFilteredApply(int jobId, int emloyerId, String txt, String status, String exp) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS Total "
                 + "FROM Apply AS a "
@@ -463,6 +378,117 @@ public class ApplyDAO {
         return 0;
     }
 
+    public List<Apply> filterApplyLog(int candidateId, String txt, String category, String status, Double offerMin, Double offerMax, int offSet, int recordsPerPage) {
+        List<Apply> list = new ArrayList<>();
+
+        // Base SQL
+        StringBuilder sql = new StringBuilder(
+                "SELECT a.ApplyID, a.JobPostID, a.CandidateID, a.CVID, a.DayCreate, a.Status, a.Note "
+                + "FROM Apply AS a "
+                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
+                + "WHERE a.CandidateID = ? "
+        );
+
+        // Filter theo tiêu đề job
+        if (txt != null && !txt.isEmpty()) {
+            sql.append("AND j.Title LIKE ? ");
+        }
+
+        //Filter theo category
+        if (category != null && !category.isEmpty()) {
+            sql.append("AND j.category = ? ");
+        }
+
+        // Filter theo trạng thái
+        if (status != null && !status.isEmpty()) {
+            sql.append("AND a.Status = ? ");
+        }
+
+        //Filter theo mức lương
+        if (offerMin != null && offerMin >= 0) {
+            sql.append("AND j.OfferMin >= ? ");
+        }
+        if (offerMax != null && offerMax >= 0) {
+            sql.append("AND j.OfferMax <= ? ");
+        }
+
+        // Phân trang
+        sql.append("ORDER BY DayCreate OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
+
+        // Debug (tuỳ chọn)
+        // System.out.println("SQL = " + sql);
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            int i = 1;
+            st.setInt(i++, candidateId);
+
+            if (txt != null && !txt.isEmpty()) {
+                st.setString(i++, "%" + txt + "%");
+            }
+
+            if (category != null && !category.isEmpty()) {
+                st.setString(i++, category);
+            }
+
+            if (status != null && !status.isEmpty()) {
+                st.setString(i++, status);
+            }
+            if (offerMin != null && offerMin >= 0) {
+                st.setDouble(i++, offerMin);
+            }
+            if (offerMax != null && offerMax >= 0) {
+                st.setDouble(i++, offerMax);
+            }
+            st.setInt(i++, offSet);
+            st.setInt(i++, recordsPerPage);
+
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countFilteredApplyLog(int candidateId, String txt, int category, String status) {
+        List<Apply> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS Total  "
+                + "FROM Apply AS a "
+                + "JOIN JobPost AS j ON a.JobPostID = j.JobPostID "
+                + "WHERE candidateID = ? ");
+
+        if (txt != null && !txt.isEmpty()) {
+            sql.append(" AND j.Title LIKE ? ");
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND a.Status = ?");
+        }
+
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            int i = 1;
+            st.setInt(i++, candidateId);
+            if (txt != null && !txt.isEmpty()) {
+                st.setString(i++, "%" + txt + "%");
+            }
+            if (status != null && !status.isEmpty()) {
+                st.setString(i++, status);
+            }
+
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public boolean isApplicable(int jobId, int candidateId) {
         String sql = "SELECT 1 FROM Apply WHERE JobPostID = ? AND CandidateID = ?";
         try (PreparedStatement st = con.prepareStatement(sql)) {
@@ -480,5 +506,7 @@ public class ApplyDAO {
     }
 
     public static void main(String[] args) {
-        System.out.println(new ApplyDAO().filterApplyLog(28, "", 0, "", "", 0, 10)); }
+        //System.out.println(new ApplyDAO().getApplyByCandidate(28, 0, 10));
+        System.out.println(new ApplyDAO().filterApplyLog(28, "", "Công nghệ thông tin","", Double.parseDouble("100"),Double.parseDouble("100000000"), 0, 10));
+    }
 }

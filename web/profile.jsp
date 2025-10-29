@@ -58,6 +58,10 @@
             .profile-avatar {
                 flex: 1;
                 text-align: center;
+                display: flex;
+                flex-direction: column; /* Sắp xếp theo cột */
+                align-items: center;    /* Căn giữa theo trục ngang */
+                gap: 8px;               /* Khoảng cách giữa ảnh và nút */
             }
 
             .profile-avatar img {
@@ -204,6 +208,7 @@
                             <div class="profile-avatar">
                                 <c:if test="${not empty candidate.avatar}">
                                     <img src="${candidate.avatar}" alt="Avatar">
+                                    <button onclick="openUploadCandidateImageModal()">Avatar</button>
                                 </c:if>
                             </div>
                             <div class="profile-info">
@@ -217,7 +222,6 @@
                     </div>
 
                     <div class="button-group">
-                        <button onclick="openUploadCandidateImageModal()">Avatar</button>
                         <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
                         <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                         <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
@@ -232,6 +236,7 @@
                             <div class="profile-avatar">
                                 <c:if test="${not empty sessionScope.user.imgLogo}">
                                     <img src="${sessionScope.user.imgLogo}" alt="Logo công ty">
+                                    <button onclick="openUploadEmployerLogoModal()">Avatar</button>
                                 </c:if>
                             </div>
                             <div class="profile-info">
@@ -249,7 +254,7 @@
 
                         <div class="button-group">
                             <c:if test="${not empty sessionScope.role}">
-                                <button onclick="openUploadEmployerLogoModal()">Avatar</button>
+
                                 <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
                                 <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                             </c:if>
@@ -265,8 +270,8 @@
                                 <p><span class="info-label">Tên gói:</span> ${service.serviceName}</p>
                                 <p><span class="info-label">Giá:</span> ${service.price} VNĐ</p>
                                 <p><span class="info-label">Thời hạn:</span> ${service.duration} ngày</p>
-                                <p><span class="info-label">Ngày đăng ký:</span>${serviceEmployer.registerDate} </p>
-                                <p><span class="info-label">Ngày hết hạn:</span>${serviceEmployer.expirationDate} </p>
+                                <p><span class="info-label">Ngày đăng ký:</span> ${serviceEmployer.registerDateFormatted} </p>
+                                <p><span class="info-label">Ngày hết hạn:</span> ${serviceEmployer.expirationDateFormatted} </p>
                                 <p><span class="info-label">Trạng thái thanh toán:</span> ${serviceEmployer.paymentStatus}</p>
                             </div>
                         </div>
@@ -415,7 +420,7 @@
                 document.getElementById("uploadEmployerLogoModal").style.display = "none";
                 document.body.style.overflow = "auto";
             }
-            
+
             function openUploadCandidateImageModal() {
                 document.getElementById("uploadCandidateImageModal").style.display = "block";
                 document.body.style.overflow = "hidden";

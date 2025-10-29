@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 
 public class ServiceEmployer {
 
@@ -43,8 +44,16 @@ public class ServiceEmployer {
         return registerDate;
     }
 
+    public String getRegisterDateFormatted() {
+        return registerDate.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
     public void setRegisterDate(Timestamp registerDate) {
         this.registerDate = registerDate;
+    }
+    
+    public String getExpirationDateFormatted() {
+        return expirationDate.toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     public Timestamp getExpirationDate() {
