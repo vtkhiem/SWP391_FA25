@@ -142,7 +142,7 @@
                           style="display:inline-block"
                           onsubmit="return confirm('Gỡ staff ${s.username} khỏi vai trò?');">
                       <input type="hidden" name="id" value="${s.adminId}">
-                      <button class="btn btn-danger" type="submit">Ban</button>
+                      <button class="btn btn-danger" type="submit">DELETE</button>
                     </form>
                   </td>
                 </tr>

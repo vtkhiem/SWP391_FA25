@@ -24,15 +24,14 @@
     font-size:14px; background:#fff;
   }
   textarea{min-height:360px; resize:vertical}
-  .row{display:grid; gap:10px; margin-bottom:12px}
+  .row { margin-bottom:12px; }
+  .row textarea { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px; }
   .muted{color:var(--muted); font-size:12px}
 
   .actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
   .btn{padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-weight:600}
   .btn.primary{background:#16a34a; color:#fff; border-color:#16a34a}
   .btn:disabled{opacity:.6; cursor:not-allowed}
-
-  /* switch */
   .switch{position:relative; display:inline-block; width:48px; height:26px; vertical-align:middle}
   .switch input{display:none}
   .slider{position:absolute; cursor:pointer; inset:0; background:#e5e7eb; border-radius:999px; transition:.2s}
@@ -44,9 +43,20 @@
   .pill.gray{background:#e5e7eb; color:#374151}
 </style>
 </head>
+<script>
+  (function(){
+    const ta = document.getElementById('excerpt');
+    const counter = document.getElementById('excerptCount');
+    if(ta && counter){
+      const upd = () => counter.textContent = (ta.value || '').length;
+      ta.addEventListener('input', upd);
+      upd();
+    }
+  })();
+</script>
+
 <body>
 
-<!-- Header Marketing -->
 <div class="navbar">
   <div><a href="${pageContext.request.contextPath}/marketing">Marketing Dashboard</a></div>
   <div><a href="${pageContext.request.contextPath}/blog-list">Quay lại danh sách</a></div>
@@ -59,24 +69,59 @@
     <c:if test="${param.saved == '1'}">
       <div class="muted" style="margin-bottom:8px;color:#16a34a;font-weight:700">Đã lưu thay đổi.</div>
     </c:if>
-
-    <form method="post" action="${pageContext.request.contextPath}/blog-list/edit">
+    <c:if test="${param.error == 'invalid_image_type'}">
+      <div class="muted" style="margin-bottom:8px;color:#b91c1c;font-weight:700">Ảnh không hợp lệ (chỉ jpg/png/webp).</div>
+    </c:if>
+    <c:if test="${param.error == 'file_too_large'}">
+      <div class="muted" style="margin-bottom:8px;color:#b91c1c;font-weight:700">File quá lớn.</div>
+    </c:if>
+    <form method="post" action="${pageContext.request.contextPath}/blog-list/edit" enctype="multipart/form-data">
       <input type="hidden" name="postID" value="${post.postID}"/>
 
       <div class="row">
         <label>Tiêu đề</label>
         <input type="text" name="title" value="${post.title}" required>
       </div>
+      <div class="row">
+        <label>Ảnh cover hiện tại</label><br>
+        <c:choose>
+          <c:when test="${not empty post.coverImageUrl}">
+           <img src="${pageContext.request.contextPath}${post.coverImageUrl}" alt="cover"
+     style="max-width:320px; border:1px solid #e5e7eb; border-radius:8px"/>
+          </c:when>
+          <c:otherwise>
+            <div class="muted">Chưa có ảnh cover.</div>
+          </c:otherwise>
+        </c:choose>
+        <input type="hidden" name="oldCoverUrl" value="${post.coverImageUrl}"/>
+      </div>
+
+      <div class="row">
+        <label>Đổi ảnh cover (jpg/png/webp)</label>
+        <input type="file" name="coverFile" id="coverFile" accept=".jpg,.jpeg,.png,.webp" />
+        <div id="coverPreviewWrap" style="margin-top:8px; display:none">
+          <strong>Preview:</strong><br>
+          <img id="coverPreview" style="max-width:320px; border:1px solid #e5e7eb; border-radius:8px"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Mô tả ngắn</label>
+        <textarea name="excerpt" id="excerpt" rows="3" maxlength="300"
+                  placeholder="Viết 1-2 câu tóm tắt để hiển thị ở trang danh sách..." required>${post.excerpt}</textarea>
+        <div class="muted" style="margin-top:6px">
+          <span id="excerptCount">0</span>/300 ký tự
+        </div>
+      </div>
 
       <div class="row">
         <label>Category name</label>
-        <input type="text" name="categoryName" value="${post.categoryName}">
+        <input type="text" name="categoryName" value="${post.categoryName}" required>
       </div>
 
       <div class="row">
         <label>Nội dung (HTML)</label>
-        <textarea name="contentHtml" id="contentHtml"><c:out value="${empty detail ? '' : detail.contentHtml}"/></textarea>
-        <div class="muted">Bạn có thể dán HTML đơn giản (p, h2, ul/li...).</div>
+        <textarea name="contentHtml" id="contentHtml" required><c:out value="${empty detail ? '' : detail.contentHtml}"/></textarea>
       </div>
 
       <div class="row" style="align-items:center; grid-template-columns:auto 1fr;">
@@ -107,6 +152,20 @@
       ? '<span class="pill">published</span>'
       : '<span class="pill gray">archived</span>';
   }
+
+  (function(){
+    const input = document.getElementById('coverFile');
+    const wrap = document.getElementById('coverPreviewWrap');
+    const img  = document.getElementById('coverPreview');
+    if(!input || !wrap || !img) return;
+    input.addEventListener('change', function(){
+      const f = this.files && this.files[0];
+      if(!f){ wrap.style.display = 'none'; img.removeAttribute('src'); return; }
+      const url = URL.createObjectURL(f);
+      img.src = url;
+      wrap.style.display = 'block';
+    });
+  })();
 </script>
 </body>
 </html>

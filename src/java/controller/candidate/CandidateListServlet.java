@@ -5,13 +5,16 @@
 
 package controller.candidate;
 
+import dal.BanDAO;
 import dal.CandidateDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import model.Candidate;
 
 /**
@@ -56,12 +59,24 @@ public class CandidateListServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-    throws ServletException, IOException {
+     throws ServletException, IOException {
 
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
 
-        String q = req.getParameter("q");        
+        String q = req.getParameter("q");
+        if (q != null) {
+            q = q.replaceAll("\\s+", " ").trim(); 
+            if (q.isEmpty()) q = null;
+        }
+
+        String likePattern = null;
+        if (q != null) {
+            likePattern = "%" + q.replace(" ", "%") + "%";
+        }
+
+        req.setAttribute("qNormalized", q);
+
         int pageSize = 10;
         int page = 1;
         try {
@@ -70,23 +85,32 @@ public class CandidateListServlet extends HttpServlet {
         } catch (NumberFormatException ignored) {}
 
         CandidateDAO dao = new CandidateDAO();
-        int total = dao.countAll(q);                  
+
+        int total = dao.countAll(likePattern);
+
         int totalPages = (int) Math.ceil(total / (double) pageSize);
         if (totalPages == 0) totalPages = 1;
         if (page > totalPages) page = totalPages;
 
-        List<Candidate> candidates = dao.findPage(page, pageSize, q); 
+        List<Candidate> candidates = dao.findPage(page, pageSize, likePattern);
+        Set<Integer> bannedIds;
+        try {
+            BanDAO bdao = new BanDAO();
+            bannedIds = bdao.getActiveBannedCandidateIds();
+        } catch (Exception e) {
+           
+            bannedIds = Collections.emptySet();
+        }
 
-        req.setAttribute("q", q);             
+        req.setAttribute("q", q); 
         req.setAttribute("page", page);
         req.setAttribute("totalPages", totalPages);
         req.setAttribute("total", total);
         req.setAttribute("candidates", candidates);
+        req.setAttribute("bannedIds", bannedIds); 
 
-        req.getRequestDispatcher("/admin/candidate-list.jsp")
-               .forward(req, resp);
+        req.getRequestDispatcher("/admin/candidate-list.jsp").forward(req, resp);
     }
-
     /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request

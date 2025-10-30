@@ -38,11 +38,10 @@ public class EmployerDAO extends DBContext {
     return 0;
 }
 
-    // Merged findPage: Uses Boolean for statusFilter (consistent with countAll)
     public List<Employer> findPage(int page, int pageSize, String keyword, Boolean statusFilter) {
     List<Employer> list = new ArrayList<>();
     StringBuilder sql = new StringBuilder();
-    // Combined SELECT columns from both versions (TaxCode from HEAD, PasswordHash from main, keeping all)
+  
     sql.append("""
         SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
                CompanyName, Description, Location, URLWebsite, TaxCode, ImgLogo, [Status]
@@ -70,7 +69,7 @@ public class EmployerDAO extends DBContext {
     try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
         int idx = 1;
         for (Object v : params) {
-            // Robust parameter binding handling different types (String, Boolean, Integer for offset/pagesize)
+          
             if (v instanceof String)      ps.setString(idx++, (String) v);
             else if (v instanceof Boolean)  ps.setBoolean(idx++, (Boolean) v);
             else if (v instanceof Integer)  ps.setInt(idx++, (Integer) v);
@@ -83,13 +82,10 @@ public class EmployerDAO extends DBContext {
                 e.setEmployerName(rs.getString("EmployerName"));
                 e.setEmail(rs.getString("Email"));
                 e.setPhoneNumber(rs.getString("PhoneNumber"));
-                
-                // PasswordHash might not be needed for all uses of this method, but include it if the model supports it.
-                // It was present in the main's SELECT list. Check if column exists before retrieving.
-                try {
+                              try {
                      e.setPasswordHash(rs.getString("PasswordHash"));
                 } catch (SQLException ex) {
-                    // Ignore if the column 'PasswordHash' is not in the result set (e.g. if the final SELECT was simplified)
+                  
                 }
 
                 e.setCompanyName(rs.getString("CompanyName"));
@@ -97,11 +93,9 @@ public class EmployerDAO extends DBContext {
                 e.setLocation(rs.getString("Location"));
                 e.setUrlWebsite(rs.getString("URLWebsite"));
                 
-                // TaxCode was only in HEAD's SELECT list.
                 try {
                      e.setTaxCode(rs.getString("TaxCode"));
                 } catch (SQLException ex) {
-                    // Ignore if the column 'TaxCode' is not in the result set
                 }
                 
                 e.setImgLogo(rs.getString("ImgLogo"));
@@ -115,7 +109,6 @@ public class EmployerDAO extends DBContext {
     return list;
 }
 
-    // New method from 'main' branch
     public Employer findById(int id) {
         String sql = """
             SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
@@ -137,7 +130,6 @@ public class EmployerDAO extends DBContext {
                     e.setDescription(rs.getString("Description"));
                     e.setLocation(rs.getString("Location"));
                     e.setUrlWebsite(rs.getString("URLWebsite"));
-                    // Added TaxCode based on the logic from the HEAD branch for consistency
                     try {
                          e.setTaxCode(rs.getString("TaxCode")); 
                     } catch (SQLException ignored) {}
@@ -151,8 +143,7 @@ public class EmployerDAO extends DBContext {
         }
         return null;
     }
-    
-    // New method from 'main' branch
+
     public String getEmailByID(int id) {
         String sql = """
             SELECT  Email
@@ -205,18 +196,6 @@ public class EmployerDAO extends DBContext {
     }
     return 0;
 }
-
-
-    public boolean delete(int id) {
-        String sql = "DELETE FROM Employer WHERE EmployerID = ?";
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
 
     public boolean updateStatus(int employerId, int status) {
         String sql = "UPDATE Employer SET [Status] = ? WHERE EmployerID = ?";

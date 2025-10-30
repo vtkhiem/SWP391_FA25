@@ -27,17 +27,16 @@ public class BlogPostDAO extends DBContext{
         b.setPublishedDate(d != null ? new Date(d.getTime()) : null);
         b.setCoverImageUrl(rs.getNString("CoverImageUrl"));
         b.setExcerpt(rs.getNString("Excerpt"));
-               b.setFeatured(rs.getBoolean("IsFeatured"));
+        b.setFeatured(rs.getBoolean("IsFeatured"));
         int fo = rs.getInt("FeaturedOrder");
         b.setFeaturedOrder(rs.wasNull() ? null : fo);
-      
         b.setStatus(rs.getBoolean("Status"));
         b.setViewCount(rs.getInt("ViewCount"));
         return b;
     }
 
-     public List<BlogPost> getFeaturedTop4() throws Exception {
-       String sql = """
+    public List<BlogPost> getFeaturedTop4() throws Exception {
+        String sql = """
     SELECT TOP (4)
            PostID, Title, Url, CategoryName, AuthorName, PublishedDate,
            CoverImageUrl, Excerpt, IsFeatured, FeaturedOrder, Status, ViewCount
@@ -116,7 +115,6 @@ public class BlogPostDAO extends DBContext{
         }
     }
 
-
     public void increaseView(String url) throws Exception {
         String sql = "UPDATE dbo.BlogPost SET ViewCount = ViewCount + 1 WHERE Url = ?";
         try (
@@ -125,17 +123,19 @@ public class BlogPostDAO extends DBContext{
             ps.executeUpdate();
         }
     }
+
     public boolean existsByUrl(String url) throws Exception {
-    String sql = "SELECT 1 FROM dbo.BlogPost WHERE Url = ? AND Status = 1";
-    try (
-         PreparedStatement ps = c.prepareStatement(sql)) {
-        ps.setNString(1, url);
-        try (ResultSet rs = ps.executeQuery()) {
-            return rs.next();
+        String sql = "SELECT 1 FROM dbo.BlogPost WHERE Url = ? AND Status = 1";
+        try (
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setNString(1, url);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         }
     }
-    }
-      public List<BlogPost> findAll(int offset, int limit) throws Exception {
+
+    public List<BlogPost> findAll(int offset, int limit) throws Exception {
         String sql = """
             SELECT PostID, Title, Url, CategoryName, AuthorName, PublishedDate, Status
             FROM dbo.BlogPost
@@ -173,7 +173,8 @@ public class BlogPostDAO extends DBContext{
             return rs.getInt(1);
         }
     }
-        public BlogPost getById(int id) throws Exception {
+
+    public BlogPost getById(int id) throws Exception {
         String sql = """
             SELECT PostID, Title, Url, CategoryName, AuthorName, PublishedDate,
                    CoverImageUrl, Excerpt, IsFeatured, FeaturedOrder,
@@ -190,7 +191,7 @@ public class BlogPostDAO extends DBContext{
         }
     }
 
- public void updateAdmin(int id, String title, String categoryName, boolean status) throws Exception {
+    public void updateAdmin(int id, String title, String categoryName, boolean status) throws Exception {
         String sql = """
             UPDATE dbo.BlogPost
                SET Title = ?, CategoryName = ?, Status = ?,
@@ -206,7 +207,7 @@ public class BlogPostDAO extends DBContext{
         }
     }
 
-  public BlogPostDetail getDetailByPostId(int postId) throws Exception {
+    public BlogPostDetail getDetailByPostId(int postId) throws Exception {
         String sql = """
             SELECT DetailID, PostID, ContentHtml, Status, CreatedAt, UpdatedAt
             FROM dbo.BlogPostDetail WHERE PostID = ?
@@ -237,14 +238,112 @@ public class BlogPostDAO extends DBContext{
         """;
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             int i = 1;
-            ps.setInt(i++, postId);                 // exists
-            ps.setNString(i++, contentHtml);        // update set
+            ps.setInt(i++, postId);                
+            ps.setNString(i++, contentHtml);       
             ps.setBoolean(i++, status);
-            ps.setInt(i++, postId);                 // update where
-            ps.setInt(i++, postId);                 // insert values
+            ps.setInt(i++, postId);              
+            ps.setInt(i++, postId);               
             ps.setNString(i++, contentHtml);
             ps.setBoolean(i++, status);
             ps.executeUpdate();
         }
     }
+
+    public void updateExcerpt(int postId, String excerpt) throws Exception {
+        if (excerpt != null && excerpt.length() > 300) {
+            excerpt = excerpt.substring(0, 300);
+        }
+        String sql = "UPDATE dbo.BlogPost SET Excerpt = ?, UpdatedAt = SYSUTCDATETIME() WHERE PostID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setNString(1, excerpt);
+            ps.setInt(2, postId);
+            ps.executeUpdate();
+        }
+    }
+    public void updateCoverImage(int postId, String coverUrl) throws Exception {
+    String sql = "UPDATE dbo.BlogPost SET CoverImageUrl = ?, UpdatedAt = SYSUTCDATETIME() WHERE PostID = ?";
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setNString(1, coverUrl);
+        ps.setInt(2, postId);
+        ps.executeUpdate();
+    }
+    }
+     public int insertPostWithDetail(BlogPost post, String contentHtml) throws Exception {
+        // Dùng OUTPUT INSERTED.PostID để lấy id mới
+        String insertPostSql =
+            "INSERT INTO dbo.BlogPost " +
+            "(Title, Url, CategoryName, AuthorName, PublishedDate, CoverImageUrl, Excerpt, IsFeatured, FeaturedOrder, Status, ViewCount) " +
+            "OUTPUT INSERTED.PostID " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String insertDetailSql =
+            "INSERT INTO dbo.BlogPostDetail (PostID, ContentHtml, Status) VALUES (?, ?, 1)";
+
+        try (
+             PreparedStatement psPost = c.prepareStatement(insertPostSql)) {
+
+            c.setAutoCommit(false);
+             psPost.setString(1, post.getTitle());
+            psPost.setString(2, post.getUrl());
+            psPost.setString(3, post.getCategoryName());
+            psPost.setString(4, post.getAuthorName());
+
+            if (post.getPublishedDate() == null) {
+                throw new SQLException("PublishedDate không được null.");
+            }
+            psPost.setDate(5, new java.sql.Date(post.getPublishedDate().getTime()));
+
+            if (post.getCoverImageUrl() == null || post.getCoverImageUrl().isBlank()) {
+                psPost.setNull(6, Types.NVARCHAR);
+            } else {
+                psPost.setString(6, post.getCoverImageUrl());
+            }
+
+            if (post.getExcerpt() == null || post.getExcerpt().isBlank()) {
+                psPost.setNull(7, Types.NVARCHAR);
+            } else {
+                psPost.setString(7, post.getExcerpt());
+            }
+
+            psPost.setBoolean(8, post.IsFeatured()); 
+            if (post.getFeaturedOrder() == null) {
+                psPost.setNull(9, Types.TINYINT);
+            } else {
+                psPost.setInt(9, post.getFeaturedOrder());
+            }
+            psPost.setBoolean(10, post.isStatus());
+            psPost.setInt(11, post.getViewCount());
+
+            int newPostId = -1;
+            try (ResultSet rs = psPost.executeQuery()) {
+                if (rs.next()) {
+                    newPostId = rs.getInt(1);
+                }
+            }
+            if (newPostId <= 0) {
+                c.rollback();
+                throw new SQLException("Không lấy được PostID sau khi insert BlogPost.");
+            }
+
+            try (PreparedStatement psDetail = c.prepareStatement(insertDetailSql)) {
+                psDetail.setInt(1, newPostId);
+                psDetail.setString(2, contentHtml);
+                psDetail.executeUpdate();
+            }
+
+            c.commit();
+            return newPostId;
+
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+     public int deleteById(int postId) throws Exception {
+    String sql = "DELETE FROM dbo.BlogPost WHERE PostID = ?";
+    try (
+         PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, postId);
+        return ps.executeUpdate();
+    }
+}
 }
