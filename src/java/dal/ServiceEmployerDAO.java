@@ -38,10 +38,38 @@ public class ServiceEmployerDAO extends DBContext {
         }
 
     }
+    // ✅ 2.5. Lấy dịch vụ hiện tại mà Employer đang dùng.
+    public int getCurrentServiceByEmployerId(int employerID) throws SQLException {
+        String sql = "SELECT ServiceID FROM ServiceEmployer WHERE EmployerID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, employerID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("ServiceID");
+                } else {
+                    return -1;
+                }
+            }
+        }
+    }
 
     // ✅ 3. Lấy chi tiết 1 đăng ký
     public ServiceEmployer getByEmployerAndService(int employerID, int serviceID) throws SQLException {
         String sql = "SELECT * FROM ServiceEmployerHistory WHERE EmployerID = ? AND ServiceID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, employerID);
+            ps.setInt(2, serviceID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToServiceEmployer(rs);
+                }
+            }
+        }
+        return null;
+    }
+    // ✅ 3. Lấy chi tiết 1 đăng ký
+    public ServiceEmployer getCurrentServiceInfoByEmployerID(int employerID, int serviceID) throws SQLException {
+        String sql = "SELECT * FROM ServiceEmployer WHERE EmployerID = ? AND ServiceID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerID);
             ps.setInt(2, serviceID);
