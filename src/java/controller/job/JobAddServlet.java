@@ -166,8 +166,8 @@ public class JobAddServlet extends HttpServlet {
             dueDate = localDate.atStartOfDay();
 
             ServiceEmployerDAO serviceEmployerDAO = new ServiceEmployerDAO();
-            int serviceId = serviceEmployerDAO.getServiceIdByEmployerId(employer.getEmployerId());
-            ServiceEmployer se = serviceEmployerDAO.getByEmployerAndService(employerId, serviceId);
+            int serviceId = serviceEmployerDAO.getCurrentServiceByEmployerId(employer.getEmployerId());
+            ServiceEmployer se = serviceEmployerDAO.getCurrentServiceInfoByEmployerID(employerId, serviceId);
             LocalDateTime expDate = se.getExpirationDate().toLocalDateTime();
             if (dueDate.isAfter(expDate)) {
                 request.setAttribute("error", "Ngày hết hạn vi phạm thời hạn gói dịch vụ. Vui lòng chọn ngày trước ngày " + expDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
