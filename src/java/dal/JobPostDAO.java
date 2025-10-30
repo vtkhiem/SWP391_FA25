@@ -150,6 +150,8 @@ public class JobPostDAO extends DBContext {
         keyword = keyword.trim();
         keyword = java.text.Normalizer.normalize(keyword, java.text.Normalizer.Form.NFD);
         keyword = keyword.replaceAll("\\p{InCombiningDiacriticalMarks}+", ""); // xóa dấu
+        keyword = keyword.replaceAll("đ", "d");
+        keyword = keyword.replaceAll("Đ", "d");
         keyword = keyword.replaceAll("[^\\p{L}\\p{N}\\s]", ""); // xóa ký tự đặc biệt
         keyword = keyword.replaceAll("\\s+", " ");
         return keyword.toLowerCase();

@@ -65,6 +65,8 @@ public class EmployerJobSearchServlet extends HttpServlet {
             keyword = keyword.trim();
             keyword = Normalizer.normalize(keyword, Normalizer.Form.NFD);
             keyword = keyword.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+            keyword = keyword.replaceAll("đ", "d");
+            keyword = keyword.replaceAll("Đ", "d");
             keyword = keyword.replaceAll("[^\\p{L}\\p{N}\\s]", "");
             keyword = keyword.replaceAll("\\s+", " ");
         }
