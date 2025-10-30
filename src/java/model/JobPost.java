@@ -19,6 +19,8 @@ public class JobPost {
     private String typeJob;
     private LocalDateTime dayCreate;
     private LocalDateTime dueDate;
+    private boolean activeOnWall; 
+    private boolean pinned;
 
     public JobPost() {
     }
@@ -42,6 +44,7 @@ public class JobPost {
         this.dayCreate = dayCreate;
         this.dueDate = dueDate;
     }
+    
 
     public int getJobPostID() {
         return jobPostID;
@@ -154,6 +157,23 @@ public class JobPost {
     public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
     }
+
+    public boolean isActiveOnWall() {
+        return activeOnWall;
+    }
+
+    public void setActiveOnWall(boolean activeOnWall) {
+        this.activeOnWall = activeOnWall;
+    }
+
+    public boolean isPinned() {
+        return pinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        this.pinned = pinned;
+    }
+    
 
     @Override
     public String toString() {

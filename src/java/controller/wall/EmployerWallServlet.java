@@ -2,11 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.feedback;
+package controller.wall;
 
-import dal.PromotionDAO;
-import dal.ServiceDAO;
-import dal.TypeFeedbackDAO;
+import dal.WallDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,18 +12,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Promotion;
-import model.Service;
-import model.TypeFeedback;
-import java.sql.*;
+import model.Employer;
+import model.JobPost;
 
 /**
  *
  * @author vuthienkhiem
  */
-@WebServlet(name = "PrepareToSendFeedbackServlet", urlPatterns = {"/prepare"})
-public class PrepareToSendFeedbackServlet extends HttpServlet {
+@WebServlet(name = "EmployerWallServlet", urlPatterns = {"/employerWall"})
+public class EmployerWallServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +41,10 @@ public class PrepareToSendFeedbackServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PrepareToSendFeedbackServlet</title>");
+            out.println("<title>Servlet EmployerWallServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PrepareToSendFeedbackServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet EmployerWallServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,20 +62,35 @@ public class PrepareToSendFeedbackServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       try {
-           
-            TypeFeedbackDAO dao = new TypeFeedbackDAO();
-   
-      
-            // Lấy danh sách loại phản hồi cho Employer
-            List<TypeFeedback> typeFeedbackList = dao.getTypeFeedbackByRole("Candidate");
-          
+        try {
+            HttpSession session = request.getSession();
+            Employer employer = (Employer) session.getAttribute("user");
 
-            request.setAttribute("typeFeedbackList", typeFeedbackList);
-        } catch (SQLException e) {
+            if (employer == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
+
+            int employerId = employer.getEmployerId();
+
+            // Lấy danh sách job đã đăng lên tường
+            WallDAO dao = new WallDAO();
+            List<JobPost> wallJobs = dao.getJobsOnWallByEmployer(employerId);
+            System.out.println("Employer ID: " + employerId);
+            System.out.println("Wall Jobs size: " + wallJobs.size());
+            for (JobPost job : wallJobs) {
+                System.out.println("Job: " + job.getTitle() + " - Active: " + job.isActiveOnWall());
+            }
+
+            // Gửi sang JSP để render
+            request.setAttribute("wallJobs", wallJobs);
+            request.getRequestDispatcher("employer.jsp").forward(request, response);
+
+        } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("errorMessage", "Không thể tải dữ liệu tường tuyển dụng!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
-        request.getRequestDispatcher("feedback_form.jsp").forward(request, response);
     }
 
     /**
@@ -92,23 +104,7 @@ public class PrepareToSendFeedbackServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         try {
-          
-            TypeFeedbackDAO dao = new TypeFeedbackDAO();
-            ServiceDAO serviceDAO = new ServiceDAO();
-            PromotionDAO promotionDAO = new PromotionDAO();
-            List<Promotion> promotionList = promotionDAO.getAllPromotions();
-            List<Service> serviceList = serviceDAO.getAllVisibleServices();
-            // Lấy danh sách loại phản hồi cho Employer
-            List<TypeFeedback> typeFeedbackList = dao.getTypeFeedbackByRole("Employer");
-            request.setAttribute("serviceList", serviceList);
-            request.setAttribute("promotionList", promotionList);
-
-            request.setAttribute("typeFeedbackList", typeFeedbackList);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        request.getRequestDispatcher("feedback_form.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

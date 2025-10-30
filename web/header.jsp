@@ -54,7 +54,7 @@
                                                     <%-- Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
                                                         <li><a href="employerServices">Trang chủ</a></li>
-                                                        <li><a href="employer.jsp">DashBoard</a></li>
+                                                        <li><a href="employerWall">DashBoard</a></li>
                                                         <li><a href="job_add">Đăng Công Việc</a></li>
                                                         <li><a href="employer_jobs">Xem Công Việc</a></li>
                                                         </c:when>
@@ -67,7 +67,7 @@
                                                                 <li><a href="jobs">Tìm việc làm</a></li>
                                                                 <li><a href="saved_jobs">Việc làm đã lưu</a></li>
 
-                                                                <li><a href="viewApplyStatus">Trạng thái ứng tuyển</a></li>
+                                                                <li><a href="viewApplyLog">Trạng thái ứng tuyển</a></li>
 
                                                             </ul>
                                                         </li>

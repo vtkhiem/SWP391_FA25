@@ -2,30 +2,51 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%@page import="model.Employer"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%
     String role = (String) session.getAttribute("role");
-    Integer employerID = null;
-    Integer candidateID = null;
-
+    
+    // Kiểm tra cơ bản: Nếu role là null, chuyển hướng ngay.
     if (role == null) {
         response.sendRedirect("access-denied.jsp");
         return;
-    } else if (role.equalsIgnoreCase("Employer")) {
-        Employer empl = (Employer) session.getAttribute("user");
-        if (empl == null) {
+    }
+
+    Integer employerID = null;
+    Integer candidateID = null;
+    Object userObject = session.getAttribute("user");
+
+    // 1. Phân quyền cho Employer
+    if (role.equalsIgnoreCase("Employer")) {
+        // Kiểm tra đối tượng người dùng (Employer)
+        if (userObject == null || !(userObject instanceof Employer)) {
             response.sendRedirect("login-employer.jsp");
             return;
         }
+        Employer empl = (Employer) userObject;
         employerID = empl.getEmployerId();
+        
+    // 2. Phân quyền cho Candidate
     } else if (role.equalsIgnoreCase("Candidate")) {
-        candidateID = (Integer) session.getAttribute("candidateID");
-    }
-    if (employerID == null) {
+        // Giả định CandidateID được lưu dưới dạng Integer trong session attribute "candidateID"
+        candidateID = (Integer) session.getAttribute("candidateId");
+        
+        // **LỖ HỔNG ĐƯỢC SỬA:** Nếu là Candidate nhưng không có ID, coi như chưa đăng nhập hoặc lỗi session.
+        if (candidateID == null) {
+            response.sendRedirect("login-candidate.jsp"); // hoặc trang đăng nhập phù hợp
+            return;
+        }
+    } else {
+        // Trường hợp role có giá trị nhưng không phải Employer/Candidate (có thể là Admin, hoặc giá trị rác)
         response.sendRedirect("access-denied.jsp");
         return;
     }
+    
 
-
+    
 %>
 
 <!DOCTYPE html>
@@ -160,9 +181,10 @@
                             <label class="form-label fw-bold">Loại phản hồi</label>
                             <select name="typeFeedbackID" class="form-select" required>
                                 <option value="">-- Chọn loại phản hồi --</option>
-                                <c:forEach var="t" items="${typeFeedbackList}">
-                                    <option value="${t.typeFeedbackID}">${t.typeFeedbackName}</option>
-                                </c:forEach>
+                                <option value="Hệ thống">Hệ thống</option>
+                    <option value="Yêu cầu hỗ trợ">Yêu cầu hỗ trợ</option>
+                      <option value="Góp ý">Góp ý</option>
+                         <option value="Khác">Khác</option>
                             </select>
                         </div>
 
