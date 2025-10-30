@@ -57,13 +57,13 @@ public class JobAddServlet extends HttpServlet {
 
         ServiceEmployerDAO serviceEmployerDAO = new ServiceEmployerDAO();
         try {
-            int serviceId = serviceEmployerDAO.getServiceIdByEmployerId(employer.getEmployerId());
+            int serviceId = serviceEmployerDAO.getCurrentServiceByEmployerId(employer.getEmployerId());
             if (serviceId == -1) {
                 session.setAttribute("error", "Chưa đăng kí dịch vụ. Vui lòng đăng kí.");
                 response.sendRedirect(request.getContextPath() + "/employerServices");
                 return;
             } else {
-                ServiceEmployer se = serviceEmployerDAO.getByEmployerAndService(employer.getEmployerId(), serviceId);
+                ServiceEmployer se = serviceEmployerDAO.getCurrentServiceInfoByEmployerID(employer.getEmployerId(), serviceId);
                 if (!se.getExpirationDate().after(new Timestamp(System.currentTimeMillis()))) {
                     session.setAttribute("error", "Dịch vụ đã hết hạn. Vui lòng đăng kí mới.");
                     response.sendRedirect(request.getContextPath() + "/employerServices");
