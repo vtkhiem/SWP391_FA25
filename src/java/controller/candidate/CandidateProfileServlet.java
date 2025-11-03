@@ -61,10 +61,12 @@ public class CandidateProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("Error in session: " + session.getAttribute("error"));
 
         // Candidate: Dữ liệu đã có trong session từ LoginServlet
         Candidate candidate = (Candidate) session.getAttribute("user");
-        
+
         System.out.println(session.getAttribute("error"));
         if (candidate != null) {
             request.setAttribute("candidate", candidate);

@@ -78,6 +78,8 @@ public class PromotionDAO extends DBContext {
                 );
                 list.add(p);
             }
+        }catch (SQLException e){
+            e.printStackTrace();
         }
         return list;
     }

@@ -14,21 +14,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.*;
 import model.OrderView;
 import model.Promotion;
 import model.Service;
+import tool.Validation;
 
 /**
  *
- * @author ADMIN
+ * @author shiro
  */
-@WebServlet(name = "SaleOrderListServlet", urlPatterns = {"/sale"})
-public class SaleOrderListServlet extends HttpServlet {
+@WebServlet(name = "FilterOrderList", urlPatterns = {"/filterOrderList"})
+public class FilterOrderList extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,16 +48,16 @@ public class SaleOrderListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SaleOrderListServlet</title>");
+            out.println("<title>Servlet FilterOrderList</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SaleOrderListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet FilterOrderList at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -65,17 +66,6 @@ public class SaleOrderListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    private LocalDate parseDate(String s) {
-        try {
-            if (s == null || s.trim().isEmpty()) {
-                return null;
-            }
-            return LocalDate.parse(s); // định dạng yyyy-MM-dd
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     private int parseIntOrDefault(String s, int def) {
         try {
             return Integer.parseInt(s);
@@ -87,24 +77,24 @@ public class SaleOrderListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String role = (String) req.getSession().getAttribute("role");
-        if (role == null || !role.equalsIgnoreCase("Sale")) {
-            resp.sendRedirect(req.getContextPath() + "/access-denied.jsp");
-            return;
-        }
+        resp.setContentType("text/html;charset=UTF-8");
 
-        int page = parseIntOrDefault(req.getParameter("page"), 1);
-        int pageSize = parseIntOrDefault(req.getParameter("size"), 10);
+        String txt = Validation.searchKey(req.getParameter("txt"));
+        String service = req.getParameter("service");
+        String promotion = req.getParameter("promotion");
+        String status = req.getParameter("status");
 
         OrderDAO dao = new OrderDAO();
         ServiceDAO sdao = new ServiceDAO();
         PromotionDAO pdao = new PromotionDAO();
 
-        int totalRows = dao.countAll();
-        if (pageSize <= 0) {
-            pageSize = 10;
-        }
-        int totalPages = (int) Math.ceil(totalRows / (double) pageSize);
+        int page = parseIntOrDefault(req.getParameter("page"), 1);
+        int size = parseIntOrDefault(req.getParameter("size"), 10);
+        int serviceID = Validation.getId(service);
+        int offSet = (page - 1) * size;
+
+        int totalRows = dao.countFilteredOrders(txt, serviceID, promotion, status);
+        int totalPages = (int) Math.ceil(totalRows / (double) size);
         if (totalPages == 0) {
             totalPages = 1;
         }
@@ -115,28 +105,33 @@ public class SaleOrderListServlet extends HttpServlet {
             page = totalPages;
         }
 
-        List<OrderView> orders = dao.findPage(page, pageSize);
+        List<OrderView> filteredOrder = dao.filterOrders(txt, serviceID, promotion, status, offSet, size);
+
         List<Service> services = new ArrayList<>();
         List<Promotion> promotions = new ArrayList<>();
-
         try {
             services = sdao.getAllServices();
             promotions = pdao.getAllPromotions();
         } catch (SQLException e) {
             e.printStackTrace();
-            // bạn có thể set lỗi ra request để hiển thị nếu cần
             req.setAttribute("error", "Không thể tải danh sách khuyến mãi!");
         }
 
         BigDecimal revenue = dao.totalRevenue();
-        req.setAttribute("orders", orders);
+
+        req.setAttribute("orders", filteredOrder);
         req.setAttribute("services", services);
         req.setAttribute("promotions", promotions);
         req.setAttribute("revenue", revenue);
         req.setAttribute("page", page);
-        req.setAttribute("pageSize", pageSize);
+        req.setAttribute("size", size);
         req.setAttribute("totalPages", totalPages);
         req.setAttribute("totalRows", totalRows);
+        req.setAttribute("txt", txt);
+        req.setAttribute("selectedService", service);
+        req.setAttribute("selectedPromotion", promotion);
+        req.setAttribute("selectedStatus", status);
+
         req.getRequestDispatcher("/sale.jsp").forward(req, resp);
     }
 
@@ -163,5 +158,4 @@ public class SaleOrderListServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

@@ -161,7 +161,7 @@
                 border-radius: 6px;
             }
 
-            .error {
+            .modal  .error {
                 color: #ff4444;
                 text-align: center;
                 display: none;
