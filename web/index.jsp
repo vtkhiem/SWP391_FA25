@@ -107,10 +107,6 @@
                 <!-- job_listing_area_start  -->
                 <div class="job_listing_area">
                     <div class="job_listing_container">
-                        <div class="job_listing_header">
-                            <div class="job_listing_title">Featured Jobs</div>
-                            <a href="jobs.html" class="job_listing_viewall">Browse More Job</a>
-                        </div>
                         <div class="job_listing_nav">
                             <button class="job_nav_arrow" aria-label="Prev">&lt;</button>
                             <div class="job_listing_grid">

@@ -322,7 +322,6 @@
             </div>
         </div>
         <!-- job_listing_area_end -->
-        <p>Employer ID: ${sessionScope.user.employerId}</p>
 
         <!-- footer -->
         <jsp:include page="footer.jsp"/>

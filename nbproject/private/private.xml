@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
 
             <file>file:/D:/SWP391_FA25/src/java/controller/sale/FilterOrderList.java</file>
             <file>file:/D:/SWP391_FA25/src/java/model/Promotion.java</file>
@@ -14,6 +15,15 @@
             <file>file:/D:/SWP391_FA25/src/java/dal/ApplyDAO.java</file>
             <file>file:/D:/SWP391_FA25/web/sale.jsp</file>
 
+=======
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/model/ServiceEmployer.java</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/dal/JobPostDAO.java</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/controller/payment/PaymentReturnServlet.java</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/controller/job/JobAddServlet.java</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/web/employer_payment_history.jsp</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/web/job_post.jsp</file>
+            <file>file:/C:/Users/bndat615/Documents/FPT%20University/Semester%205/SWP391/Projects/SWP391_FA25/src/java/controller/employer/EditEmployerProfile.java</file>
+>>>>>>> a2132221fe79c659a41ab60accb3ec4bce62d781
         </group>
     </open-files>
 </project-private>
