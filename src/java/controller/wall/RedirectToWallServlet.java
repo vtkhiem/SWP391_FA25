@@ -4,8 +4,8 @@
  */
 package controller.wall;
 
-import dal.ServiceEmployerDAO;
-import dal.ServiceFunctionDAO;
+import dal.EmployerDAO;
+import dal.JobPostDAO;
 import dal.WallDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,15 +14,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Function;
+import model.Candidate;
+import model.JobPost;
 
 /**
  *
  * @author vuthienkhiem
  */
-@WebServlet(name = "AddToWallServlet", urlPatterns = {"/addToWall"})
-public class AddToWallServlet extends HttpServlet {
+@WebServlet(name = "RedirectToWallServlet", urlPatterns = {"/redirectWall"})
+public class RedirectToWallServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +43,10 @@ public class AddToWallServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddToWallServlet</title>");
+            out.println("<title>Servlet RedirectToWallServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddToWallServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RedirectToWallServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,44 +64,18 @@ public class AddToWallServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       try {
-            String id_raw = request.getParameter("employerId");
-            String job_raw = request.getParameter("jobpostId");
-            if(id_raw==null || job_raw==null){
-                request.getRequestDispatcher("error.jsp");
-            }
-            int employerId = Integer.parseInt(id_raw);
-            int jobpostId = Integer.parseInt(job_raw);
-            ServiceEmployerDAO sedao= new ServiceEmployerDAO();
-                    ServiceFunctionDAO sfdao = new ServiceFunctionDAO();
-            int serviceId = sedao.getCurrentServiceByEmployerId(employerId);
-            List<Function> list = sfdao.getFunctionsByServiceId(serviceId);
-              boolean hasWallFunction = false;
-             for (Function f : list) {
-                if (f.getFunctionName().equalsIgnoreCase("EmployerWall")) {
-                    hasWallFunction = true;
-                    break;
-                }
-            }  if (hasWallFunction) {
-                WallDAO dao = new WallDAO();
-                boolean success = dao.addJobToWall(employerId, jobpostId);
+       EmployerDAO edao = new EmployerDAO();
+       
+            int jobPostId  = Integer.parseInt(request.getParameter("jobpostID"));
+            JobPostDAO jdao = new JobPostDAO();
+            int employerId = jdao.getEmployerIdByJobPostId(jobPostId);
+       WallDAO dao = new WallDAO();
+       List<JobPost> list = dao.getJobsOnWallByEmployer(employerId);
+       String companyName = edao.getCompanyNameByEmployerID(employerId);
+       request.setAttribute("companyName", companyName);
+       request.setAttribute("wallJobs", list);
+      request.getRequestDispatcher("viewEmployerWall.jsp").forward(request, response);
 
-                if (success) {
-                    request.getSession().setAttribute("message", "Đã thêm công việc lên tường!");
-                } else {
-                    request.getSession().setAttribute("error", "Thêm công việc lên tường thất bại!");
-                }
-            } else {
-                // Không có quyền sử dụng tính năng này
-                request.getSession().setAttribute("error", "Dịch vụ hiện tại của bạn không hỗ trợ đăng lên tường!");
-            }
-                response.sendRedirect("employer_jobs");
-         
-        } catch (Exception e) {
-               e.printStackTrace();
-        request.getSession().setAttribute("error", "Lỗi khi thêm công việc lên tường!");
-        response.sendRedirect("employer_jobs");
-        }
     }
 
     /**
@@ -113,7 +89,7 @@ public class AddToWallServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-      
+        processRequest(request, response);
     }
 
     /**
