@@ -118,7 +118,7 @@
                                                                     </c:when>
                                                                     <c:when test="${sessionScope.role eq 'Employer'}">
                                                                         <li><a href="employerProfile">Xem hồ sơ</a></li>
-                                                                        <li><a href="#">Lịch sử giao dịch</a></li>
+                                                                        <li><a href="payments_history">Lịch sử giao dịch</a></li>
                                                                     </c:when>
                                                                 </c:choose>
                                                                 <li><a href="logout">Đăng xuất</a></li>
