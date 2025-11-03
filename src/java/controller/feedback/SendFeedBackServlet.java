@@ -5,6 +5,9 @@
 package controller.feedback;
 
 import dal.FeedbackDAO;
+import dal.PromotionDAO;
+import dal.ServiceDAO;
+import dal.TypeFeedbackDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,9 +17,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import model.Employer;
 import model.Feedback;
+import model.Promotion;
+import model.Service;
+import model.TypeFeedback;
 import tool.EmailService;
 
 /**
@@ -64,50 +71,119 @@ public class SendFeedBackServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+       
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-       
-            Employer emp = (Employer) request.getSession().getAttribute("user");
-            if (emp == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
 
-        Integer employerID = Integer.valueOf(emp.getEmployerId());
+        HttpSession session = request.getSession();
+        Employer emp = (Employer) session.getAttribute("user");
+        if (emp == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        Integer employerID = emp.getEmployerId();
+       
         String subject = request.getParameter("subject");
         String content = request.getParameter("content");
-        String type = request.getParameter("type");
+        String[] typeFeedbackIDs = request.getParameterValues("typeFeedbackIDs"); // nhiều checkbox
+        String serviceID_raw = request.getParameter("serviceID");
+        String promotionID_raw = request.getParameter("promotionID");
+   
+Integer serviceID = null;
+        if (serviceID_raw != null && !serviceID_raw.isEmpty()) {
+            serviceID = Integer.parseInt(serviceID_raw);
+       }
 
-        Feedback feedback = new Feedback(employerID, null, subject, content, type);
+
+         Integer promotionID = null;
+       if (promotionID_raw != null && !promotionID_raw.isEmpty()) {
+     promotionID = Integer.parseInt(promotionID_raw);
+        
+     }
+        if (typeFeedbackIDs == null || typeFeedbackIDs.length == 0) {
+            request.setAttribute("error", "Vui lòng chọn ít nhất một loại phản hồi.");
+            doGet(request, response);
+            return;
+        }
 
         try {
             FeedbackDAO dao = new FeedbackDAO();
-            boolean success = dao.addFeedback(feedback);
-            if (success) {
-                EmailService tool = new EmailService();
-                tool.sendFeedbackToAdmin("vuthienkhiem2005@gmail.com", emp.getEmail(), subject, content);
-                
-                request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
-            } else {
-                request.setAttribute("error", "Không thể gửi phản hồi. Vui lòng thử lại.");
+
+      
+            Feedback feedback = new Feedback(employerID, null, subject, content, serviceID,promotionID);
+           
+            if(promotionID!=null && serviceID != null){
+                 PromotionDAO pdao = new PromotionDAO();
+                   String code = pdao.getCodeById(promotionID);
+                     ServiceDAO sdao = new ServiceDAO();
+            String serviceName = sdao.getServiceNameById(serviceID);
+               int feedbackID = dao.insertFeedbackAndReturnId(feedback);
+
+        
+            dao.insertFeedbackTypes(feedbackID, Arrays.asList(typeFeedbackIDs));
+
+            EmailService tool = new EmailService();
+            tool.sendFeedbackToAdminEmp("vuthienkhiem2005@gmail.com", emp.getEmail(), subject, content,code,serviceName);
+
+     
+            request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
+            request.getRequestDispatcher("feedback_success.jsp").forward(request, response);
             }
+      
+            else if(promotionID == null && serviceID==null){
+               int feedbackID = dao.insertFeedbackAndReturnId(feedback);
+
+        
+            dao.insertFeedbackTypes(feedbackID, Arrays.asList(typeFeedbackIDs));
+
+            EmailService tool = new EmailService();
+            tool.sendFeedbackToAdmin("vuthienkhiem2005@gmail.com", emp.getEmail(), subject, content);
+
+     
+            request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
+            request.getRequestDispatcher("feedback_success.jsp").forward(request, response);
+           }else{
+                 PromotionDAO pdao = new PromotionDAO();
+                  ServiceDAO sdao = new ServiceDAO();
+                  String serviceName = "";
+                   String code = "";
+                 if(promotionID!=null){
+                
+               
+                        code = pdao.getCodeById(promotionID);
+                  
+                 }
+                 if(serviceID!=null){
+               
+             
+                          serviceName = sdao.getServiceNameById(serviceID);
+                 }
+       
+               int feedbackID = dao.insertFeedbackAndReturnId(feedback);
+
+        
+            dao.insertFeedbackTypes(feedbackID, Arrays.asList(typeFeedbackIDs));
+
+            EmailService tool = new EmailService();
+            tool.sendFeedbackToAdminEmp("vuthienkhiem2005@gmail.com", emp.getEmail(), subject, content,code,serviceName);
+
+     
+            request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
+            request.getRequestDispatcher("feedback_success.jsp").forward(request, response);
+            }
+      
+            
+
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            request.getRequestDispatcher("feedback_form.jsp").forward(request, response);
         }
 
         request.getRequestDispatcher("feedback_success.jsp").forward(request, response);

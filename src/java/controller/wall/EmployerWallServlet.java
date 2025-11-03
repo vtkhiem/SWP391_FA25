@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.feedback;
+package controller.wall;
 
-import dal.FeedbackDAO;
-import dal.TypeFeedbackDAO;
+import dal.WallDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,20 +12,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Candidate;
-import model.Feedback;
-import model.TypeFeedback;
-import tool.EmailService;
+import model.Employer;
+import model.JobPost;
 
 /**
  *
  * @author vuthienkhiem
  */
-@WebServlet(name = "SendFeedbackCanServlet", urlPatterns = {"/sendFeedbackCan"})
-public class SendFeedbackCanServlet extends HttpServlet {
+@WebServlet(name = "EmployerWallServlet", urlPatterns = {"/employerWall"})
+public class EmployerWallServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +41,10 @@ public class SendFeedbackCanServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SendFeedbackCanServlet</title>");
+            out.println("<title>Servlet EmployerWallServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SendFeedbackCanServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet EmployerWallServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,15 +62,35 @@ public class SendFeedbackCanServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-           try {
-            TypeFeedbackDAO dao = new TypeFeedbackDAO();
-            List<TypeFeedback> typeFeedbackList = dao.getTypeFeedbackByRole("Candidate");
-            request.setAttribute("typeFeedbackList", typeFeedbackList);
-        } catch (SQLException e) {  
+        try {
+            HttpSession session = request.getSession();
+            Employer employer = (Employer) session.getAttribute("user");
+
+            if (employer == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
+
+            int employerId = employer.getEmployerId();
+
+            // Lấy danh sách job đã đăng lên tường
+            WallDAO dao = new WallDAO();
+            List<JobPost> wallJobs = dao.getJobsOnWallByEmployer(employerId);
+            System.out.println("Employer ID: " + employerId);
+            System.out.println("Wall Jobs size: " + wallJobs.size());
+            for (JobPost job : wallJobs) {
+                System.out.println("Job: " + job.getTitle() + " - Active: " + job.isActiveOnWall());
+            }
+
+            // Gửi sang JSP để render
+            request.setAttribute("wallJobs", wallJobs);
+            request.getRequestDispatcher("employer.jsp").forward(request, response);
+
+        } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("errorMessage", "Không thể tải dữ liệu tường tuyển dụng!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
-        request.getRequestDispatcher("feedback_form.jsp").forward(request, response);
-    
     }
 
     /**
@@ -88,41 +104,8 @@ public class SendFeedbackCanServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-       
-            Candidate can = (Candidate) request.getSession().getAttribute("user");
-            if (can == null) {
-                response.sendRedirect("login.jsp");
-                return;
-            }
-
-        Integer employerID = Integer.valueOf(can.getCandidateId());
-        String subject = request.getParameter("subject");
-        String content = request.getParameter("content");
-        String type = request.getParameter("type");
-
-        Feedback feedback = new Feedback(null, can.getCandidateId(), subject, content, null, null);
-
-        try {
-            FeedbackDAO dao = new FeedbackDAO();
-            boolean success = dao.addFeedback(feedback);
-            if (success) {
-                   EmailService tool = new EmailService();
-                tool.sendFeedbackToAdmin("vuthienkhiem2005@gmail.com", can.getEmail(), subject, content);
-                request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
-            } else {
-                request.setAttribute("error", "Không thể gửi phản hồi. Vui lòng thử lại.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
-        }
-
-        request.getRequestDispatcher("feedback_success_can.jsp").forward(request, response);
+        processRequest(request, response);
     }
-
-    
 
     /**
      * Returns a short description of the servlet.

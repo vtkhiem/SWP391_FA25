@@ -60,7 +60,7 @@ public class JobPostDAO extends DBContext {
     }
 
     public JobPost getJobPostById(int id) {
-        String sql = "SELECT * FROM JobPost WHERE JobPostID = ? AND DueDate >= GETDATE()";
+        String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -150,6 +150,8 @@ public class JobPostDAO extends DBContext {
         keyword = keyword.trim();
         keyword = java.text.Normalizer.normalize(keyword, java.text.Normalizer.Form.NFD);
         keyword = keyword.replaceAll("\\p{InCombiningDiacriticalMarks}+", ""); // xóa dấu
+        keyword = keyword.replaceAll("đ", "d");
+        keyword = keyword.replaceAll("Đ", "d");
         keyword = keyword.replaceAll("[^\\p{L}\\p{N}\\s]", ""); // xóa ký tự đặc biệt
         keyword = keyword.replaceAll("\\s+", " ");
         return keyword.toLowerCase();
@@ -231,27 +233,57 @@ public class JobPostDAO extends DBContext {
         return false;
     }
 
-    public List<JobPost> getJobsByEmployer(int employerId, int offset, int noOfRecords) {
-        List<JobPost> list = new ArrayList<>();
-        String sql = "SELECT * FROM JobPost WHERE EmployerID = ? ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+    public List<JobPost> getJobsByEmployer(int employerId, int offset, int limit) {
+    List<JobPost> list = new ArrayList<>();
+    String sql = """
+        SELECT jp.*, 
+               ISNULL(w.IsActive, 0) AS activeOnWall
+        FROM JobPost jp
+        LEFT JOIN EmployerWall w
+            ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID
+        WHERE jp.EmployerID = ?
+        ORDER BY jp.DayCreate DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
 
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, employerId);
-            ps.setInt(2, offset);
-            ps.setInt(3, noOfRecords);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(extractJobPost(rs));
-                    System.out.println("Loaded job: " + rs.getString("Title"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL error (getJobPosts): " + e.getMessage());
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, employerId);
+        ps.setInt(2, offset);
+        ps.setInt(3, limit);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            JobPost j = new JobPost();
+            j.setJobPostID(rs.getInt("JobPostID"));
+            j.setEmployerID(rs.getInt("EmployerID"));
+            j.setTitle(rs.getString("Title"));
+            j.setDescription(rs.getString("Description"));
+            j.setCategory(rs.getString("Category"));
+            j.setPosition(rs.getString("Position"));
+            j.setLocation(rs.getString("Location"));
+            j.setOfferMin(rs.getBigDecimal("OfferMin"));
+            j.setOfferMax(rs.getBigDecimal("OfferMax"));
+            j.setNumberExp(rs.getInt("NumberExp"));
+            j.setVisible(rs.getBoolean("Visible"));
+            j.setTypeJob(rs.getString("TypeJob"));
+
+            Timestamp dayCreate = rs.getTimestamp("DayCreate");
+            if (dayCreate != null) j.setDayCreate(dayCreate.toLocalDateTime());
+
+            Timestamp dueDate = rs.getTimestamp("DueDate");
+            if (dueDate != null) j.setDueDate(dueDate.toLocalDateTime());
+
+            // ✅ Thêm dòng này
+            j.setActiveOnWall(rs.getBoolean("activeOnWall"));
+
+            list.add(j);
         }
-        
-        System.out.println("Total jobs: " + list.size());
-        return list;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
     
     public int countJobsByEmployer(int employerId) {
         String sql = "SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?";

@@ -61,7 +61,7 @@
                                 <div class="toast-message error">${error}</div>
                             </c:if>
 
-                            <form action="job_add" method="post">
+                            <form action="job_add" method="post" onsubmit="removeCommasBeforeSubmit()">
                                 <input type="hidden" name="employerId" value="${sessionScope.user.employerId}"/>
 
                                 <div class="form-group">
@@ -168,11 +168,11 @@
                                     <label>Mức lương <span style="color: red;">*</span></label>
                                     <div class="d-flex">
                                         <div class="col-6">
-                                            <input type="number" class="form-control mr-2" name="offerMin" step="1" placeholder="Từ..." required>
+                                            <input type="text" id="offerMin" class="form-control mr-2 money-input" name="offerMin" step="1" placeholder="Từ..." required>
                                             <span class="error-message"></span>
                                         </div>
                                         <div class="col-6">
-                                            <input type="number" class="form-control" name="offerMax" step="1" placeholder="Đến..." required>
+                                            <input type="text" id="offerMax" class="form-control money-input" name="offerMax" step="1" placeholder="Đến..." required>
                                             <span class="error-message"></span>
                                         </div>
                                     </div>
@@ -249,7 +249,6 @@
                     });
 
                     setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
-
                     setTimeout(() => {
                         toast.style.right = "-350px";
                         toast.style.opacity = "0";
@@ -327,8 +326,8 @@
                         showError(offerMax, "Vui lòng nhập mức lương tối thiểu và tối đa.");
                         isValid = false;
                     } else {
-                        const min = parseFloat(offerMin.value);
-                        const max = parseFloat(offerMax.value);
+                        const min = parseFloat(offerMin.value.replace(/\./g, ""));
+                        const max = parseFloat(offerMax.value.replace(/\./g, ""));
                         if (min < 0 || max < 0) {
                             if (min < 0) {
                                 showError(offerMin, "Mức lương không được là số âm.");
@@ -360,11 +359,23 @@
                     return isValid;
                 }
 
-                form.addEventListener("submit", (e) => {
+                document.querySelectorAll('.money-input').forEach(el => {
+                    el.addEventListener('input', () => formatNumber(el));
+                });
+
+                form.addEventListener('submit', e => {
+                    document.querySelectorAll('.money-input').forEach(el => {
+                        el.value = el.value.replace(/\./g, '');
+                    });
                     if (!validateForm())
                         e.preventDefault();
                 });
             });
+
+            function formatNumber(input) {
+                let value = input.value.replace(/\D/g, "");
+                input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
         </script>
     </body>
 </html>

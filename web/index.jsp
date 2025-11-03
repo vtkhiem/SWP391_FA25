@@ -383,8 +383,8 @@
                 </div>
             </div>
             <div class="text-center my-5">
-                <form action="feedback_form.jsp" method="get">
-                    <input type="hidden" name="type" value="Service Feedback">
+                <form action="prepare" method="get">
+                   
                     <button type="submit" class="buy-btn">
                         <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên
                     </button>
