@@ -262,7 +262,9 @@
                                                         </form>
                                                     </c:otherwise>
                                                 </c:choose>
-                                                <a class="btn btn-sm btn-warning m-1" href="addToWall?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}"><i class="ti-write"></i></a>
+                                                <a class="btn btn-sm btn-dark m-1" href="addToWall?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}">
+                                                    <i class="ti-pin-alt"></i>
+                                                </a>
                                                     <c:choose>
                                                         <c:when test="${job.activeOnWall}">
                                                         <!-- Nếu đang hiện, thì click sẽ tắt -->

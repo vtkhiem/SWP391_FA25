@@ -294,7 +294,7 @@
             <h1>Marketing Staff Dashboard</h1>
             <div class="user-info">
                 <span class="welcome-text">Xin chào, <b>${user.username}</b></span>
-                <a class="logout" href="logout">🚪 Đăng xuất</a>
+                <a class="logout" href="logout">Đăng xuất</a>
             </div>
         </header>
 
@@ -309,8 +309,8 @@
 
             <div class="card">
                 <h2>Đăng tin khuyến mãi</h2>
-                <form action="job_add" method="post">
-                    <input type="hidden" name="createBy" value=""/>
+                <form action="post_promotion" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="createBy" value="${sessionScope.user.adminId}"/>
 
                     <div class="form-group col-12">
                         <label>Tiêu đề <span style="color: red;">*</span></label>
@@ -320,7 +320,7 @@
 
                     <div class="form-group col-12">
                         <label>Dịch vụ <span style="color: red;">*</span></label>
-                        <select class="form-control" name="category" required>
+                        <select class="form-control" name="service" required>
                             <option value="" disabled selected hidden>Chọn dịch vụ...</option>
                             <c:forEach var="s" items="${services}">
                                 <option value="${s.serviceID}">${s.serviceName}</option>
@@ -343,12 +343,12 @@
                     <div class="form-group d-flex">
                         <div class="col-6">
                             <label>Ngày bắt đầu <span style="color: red;">*</span></label>
-                            <input type="date" class="form-control" name="dueDate" required>
+                            <input type="date" class="form-control" name="startDate" required>
                             <span class="error-message"></span>
                         </div>
                         <div class="col-6">
                             <label>Ngày kết thúc <span style="color: red;">*</span></label>
-                            <input type="date" class="form-control" name="dueDate" required>
+                            <input type="date" class="form-control" name="endDate" required>
                             <span class="error-message"></span>
                         </div>
                     </div>
@@ -363,6 +363,7 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
+                // --- Toast Notification ---
                 const toasts = document.querySelectorAll(".toast-message");
                 toasts.forEach((toast, index) => {
                     Object.assign(toast.style, {
@@ -383,13 +384,13 @@
                     });
 
                     setTimeout(() => (toast.style.right = "20px"), 200 + index * 150);
-
                     setTimeout(() => {
                         toast.style.right = "-350px";
                         toast.style.opacity = "0";
                     }, 4000 + index * 150);
                 });
 
+                // --- Validation ---
                 const form = document.querySelector("form");
 
                 function showError(input, message) {
@@ -410,22 +411,22 @@
 
                 function validateForm() {
                     let isValid = true;
+
                     const title = form.querySelector('[name="title"]');
-                    const position = form.querySelector('[name="position"]');
-                    const desc1 = form.querySelector('[name="description-1"]');
-                    const desc2 = form.querySelector('[name="description-2"]');
-                    const desc3 = form.querySelector('[name="description-3"]');
-                    const offerMin = form.querySelector('[name="offerMin"]');
-                    const offerMax = form.querySelector('[name="offerMax"]');
-                    const dueDate = form.querySelector('[name="dueDate"]');
+                    const service = form.querySelector('[name="service"]');
+                    const content = form.querySelector('[name="content"]');
+                    const bannerImage = form.querySelector('[name="bannerImage"]');
+                    const startDate = form.querySelector('[name="startDate"]');
+                    const endDate = form.querySelector('[name="endDate"]');
 
-                    const inputs = [title, position, desc1, desc2, desc3, offerMin, offerMax, dueDate];
+                    const inputs = [title, service, content, bannerImage, startDate, endDate];
                     inputs.forEach(clearError);
-
+                    
                     const hasSpecialChar = (str) => /[!@#$%^&*(),.?":{}|<>]/.test(str);
                     const trim = (s) => s.trim();
 
-                    if (!trim(title.value)) {
+                    // --- Validate Title ---
+                    if (!title.value.trim()) {
                         showError(title, "Vui lòng nhập tiêu đề.");
                         isValid = false;
                     } else if (hasSpecialChar(title.value)) {
@@ -433,60 +434,53 @@
                         isValid = false;
                     }
 
-                    if (!trim(position.value)) {
-                        showError(position, "Vui lòng nhập vị trí công việc.");
-                        isValid = false;
-                    } else if (hasSpecialChar(position.value)) {
-                        showError(position, "Vị trí không được chứa ký tự đặc biệt.");
+                    // --- Validate Category ---
+                    if (!service.value) {
+                        showError(service, "Vui lòng chọn dịch vụ.");
                         isValid = false;
                     }
 
-                    if (!trim(desc1.value)) {
-                        showError(desc1, "Vui lòng nhập mô tả cụ thể.");
+                    // --- Validate Content ---
+                    if (!content.value.trim()) {
+                        showError(content, "Vui lòng nhập nội dung khuyến mãi.");
                         isValid = false;
                     }
 
-                    if (!trim(desc2.value)) {
-                        showError(desc2, "Vui lòng nhập yêu cầu công việc.");
-                        isValid = false;
-                    }
-
-                    if (!trim(desc3.value)) {
-                        showError(desc3, "Vui lòng nhập quyền lợi.");
-                        isValid = false;
-                    }
-
-                    if (offerMin.value === "" || offerMax.value === "") {
-                        showError(offerMin, "Vui lòng nhập mức lương tối thiểu và tối đa.");
-                        showError(offerMax, "Vui lòng nhập mức lương tối thiểu và tối đa.");
+                    // --- Validate Banner Image ---
+                    if (!bannerImage.value) {
+                        showError(bannerImage, "Vui lòng chọn ảnh bìa.");
                         isValid = false;
                     } else {
-                        const min = parseFloat(offerMin.value);
-                        const max = parseFloat(offerMax.value);
-                        if (min < 0 || max < 0) {
-                            if (min < 0) {
-                                showError(offerMin, "Mức lương không được là số âm.");
-                                isValid = false;
-                            }
-                            if (max < 0) {
-                                showError(offerMax, "Mức lương không được là số âm.");
-                                isValid = false;
-                            }
-                        } else if (max < min) {
-                            showError(offerMax, "Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu.");
+                        const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+                        const fileExt = bannerImage.value.split(".").pop().toLowerCase();
+                        if (!allowedExtensions.includes(fileExt)) {
+                            showError(bannerImage, "Ảnh bìa chỉ được phép là JPG, JPEG, PNG hoặc GIF.");
                             isValid = false;
                         }
                     }
 
-                    if (!dueDate.value) {
-                        showError(dueDate, "Vui lòng chọn ngày hết hạn.");
+                    // --- Validate Dates ---
+                    if (!startDate.value) {
+                        showError(startDate, "Vui lòng chọn ngày bắt đầu.");
                         isValid = false;
-                    } else {
+                    }
+                    if (!endDate.value) {
+                        showError(endDate, "Vui lòng chọn ngày kết thúc.");
+                        isValid = false;
+                    }
+
+                    if (startDate.value && endDate.value) {
+                        const start = new Date(startDate.value);
+                        const end = new Date(endDate.value);
                         const today = new Date();
-                        const due = new Date(dueDate.value);
                         today.setHours(0, 0, 0, 0);
-                        if (due < today) {
-                            showError(dueDate, "Ngày hết hạn phải từ hôm nay trở đi.");
+
+                        if (start < today) {
+                            showError(startDate, "Ngày bắt đầu phải từ hôm nay trở đi.");
+                            isValid = false;
+                        }
+                        if (end < start) {
+                            showError(endDate, "Ngày kết thúc phải sau ngày bắt đầu.");
                             isValid = false;
                         }
                     }
