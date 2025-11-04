@@ -1,4 +1,5 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -102,6 +103,10 @@
 
                                         <!-- Nếu đã login thì hiện tên user + Logout -->
                                         <c:if test="${not empty sessionScope.user}">
+                                      
+                                        
+
+
                                             <div class="main-menu phone_num d-none d-xl-block">
                                                 <nav>
                                                     <ul id="navigation">

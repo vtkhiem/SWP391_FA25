@@ -21,6 +21,8 @@ public class JobPost {
     private LocalDateTime dueDate;
     private boolean activeOnWall; 
     private boolean pinned;
+    private String companyName;
+
 
     public JobPost() {
     }
@@ -173,6 +175,7 @@ public class JobPost {
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
     }
+    
     
 
     @Override

@@ -551,4 +551,192 @@ public class JobPostDAO extends DBContext {
         }
         return -1;
     }
+    public boolean deleteJobPost(int id) {
+        String sql = "DELETE FROM JobPost WHERE JobPostID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<JobPost> adminGetJobPosts(int offset, int noOfRecords) {
+        List<JobPost> list = new ArrayList<>();
+      
+        String sql = "SELECT * FROM JobPost ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, noOfRecords);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractJobPost(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error (adminGetJobPosts): " + e.getMessage());
+        }
+        return list;
+    }
+
+    
+    public int adminCountAllJobs() {
+       
+        String sql = "SELECT COUNT(*) FROM JobPost";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    /**
+     * Tìm kiếm jobs cho Admin (KHÔNG lọc Visible = 1)
+     * @return Danh sách JobPost
+     */
+    public List<JobPost> adminSearchJobs(String category, String location,
+            Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
+            int offset, int noOfRecords) {
+        List<JobPost> list = new ArrayList<>();
+        // Bỏ 'WHERE Visible = 1'
+        // Dùng 'WHERE 1=1' để dễ dàng nối các mệnh đề 'AND'
+        StringBuilder sql = new StringBuilder("SELECT * FROM JobPost WHERE 1=1");
+
+        if (category != null && !category.isEmpty()) {
+            sql.append(" AND Category LIKE ?");
+        }
+        if (location != null && !location.isEmpty()) {
+            sql.append(" AND Location LIKE ?");
+        }
+        if (minSalary != null && minSalary >= 0) {
+            sql.append(" AND OfferMin >= ?");
+        }
+        if (maxSalary != null && maxSalary >= 0) {
+            sql.append(" AND OfferMax <= ?");
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+        }
+        if (numberExp >= 0) {
+            sql.append(" AND NumberExp = ?");
+        }
+        if (jobType != null && !jobType.isEmpty()) {
+            sql.append(" AND TypeJob = ?");
+        }
+
+        sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (category != null && !category.isEmpty()) {
+                ps.setString(idx++, "%" + category + "%");
+            }
+            if (location != null && !location.isEmpty()) {
+                ps.setString(idx++, "%" + location + "%");
+            }
+            if (minSalary != null && minSalary >= 0) {
+                ps.setDouble(idx++, minSalary);
+            }
+            if (maxSalary != null && maxSalary >= 0) {
+                ps.setDouble(idx++, maxSalary);
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                String normalized = normalizeKeyword(keyword);
+                ps.setString(idx++, "%" + normalized + "%");
+                ps.setString(idx++, "%" + normalized + "%");
+            }
+            if (numberExp >= 0) {
+                ps.setInt(idx++, numberExp);
+            }
+            if (jobType != null && !jobType.isEmpty()) {
+                ps.setString(idx++, jobType);
+            }
+            ps.setInt(idx++, offset);
+            ps.setInt(idx++, noOfRecords);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractJobPost(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Đếm kết quả tìm kiếm cho Admin (KHÔNG lọc Visible = 1)
+     * @return Tổng số bài đăng
+     */
+    public int adminCountJobsSearched(String category, String location,
+            Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
+        // Bỏ 'WHERE Visible = 1'
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE 1=1");
+
+        if (category != null && !category.isEmpty()) {
+            sql.append(" AND Category LIKE ?");
+        }
+        if (location != null && !location.isEmpty()) {
+            sql.append(" AND Location LIKE ?");
+        }
+        if (minSalary != null && minSalary >= 0) {
+            sql.append(" AND OfferMin >= ?");
+        }
+        if (maxSalary != null && maxSalary >= 0) {
+            sql.append(" AND OfferMax <= ?");
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+        }
+        if (numberExp >= 0) {
+            sql.append(" AND NumberExp = ?");
+        }
+        if (jobType != null && !jobType.isEmpty()) {
+            sql.append(" AND TypeJob = ?");
+        }
+
+        try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (category != null && !category.isEmpty()) {
+                ps.setString(idx++, "%" + category + "%");
+            }
+            if (location != null && !location.isEmpty()) {
+                ps.setString(idx++, "%" + location + "%");
+            }
+            if (minSalary != null && minSalary >= 0) {
+                ps.setDouble(idx++, minSalary);
+            }
+            if (maxSalary != null && maxSalary >= 0) {
+                ps.setDouble(idx++, maxSalary);
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                String normalized = normalizeKeyword(keyword);
+                ps.setString(idx++, "%" + normalized + "%");
+                ps.setString(idx++, "%" + normalized + "%");
+            }
+            if (numberExp >= 0) {
+                ps.setInt(idx++, numberExp);
+            }
+            if (jobType != null && !jobType.isEmpty()) {
+                ps.setString(idx++, jobType);
+            }
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
