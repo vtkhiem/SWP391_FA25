@@ -94,8 +94,8 @@ public class PaymentReturnServlet extends HttpServlet {
             }
 
             // ✅ 3. Lấy orderId từ tham số đã gửi ban đầu
-           String vnp_OrderInfo = request.getParameter("vnp_OrderInfo");
-           String orderIdStr = vnp_OrderInfo.replaceAll("\\D+", "");
+            String vnp_OrderInfo = request.getParameter("vnp_OrderInfo");
+            String orderIdStr = vnp_OrderInfo.replaceAll("\\D+", "");
 
             if (orderIdStr == null) {
                 response.getWriter().println("<html><body><h3>Lỗi: Không tìm thấy orderId!</h3></body></html>");
@@ -142,14 +142,14 @@ public class PaymentReturnServlet extends HttpServlet {
                 }
 
                 boolean inserted = serviceEmpDAO.registerService(employerId, serviceId, registerDate, expirationDate, paymentStatus, actionType);
-if(inserted){
-     
-              response.sendRedirect("payment_success.jsp?" + request.getQueryString());
+                if (inserted) {
 
-}else{
-    //database 
-}
-             
+                    response.sendRedirect("payment_success.jsp?" + request.getQueryString());
+
+                } else {
+                    //database 
+                }
+
             } else {
                 // ❌ Giao dịch thất bại
                 orderDAO.updateOrderStatus(orderId, "Failed");
@@ -163,7 +163,6 @@ if(inserted){
             e.printStackTrace();
             response.getWriter().println("<html><body><h3>Lỗi hệ thống: " + e.getMessage() + "</h3></body></html>");
         }
-
     }
 
     /**

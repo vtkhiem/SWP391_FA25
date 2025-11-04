@@ -538,4 +538,20 @@ public class JobPostDAO extends DBContext {
             ps.setTimestamp(13, null);
         }
     }
+    public int getEmployerIdByJobPostId(int jobpostID){
+          String sql = "SELECT EmployerID FROM JobPost WHERE JobpostID = ?";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, jobpostID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("EmployerID"); 
+                }
+            }
+        } catch (SQLException e) {
+               System.err.println("Error retrieving EmployerID for JobpostID " + jobpostID);
+        e.printStackTrace();
+        }
+        return -1;
+    }
 }

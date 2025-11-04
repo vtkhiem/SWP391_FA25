@@ -308,6 +308,25 @@ public class EmployerDAO extends DBContext {
             return false;
         }
     }
+        
+        public String getCompanyNameByEmployerID(int employerId){
+     String sql = """
+            SELECT  CompanyName
+            FROM Employer
+            WHERE EmployerID = ?
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, employerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("CompanyName");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+        }
 
     public static void main(String[] args) {
         System.out.println(new EmployerDAO().findById(5));
