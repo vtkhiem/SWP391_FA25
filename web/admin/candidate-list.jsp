@@ -133,6 +133,9 @@
         </table>
 
         <div class="pagination">
+            <div class="container">
+                        <a href="exportCandidateList"><button class="btn primary" type="submit">Xuất dữ liệu</button></a>
+                    </div>
             <c:forEach var="i" begin="1" end="${totalPages}">
                 <c:choose>
                     <c:when test="${i == page}">

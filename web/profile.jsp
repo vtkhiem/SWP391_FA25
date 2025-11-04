@@ -217,6 +217,7 @@
                                 <p><span class="info-label">Số điện thoại:</span> ${candidate.phoneNumber}</p>
                                 <p><span class="info-label">Địa chỉ:</span> ${candidate.address}</p>
                                 <p><span class="info-label">Quốc tịch:</span> ${candidate.nationality}</p>
+                                <p><span class="info-label">Công khai CV:</span> ${candidate.isPublic ? 'Có' : 'Không'}</p>
                             </div>
                         </div>
                     </div>
@@ -324,41 +325,48 @@
 
                     <input type="text" name="address" value="${candidate.address}" placeholder="Địa chỉ" required>
                     <input type="text" name="nationality" value="${candidate.nationality}" placeholder="Quốc tịch" required>
-                    <div style="text-align:center;margin-top:15px;">
-                        <button type="submit">Cập nhật</button>
-                        <button type="button" onclick="closeEditCandidateProfileModal()">Hủy</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!--Modal upload avt candidate-->
-        <div id="uploadCandidateImageModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeUploadCandidateImageModal()">&times;</span>
-                <h2>Avatar</h2>
-                <form id="uploadCandidateImage" action="uploadCandidateImage" method="post"  enctype="multipart/form-data">
-                    <div class="form-group">
-                        <input type="file" class="form-control" name="candidateImage" accept="image/png, image/jpeg, image/jpg"
-                               required>
-                        <small class="form-text text-muted">Chỉ chấp nhận file: IMG,PNG,JPEG,JPG</small>
-                        <div style="text-align:center;margin-top:15px;">
+                    <div style="text-align:center;margin-top:15px;margin-bottom: 15px">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="isPublic" name="isPublic"
+                                   <c:if test="${candidate.isPublic}">checked</c:if> />
+                                   <label class="form-check-label" for="isPublic">
+                                       Công khai CV
+                                   </label>
+                            </div>
                             <button type="submit">Cập nhật</button>
-                            <button type="button" onclick="closeUploadCandidateImageModal()">Hủy</button>
+                            <button type="button" onclick="closeEditCandidateProfileModal()">Hủy</button>
                         </div>
-
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Modal thêm thông tin employer -->
-        <div id="editEmployerProfileModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeEditEmployerProfileModal()">&times;</span>
-                <h2>Thông tin người dùng</h2>
-                <form id="editEmployerProfileform" action="editEmployerProfile" method="post">
-                    <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty" required >
+            <!--Modal upload avt candidate-->
+            <div id="uploadCandidateImageModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeUploadCandidateImageModal()">&times;</span>
+                    <h2>Avatar</h2>
+                    <form id="uploadCandidateImage" action="uploadCandidateImage" method="post"  enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="file" class="form-control" name="candidateImage" accept="image/png, image/jpeg, image/jpg"
+                                   required>
+                            <small class="form-text text-muted">Chỉ chấp nhận file: IMG,PNG,JPEG,JPG</small>
+                            <div style="text-align:center;margin-top:15px;">
+                                <button type="submit">Cập nhật</button>
+                                <button type="button" onclick="closeUploadCandidateImageModal()">Hủy</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal thêm thông tin employer -->
+            <div id="editEmployerProfileModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeEditEmployerProfileModal()">&times;</span>
+                    <h2>Thông tin người dùng</h2>
+                    <form id="editEmployerProfileform" action="editEmployerProfile" method="post">
+                        <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty" required >
                     <input type="text" name="email" value="${employer.email}" readonly="" placeholder="Email" required>
                     <input id="phone" type="text" name="phoneNumber" 
                            value="${employer.phoneNumber}" placeholder="Số điện thoại" required>

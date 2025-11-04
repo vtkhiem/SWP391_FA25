@@ -3,6 +3,7 @@ package dal;
 import model.Candidate;
 import java.sql.*;
 import java.util.*;
+import model.Employer;
 
 public class CandidateDAO extends DBContext {
 
@@ -54,13 +55,26 @@ public class CandidateDAO extends DBContext {
         return 0;
     }
 
+    public List<Candidate> getAllCandidates(){
+        List<Candidate> list = new ArrayList<>();
+        String sql = "SELECT * FROM Candidate";
+        try (PreparedStatement st = c.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
     public List<Candidate> findPage(int page, int pageSize, String keyword) {
         List<Candidate> list = new ArrayList<>();
         if (page < 1) page = 1;
         int offset = (page - 1) * pageSize;
 
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality ")
+        sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality, isPublic ")
           .append("FROM Candidate ");
 
         boolean hasKw = keyword != null && !keyword.trim().isEmpty();
@@ -101,7 +115,7 @@ public class CandidateDAO extends DBContext {
 
     public Candidate findById(int id) {
         String sql = """
-            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar
+            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar, isPublic 
             FROM Candidate
             WHERE CandidateID = ?
         """;
@@ -162,7 +176,7 @@ public class CandidateDAO extends DBContext {
  
     public Candidate checkLogin(String email, String passwordHash) {
         String sql = """
-            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar
+            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar, isPublic 
             FROM Candidate
             WHERE Email = ? AND PasswordHash = ?
         """;
@@ -211,7 +225,8 @@ public class CandidateDAO extends DBContext {
                SET CandidateName = ?,
                    Address = ?,
                    PhoneNumber = ?,
-                   Nationality = ?
+                   Nationality = ?,
+                   isPublic = ?
              WHERE CandidateID = ?
             """;
         try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
@@ -220,7 +235,10 @@ public class CandidateDAO extends DBContext {
             ps.setString(2, candidate.getAddress());
             ps.setString(3, candidate.getPhoneNumber());
             ps.setString(4, candidate.getNationality());
-            ps.setInt(5, candidate.getCandidateId());
+            ps.setBoolean(5, candidate.isIsPublic()); 
+            ps.setInt(6, candidate.getCandidateId());
+
+            
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -241,6 +259,7 @@ public class CandidateDAO extends DBContext {
         cd.setNationality(rs.getString("Nationality"));
         cd.setPasswordHash(rs.getString("PasswordHash"));
         cd.setAvatar(rs.getString("Avatar"));
+        cd.setIsPublic(false);
         return cd;
     }
     
@@ -263,4 +282,6 @@ public class CandidateDAO extends DBContext {
             return false;
         }
     }
+
 }
+

@@ -120,7 +120,7 @@ public class RegisterCandidateDAO extends DBContext {
     public Candidate getCandidateByEmail(String email) {
         try {
               String query = "SELECT [CandidateID], [CandidateName], [Address], [Email], [PhoneNumber], "
-                     + "[Nationality], [PasswordHash], [Avatar] "
+                     + "[Nationality], [PasswordHash], [Avatar], [isPublic] "
                      + "FROM [dbo].[Candidate] "
                      + "WHERE Email = ?";
       
@@ -138,7 +138,8 @@ public class RegisterCandidateDAO extends DBContext {
                     rs.getString("PhoneNumber"),
                     rs.getString("Nationality"),
                     rs.getString("PasswordHash"),
-                    rs.getString("Avatar")
+                    rs.getString("Avatar"),
+                    rs.getBoolean("isPublic")   
                 );
             }
         } catch (Exception e) {

@@ -57,6 +57,7 @@
                                                         <li><a href="employerWall">DashBoard</a></li>
                                                         <li><a href="job_add">Đăng Công Việc</a></li>
                                                         <li><a href="employer_jobs">Xem Công Việc</a></li>
+                                                        <li><a href="employer_candidates">Tìm ứng viên</a></li>
                                                         </c:when>
 
                                                     <%-- Candidate/Guest --%>

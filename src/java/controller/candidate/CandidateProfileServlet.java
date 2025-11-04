@@ -63,11 +63,13 @@ public class CandidateProfileServlet extends HttpServlet {
         HttpSession session = request.getSession();
         System.out.println("Session ID: " + session.getId());
         System.out.println("Error in session: " + session.getAttribute("error"));
-
+        System.out.println("error: " + session.getAttribute("error"));
+        System.out.println("message: " + session.getAttribute("message"));
+        
         // Candidate: Dữ liệu đã có trong session từ LoginServlet
         Candidate candidate = (Candidate) session.getAttribute("user");
 
-        System.out.println(session.getAttribute("error"));
+        System.out.println(session.getAttribute("message"));
         if (candidate != null) {
             request.setAttribute("candidate", candidate);
             request.getRequestDispatcher("profile.jsp").forward(request, response);
