@@ -75,7 +75,8 @@
           
              <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
-          
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
 </div>
 
 <div class="searchbar-wrap">
@@ -148,3 +149,4 @@
 </div>
 </body>
 </html>
+                           
