@@ -193,5 +193,28 @@ j.setPinned(rs.getBoolean("IsPinned"));
     }
     return list;
 }
+    public boolean isJobOnWall(int employerId, int jobpostId) {
+    String sql = "SELECT COUNT(*) FROM EmployerWall WHERE EmployerID = ? AND JobPostID = ?";
+    
+    try (
+         PreparedStatement ps = c.prepareStatement(sql)) {
+
+        ps.setInt(1, employerId);
+        ps.setInt(2, jobpostId);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                int count = rs.getInt(1);
+           
+                return count > 0; 
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        // Xử lý lỗi nếu cần, có thể trả về false hoặc ném-lỗi
+    }
+    // Mặc định trả về false nếu có lỗi hoặc không tìm thấy
+    return false; 
+}
 
 }
