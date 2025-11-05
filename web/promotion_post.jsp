@@ -451,10 +451,10 @@
                         showError(bannerImage, "Vui lòng chọn ảnh bìa.");
                         isValid = false;
                     } else {
-                        const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+                        const allowedExtensions = ["jpg", "jpeg", "png"];
                         const fileExt = bannerImage.value.split(".").pop().toLowerCase();
                         if (!allowedExtensions.includes(fileExt)) {
-                            showError(bannerImage, "Ảnh bìa chỉ được phép là JPG, JPEG, PNG hoặc GIF.");
+                            showError(bannerImage, "Ảnh bìa chỉ được phép là JPG, JPEG hoặc PNG.");
                             isValid = false;
                         }
                     }

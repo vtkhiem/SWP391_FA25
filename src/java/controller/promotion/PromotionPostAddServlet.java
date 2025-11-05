@@ -123,7 +123,7 @@ public class PromotionPostAddServlet extends HttpServlet {
             startDate = sDate.atStartOfDay();
             endDate = eDate.atStartOfDay();
 
-            if (startDate.isBefore(LocalDateTime.now())) {
+            if (startDate.isBefore(LocalDate.now().atStartOfDay())) {
                 request.setAttribute("error", "Ngày bắt đầu phải từ hôm nay trở đi.");
                 request.getRequestDispatcher("promotion_post.jsp").forward(request, response);
                 return;

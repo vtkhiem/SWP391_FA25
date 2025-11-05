@@ -244,7 +244,7 @@ public class JobPostDAO extends DBContext {
         WHERE jp.EmployerID = ?
         ORDER BY jp.DayCreate DESC
         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-    """;
+        """;
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerId);
@@ -289,7 +289,7 @@ public class JobPostDAO extends DBContext {
     }
 
     public int countJobsByEmployer(int employerId) {
-        String sql = "SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?";
+        String sql = "SELECT COUNT(*), ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerId);
@@ -324,29 +324,29 @@ public class JobPostDAO extends DBContext {
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
             int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM JobPost WHERE EmployerID = ?");
-
+        StringBuilder sql = new StringBuilder("SELECT jp.*, ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
+        
         if (category != null && !category.isEmpty()) {
-            sql.append(" AND Category LIKE ?");
+            sql.append(" AND jp.Category LIKE ?");
         }
         if (location != null && !location.isEmpty()) {
-            sql.append(" AND Location LIKE ?");
+            sql.append(" AND jp.Location LIKE ?");
         }
         if (minSalary != null && minSalary >= 0) {
-            sql.append(" AND OfferMin >= ?");
+            sql.append(" AND jp.OfferMin >= ?");
         }
         if (maxSalary != null && maxSalary >= 0) {
-            sql.append(" AND OfferMax <= ?");
+            sql.append(" AND jp.OfferMax <= ?");
         }
         if (keyword != null && !keyword.isEmpty()) {
             // Sử dụng COLLATE chính xác và đặt điều kiện cho Title/Description
-            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+            sql.append(" AND (jp.Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR jp.Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
         }
         if (numberExp >= 0) {
-            sql.append(" AND NumberExp = ?");
+            sql.append(" AND jp.NumberExp = ?");
         }
         if (jobType != null && !jobType.isEmpty()) {
-            sql.append(" AND TypeJob = ?");
+            sql.append(" AND jp.TypeJob = ?");
         }
 
         sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
@@ -392,28 +392,28 @@ public class JobPostDAO extends DBContext {
 
     public int countSearchedJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*), ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
 
         if (category != null && !category.isEmpty()) {
-            sql.append(" AND Category LIKE ?");
+            sql.append(" AND jp.Category LIKE ?");
         }
         if (location != null && !location.isEmpty()) {
-            sql.append(" AND Location LIKE ?");
+            sql.append(" AND jp.Location LIKE ?");
         }
         if (minSalary != null && minSalary >= 0) {
-            sql.append(" AND OfferMin >= ?");
+            sql.append(" AND jp.OfferMin >= ?");
         }
         if (maxSalary != null && maxSalary >= 0) {
-            sql.append(" AND OfferMax <= ?");
+            sql.append(" AND jp.OfferMax <= ?");
         }
         if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+            sql.append(" AND (jp.Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR jp.Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
         }
         if (numberExp >= 0) {
-            sql.append(" AND NumberExp = ?");
+            sql.append(" AND jp.NumberExp = ?");
         }
         if (jobType != null && !jobType.isEmpty()) {
-            sql.append(" AND TypeJob = ?");
+            sql.append(" AND jp.TypeJob = ?");
         }
 
         try (PreparedStatement ps = c.prepareStatement(sql.toString())) {

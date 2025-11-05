@@ -9,7 +9,7 @@ public class PromotionPostDAO extends DBContext {
 
     public boolean insertPromotionPost(PromotionPost proPost) {
         String sql = "INSERT INTO PromotionPost (ServiceID, Title, [Content], BannerImage, StartDate, EndDate, IsActive, PriorityLevel, CreatedAt, UpdatedAt, CreatedBy)"
-                + "VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, proPost.getServiceID());
             ps.setString(2, proPost.getTitle());
@@ -27,12 +27,12 @@ public class PromotionPostDAO extends DBContext {
             }
             ps.setBoolean(7, proPost.isIsActive());
             ps.setInt(8, proPost.getPriorityLevel());
-            if (proPost.getStartDate() != null) {
+            if (proPost.getCreatedAt() != null) {
                 ps.setTimestamp(9, Timestamp.valueOf(proPost.getCreatedAt()));
             } else {
                 ps.setTimestamp(9, null);
             }
-            if (proPost.getEndDate() != null) {
+            if (proPost.getUpdatedAt() != null) {
                 ps.setTimestamp(10, Timestamp.valueOf(proPost.getUpdatedAt()));
             } else {
                 ps.setTimestamp(10, null);
