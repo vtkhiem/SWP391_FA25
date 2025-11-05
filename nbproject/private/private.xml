@@ -16,10 +16,6 @@
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/PromotionPost.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/feedback/AdminListFeedbackServlet.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/adminFeedback.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/FeedbackDAO.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Feedback.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/ServiceFunction.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/EmailService.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/DBContext.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/VNPaySecurityUtils.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/VNPayPaymentServlet.java</file>
@@ -52,8 +48,38 @@
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/jobs.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/JobListServlet.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/job_details.jsp</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/EmployerDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/employer/EmployerServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/payment_success.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/JobAddServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/ServicePromotionDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/wall/PinJobOnWallServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Notification.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/NotificationDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/notification/NotificationServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/header_notification.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/AdminJobListServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/jobs_manage_by_admin.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/JobVisibleServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/AdminHidePostSendMailServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/JobHideServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/feedback/RespondFeedbackServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/PasswordDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/OrderDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/RegisterEmployerDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/wall/HideAndShowJobpostFromWallServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/marketing-staff.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/EmployerWall.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/AdminRoleDefine.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/EmployerJobDetailServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/addPromotion.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/adminPromotionList.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/viewEmployerWall.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/EmailBanned.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/EmailBannedDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/JobDetailServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/AdminJobDetailServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin_job_details.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/EmailService.java</file>
         </group>
     </open-files>
 </project-private>

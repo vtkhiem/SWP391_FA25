@@ -13,6 +13,9 @@
     <title>Danh sách Feedback</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+          .navbar {
+            background:#003366; color:#fff; padding:10px 20px; display:flex; gap:10px;
+        }
         body {
             background-color: #f8f9fa;
             padding: 30px;
@@ -30,7 +33,26 @@
     </style>
 </head>
 <body>
+     <div class="navbar">
+    <a>Admin Dashboard</a>
+    <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
+    <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/admin/employers" class="nav-link">Employers</a>
+      <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link">Promotions</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/admin/staffs" class="nav-link">Staffs</a>
+          
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
+</div>
 <div class="container">
+   
     <h2 class="text-center mb-4">📨 Danh sách Feedback</h2>
 
     <!-- Nav tabs -->

@@ -19,12 +19,13 @@ public class Order {
     private String payMethod;
     private String status;
     private LocalDateTime date;        // DATETIME → LocalDateTime
-    private Integer duration;       
+    private Integer duration; 
+    private String code;
 
     public Order() {
     }
 
-    public Order(int orderID, int employerID, int serviceID, BigDecimal amount, String payMethod, String status, LocalDateTime date, Integer duration) {
+    public Order(int orderID, int employerID, int serviceID, BigDecimal amount, String payMethod, String status, LocalDateTime date, Integer duration, String code) {
         this.orderID = orderID;
         this.employerID = employerID;
         this.serviceID = serviceID;
@@ -33,7 +34,10 @@ public class Order {
         this.status = status;
         this.date = date;
         this.duration = duration;
+        this.code = code;
     }
+
+   
 
     public int getOrderID() {
         return orderID;
@@ -98,6 +102,15 @@ public class Order {
     public void setDuration(Integer duration) {
         this.duration = duration;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+    
     
     
 }

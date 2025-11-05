@@ -34,8 +34,8 @@ public class OrderDAO extends DBContext{
     
    
     public int insertOrder(Order order) throws SQLException {
-        String sql = "INSERT INTO Orders (employerID, serviceID, amount, payMethod, status, date, duration) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Orders (employerID, serviceID, amount, payMethod, status, date, duration,code) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -58,6 +58,11 @@ public class OrderDAO extends DBContext{
                 ps.setInt(7, order.getDuration());
             } else {
                 ps.setNull(7, Types.INTEGER);
+            }
+              if (order.getCode()!= null) {
+                ps.setString(8, order.getCode());
+            } else {
+                ps.setNull(8, Types.NVARCHAR);
             }
 
             int affectedRows = ps.executeUpdate();
@@ -100,7 +105,8 @@ public class OrderDAO extends DBContext{
                         rs.getString("PayMethod"),
                         rs.getString("Status"),
                         rs.getTimestamp("Date").toLocalDateTime(),
-                        rs.getInt("Duration")
+                        rs.getInt("Duration"),
+                        rs.getString("Code")
                 );
                 list.add(order);
             }
@@ -123,7 +129,8 @@ public class OrderDAO extends DBContext{
                             rs.getString("PayMethod"),
                             rs.getString("Status"),
                             rs.getTimestamp("Date").toLocalDateTime(),
-                            rs.getInt("Duration")
+                            rs.getInt("Duration"),
+                            rs.getString("Code")
                     );
                 }
             }
@@ -147,7 +154,8 @@ public class OrderDAO extends DBContext{
                             rs.getString("PayMethod"),
                             rs.getString("Status"),
                             rs.getTimestamp("Date").toLocalDateTime(),
-                            rs.getInt("Duration")
+                            rs.getInt("Duration"),
+                            rs.getString("Code")
                     );
                     list.add(order);
                 }
