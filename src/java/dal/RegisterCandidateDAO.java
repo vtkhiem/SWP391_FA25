@@ -186,10 +186,10 @@ public class RegisterCandidateDAO extends DBContext {
     public static void main(String[] args) {
         RegisterCandidateDAO dao = new RegisterCandidateDAO();
 
-        String name = "Nguyen Van C";
-        String email = "nguyenvanc@example.com";
-        String phone = "0912345678";
-        String password = "123456";
+        String name = "Ganyu Simp";
+        String email = "jkl@gmail.com";
+        String phone = "0395112484";
+        String password = "Tt@123456";
 
         // Kiểm tra email và phone trước khi đăng ký
         if (dao.isEmailCandidateExist(email)) {
@@ -204,9 +204,5 @@ public class RegisterCandidateDAO extends DBContext {
         // Đóng connection
         dao.closeConnection();
     }
-
-   
-  
-
 
 }

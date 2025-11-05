@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+import dal.CVDAO;
+import dal.CandidateDAO;
 import java.math.BigDecimal;
 import java.sql.Date;
 /**
@@ -25,7 +27,7 @@ public class CV {
     private String nationality;
     private String gender;
     private String fileData;
-    private Date dayCreate;
+    private Date dayCreate; 
 
     public CV() {
     }
@@ -166,6 +168,10 @@ public class CV {
 
     public void setDayCreate(Date dayCreate) {
         this.dayCreate = dayCreate;
+    }
+    
+    public Candidate getCandidate(){
+        return new CandidateDAO().getCandidateByCV(CVID);
     }
 
  

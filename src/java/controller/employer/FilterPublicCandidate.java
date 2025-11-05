@@ -4,8 +4,11 @@
  */
 package controller.employer;
 
+import dal.ApplyDAO;
 import dal.CVDAO;
 import dal.CandidateDAO;
+import dal.EmployerDAO;
+import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,16 +17,22 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import model.Apply;
+import model.ApplyDetail;
 import model.CV;
 import model.Candidate;
+import model.Employer;
+import model.JobPost;
+import tool.Validation;
 
 /**
  *
  * @author shiro
  */
-@WebServlet(name = "EmployerCandidates", urlPatterns = {"/employerCandidates"})
-public class employerCandidates extends HttpServlet {
+@WebServlet(name = "FilterPublicCandidate", urlPatterns = {"/filterPublicCandidate"})
+public class FilterPublicCandidate extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +51,10 @@ public class employerCandidates extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet employerCandidates</title>");
+            out.println("<title>Servlet FilterPublicCandidate</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet employerCandidates at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet FilterPublicCandidate at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,43 +72,50 @@ public class employerCandidates extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
         response.setContentType("text/html;charset=UTF-8");
-        int pageSize = 10;
-        int page = 1;
-        try {
-            String p = request.getParameter("page");
-            if (p != null) {
-                page = Math.max(1, Integer.parseInt(p));
-            }
-        } catch (NumberFormatException ignored) {
-        }
+        HttpSession session = request.getSession();
 
-        CVDAO cvdao = new CVDAO();
-        CandidateDAO candao = new CandidateDAO();
+        String txt = Validation.searchKey(request.getParameter("txt"));
+
+        // Salary filter (nếu không nhập thì set = -1 để bỏ qua)
+        double min = -1;
+
+        try {
+            String minParam = request.getParameter("offerMin");
+            if (minParam != null && !minParam.isEmpty()) {
+                min = Double.parseDouble(minParam);
+            }
+        } catch (NumberFormatException e) {
+            // Nếu parse lỗi thì bỏ qua filter
+            min = -1;
+        }
         
-        int total = cvdao.countPublicCVs();
-        int totalPages = (int) Math.ceil(total / (double) pageSize);
-        if (totalPages == 0) {
-            totalPages = 1;
-        }
-        if (page > totalPages) {
-            page = totalPages;
-        }
+
+        int page = Validation.getPage(request.getParameter("page"));
+
+        ApplyDAO dao = new ApplyDAO();
+        JobPostDAO jdao = new JobPostDAO();
+        CandidateDAO cdao = new CandidateDAO();
+        CVDAO cvdao = new CVDAO();
+        EmployerDAO edao = new EmployerDAO();
+
         int recordsPerPage = 10;
         int offset = (page - 1) * recordsPerPage;
-        List<CV> cvs = cvdao.getPublicCVs(offset, recordsPerPage);
+       List<CV> cvs = cvdao.filterPublicCVs(txt, min, offset,recordsPerPage);
+
         
-                
+        int totalRecords = cvdao.countFilteredPublicCV(txt, min);
+        int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
         request.setAttribute("cvs", cvs);
+        request.setAttribute("txt", txt);
+        request.setAttribute("offerMin", min);
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("total", total);
-
-        request.getRequestDispatcher("/employer-view-candidate.jsp")
-               .forward(request, response);
-
+        request.getRequestDispatcher("employer-view-candidate.jsp").forward(request, response);
     }
+    
+    
 
     /**
      * Handles the HTTP <code>POST</code> method.

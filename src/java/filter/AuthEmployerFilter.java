@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/job_delete_bulk", "/employer_jobs", "/employer_search", "/filterApply","/employerProfile", "/editEmployerProfile", "/employerServices"})
+@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/job_delete_bulk", "/employer_jobs", "/employer_search", "/filterApply","/employerProfile", "/editEmployerProfile", "/employerServices", "/employerCandidates", "/filterPublicCandidate"})
 public class AuthEmployerFilter implements Filter {
 
     @Override
