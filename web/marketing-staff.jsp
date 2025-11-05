@@ -72,14 +72,7 @@
         <a class="btn primary" href="${pageContext.request.contextPath}/marketingStatistics">Xem thống kê</a>
       </div>
     </div>
-
-    <div class="card">
-      <h3>Quản lý Blog Post</h3>
-      <p>Soạn thảo, xuất bản và sắp xếp các bài viết trên trang Blog.</p>
-      <div class="actions">
-        <a class="btn primary" href="${pageContext.request.contextPath}/blog-list">Xem danh sách bài viết</a>
-      </div>
-    </div>
+      
   </div>
 </div>
 </body>

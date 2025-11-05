@@ -74,6 +74,13 @@ public class PinJobOnWallServlet extends HttpServlet {
             int serviceId = sedao.getCurrentServiceByEmployerId(employerId);
             List<Function> list = sfdao.getFunctionsByServiceId(serviceId);
               boolean hasWallFunction = false;
+            for(Function f : list){
+                 if (f.getFunctionName().equalsIgnoreCase("PinPost")) {
+                        hasWallFunction = true;
+                        break;
+                    }
+            }
+            
               if(hasWallFunction){
                    if ("pin".equalsIgnoreCase(action)) {
                 success = dao.pinJob(employerId, jobPostId);
