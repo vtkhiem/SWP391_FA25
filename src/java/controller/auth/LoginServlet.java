@@ -6,6 +6,7 @@ package controller.auth;
 
 import dal.AdminDAO;
 import dal.CandidateDAO;
+import dal.EmailBannedDAO;
 import dal.RegisterCandidateDAO;
 import dal.RegisterEmployerDAO;
 import java.io.IOException;
@@ -68,7 +69,9 @@ public class LoginServlet extends HttpServlet {
 
             HttpSession session = request.getSession();
             if (role.equalsIgnoreCase("candidate")) {
-                if (candidateDAO.isEmailCandidateExist(inputValue)) {
+                EmailBannedDAO ebdao  = new EmailBannedDAO();
+                if(!ebdao.isEmailBanned(inputValue, "Candidate")){
+                    if (candidateDAO.isEmailCandidateExist(inputValue)) {
                     boolean result = candidateDAO.loginCandidate(inputValue, password);
 
                     if (result) {
@@ -85,8 +88,14 @@ public class LoginServlet extends HttpServlet {
                 } else {
                     status = "Tài Khoản không tồn tại";
                 }
+                }else{
+                    status = "Tài Khoản của bạn đã bị hạn chế";
+                }
+                
             } else if (role.equalsIgnoreCase("employer")) {
-                if (employerDAO.isEmailEmployerExist(inputValue)) {
+                  EmailBannedDAO ebdao  = new EmailBannedDAO();
+                if(!ebdao.isEmailBanned(inputValue, "Employer")){
+                    if (employerDAO.isEmailEmployerExist(inputValue)) {
 
                     boolean result = employerDAO.loginEmployer(inputValue, password);
 
@@ -109,7 +118,11 @@ public class LoginServlet extends HttpServlet {
                     }
                 } else {
                     status = "Tài Khoản không tồn tại";
+                } 
+                }else{
+                    status = "Tài Khoản của bạn đã bị hạn chế";
                 }
+               
 
             }
 

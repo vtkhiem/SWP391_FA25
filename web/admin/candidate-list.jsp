@@ -56,6 +56,114 @@
         .pagination a, .pagination span { padding:8px 12px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; text-decoration:none; color:inherit; }
         .pagination .active { background:#003366; color:#fff; border-color:#003366; }
         .empty { color:#6b7280; padding:20px; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #111827;
+        }
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        .modal-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .modal-input:focus {
+            outline: none;
+            border-color: #ff7a00;
+            box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.1);
+        }
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn-cancel {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+        }
+        .btn-cancel:hover {
+            background: #f9fafb;
+        }
+        .btn-confirm {
+            background: #dc2626;
+            border: 1px solid #dc2626;
+            color: #fff;
+        }
+        .btn-confirm:hover {
+            background: #b91c1c;
+        }
+        .toast-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 22px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s ease;
+}
+
+/* Kiểu cho thông báo thành công */
+.toast-message.success {
+    background-color: #16a34a; /* Màu xanh lá */
+}
+
+/* Kiểu cho thông báo lỗi */
+.toast-message.error {
+    background-color: #dc2626; /* Màu đỏ */
+}
+
+/* Animation khi hiện */
+.toast-message.show {
+    opacity: 1;
+    transform: translateX(0);
+}
     </style>
 </head>
 <body>
@@ -77,7 +185,24 @@
           <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
              <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
+           <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/bannedAccountList" class="nav-link" style="text-decoration:underline;">Banned</a>
 </div>
+<c:if test="${not empty sessionScope.message}">
+    <div id="toast" class="toast-message success show">
+        ${sessionScope.message}
+    </div>
+    <%-- Xóa attribute khỏi session sau khi đã hiển thị --%>
+    <c:remove var="message" scope="session"/>
+</c:if>
+
+<c:if test="${not empty sessionScope.error}">
+    <div id="toast" class="toast-message error show">
+        ${sessionScope.error}
+    </div>
+    <%-- Xóa attribute khỏi session sau khi đã hiển thị --%>
+    <c:remove var="error" scope="session"/>
+</c:if>
 
 <div class="searchbar-wrap">
     <form class="searchbar" method="get" action="">
@@ -116,12 +241,10 @@
                                 <td>${c.phoneNumber}</td>
                                 <td><c:out value="${empty c.nationality ? '—' : c.nationality}"/></td>
                                 <td class="col-actions">                             
-                                    <form method="post" action="${pageContext.request.contextPath}/admin/candidate/delete"
-                                          style="display:inline-block;margin-left:8px;"
-                                          onsubmit="return confirm('Banned ứng viên ${c.candidateName}?');">
-                                        <input type="hidden" name="id" value="${c.candidateId}">
-                                        <button class="btn btn-danger" type="submit">Ban</button>
-                                    </form>
+                                    <button class="btn btn-danger" type="button" 
+                                            onclick="openBanModal(${c.candidateId}, '${c.candidateName}')">
+                                        Ban
+                                    </button>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -147,6 +270,73 @@
         </div>
     </div>
 </div>
+
+<!-- Ban Modal -->
+<div id="banModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">Ban ứng viên</div>
+        <form id="banForm" method="post" action="${pageContext.request.contextPath}/candidateBan">
+            <div class="modal-body">
+                <p style="margin-bottom: 16px; color: #6b7280;">
+                    Bạn có chắc chắn muốn ban ứng viên <strong id="candidateName"></strong>?
+                </p>
+                <label class="modal-label" for="banReason">Lý do ban <span style="color: #dc2626;">*</span></label>
+                <textarea 
+                    id="banReason" 
+                    name="banReason" 
+                    class="modal-input" 
+                    placeholder="Nhập lý do ban ứng viên..."
+                    required></textarea>
+                <input type="hidden" id="candidateId" name="id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeBanModal()">Hủy</button>
+                <button type="submit" class="btn btn-confirm">Xác nhận Ban</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openBanModal(candidateId, candidateName) {
+        document.getElementById('candidateId').value = candidateId;
+        document.getElementById('candidateName').textContent = candidateName;
+        document.getElementById('banReason').value = '';
+        document.getElementById('banModal').classList.add('active');
+    }
+
+    function closeBanModal() {
+        document.getElementById('banModal').classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('banModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeBanModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeBanModal();
+        }
+    });
+    document.addEventListener('DOMContentLoaded', (event) => {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        // Sau 3 giây (3000ms), bắt đầu làm mờ
+        setTimeout(() => {
+            toast.style.opacity = '0';
+        }, 3000);
+        
+        // Sau 3.5 giây (3500ms), hoàn toàn ẩn đi
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3500);
+    }
+});
+</script>
+
 </body>
 </html>
-                           
