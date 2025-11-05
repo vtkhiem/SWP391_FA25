@@ -45,8 +45,6 @@
     <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
   </div>
 </div>
-  
-    ${sessionScope.user}
 
 <div class="container">
   <div class="cards">

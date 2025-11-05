@@ -19,7 +19,6 @@ public class PromotionPost {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private boolean isActive;
-    private String displayPosition;
     private int priorityLevel;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -28,7 +27,7 @@ public class PromotionPost {
     public PromotionPost() {
     }
 
-    public PromotionPost(int promotionPostID,  int serviceID, String title, String content, String bannerImage, LocalDateTime startDate, LocalDateTime endDate, boolean isActive, String displayPosition, int priorityLevel, LocalDateTime createdAt, LocalDateTime updatedAt, int createdBy) {
+    public PromotionPost(int promotionPostID,  int serviceID, String title, String content, String bannerImage, LocalDateTime startDate, LocalDateTime endDate, boolean isActive, int priorityLevel, LocalDateTime createdAt, LocalDateTime updatedAt, int createdBy) {
         this.promotionPostID = promotionPostID;
         this.serviceID = serviceID;
         this.title = title;
@@ -37,7 +36,6 @@ public class PromotionPost {
         this.startDate = startDate;
         this.endDate = endDate;
         this.isActive = isActive;
-        this.displayPosition = displayPosition;
         this.priorityLevel = priorityLevel;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -106,14 +104,6 @@ public class PromotionPost {
 
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
-    }
-
-    public String getDisplayPosition() {
-        return displayPosition;
-    }
-
-    public void setDisplayPosition(String displayPosition) {
-        this.displayPosition = displayPosition;
     }
 
     public int getPriorityLevel() {

@@ -227,6 +227,27 @@
                                             <td>
                                                 <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
                                                 <a class="btn btn-sm btn-primary m-1" href="employer_job_details?id=${job.jobPostID}"><i class="ti-eye"></i></a>
+                                                <a class="btn btn-sm btn-secondary m-1" href="addToWall?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}">
+                                                    <i class="ti-pin-alt"></i>
+                                                </a>
+                                                <c:choose>
+                                                    <c:when test="${job.activeOnWall}">
+                                                        <!-- Nếu đang hiện, thì click sẽ tắt -->
+                                                        <a class="btn btn-sm btn-dark m-1"
+                                                           href="hideAndShow?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}&active=false"
+                                                           onclick="return confirm('Bạn có chắc muốn ẩn bài này khỏi tường?');">
+                                                            <i class="ti-view-grid"></i>
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <!-- Nếu đang ẩn, click sẽ bật -->
+                                                        <a class="btn btn-sm btn-dark m-1"
+                                                           href="hideAndShow?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}&active=true"
+                                                           onclick="return confirm('Bạn có chắc muốn hiển thị bài này trên tường?');">
+                                                            <i class="ti-layout-grid2-alt"></i>
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
                                                 <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
                                                 <c:choose>
                                                     <c:when test="${job.visible}">
