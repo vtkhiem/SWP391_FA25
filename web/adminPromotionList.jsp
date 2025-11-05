@@ -69,20 +69,23 @@
 </head>
 <body>
 
-<div class="navbar">
+ <div class="navbar">
     <a>Admin Dashboard</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/employers" class="nav-link">Employers</a>
-    <span class="divider">|</span>
-    <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
-    <span class="divider">|</span>
-    <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link" style="text-decoration:underline;">Promotions</a>
-    <span class="divider">|</span>
-    <a href="${pageContext.request.contextPath}/admin/staffs" class="nav-link">Staffs</a>
-    <span class="divider">|</span>
-    <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
+      <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link">Promotions</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/admin/staffs" class="nav-link">Staffs</a>
+          
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
 </div>
 
 <div class="container">

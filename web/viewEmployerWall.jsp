@@ -104,10 +104,10 @@
         margin-top: 10%;
         text-align: center;
         padding: 1.5rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
         border-radius: 16px;
         color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
     }
     
     .wall-header h3 {
@@ -161,7 +161,7 @@
     .post-icon {
         width: 50px;
         height: 50px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -169,7 +169,7 @@
         font-size: 1.5rem;
         color: white;
         flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
     }
     
     .card-body {
@@ -201,7 +201,7 @@
     .detail-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
         border-radius: 10px;
         display: flex;
         align-items: center;
@@ -250,12 +250,12 @@
         border-radius: 10px;
         font-weight: 600;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
     }
     
     .btn-view-detail:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
     }
     
     .badge {

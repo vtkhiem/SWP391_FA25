@@ -52,7 +52,7 @@ public class RegisterServiceServlet extends HttpServlet {
 
             BigDecimal finalPrice = service.getPrice();
             Promotion promo = null;
-
+            
             if (promoCode != null && !promoCode.trim().isEmpty()) {
                 promo = promoDAO.getPromotionByCode(promoCode.trim());
                 if (promo != null && promo.isStatus()) {
@@ -73,6 +73,7 @@ public class RegisterServiceServlet extends HttpServlet {
             order.setStatus("Pending");
             order.setDate(LocalDateTime.now());
             order.setDuration(service.getDuration());
+            order.setCode(promoCode);
 
             int orderId = orderDAO.insertOrder(order);
             if (orderId <= 0) {
@@ -80,7 +81,7 @@ public class RegisterServiceServlet extends HttpServlet {
                 request.getRequestDispatcher("buy_service.jsp").forward(request, response);
                 return;
             }
-
+            
             // ✅ Chuyển sang PaymentServlet
             String orderInfo = "Thanh toan don hang #" + orderId + " - " + service.getServiceName();
             String amount = String.valueOf(finalPrice.intValue());
