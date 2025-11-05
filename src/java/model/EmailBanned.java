@@ -9,7 +9,7 @@ package model;
  * @author vuthienkhiem
  */
 public class EmailBanned {
-    private int emailBanned;
+    private int emailBannedId;
     private String email;
     private String role;
     private String reason;
@@ -18,18 +18,18 @@ public class EmailBanned {
     }
 
     public EmailBanned(int emailBanned, String email, String role, String reason) {
-        this.emailBanned = emailBanned;
+        this.emailBannedId = emailBanned;
         this.email = email;
         this.role = role;
         this.reason = reason;
     }
 
-    public int getEmailBanned() {
-        return emailBanned;
+    public int getEmailBannedId() {
+        return emailBannedId;
     }
 
-    public void setEmailBanned(int emailBanned) {
-        this.emailBanned = emailBanned;
+    public void setEmailBannedId(int emailBanned) {
+        this.emailBannedId = emailBanned;
     }
 
     public String getEmail() {
