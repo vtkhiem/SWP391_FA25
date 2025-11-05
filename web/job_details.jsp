@@ -141,7 +141,10 @@
                                         <img src="img/svg_icon/1.svg" alt="">
                                     </div>
                                     <div class="jobs_conetent">
-                                        <h4>${job.title}</h4>
+                                        <a href="redirectWall?jobpostID=${job.jobPostID}">
+                                              <h4>${job.title}</h4>
+                                        </a>
+                                      
                                         <div class="links_locat d-flex align-items-center">
                                             <div class="location">
                                                 <p><i class="fa fa-map-marker"></i> ${job.location}</p>

@@ -2,11 +2,10 @@
      * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
      * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
      */
-    package controller.wall;
+    package controller.job;
 
-    import dal.ServiceEmployerDAO;
-    import dal.ServiceFunctionDAO;
-    import dal.WallDAO;
+    import dal.JobPostDAO;
+    import dal.SavedJobDAO;
     import java.io.IOException;
     import java.io.PrintWriter;
     import jakarta.servlet.ServletException;
@@ -14,15 +13,17 @@
     import jakarta.servlet.http.HttpServlet;
     import jakarta.servlet.http.HttpServletRequest;
     import jakarta.servlet.http.HttpServletResponse;
-    import java.util.List;
-    import model.Function;
+    import jakarta.servlet.http.HttpSession;
+    import model.Candidate;
+    import model.JobPost;
+    import model.SavedJob;
 
     /**
      *
      * @author vuthienkhiem
      */
-    @WebServlet(name = "AddToWallServlet", urlPatterns = {"/addToWall"})
-    public class AddToWallServlet extends HttpServlet {
+    @WebServlet(name = "AdminJobDetailServlet", urlPatterns = {"/adminJobDetail"})
+    public class AdminJobDetailServlet extends HttpServlet {
 
         /**
          * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +42,10 @@
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
                 out.println("<head>");
-                out.println("<title>Servlet AddToWallServlet</title>");
+                out.println("<title>Servlet AdminJobDetailServlet</title>");
                 out.println("</head>");
                 out.println("<body>");
-                out.println("<h1>Servlet AddToWallServlet at " + request.getContextPath() + "</h1>");
+                out.println("<h1>Servlet AdminJobDetailServlet at " + request.getContextPath() + "</h1>");
                 out.println("</body>");
                 out.println("</html>");
             }
@@ -62,50 +63,12 @@
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
-           try {
-                String id_raw = request.getParameter("employerId");
-                String job_raw = request.getParameter("jobpostId");
-                if(id_raw==null || job_raw==null){
-                    request.getRequestDispatcher("error.jsp");
-                }
-                int employerId = Integer.parseInt(id_raw);
-                int jobpostId = Integer.parseInt(job_raw);
-                ServiceEmployerDAO sedao= new ServiceEmployerDAO();
-                        ServiceFunctionDAO sfdao = new ServiceFunctionDAO();
-                int serviceId = sedao.getCurrentServiceByEmployerId(employerId);
-                List<Function> list = sfdao.getFunctionsByServiceId(serviceId);
-                  boolean hasWallFunction = false;
-                 for (Function f : list) {
-                    if (f.getFunctionName().equalsIgnoreCase("EmployerWall")) {
-                        hasWallFunction = true;
-                        break;
-                    }
-                }  if (hasWallFunction) {
-
-
-                    WallDAO dao = new WallDAO();
-                    if(!dao.isJobOnWall(employerId, jobpostId)){
-                         boolean success = dao.addJobToWall(employerId, jobpostId);
-
-                    if (success) {
-                        request.getSession().setAttribute("message", "Đã thêm công việc lên tường!");
-                    } else {
-                        request.getSession().setAttribute("error", "Thêm công việc lên tường thất bại!");
-                    }
-                } else {
-                   request.getSession().setAttribute("message", "Công việc đã có trên tường!");
-                }
-                    }else{
-                     request.getSession().setAttribute("error", "Dịch vụ hiện tại của bạn không hỗ trợ đăng lên tường!");
-                    
-                }
-
-                    response.sendRedirect("employer_jobs");
-
-            } catch (Exception e) {
-                   e.printStackTrace();
-            request.getSession().setAttribute("error", "Lỗi khi thêm công việc lên tường!");
-            response.sendRedirect("employer_jobs");
+               JobPostDAO jobPostDAO = new JobPostDAO();
+            int jobId = Integer.parseInt(request.getParameter("id"));
+            JobPost job = jobPostDAO.getJobPostById(jobId);
+            if (job != null) {
+                    request.setAttribute("job", job);
+                    request.getRequestDispatcher("/admin_job_details.jsp").forward(request, response);           
             }
         }
 
@@ -120,7 +83,7 @@
         @Override
         protected void doPost(HttpServletRequest request, HttpServletResponse response)
                 throws ServletException, IOException {
-
+            processRequest(request, response);
         }
 
         /**

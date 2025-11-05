@@ -95,8 +95,7 @@ public class RespondFeedbackServlet extends HttpServlet {
             }
             
             
-            
-            
+         
             try {
                 feedbackDAO.respondToFeedback(feedbackID, adminResponse, newStatus);
                 response.sendRedirect("adminFeedbackList"); // reload list
