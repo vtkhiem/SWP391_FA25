@@ -3,8 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.candidate;
+package controller.blog;
 
+import dal.BlogPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,13 +13,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import dal.CandidateDAO;
+
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="CandidateDeleteServlet", urlPatterns={"/admin/candidate/delete"})
-public class CandidateDeleteServlet extends HttpServlet {
+@WebServlet(name="DeleteBlogPostServlet", urlPatterns={"/blog-list/delete"})
+public class DeleteBlogPostServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -35,10 +36,10 @@ public class CandidateDeleteServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CandidateDeleteServlet</title>");  
+            out.println("<title>Servlet DeleteBlogPostServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CandidateDeleteServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet DeleteBlogPostServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,20 +68,26 @@ public class CandidateDeleteServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-    throws ServletException, IOException {
-
-        String idStr = req.getParameter("id");
-        int id = -1;
-        try { id = Integer.parseInt(idStr); } catch (Exception ignored) {}
-
-        if (id <= 0) {
-            resp.sendRedirect(req.getContextPath() + "/admin/candidates?deleted=0");
+        throws ServletException, IOException {
+        String idStr = req.getParameter("postId");
+        if (idStr == null || idStr.isBlank()) {
+            resp.sendRedirect(req.getContextPath()+"/blog-list?error=missing_id");
             return;
         }
-
-        CandidateDAO dao = new CandidateDAO();
-        boolean ok = dao.deleteCascade(id);
-        resp.sendRedirect(req.getContextPath() + "/admin/candidates?deleted=" + (ok ? "1" : "0"));
+        try {
+            int id = Integer.parseInt(idStr);
+            BlogPostDAO dao = new BlogPostDAO();
+            int n = dao.deleteById(id);
+            if (n > 0) {
+                resp.sendRedirect(req.getContextPath()+"/blog-list?deleted=1");
+            } else {
+                resp.sendRedirect(req.getContextPath()+"/blog-list?error=not_found");
+            }
+        } catch (NumberFormatException e) {
+            resp.sendRedirect(req.getContextPath()+"/blog-list?error=bad_id");
+        } catch (Exception e) {
+            resp.sendRedirect(req.getContextPath()+"/blog-list?error=server");
+        }
     }
 
     /** 

@@ -5,7 +5,7 @@
 
 package controller.employer;
 
-import dal.EmployerDAO;
+import dal.BanDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,13 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author ADMIN
  */
-@WebServlet(name="EmployerDeleteServlet", urlPatterns={"/admin/employer/delete"})
-public class EmployerDeleteServlet extends HttpServlet {
+@WebServlet(name="EmployerUnbanServlet", urlPatterns={"/admin/employers/unban"})
+public class EmployerUnbanServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -36,10 +37,10 @@ public class EmployerDeleteServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployerDeleteServlet</title>");  
+            out.println("<title>Servlet EmployerUnbanServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EmployerDeleteServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet EmployerUnbanServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,12 +69,26 @@ public class EmployerDeleteServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-    throws ServletException, IOException {
-        int id; try { id = Integer.parseInt(req.getParameter("id")); } catch (Exception e){ id = -1; }
-        if (id <= 0) { resp.sendRedirect(req.getContextPath()+"/admin/employers?deleted=0"); return; }
+   throws ServletException, IOException {
 
-        boolean ok = new EmployerDAO().delete(id);
-        resp.sendRedirect(req.getContextPath()+"/admin/employers?deleted=" + (ok ? "1" : "0"));
+        HttpSession s = req.getSession(false);
+        String role = s == null ? null : (String) s.getAttribute("role");
+        if (!"Admin".equals(role)) {
+            resp.sendRedirect(req.getContextPath()+"/access-denied.jsp");
+            return;
+        }
+
+        int id;
+        try { id = Integer.parseInt(req.getParameter("id")); }
+        catch (Exception e) { resp.sendError(400, "Invalid employer id"); return; }
+
+        try {
+            BanDAO bdao = new BanDAO();
+            bdao.unbanEmployerActive(id);
+            resp.sendRedirect(req.getContextPath()+"/admin/employers?msg=unban_ok");
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
     }
 
     /** 

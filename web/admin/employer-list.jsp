@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="model.Admin" %>
 <%
     String role = (String) session.getAttribute("role");
@@ -397,6 +398,7 @@
                     <div class="container">
                         <a href="exportEmployerList"><button class="btn primary" type="submit">Xuất dữ liệu</button></a>
                     </div>
+
                     <c:forEach var="i" begin="1" end="${totalPages}">
                         <c:url var="pageUrl" value="">
                             <c:param name="page" value="${i}"/>
@@ -420,5 +422,13 @@
                 </div>
             </div>
         </div>
+
+
+        <script>
+            function confirmUnbanEmployer(name) {
+                return confirm('Gỡ cấm nhà tuyển dụng ' + (name || '') + ' khỏi trạng thái cấm?');
+            }
+        </script>
     </body>
 </html>
+

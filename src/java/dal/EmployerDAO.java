@@ -25,6 +25,7 @@ public class EmployerDAO extends DBContext {
             params.add(statusFilter);
         }
 
+
         try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
                 Object v = params.get(i);
@@ -62,10 +63,12 @@ public class EmployerDAO extends DBContext {
                 e.setDescription(rs.getString("Description"));
                 e.setLocation(rs.getString("Location"));
                 e.setUrlWebsite(rs.getString("URLWebsite"));
+
                 // Added TaxCode based on the logic from the HEAD branch for consistency
                 try {
                     e.setTaxCode(rs.getString("TaxCode"));
                 } catch (SQLException ignored) {
+
                 }
                 e.setImgLogo(rs.getString("ImgLogo"));
                 e.setStatus(rs.getBoolean("Status"));
@@ -163,7 +166,6 @@ public class EmployerDAO extends DBContext {
         return list;
     }
 
-    // New method from 'main' branch
     public Employer findById(int id) {
         String sql = """
             SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
@@ -186,7 +188,6 @@ public class EmployerDAO extends DBContext {
                     e.setDescription(rs.getString("Description"));
                     e.setLocation(rs.getString("Location"));
                     e.setUrlWebsite(rs.getString("URLWebsite"));
-                    // Added TaxCode based on the logic from the HEAD branch for consistency
                     try {
                         e.setTaxCode(rs.getString("TaxCode"));
                     } catch (SQLException ignored) {
@@ -202,7 +203,9 @@ public class EmployerDAO extends DBContext {
         return null;
     }
 
+
     // New method from 'main' branch
+
     public String getEmailByID(int id) {
         String sql = """
             SELECT  Email
@@ -274,6 +277,7 @@ public class EmployerDAO extends DBContext {
             return false;
         }
     }
+
 
     public boolean updateStatus(int employerId, int status) {
         String sql = "UPDATE Employer SET [Status] = ? WHERE EmployerID = ?";

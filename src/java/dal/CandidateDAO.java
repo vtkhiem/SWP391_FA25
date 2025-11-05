@@ -40,20 +40,17 @@ public class CandidateDAO extends DBContext {
         return cx;
     }
 
-    public int countAll(String keyword) {
-        String base = "SELECT COUNT(*) FROM Candidate";
-        String where = "";
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            where = " WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?";
-        }
-        String sql = base + where;
 
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            if (!where.isEmpty()) {
-                String like = "%" + keyword.trim() + "%";
-                ps.setString(1, like);
-                ps.setString(2, like);
-                ps.setString(3, like);
+    public int countAll(String likePattern) {
+        String sql = "SELECT COUNT(*) FROM Candidate";
+        boolean hasKw = likePattern != null && !likePattern.trim().isEmpty();
+        if (hasKw) {
+            sql += " WHERE CandidateName COLLATE Vietnamese_100_CI_AI LIKE ?";
+        }
+
+        try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
+            if (hasKw) {
+                ps.setString(1, likePattern);
             }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -65,6 +62,7 @@ public class CandidateDAO extends DBContext {
         }
         return 0;
     }
+
 
     public List<Candidate> getAllCandidates() {
         List<Candidate> list = new ArrayList<>();
@@ -79,31 +77,32 @@ public class CandidateDAO extends DBContext {
         return list;
     }
 
-    public List<Candidate> findPage(int page, int pageSize, String keyword) {
+
+    public List<Candidate> findPage(int page, int pageSize, String likePattern) {
+
         List<Candidate> list = new ArrayList<>();
         if (page < 1) {
             page = 1;
         }
         int offset = (page - 1) * pageSize;
 
+        boolean hasKw = likePattern != null && !likePattern.trim().isEmpty();
+
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality, isPublic ")
                 .append("FROM Candidate ");
 
-        boolean hasKw = keyword != null && !keyword.trim().isEmpty();
+
         if (hasKw) {
-            sb.append("WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? ");
+            sb.append("WHERE CandidateName COLLATE Vietnamese_100_CI_AI LIKE ? ");
         }
         sb.append("ORDER BY CandidateID ASC ")
                 .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
 
-        try (PreparedStatement ps = c.prepareStatement(sb.toString())) {
+        try (PreparedStatement ps = requireConn().prepareStatement(sb.toString())) {
             int idx = 1;
             if (hasKw) {
-                String like = "%" + keyword.trim() + "%";
-                ps.setString(idx++, like);
-                ps.setString(idx++, like);
-                ps.setString(idx++, like);
+                ps.setString(idx++, likePattern);
             }
             ps.setInt(idx++, offset);
             ps.setInt(idx, pageSize);
@@ -212,7 +211,7 @@ public class CandidateDAO extends DBContext {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return true; // phòng thủ: coi như đã tồn tại khi lỗi
+            return true; 
         }
     }
 
@@ -261,6 +260,7 @@ public class CandidateDAO extends DBContext {
         }
         return null;
     }
+
 
     public boolean deleteCascade(int candidateId) {
         String delApply = "DELETE FROM Apply WHERE CandidateID = ?";
@@ -316,6 +316,7 @@ public class CandidateDAO extends DBContext {
             return false;
         }
     }
+
 
     private Candidate mapRow(ResultSet rs) throws SQLException {
         Candidate cd = new Candidate();
