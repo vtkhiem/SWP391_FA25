@@ -16,16 +16,13 @@
         <meta charset="UTF-8">
         <title>Admin Dashboard - Employers</title>
         <style>
-
             body {
                 margin:0;
                 font-family: Arial, sans-serif;
                 background:#f3f4f6;
                 color:#111827;
             }
-
             .navbar {
-
                 background:#003366;
                 color:#fff;
                 padding:10px 20px;
@@ -193,44 +190,44 @@
                 background:#fafafa;
             }
 
-            .col-id {
+            .col-id{
                 width:4%;
                 font-variant-numeric:tabular-nums;
                 color:#374151;
             }
-            .col-name {
+            .col-name{
                 width:15%;
                 font-weight:700;
             }
-            .col-company {
+            .col-company{
                 width:12%;
             }
-            .col-email {
+            .col-email{
                 width:20%;
             }
-            .col-phone {
+            .col-phone{
                 width:10%;
             }
-            .col-loc {
+            .col-loc{
                 width:10%;
             }
-            .col-web {
+            .col-web{
                 width:20%;
             }
-            .col-tax {
+            .col-tax{
                 width:15%;
             }
-            .col-status {
+            .col-status{
                 width:10%;
                 text-align:center;
             }
-            .col-actions {
+            .col-actions{
                 width:15%;
                 text-align:right;
                 white-space:nowrap;
             }
 
-            .badge {
+            .badge{
                 display:inline-block;
                 padding:4px 8px;
                 border-radius:999px;
@@ -238,18 +235,18 @@
                 font-weight:600;
                 border:1px solid;
             }
-            .badge-ok {
+            .badge-ok{
                 background:#ecfdf5;
                 color:#065f46;
                 border-color:#a7f3d0;
             }
-            .badge-no {
+            .badge-no{
                 background:#fef2f2;
                 color:#991b1b;
                 border-color:#fecaca;
             }
 
-            .pagination {
+            .pagination{
                 display:flex;
                 gap:8px;
                 align-items:center;
@@ -258,7 +255,7 @@
                 border-top:1px solid #e5e7eb;
                 background:#fff;
             }
-            .pagination a, .pagination span {
+            .pagination a, .pagination span{
                 padding:8px 12px;
                 border-radius:8px;
                 border:1px solid #e5e7eb;
@@ -266,12 +263,12 @@
                 text-decoration:none;
                 color:inherit;
             }
-            .pagination .active {
+            .pagination .active{
                 background:#003366;
                 color:#fff;
                 border-color:#003366;
             }
-            .empty {
+            .empty{
                 color:#6b7280;
                 padding:20px;
             }
@@ -298,28 +295,25 @@
         <div class="searchbar-wrap">
             <form class="searchbar" method="get" action="">
                 <input type="text" name="q" placeholder="Tìm employer theo tên, email, công ty, SĐT" value="${q}"/>
-
                 <select name="status">
                     <option value="" ${empty status ? 'selected' : ''}>Tất cả</option>
                     <option value="true" ${status == 'true' ? 'selected' : ''}>Verified</option>
                     <option value="false" ${status == 'false' ? 'selected' : ''}>Not Verified</option>
                 </select>
-
                 <button class="btn primary" type="submit">Tìm kiếm</button>
             </form>
         </div>
 
-        <div class="container" >
+        <div class="container">
             <div class="total-card">
                 <div class="total-title">Tổng nhà tuyển dụng</div>
                 <div class="total-num">${total}</div>
-
             </div>
 
             <div class="table-card">
                 <div class="table-head">Danh Sách nhà tuyển dụng</div>
 
-                <div class="table-scroll"> 
+                <div class="table-scroll">
                     <table>
                         <thead>
                             <tr>
@@ -347,12 +341,22 @@
                                             <td class="col-phone">${e.phoneNumber}</td>
                                             <td class="col-loc">${e.location}</td>
                                             <td class="col-web">
-                                                <c:if test="${not empty e.urlWebsite}">
-                                                    <a href="<c:out value='${e.urlWebsite.startsWith("http") ? e.urlWebsite : "//" += e.urlWebsite}'/>" target="_blank" rel="noopener noreferrer">${e.urlWebsite}</a>
-                                                </c:if>
-                                                <c:if test="${empty e.urlWebsite}">—</c:if>
-                                                </td>
-                                                <td class="col-tax">${e.taxCode}</td>
+                                                <c:choose>
+                                                    <c:when test="${not empty e.urlWebsite}">
+                                                        <c:set var="u" value="${e.urlWebsite}"/>
+                                                        <c:choose>
+                                                            <c:when test="${fn:startsWith(u, 'http')}">
+                                                                <a href="${u}" target="_blank" rel="noopener noreferrer">${u}</a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <a href="https://${u}" target="_blank" rel="noopener noreferrer">${u}</a>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise>—</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="col-tax">${e.taxCode}</td>
                                             <td class="col-status">
                                                 <c:choose>
                                                     <c:when test="${e.status}">
@@ -363,7 +367,10 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <td class="col-actions">
+
+                                            <!-- ACTIONS: Verify + Ban/Unban -->
+                                            <td class="col-actions" style="text-align:right">
+                                                <!-- Nút Verify chỉ hiện khi chưa verify -->
                                                 <c:if test="${not e.status}">
                                                     <form method="post"
                                                           action="${pageContext.request.contextPath}/admin/employer/verify"
@@ -374,13 +381,34 @@
                                                     </form>
                                                 </c:if>
 
-                                                <form method="post"
-                                                      action="${pageContext.request.contextPath}/admin/employer/delete"
-                                                      style="display:inline-block"
-                                                      onsubmit="return confirm('Banned employer ${e.employerName}?');">
-                                                    <input type="hidden" name="id" value="${e.employerId}">
-                                                    <button class="btn btn-danger" type="submit">Ban</button>
-                                                </form>
+                                                <!-- Ban / Unban -->
+                                                <c:set var="isBanned" value="false"/>
+                                                <c:if test="${not empty bannedEmployerIds}">
+                                                    <c:forEach var="id" items="${bannedEmployerIds}">
+                                                        <c:if test="${id == e.employerId}">
+                                                            <c:set var="isBanned" value="true"/>
+                                                        </c:if>
+                                                    </c:forEach>
+                                                </c:if>
+
+                                                <c:choose>
+                                                    <c:when test="${isBanned}">
+                                                        <form method="post"
+                                                              action="${pageContext.request.contextPath}/admin/employers/unban"
+                                                              style="display:inline"
+                                                              onsubmit="return confirmUnbanEmployer('${e.employerName}');">
+                                                            <input type="hidden" name="id" value="${e.employerId}">
+                                                            <button type="submit" class="btn btn-danger">Unban</button>
+                                                        </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a class="btn"
+                                                           href="${pageContext.request.contextPath}/admin/employers/ban?id=${e.employerId}&backTo=list">
+                                                            Ban
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
+
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -392,7 +420,6 @@
                         </tbody>
                     </table>
                 </div>
-
 
                 <div class="pagination">
                     <div class="container">
@@ -423,7 +450,6 @@
             </div>
         </div>
 
-
         <script>
             function confirmUnbanEmployer(name) {
                 return confirm('Gỡ cấm nhà tuyển dụng ' + (name || '') + ' khỏi trạng thái cấm?');
@@ -431,4 +457,3 @@
         </script>
     </body>
 </html>
-

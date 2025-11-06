@@ -58,7 +58,7 @@
                                                         <li><a href="employerWall">DashBoard</a></li>
                                                         <li><a href="job_add">Đăng Công Việc</a></li>
                                                         <li><a href="employer_jobs">Xem Công Việc</a></li>
-                                                        <li><a href="employerCandidates">Tìm ứng viên</a></li>
+                                                        <li><a href="viewPublicCVs">Tìm ứng viên</a></li>
                                                         </c:when>
 
                                                     <%-- Candidate/Guest --%>
@@ -98,7 +98,7 @@
                                                 <a href="login.jsp">Đăng nhập</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="login-employer.jsp">Nhà tuyển dụng</a>
+                                                <a class="boxed-btn3" href="employerServices">Nhà tuyển dụng</a>
                                             </div>
                                         </c:if>
 

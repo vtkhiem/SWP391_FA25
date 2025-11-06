@@ -37,7 +37,7 @@ public class OrderDAO extends DBContext {
     public int insertOrder(Order order) throws SQLException {
 
         String sql = "INSERT INTO Orders (employerID, serviceID, amount, payMethod, status, date, duration,code) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?,?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -61,7 +61,7 @@ public class OrderDAO extends DBContext {
             } else {
                 ps.setNull(7, Types.INTEGER);
             }
-              if (order.getCode()!= null) {
+            if (order.getCode() != null) {
                 ps.setString(8, order.getCode());
             } else {
                 ps.setNull(8, Types.NVARCHAR);
@@ -174,24 +174,28 @@ public class OrderDAO extends DBContext {
     private String baseSelect() {
         // SQL query with JOINs and Outer Apply for promotion calculation
         return """
-            SELECT o.OrderID, o.EmployerID, e.EmployerName, e.Email AS EmployerEmail,
-                   o.ServiceID, s.ServiceName,
-                   o.Amount, o.PayMethod, o.Status, o.[Date], o.Duration,
-                   ap.Code       AS PromotionCode,
-                   ap.Discount   AS DiscountPercent,
-                   CAST(o.Amount * (1 - ISNULL(ap.Discount,0)/100.0) AS DECIMAL(18,2)) AS FinalAmount
-            FROM Orders o
-            JOIN Employer e ON e.EmployerID = o.EmployerID
-            JOIN Service  s ON s.ServiceID  = o.ServiceID
-            OUTER APPLY (
-                SELECT TOP 1 p.Code, p.Discount
-                FROM ServicePromotion sp
-                JOIN Promotion p ON p.PromotionID = sp.PromotionID
-                WHERE sp.ServiceID = o.ServiceID
-                  AND p.DateSt <= o.[Date] AND o.[Date] <= p.DateEn
-                ORDER BY p.Discount DESC, p.PromotionID ASC
-            ) ap
-        """;
+    SELECT o.OrderID, o.EmployerID, e.EmployerName, e.Email AS EmployerEmail,
+           o.ServiceID, s.ServiceName,
+           o.Amount, o.PayMethod, o.Status, o.[Date], o.Duration,
+           ap.Code       AS PromotionCode,
+           ap.Discount   AS DiscountPercent,
+           CAST(o.Amount * (1 - ISNULL(ap.Discount,0)) AS DECIMAL(18,2)) AS FinalAmount
+    FROM Orders o
+    JOIN Employer e ON e.EmployerID = o.EmployerID
+    JOIN Service  s ON s.ServiceID  = o.ServiceID
+    OUTER APPLY (
+        SELECT TOP 1 p.Code, p.Discount
+        FROM Promotion p
+        LEFT JOIN ServicePromotion sp ON sp.PromotionID = p.PromotionID
+        WHERE (o.Code IS NOT NULL AND p.Code = o.Code)
+           OR (o.Code IS NULL 
+               AND sp.ServiceID = o.ServiceID
+               AND p.DateSt <= o.[Date] AND o.[Date] <= p.DateEn
+               AND p.Status = 1)
+        ORDER BY p.Discount DESC, p.PromotionID ASC
+    ) ap
+    """;
+
     }
 
     public int countAll() {
@@ -234,18 +238,19 @@ public class OrderDAO extends DBContext {
 
     public BigDecimal totalRevenue() {
         String sql = """
-            SELECT SUM(CAST(o.Amount * (1 - ISNULL(ap.Discount,0)/100.0) AS DECIMAL(18,2)))
-            FROM Orders o
-            OUTER APPLY (
-                SELECT TOP 1 p.Discount
-                FROM ServicePromotion sp
-                JOIN Promotion p ON p.PromotionID = sp.PromotionID
-                WHERE sp.ServiceID = o.ServiceID
-                  AND p.DateSt <= o.[Date] AND o.[Date] <= p.DateEn
-                ORDER BY p.Discount DESC, p.PromotionID ASC
-            ) ap
-            WHERE o.Status IN ('paid','completed','success')
-        """;
+    SELECT SUM(CAST(o.Amount * (1 - ISNULL(ap.Discount,0)) AS DECIMAL(18,2)))
+    FROM Orders o
+    OUTER APPLY (
+        SELECT TOP 1 p.Discount
+        FROM ServicePromotion sp
+        JOIN Promotion p ON p.PromotionID = sp.PromotionID
+        WHERE sp.ServiceID = o.ServiceID
+          AND p.DateSt <= o.[Date] AND o.[Date] <= p.DateEn
+          AND p.Status = 1
+        ORDER BY p.Discount DESC, p.PromotionID ASC
+    ) ap
+    WHERE o.Status IN ('paid')
+""";
         try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             BigDecimal sum = rs.next() ? rs.getBigDecimal(1) : null;
             return sum != null ? sum : BigDecimal.ZERO;
@@ -274,8 +279,8 @@ public class OrderDAO extends DBContext {
         ov.setDuration(rs.wasNull() ? null : dur);
 
         ov.setPromotionCode(rs.getString("PromotionCode"));
-        int disc = rs.getInt("DiscountPercent");
-        ov.setDiscountPercent(rs.wasNull() ? null : disc);
+        BigDecimal disc = rs.getBigDecimal("DiscountPercent");
+        ov.setDiscountPercent(disc != null ? disc.multiply(BigDecimal.valueOf(100)) : BigDecimal.ZERO);
 
         ov.setFinalAmount(rs.getBigDecimal("FinalAmount"));
         return ov;
@@ -386,7 +391,7 @@ public class OrderDAO extends DBContext {
         }
 
         return 0;
-        }
+    }
 
     public static void main(String[] args) {
         System.out.println(new OrderDAO().filterOrders("bui", -1, "", "", 0, 10));
