@@ -1,75 +1,90 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-package controller.sale;
-import java.io.IOException;
-import java.io.PrintWriter;
+package controller.order;
+
+import dal.OrderDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-/**
-*
-* @author shiro
-*/
-@WebServlet(name="ExportOrderList", urlPatterns={"/exportOrderList"})
+import model.OrderView;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+
+@WebServlet(name = "ExportOrderList", urlPatterns = {"/exportOrderList"})
 public class ExportOrderList extends HttpServlet {
-/**
-* Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-* @param request servlet request
-* @param response servlet response
-* @throws ServletException if a servlet-specific error occurs
-* @throws IOException if an I/O error occurs
-*/
-protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-throws ServletException, IOException {
-response.setContentType("text/html;charset=UTF-8");
-try (PrintWriter out = response.getWriter()) {
-/* TODO output your page here. You may use following sample code. */
-out.println("<!DOCTYPE html>");
-out.println("<html>");
-out.println("<head>");
-out.println("<title>Servlet ExportOrderList</title>");
-out.println("</head>");
-out.println("<body>");
-out.println("<h1>Servlet ExportOrderList at " + request.getContextPath () + "</h1>");
-out.println("</body>");
-out.println("</html>");
-}
-}
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-/**
-* Handles the HTTP <code>GET</code> method.
-* @param request servlet request
-* @param response servlet response
-* @throws ServletException if a servlet-specific error occurs
-* @throws IOException if an I/O error occurs
-*/
-@Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-throws ServletException, IOException {
-processRequest(request, response);
-}
-/**
-* Handles the HTTP <code>POST</code> method.
-* @param request servlet request
-* @param response servlet response
-* @throws ServletException if a servlet-specific error occurs
-* @throws IOException if an I/O error occurs
-*/
-@Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-throws ServletException, IOException {
-processRequest(request, response);
-}
-/**
-* Returns a short description of the servlet.
-* @return a String containing servlet description
-*/
-@Override
-public String getServletInfo() {
-return "Short description";
-}// </editor-fold>
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        OrderDAO dao = new OrderDAO();
+        List<OrderView> list = dao.findPage(1, 9999);  // xuất tất cả
+
+        resp.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        resp.setHeader("Content-Disposition", "attachment; filename=orders.xlsx");
+
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("Orders");
+
+        // --- Header style ---
+        CellStyle headerStyle = wb.createCellStyle();
+        Font font = wb.createFont();
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        // --- Header row ---
+        String[] headers = {
+                "Order ID", "Ngày đặt", "Nhà tuyển dụng", "Email",
+                "Gói", "Mã KM", "Giảm (%)",
+                "Tổng tiền", "Phương thức", "Thời lượng", "Ngày kết thúc", "Trạng thái"
+        };
+
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // --- Data rows ---
+        int rowIndex = 1;
+        for (OrderView o : list) {
+            Row row = sheet.createRow(rowIndex++);
+
+            row.createCell(0).setCellValue(o.getOrderId());
+            row.createCell(1).setCellValue(o.getDate() != null ? o.getDate().toString() : "");
+            row.createCell(2).setCellValue(o.getEmployerName());
+            row.createCell(3).setCellValue(o.getEmployerEmail());
+            row.createCell(4).setCellValue(o.getServiceName());
+            row.createCell(5).setCellValue(o.getPromotionCode() != null ? o.getPromotionCode() : "");
+            row.createCell(6).setCellValue(o.getDiscountPercent() != null ? o.getDiscountPercent().toString() : "");
+            row.createCell(7).setCellValue(o.getFinalAmount().doubleValue());
+            row.createCell(8).setCellValue(o.getPayMethod());
+
+            row.createCell(9).setCellValue(o.getDuration() != null ? o.getDuration() : 0);
+
+            if (o.getEndDate() != null) {
+                row.createCell(10).setCellValue(o.getEndDate().toString());
+            } else {
+                row.createCell(10).setCellValue("");
+            }
+
+            row.createCell(11).setCellValue(o.getStatus());
+        }
+
+        // Auto-size
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        OutputStream out = resp.getOutputStream();
+        wb.write(out);
+        wb.close();
+        out.flush();
+        out.close();
+    }
 }
