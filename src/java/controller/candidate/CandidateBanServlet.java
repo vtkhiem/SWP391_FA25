@@ -2,18 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-<<<<<<< HEAD
 
 package controller.candidate;
 
 import dal.BanDAO;
 import dal.CandidateDAO;
-=======
-package controller.candidate;
-
-import dal.CandidateDAO;
-import dal.EmailBannedDAO;
->>>>>>> 4fcbea66ddbfcb5f56b0db6d0262b72ebd57ef46
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -22,7 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-<<<<<<< HEAD
 import java.time.Instant;
 import model.Ban;
 import model.Candidate;
@@ -36,41 +28,19 @@ public class CandidateBanServlet extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-=======
-import model.Candidate;
-import model.EmailBanned;
-import tool.EmailService;
-
-/**
- *
- * @author vuthienkhiem
- */
-@WebServlet(name = "CandidateBanServlet", urlPatterns = {"/candidateBan"})
-public class CandidateBanServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
->>>>>>> 4fcbea66ddbfcb5f56b0db6d0262b72ebd57ef46
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-<<<<<<< HEAD
     throws ServletException, IOException {
-=======
-            throws ServletException, IOException {
->>>>>>> 4fcbea66ddbfcb5f56b0db6d0262b72ebd57ef46
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-<<<<<<< HEAD
             out.println("<title>Servlet CandidateBanServlet</title>");  
             out.println("</head>");
             out.println("<body>");
@@ -83,21 +53,6 @@ public class CandidateBanServlet extends HttpServlet {
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
-=======
-            out.println("<title>Servlet CandidateBanServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CandidateBanServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
->>>>>>> 4fcbea66ddbfcb5f56b0db6d0262b72ebd57ef46
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -105,7 +60,6 @@ public class CandidateBanServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-<<<<<<< HEAD
    throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
@@ -157,15 +111,6 @@ public class CandidateBanServlet extends HttpServlet {
 
     /** 
      * Handles the HTTP <code>POST</code> method.
-=======
-            throws ServletException, IOException {
-   
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
->>>>>>> 4fcbea66ddbfcb5f56b0db6d0262b72ebd57ef46
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -173,7 +118,6 @@ public class CandidateBanServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-<<<<<<< HEAD
     throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
@@ -226,36 +170,6 @@ public class CandidateBanServlet extends HttpServlet {
 
     /** 
      * Returns a short description of the servlet.
-=======
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
-      EmailBannedDAO ebdao = new EmailBannedDAO();
-        EmailService es = new EmailService();
-      
-        String banReason = request.getParameter("banReason");
-        int id = Integer.parseInt(request.getParameter("id"));
-        CandidateDAO candao = new CandidateDAO();
-       Candidate can = candao.getCandidateById(id);
-        if (can.getEmail() == null || can.getEmail().isEmpty() || banReason == null || banReason.isEmpty()) {
-            session.setAttribute("error", "Lỗi: Email và Lý do không được để trống.");
-            response.sendRedirect("admin/candidates");
-            return;
-        }
-      
-    boolean success = ebdao.addBannedEmail(can.getEmail(),"Candidate",banReason);
-    if(success){
-         session.setAttribute("message", "Hạn chế tài khoản có "+can.getEmail()+" thành công");
-         es.sendWarningToUser(can.getEmail(), banReason, "Candidate");
-    }else{
-         session.setAttribute("error", "Tài khoản "+can.getEmail()+" vai trò "+ "Candidate "+"đã bị hạn chế từ trước");
-    }
-      response.sendRedirect("admin/candidates");
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
->>>>>>> 4fcbea66ddbfcb5f56b0db6d0262b72ebd57ef46
      * @return a String containing servlet description
      */
     @Override
