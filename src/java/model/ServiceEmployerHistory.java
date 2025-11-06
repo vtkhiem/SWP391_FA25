@@ -13,13 +13,14 @@ public class ServiceEmployerHistory {
     private String paymentStatus;
     private String actionType;
     private Timestamp createdAt;
+    private int code;
 
     public ServiceEmployerHistory() {
     }
 
     public ServiceEmployerHistory(int historyID, int employerID, int serviceID,
             String serviceName, Timestamp registerDate, Timestamp expirationDate,
-            String paymentStatus, String actionType, Timestamp createdAt) {
+            String paymentStatus, String actionType, Timestamp createdAt, int code) {
         this.historyID = historyID;
         this.employerID = employerID;
         this.serviceID = serviceID;
@@ -29,6 +30,7 @@ public class ServiceEmployerHistory {
         this.paymentStatus = paymentStatus;
         this.actionType = actionType;
         this.createdAt = createdAt;
+        this.code = code;
     }
 
     public int getHistoryID() {
@@ -101,5 +103,13 @@ public class ServiceEmployerHistory {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+    
+    public int getCode() {
+        return code;
+    }
+    
+    public void setCode(int code) {
+        this.code = code;
     }
 }

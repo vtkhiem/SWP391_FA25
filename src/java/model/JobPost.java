@@ -22,6 +22,7 @@ public class JobPost {
     private boolean activeOnWall; 
     private boolean pinned;
     private String companyName;
+    private String imageUrl;
 
 
     public JobPost() {
@@ -30,7 +31,8 @@ public class JobPost {
     public JobPost(int jobPostID, int employerID, String title, String description,
             String category, String position, String location,
             BigDecimal offerMin, BigDecimal offerMax, int numberExp,
-            boolean visible, String typeJob, LocalDateTime dayCreate, LocalDateTime dueDate) {
+            boolean visible, String typeJob, LocalDateTime dayCreate,
+            LocalDateTime dueDate) {
         this.jobPostID = jobPostID;
         this.employerID = employerID;
         this.title = title;

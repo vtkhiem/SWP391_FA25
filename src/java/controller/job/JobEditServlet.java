@@ -2,6 +2,8 @@ package controller.job;
 
 import dal.ApplyDAO;
 import dal.JobPostDAO;
+import dal.ServiceEmployerDAO;
+import dal.ServiceFunctionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,11 +17,14 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import model.Employer;
+import model.Function;
 import model.JobPost;
 
 @WebServlet(name = "JobEditServlet", urlPatterns = {"/job_edit"})
 public class JobEditServlet extends HttpServlet {
+
     private JobPostDAO jobPostDAO = new JobPostDAO();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -45,7 +50,7 @@ public class JobEditServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employer employer = (Employer) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
-        
+
         if (employer == null || !"Employer".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
             return;
@@ -59,7 +64,7 @@ public class JobEditServlet extends HttpServlet {
 
         try {
             int jobId = Integer.parseInt(idParam);
-            
+
             JobPost job = jobPostDAO.getJobPostById(jobId);
             if (job == null) {
                 session.setAttribute("error", "Không tìm thấy công việc cần chỉnh sửa.");
@@ -72,53 +77,70 @@ public class JobEditServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/employer_jobs");
                 return;
             }
-            
-            ApplyDAO applyDAO = new ApplyDAO();
-            if (applyDAO.checkHasApply(jobId)) {
-                session.setAttribute("error", "Đã có ứng viên ứng tuyển. Bạn không thể chỉnh sửa công việc này.");
-                response.sendRedirect(request.getContextPath() + "/employer_jobs");
-                return;
-            } else {
-                if (job.isVisible()) {
-                    session.setAttribute("error", "Công việc đang mở. Bạn không thể chỉnh sửa công việc này.");
+
+            ServiceEmployerDAO seDAO = new ServiceEmployerDAO();
+            int serviceId = seDAO.getCurrentServiceByEmployerId(job.getEmployerID());
+            ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
+            List<Function> funcs = sfDAO.getFunctionsByServiceId(jobId);
+            boolean hasEditFunction = false;
+            for (Function f : funcs) {
+                if (f.getFunctionName().equalsIgnoreCase("EditJobPost")) {
+                    hasEditFunction = true;
+                    break;
+                }
+            }
+
+            if (hasEditFunction) {
+                ApplyDAO applyDAO = new ApplyDAO();
+                if (applyDAO.checkHasApply(jobId)) {
+                    session.setAttribute("error", "Đã có ứng viên ứng tuyển. Bạn không thể chỉnh sửa công việc này.");
                     response.sendRedirect(request.getContextPath() + "/employer_jobs");
                     return;
                 } else {
-                    String[] parts = job.getDescription().split("<b>.*?</b>");
-                    String desc1 = "";
-                    String desc2 = "";
-                    String desc3 = "";
+                    if (job.isVisible()) {
+                        session.setAttribute("error", "Công việc đang mở. Bạn không thể chỉnh sửa công việc này.");
+                        response.sendRedirect(request.getContextPath() + "/employer_jobs");
+                        return;
+                    } else {
+                        String[] parts = job.getDescription().split("<b>.*?</b>");
+                        String desc1 = "";
+                        String desc2 = "";
+                        String desc3 = "";
 
-                    for (int i = 0; i < parts.length; i++) {
-                        String clean = parts[i].replaceAll("(?i)<br>", "\n").trim();
+                        for (int i = 0; i < parts.length; i++) {
+                            String clean = parts[i].replaceAll("(?i)<br>", "\n").trim();
 
-                        switch (i) {
-                            case 0:
-                                desc1 = clean;
-                                break;
-                            case 1:
-                                desc2 = clean;
-                                break;
-                            case 2:
-                                desc3 = clean;
-                                break;
+                            switch (i) {
+                                case 0:
+                                    desc1 = clean;
+                                    break;
+                                case 1:
+                                    desc2 = clean;
+                                    break;
+                                case 2:
+                                    desc3 = clean;
+                                    break;
+                            }
                         }
-                    }
 
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    String dueDateFormatted = "";
-                    if (job.getDueDate() != null) {
-                        dueDateFormatted = job.getDueDate().format(formatter);
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        String dueDateFormatted = "";
+                        if (job.getDueDate() != null) {
+                            dueDateFormatted = job.getDueDate().format(formatter);
+                        }
+                        request.setAttribute("dueDateFormatted", dueDateFormatted);
+                        request.setAttribute("desc1", desc1);
+                        request.setAttribute("desc2", desc2);
+                        request.setAttribute("desc3", desc3);
+                        request.setAttribute("job", job);
+                        request.getRequestDispatcher("/job_edit.jsp").forward(request, response);
                     }
-                    request.setAttribute("dueDateFormatted", dueDateFormatted);
-                    request.setAttribute("desc1", desc1);
-                    request.setAttribute("desc2", desc2);
-                    request.setAttribute("desc3", desc3);
-                    request.setAttribute("job", job);
-                    request.getRequestDispatcher("/job_edit.jsp").forward(request, response);
                 }
+            } else {
+                session.setAttribute("error", "Gói dịch vụ không có quyền được chỉnh sửa công việc.");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
             response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
@@ -130,7 +152,7 @@ public class JobEditServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employer employer = (Employer) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
-        
+
         if (employer == null || !"Employer".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/login-employer.jsp");
             return;
@@ -139,7 +161,7 @@ public class JobEditServlet extends HttpServlet {
         try {
             int jobId = Integer.parseInt(request.getParameter("id"));
             JobPost oldJob = jobPostDAO.getJobPostById(jobId);
-            
+
             if (oldJob == null || oldJob.getEmployerID() != employer.getEmployerId()) {
                 session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
                 response.sendRedirect(request.getContextPath() + "/employer_jobs");
@@ -161,9 +183,9 @@ public class JobEditServlet extends HttpServlet {
                 description = oldJob.getDescription();
             } else {
                 StringBuilder descriptionBuilder = new StringBuilder();
-                descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n","<br>")).append("<br>");
-                descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n","<br>")).append("<br>");
-                descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n","<br>"));
+                descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
+                descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
+                descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n", "<br>"));
                 description = descriptionBuilder.toString().trim();
             }
 
@@ -248,13 +270,13 @@ public class JobEditServlet extends HttpServlet {
 
             if (updated) {
                 session.setAttribute("message", "Chỉnh sửa công việc thành công!");
-                response.sendRedirect(request.getContextPath() +"/employer_jobs");
+                response.sendRedirect(request.getContextPath() + "/employer_jobs");
             } else {
                 request.setAttribute("error", "Chỉnh sửa công việc thất bại. Vui lòng thử lại.");
                 request.getRequestDispatcher("/job_edit").forward(request, response);
             }
         } catch (ServletException | IOException | NumberFormatException e) {
-            session.setAttribute("error", "Có lỗi xảy ra khi thực hiện.");
+            session.setAttribute("error", "Có lỗi" + e + " xảy ra khi thực hiện.");
             response.sendRedirect(request.getContextPath() + "/employer_jobs");
         }
     }

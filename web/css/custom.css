@@ -127,6 +127,65 @@
     text-decoration: underline;
 }
 
+.job_highlight_slider {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.job_slide_container {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.job_slide {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.job_card_large {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 80%;
+}
+
+.job_logo_large {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 24px;
+}
+
+.job_info_large {
+    flex: 1;
+}
+
+.job_title_large {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.job_company_large {
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.job_salary_large, .job_location_large {
+    color: #666;
+    margin-bottom: 4px;
+}
+
 .job_listing_area {
     padding-top: 32px;
     padding-bottom: 32px;
@@ -828,12 +887,12 @@ button.save_job:hover {
 }
 
 .is-invalid {
-  border-color: #dc3545 !important;
+    border-color: #dc3545 !important;
 }
 
 .error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  display: none;
-  margin-top: 4px;
+    color: #dc3545;
+    font-size: 0.875rem;
+    display: none;
+    margin-top: 4px;
 }

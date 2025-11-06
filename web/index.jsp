@@ -104,108 +104,32 @@
                 </div>
                 <!-- search-area-end -->
 
-                <!-- job_listing_area_start  -->
-                <div class="job_listing_area">
-                    <div class="job_listing_container">
-                        <div class="job_listing_nav">
-                            <button class="job_nav_arrow" aria-label="Prev">&lt;</button>
-                            <div class="job_listing_grid">
-                                <!-- Job Card 1 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/1.svg" alt="VinUni" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Head of Marketing & ...</div>
-                                        <div class="job_card_company">VinUniversity</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội</div>
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
-                                <!-- Job Card 2 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/2.svg" alt="Techcombank" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Internal Audit</div>
-                                        <div class="job_card_company">Techcombank</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội</div>
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
+                <!-- job_highlight_slider_start -->
+                <div class="job_highlight_slider">
+                    <button class="job_nav_arrow prev" aria-label="Prev">&lt;</button>
 
-                                <!-- Job Card 3 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/3.svg" alt="Vietcombank" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Chuyên Viên Kiểm Đị...</div>
-                                        <div class="job_card_company">Vietcombank</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội</div>
+                    <div class="job_slide_container">
+                        <!-- Một slide hiển thị 1 job -->
+                        <c:forEach var="job" items="${highlightJobs}">
+                            <div class="job_slide">
+                                <div class="job_card_large">
+                                    <div class="job_info_large">
+                                        <h3 class="job_title_large">${job.title}</h3>
+                                        <p class="job_salary_large">
+                                            <i class="fa fa-money"></i> ${job.salary}
+                                        </p>
+                                        <p class="job_location_large">
+                                            <i class="fa fa-map-marker"></i> ${job.location}
+                                        </p>
                                     </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
-                                <!-- Job Card 4 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/3.svg" alt="Vietcombank" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Chuyên Viên Kiểm Đị...</div>
-                                        <div class="job_card_company">Vietcombank</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội</div>
-
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
-                                <!-- Job Card 5 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/2.svg" alt="Techcombank" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Chuyên Viên Cao Cấp...</div>
-                                        <div class="job_card_company">Techcombank</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội</div>
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
-                                <!-- Job Card 6 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/4.svg" alt="Chailease" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Nhân Viên Quan Hệ K...</div>
-                                        <div class="job_card_company">Chailease</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Bình Dương, Đồng Nai, Hồ Chí Minh</div>
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
-                                <!-- Job Card 7 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/2.svg" alt="Techcombank" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Chuyên Gia Tài Chính...</div>
-                                        <div class="job_card_company">Techcombank</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội</div>
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
-                                </div>
-                                <!-- Job Card 8 -->
-                                <div class="job_card">
-                                    <img src="img/svg_icon/5.svg" alt="CityLand" class="job_card_logo">
-                                    <div class="job_card_info">
-                                        <div class="job_card_title">Giám Đốc Kinh Doanh...</div>
-                                        <div class="job_card_company">CityLand</div>
-                                        <div class="job_card_salary">Thương lượng</div>
-                                        <div class="job_card_location">Hà Nội, Hồ Chí Minh</div>
-                                    </div>
-                                    <div class="job_card_hot"><i class="fa fa-fire"></i>Hot</div>
                                 </div>
                             </div>
-                            <button class="job_nav_arrow" aria-label="Next">&gt;</button>
-                        </div>
+                        </c:forEach>
                     </div>
+
+                    <button class="job_nav_arrow next" aria-label="Next">&gt;</button>
                 </div>
-                <!-- job_listing_area_end  -->
+                <!-- job_highlight_slider_end -->
             </div>
 
             <!-- industry_section_start -->
@@ -380,7 +304,7 @@
             </div>
             <div class="text-center my-5">
                 <form action="prepare" method="get">
-                   
+
                     <button type="submit" class="buy-btn">
                         <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên
                     </button>
@@ -391,5 +315,28 @@
             <!-- footer -->
             <jsp:include page="footer.jsp"/>
             <!-- footer --> 
+
+            <script>
+                const container = document.querySelector('.job_slide_container');
+                const slides = document.querySelectorAll('.job_slide');
+                const prev = document.querySelector('.job_nav_arrow.prev');
+                const next = document.querySelector('.job_nav_arrow.next');
+
+                let index = 0;
+
+                function updateSlide() {
+                    container.style.transform = `translateX(-${index * 100}%)`;
+                }
+
+                next.addEventListener('click', () => {
+                    index = (index + 1) % slides.length;
+                    updateSlide();
+                });
+
+                prev.addEventListener('click', () => {
+                    index = (index - 1 + slides.length) % slides.length;
+                    updateSlide();
+                });
+            </script>
     </body>
 </html>

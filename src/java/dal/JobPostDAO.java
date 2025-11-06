@@ -22,6 +22,31 @@ public class JobPostDAO extends DBContext {
         System.out.println("Total jobs: " + list.size());
         return list;
     }
+    
+    public List<JobPost> getHighlightJob() {
+        List<JobPost> list = new ArrayList<>();
+        String sql = """
+            SELECT jp.*
+            FROM JobHighlight jh
+            JOIN JobPost jp ON jh.JobPostID = jp.JobPostID
+            WHERE jp.Visible = 1
+            AND jp.DueDate >= GETDATE()
+            ORDER BY jp.DayCreate DESC
+        """;
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractJobPost(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error (getJobPosts): " + e.getMessage());
+        }
+
+        System.out.println("Total jobs: " + list.size());
+        return list;
+    }
 
     public List<JobPost> getJobPosts(int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
@@ -236,14 +261,16 @@ public class JobPostDAO extends DBContext {
     public List<JobPost> getJobsByEmployer(int employerId, int offset, int limit) {
         List<JobPost> list = new ArrayList<>();
         String sql = """
-        SELECT jp.*, 
-               ISNULL(w.IsActive, 0) AS activeOnWall
-        FROM JobPost jp
-        LEFT JOIN EmployerWall w
-            ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID
-        WHERE jp.EmployerID = ?
-        ORDER BY jp.DayCreate DESC
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+            SELECT jp.*, ISNULL(w.IsActive, 0) AS activeOnWall
+            FROM JobPost jp
+            LEFT JOIN (
+                SELECT JobPostID, EmployerID, MAX(CAST(ISNULL(IsActive,0) AS INT)) AS IsActive
+                FROM EmployerWall
+                GROUP BY JobPostID, EmployerID
+            ) w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID
+            WHERE jp.EmployerID = ?
+            ORDER BY jp.DayCreate DESC
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
         """;
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -266,36 +293,35 @@ public class JobPostDAO extends DBContext {
                 j.setNumberExp(rs.getInt("NumberExp"));
                 j.setVisible(rs.getBoolean("Visible"));
                 j.setTypeJob(rs.getString("TypeJob"));
-
                 Timestamp dayCreate = rs.getTimestamp("DayCreate");
                 if (dayCreate != null) {
                     j.setDayCreate(dayCreate.toLocalDateTime());
                 }
-
                 Timestamp dueDate = rs.getTimestamp("DueDate");
                 if (dueDate != null) {
                     j.setDueDate(dueDate.toLocalDateTime());
                 }
-
                 j.setActiveOnWall(rs.getBoolean("activeOnWall"));
-
                 list.add(j);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return list;
     }
 
     public int countJobsByEmployer(int employerId) {
-        String sql = "SELECT COUNT(*), ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?";
+        String sql = """
+            SELECT COUNT(*) AS cnt
+            FROM JobPost jp
+            WHERE jp.EmployerID = ?
+        """;
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return rs.getInt("cnt");
                 }
             }
         } catch (SQLException e) {
@@ -325,7 +351,7 @@ public class JobPostDAO extends DBContext {
             int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT jp.*, ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
-        
+
         if (category != null && !category.isEmpty()) {
             sql.append(" AND jp.Category LIKE ?");
         }
@@ -381,7 +407,29 @@ public class JobPostDAO extends DBContext {
             ps.setInt(idx++, noOfRecords);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(extractJobPost(rs));
+                    JobPost j = new JobPost();
+                    j.setJobPostID(rs.getInt("JobPostID"));
+                    j.setEmployerID(rs.getInt("EmployerID"));
+                    j.setTitle(rs.getString("Title"));
+                    j.setDescription(rs.getString("Description"));
+                    j.setCategory(rs.getString("Category"));
+                    j.setPosition(rs.getString("Position"));
+                    j.setLocation(rs.getString("Location"));
+                    j.setOfferMin(rs.getBigDecimal("OfferMin"));
+                    j.setOfferMax(rs.getBigDecimal("OfferMax"));
+                    j.setNumberExp(rs.getInt("NumberExp"));
+                    j.setVisible(rs.getBoolean("Visible"));
+                    j.setTypeJob(rs.getString("TypeJob"));
+                    Timestamp dayCreate = rs.getTimestamp("DayCreate");
+                    if (dayCreate != null) {
+                        j.setDayCreate(dayCreate.toLocalDateTime());
+                    }
+                    Timestamp dueDate = rs.getTimestamp("DueDate");
+                    if (dueDate != null) {
+                        j.setDueDate(dueDate.toLocalDateTime());
+                    }
+                    j.setActiveOnWall(rs.getBoolean("activeOnWall"));
+                    list.add(j);
                 }
             }
         } catch (SQLException e) {
@@ -392,7 +440,7 @@ public class JobPostDAO extends DBContext {
 
     public int countSearchedJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*), ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT jp.JobPostID) AS cnt FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
 
         if (category != null && !category.isEmpty()) {
             sql.append(" AND jp.Category LIKE ?");
@@ -444,7 +492,7 @@ public class JobPostDAO extends DBContext {
             }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return rs.getInt("cnt");
                 }
             }
         } catch (SQLException e) {
@@ -538,22 +586,24 @@ public class JobPostDAO extends DBContext {
             ps.setTimestamp(13, null);
         }
     }
-    public int getEmployerIdByJobPostId(int jobpostID){
-          String sql = "SELECT EmployerID FROM JobPost WHERE JobpostID = ?";
+
+    public int getEmployerIdByJobPostId(int jobpostID) {
+        String sql = "SELECT EmployerID FROM JobPost WHERE JobpostID = ?";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, jobpostID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("EmployerID"); 
+                    return rs.getInt("EmployerID");
                 }
             }
         } catch (SQLException e) {
-               System.err.println("Error retrieving EmployerID for JobpostID " + jobpostID);
-        e.printStackTrace();
+            System.err.println("Error retrieving EmployerID for JobpostID " + jobpostID);
+            e.printStackTrace();
         }
         return -1;
     }
+
     public boolean deleteJobPost(int id) {
         String sql = "DELETE FROM JobPost WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -567,7 +617,7 @@ public class JobPostDAO extends DBContext {
 
     public List<JobPost> adminGetJobPosts(int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-      
+
         String sql = "SELECT * FROM JobPost ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -584,9 +634,8 @@ public class JobPostDAO extends DBContext {
         return list;
     }
 
-    
     public int adminCountAllJobs() {
-       
+
         String sql = "SELECT COUNT(*) FROM JobPost";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -600,8 +649,10 @@ public class JobPostDAO extends DBContext {
         }
         return 0;
     }
+
     /**
      * Tìm kiếm jobs cho Admin (KHÔNG lọc Visible = 1)
+     *
      * @return Danh sách JobPost
      */
     public List<JobPost> adminSearchJobs(String category, String location,
@@ -663,7 +714,7 @@ public class JobPostDAO extends DBContext {
             }
             ps.setInt(idx++, offset);
             ps.setInt(idx++, noOfRecords);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractJobPost(rs));
@@ -677,6 +728,7 @@ public class JobPostDAO extends DBContext {
 
     /**
      * Đếm kết quả tìm kiếm cho Admin (KHÔNG lọc Visible = 1)
+     *
      * @return Tổng số bài đăng
      */
     public int adminCountJobsSearched(String category, String location,
@@ -731,7 +783,7 @@ public class JobPostDAO extends DBContext {
             if (jobType != null && !jobType.isEmpty()) {
                 ps.setString(idx++, jobType);
             }
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
