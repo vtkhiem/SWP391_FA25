@@ -274,6 +274,7 @@
             }
         </style>
 
+
     </head>
     <body>
         <div class="navbar">
@@ -391,6 +392,7 @@
                                                     </c:forEach>
                                                 </c:if>
 
+
                                                 <c:choose>
                                                     <c:when test="${isBanned}">
                                                         <form method="post"
@@ -409,6 +411,7 @@
                                                     </c:otherwise>
                                                 </c:choose>
 
+
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -420,6 +423,7 @@
                         </tbody>
                     </table>
                 </div>
+
 
                 <div class="pagination">
                     <div class="container">
