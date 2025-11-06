@@ -142,7 +142,7 @@ public class EmailService {
             MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(from, "Support Team"));
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            msg.setSubject("Trả lời feedback");
+            msg.setSubject("Gửi cảnh cáo");
             
             String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
                     + "<h3>📬 Có phản hồi mới gửi từ admin </h3>"

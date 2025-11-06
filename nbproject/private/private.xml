@@ -75,11 +75,31 @@
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/adminPromotionList.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/viewEmployerWall.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/EmailBanned.java</file>
-            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/EmailBannedDAO.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/JobDetailServlet.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/job/AdminJobDetailServlet.java</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin_job_details.jsp</file>
             <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/tool/EmailService.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/AddServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/ListServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/LoadPromotionAddServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/RegisterServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/service/BuyServiceServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/buy_service.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/payment/PaymentReturnServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/payment/PaymentServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/OrderView.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/model/Order.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/employer/EmployerDeleteServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/dal/EmailBannedDAO.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/candidate/CandidateBanServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/employer/EmployerBanServlet.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin/candidate-list.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin/employer-list.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin/staff-add.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin/staff-list.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/web/admin_banned_account.jsp</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/ban/BannedAccountList.java</file>
+            <file>file:/Users/vuthienkhiem/Documents/SWP391/SWP391_FA25/src/java/controller/ban/UnbanServlet.java</file>
         </group>
     </open-files>
 </project-private>
