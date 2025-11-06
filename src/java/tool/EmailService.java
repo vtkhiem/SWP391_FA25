@@ -10,7 +10,7 @@ import java.util.UUID;
 public class EmailService {
     private final int LIMIT_MINUTES = 10; // Thời hạn token
     private final String from = "vuthienkhiem2005@gmail.com";
-    private final String password = "wgdj tgxv azcf ktxu"; // app password của Gmail (16 ký tự)
+    private final String password = "niwd ucew odcs cudg"; // app password của Gmail (16 ký tự)
 
     // Sinh token random
     public String generateToken() {
@@ -32,10 +32,12 @@ public class EmailService {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.port", "587"); // Đã đổi về 587
             props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true"); // sửa lỗi chính tả ở đây
-props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.starttls.enable", "true"); // Đã bật lại STARTTLS
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.localhost", "localhost"); // Giữ lại bản vá lỗi hostname
+
             // Authenticator
             Authenticator auth = new Authenticator() {
                 @Override
@@ -48,7 +50,7 @@ props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
             // Soạn mail
             MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(from, "Support Team")); // hiển thị tên người gửi
+            msg.setFrom(new InternetAddress(from, "Support Team"));
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
             msg.setSubject("Yêu cầu đặt lại mật khẩu");
             
@@ -69,14 +71,17 @@ props.put("mail.smtp.ssl.protocols", "TLSv1.2");
             e.printStackTrace();
         }
     }
-      public void sendEmailToUser(String to,String response, String subject) {
+    
+    public void sendEmailToUser(String to,String response, String subject) {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.port", "587"); // Đã đổi về 587
             props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true"); // sửa lỗi chính tả ở đây
-props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.starttls.enable", "true"); // Đã bật lại STARTTLS
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.localhost", "localhost"); // Giữ lại bản vá lỗi hostname
+
             // Authenticator
             Authenticator auth = new Authenticator() {
                 @Override
@@ -89,18 +94,18 @@ props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
             // Soạn mail
             MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(from, "Support Team")); // hiển thị tên người gửi
+            msg.setFrom(new InternetAddress(from, "Support Team"));
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
             msg.setSubject("Trả lời feedback");
             
             String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
-                + "<h3>📬 Có phản hồi mới gửi từ admin </h3>"
-                + "<p><b>Chủ đề:</b> " + subject + "</p>"
-                + "<p><b>Nội dung:</b><br>" + response + "</p>"
-                + "<hr>"
-                + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
-                + "Vui lòng không trả lời email này.</p>"
-                + "</div>";
+                    + "<h3>📬 Có phản hồi mới gửi từ admin </h3>"
+                    + "<p><b>Chủ đề:</b> " + subject + "</p>"
+                    + "<p><b>Nội dung:</b><br>" + response + "</p>"
+                    + "<hr>"
+                    + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
+                    + "Vui lòng không trả lời email này.</p>"
+                    + "</div>";
 
             msg.setContent(htmlContent, "text/html; charset=UTF-8");
 
@@ -113,98 +118,147 @@ props.put("mail.smtp.ssl.protocols", "TLSv1.2");
             e.printStackTrace();
         }
     }
-  public void sendFeedbackToAdmin(String adminEmail, String senderName, String subject, String content) {
-    try {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+    public void sendWarningToUser(String to,String reason, String role) {
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587"); // Đã đổi về 587
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true"); // Đã bật lại STARTTLS
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.localhost", "localhost"); // Giữ lại bản vá lỗi hostname
 
-        // Đăng nhập vào tài khoản gửi mail
-        Authenticator auth = new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, password);
-            }
-        };
+            // Authenticator
+            Authenticator auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(from, password);
+                }
+            };
 
-        Session session = Session.getInstance(props, auth);
+            Session session = Session.getInstance(props, auth);
 
-        // Soạn email
-        MimeMessage msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(from, senderName)); // hiển thị tên người gửi
-        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(adminEmail));
-        msg.setSubject("📩 Phản hồi mới từ người dùng: " + senderName, "UTF-8");
+            // Soạn mail
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(from, "Support Team"));
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            msg.setSubject("Trả lời feedback");
+            
+            String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
+                    + "<h3>📬 Có phản hồi mới gửi từ admin </h3>"
+                    + "<p><b>Bạn đã bị khoá tài khoản có email </b> " + to + "</p>"
+                    + "<p><b>Role </b> " + role+ "</p>"
+                    + "<p><b>Lí do:</b><br>" + reason + "</p>"
+                    + "<hr>"
+                    + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống kiểm duyệt. "
+                    + "Vui lòng không trả lời email này.</p>"
+                    + "</div>";
 
-        String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
-                + "<h3>📬 Có phản hồi mới gửi từ người dùng <span style='color:#0d6efd;'>" + senderName + "</span></h3>"
-                + "<p><b>Chủ đề:</b> " + subject + "</p>"
-                + "<p><b>Nội dung:</b><br>" + content + "</p>"
-                + "<hr>"
-                + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
-                + "Vui lòng không trả lời email này.</p>"
-                + "</div>";
+            msg.setContent(htmlContent, "text/html; charset=UTF-8");
 
-        msg.setContent(htmlContent, "text/html; charset=UTF-8");
+            // Gửi mail
+            Transport.send(msg);
 
-        // Gửi email
-        Transport.send(msg);
+            System.out.println("Email đã được gửi thành công tới: " + to);
 
-        System.out.println("✅ Feedback đã được gửi đến admin: " + adminEmail);
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
-  public void sendFeedbackToAdminEmp(String adminEmail, String senderName, String subject, String content,String code,String service) {
-    try {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+    
+    public void sendFeedbackToAdmin(String adminEmail, String senderName, String subject, String content) {
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587"); // Đã đổi về 587
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true"); // Đã bật lại STARTTLS
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.localhost", "localhost"); // Giữ lại bản vá lỗi hostname
 
-        // Đăng nhập vào tài khoản gửi mail
-        Authenticator auth = new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, password);
-            }
-        };
+            // Đăng nhập vào tài khoản gửi mail
+            Authenticator auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(from, password);
+                }
+            };
 
-        Session session = Session.getInstance(props, auth);
+            Session session = Session.getInstance(props, auth);
 
-        // Soạn email
-        MimeMessage msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(from, senderName)); // hiển thị tên người gửi
-        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(adminEmail));
-        msg.setSubject("📩 Phản hồi mới từ người dùng: " + senderName, "UTF-8");
+            // Soạn email
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(from, senderName));
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(adminEmail));
+            msg.setSubject("📩 Phản hồi mới từ người dùng: " + senderName, "UTF-8");
 
-        String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
-                + "<h3>📬 Có phản hồi mới gửi từ người dùng <span style='color:#0d6efd;'>" + senderName + "</span></h3>"
-                + "<p><b>Chủ đề:</b> " + subject + "</p>"
-                + "<p>" + service + "</p>"
-                + "<p>" + code + "</p>"
-                + "<p><b>Nội dung:</b><br>" + content + "</p>"
-                + "<hr>"
-                + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
-                + "Vui lòng không trả lời email này.</p>"
-                + "</div>";
+            String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
+                    + "<h3>📬 Có phản hồi mới gửi từ người dùng <span style='color:#0d6efd;'>" + senderName + "</span></h3>"
+                    + "<p><b>Chủ đề:</b> " + subject + "</p>"
+                    + "<p><b>Nội dung:</b><br>" + content + "</p>"
+                    + "<hr>"
+                    + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
+                    + "Vui lòng không trả lời email này.</p>"
+                    + "</div>";
 
-        msg.setContent(htmlContent, "text/html; charset=UTF-8");
+            msg.setContent(htmlContent, "text/html; charset=UTF-8");
 
-        // Gửi email
-        Transport.send(msg);
+            // Gửi email
+            Transport.send(msg);
 
-        System.out.println("✅ Feedback đã được gửi đến admin: " + adminEmail);
+            System.out.println("✅ Feedback đã được gửi đến admin: " + adminEmail);
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
+    
+    public void sendFeedbackToAdminEmp(String adminEmail, String senderName, String subject, String content,String code,String service) {
+        try {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587"); // Đã đổi về 587
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true"); // Đã bật lại STARTTLS
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.localhost", "localhost"); // Giữ lại bản vá lỗi hostname
 
+            // Đăng nhập vào tài khoản gửi mail
+            Authenticator auth = new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(from, password);
+                }
+            };
 
+            Session session = Session.getInstance(props, auth);
+
+            // Soạn email
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(from, senderName));
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(adminEmail));
+            msg.setSubject("📩 Phản hồi mới từ người dùng: " + senderName, "UTF-8");
+
+            String htmlContent = "<div style='font-family: Arial, sans-serif; font-size: 14px;'>"
+                    + "<h3>📬 Có phản hồi mới gửi từ người dùng <span style='color:#0d6efd;'>" + senderName + "</span></h3>"
+                    + "<p><b>Chủ đề:</b> " + subject + "</p>"
+                    + "<p>" + service + "</p>"
+                    + "<p>" + code + "</p>"
+                    + "<p><b>Nội dung:</b><br>" + content + "</p>"
+                    + "<hr>"
+                    + "<p style='font-size:12px;color:gray;'>Email này được gửi tự động từ hệ thống Feedback. "
+                    + "Vui lòng không trả lời email này.</p>"
+                    + "</div>";
+
+            msg.setContent(htmlContent, "text/html; charset=UTF-8");
+
+            // Gửi email
+            Transport.send(msg);
+
+            System.out.println("✅ Feedback đã được gửi đến admin: " + adminEmail);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

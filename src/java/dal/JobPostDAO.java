@@ -657,7 +657,7 @@ public class JobPostDAO extends DBContext {
      */
     public List<JobPost> adminSearchJobs(String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
-            int offset, int noOfRecords) {
+            int offset, int noOfRecords,int employerId) {
         List<JobPost> list = new ArrayList<>();
         // Bỏ 'WHERE Visible = 1'
         // Dùng 'WHERE 1=1' để dễ dàng nối các mệnh đề 'AND'
@@ -683,6 +683,8 @@ public class JobPostDAO extends DBContext {
         }
         if (jobType != null && !jobType.isEmpty()) {
             sql.append(" AND TypeJob = ?");
+        }if (employerId >= 0) {
+            sql.append(" AND EmployerID = ?");
         }
 
         sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
@@ -712,6 +714,9 @@ public class JobPostDAO extends DBContext {
             if (jobType != null && !jobType.isEmpty()) {
                 ps.setString(idx++, jobType);
             }
+            if (employerId >= 0) {
+                ps.setInt(idx++, employerId);
+            }
             ps.setInt(idx++, offset);
             ps.setInt(idx++, noOfRecords);
 
@@ -732,7 +737,7 @@ public class JobPostDAO extends DBContext {
      * @return Tổng số bài đăng
      */
     public int adminCountJobsSearched(String category, String location,
-            Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
+            Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,int employerId) {
         // Bỏ 'WHERE Visible = 1'
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE 1=1");
 
@@ -756,6 +761,8 @@ public class JobPostDAO extends DBContext {
         }
         if (jobType != null && !jobType.isEmpty()) {
             sql.append(" AND TypeJob = ?");
+        }if (employerId >= 0) {
+            sql.append(" AND EmployerID = ?");
         }
 
         try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
@@ -782,6 +789,10 @@ public class JobPostDAO extends DBContext {
             }
             if (jobType != null && !jobType.isEmpty()) {
                 ps.setString(idx++, jobType);
+            }
+
+            if (employerId >= 0) {
+                ps.setInt(idx++, employerId);
             }
 
             try (ResultSet rs = ps.executeQuery()) {

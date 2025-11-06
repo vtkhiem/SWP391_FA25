@@ -94,16 +94,24 @@
 </head>
 <body>
 
-<div class="navbar">
+ <div class="navbar">
     <a>Admin Dashboard</a>
-    <span class="divider">|</span>
-    <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link active">Bài Đăng</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/employers" class="nav-link">Employers</a>
-    </div>
-
+      <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/listService" class="nav-link">Services</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminPromotion" class="nav-link">Promotions</a>
+           <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/admin/staffs" class="nav-link">Staffs</a>
+          
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
+             <span class="divider">|</span>
+          <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
+</div>
 <div class="container">
 
     <div class="filter-card">
@@ -148,6 +156,11 @@
                     <option value="" ${param.jobType == '' ? 'selected' : ''}>Tất cả</option>
                     <option value="Full-time" ${param.jobType == 'Full-time' ? 'selected' : ''}>Toàn thời gian (Full-time)</option>
                     </select>
+                    
+            </div>
+                    <div class="form-group">
+                <label>Employer ID</label>
+                <input type="number" name="employerId" placeholder="Nhập Employer ID..." value="${param.employerId}">
             </div>
             <div class="form-group submit-btn">
                 <button type="submit" class="btn primary" style="width:100%;">Lọc</button>
@@ -192,7 +205,7 @@
                                     </c:choose>
                                 </td>
                                 <td class="col-actions">
-                                    <a href="job_details?id=${job.jobPostID}" class="btn">Xem</a>
+                                    <a href="adminJobDetail?id=${job.jobPostID}" class="btn">Xem</a>
                                    <c:if test="${job.visible}">
                                         <form method="post" action="adminHideJob"
                                               style="display:inline-block;margin-left:8px;"
@@ -221,6 +234,9 @@
                 <c:if test="${not empty param.maxSalary}"><c:param name="maxSalary" value="${param.maxSalary}"/></c:if>
                 <c:if test="${not empty param.numberExp}"><c:param name="numberExp" value="${param.numberExp}"/></c:if>
                 <c:if test="${not empty param.jobType}"><c:param name="jobType" value="${param.jobType}"/></c:if>
+           
+                <c:if test="${not empty param.employerId}"><c:param name="employerId" value="${param.employerId}"/></c:if>
+           
             </c:url>
             
             <c:set var="separator" value="${fn:contains(pageUrl, '?') ? '&' : '?'}" />

@@ -51,11 +51,13 @@ public class AdminJobListServlet extends HttpServlet {
         String maxSalaryStr = request.getParameter("maxSalary");
         String numberExpStr = request.getParameter("numberExp");
         String jobType = request.getParameter("jobType");
+        String employerId_raw = request.getParameter("employerId");
 
         // --- 3. Chuyển đổi kiểu dữ liệu cho tham số ---
         Double minSalary = null;
         Double maxSalary = null;
         int numberExp = -1; // Mặc định là -1 (bỏ qua filter này)
+        int employerId= -1;
 
         try {
             if (minSalaryStr != null && !minSalaryStr.isEmpty()) {
@@ -66,6 +68,9 @@ public class AdminJobListServlet extends HttpServlet {
             }
             if (numberExpStr != null && !numberExpStr.isEmpty()) {
                 numberExp = Integer.parseInt(numberExpStr);
+            }
+            if (employerId_raw != null && !employerId_raw.isEmpty()) {
+                employerId = Integer.parseInt(employerId_raw);
             }
         } catch (NumberFormatException e) {
             System.out.println("Lỗi parse filter: " + e.getMessage());
@@ -79,7 +84,8 @@ public class AdminJobListServlet extends HttpServlet {
                 || (minSalary != null)
                 || (maxSalary != null)
                 || (numberExp >= 0) // 0 (Không yêu cầu KN) cũng là 1 filter
-                || (jobType != null && !jobType.isEmpty());
+                || (jobType != null && !jobType.isEmpty())
+        || (employerId >= 0);
 
         List<JobPost> jobs;
         int totalJobs;
@@ -87,8 +93,8 @@ public class AdminJobListServlet extends HttpServlet {
         // --- 5. Lấy dữ liệu từ DAO ---
         if (isFiltering) {
             // Có filter: Gọi hàm search
-            jobs = jobDAO.adminSearchJobs(category, location, minSalary, maxSalary, keyword, numberExp, jobType, offset, RECORDS_PER_PAGE);
-            totalJobs = jobDAO.adminCountJobsSearched(category, location, minSalary, maxSalary, keyword, numberExp, jobType);
+            jobs = jobDAO.adminSearchJobs(category, location, minSalary, maxSalary, keyword, numberExp, jobType, offset, RECORDS_PER_PAGE,employerId);
+            totalJobs = jobDAO.adminCountJobsSearched(category, location, minSalary, maxSalary, keyword, numberExp, jobType,employerId);
         } else {
             // Không filter: Lấy tất cả
             jobs = jobDAO.adminGetJobPosts(offset, RECORDS_PER_PAGE);

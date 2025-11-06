@@ -220,6 +220,20 @@
             #phoneContainer {
                 width: 100%;
             }
+
+            .validation-message {
+                font-size: 12px;
+                margin: 0;
+                min-height: 16px;
+            }
+
+            .validation-message.success {
+                color: #22c55e;
+            }
+
+            .validation-message.error {
+                color: #ef4444;
+            }
         </style>
     </head>
     <body>
@@ -231,19 +245,19 @@
                 <form id="signupForm" action="register" method="post" autocomplete="off">
                     <input type="text" name="name" placeholder="Tên" value="${name}" required />
                     <input id="phone" type="text" name="phone" placeholder="Số điện thoại" value="${phone}" required />
-                     <p id="phoneResult" style="font-size: 12px; color: green ; margin: 0;"></p>
-                     <input id="email" type="email" name="email" placeholder="Email" value="${email}" required />
-                      <p id="emailResult" style="font-size: 12px; color:green ; margin: 0;"></p>
+                    <p id="phoneResult" class="validation-message"></p>
+                    <input id="email" type="email" name="email" placeholder="Email" value="${email}" required />
+                    <p id="emailResult" class="validation-message"></p>
                     <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
-                     <input type="hidden" name="role" value="candidate"/>
+                    <input type="hidden" name="role" value="candidate"/>
                     <div id="passwordError" style="display:none;">Mật khẩu không trùng khớp!</div>
                     <button type="submit">Đăng ký</button>
                 </form>
             </div>
             <div class="form-container sign-in-container">
                 <form action="login" method="post" autocomplete="off">
-                     <input type="hidden" name="role" value="candidate"/>
+                    <input type="hidden" name="role" value="candidate"/>
                     <input type="text" name="email" placeholder="Email" value="${username}" required />
                     <input type="password" name="password" placeholder="Mật khẩu" required />
                     <button type="submit">Đăng nhập</button>
@@ -254,12 +268,10 @@
                 <div class="overlay">
                     <div class="overlay-panel overlay-left">
                         <h1>Chào mừng trở lại!</h1>
-
                         <button class="ghost" id="signIn">Đăng nhập</button>
                     </div>
                     <div class="overlay-panel overlay-right">
                         <h1>Xin chào!</h1>
-
                         <button class="ghost" id="signUp">Đăng ký</button>
                     </div>
                 </div>
@@ -269,6 +281,7 @@
             <div id="notificationTab">${status}</div>
         </c:if>
         <script>
+            // Notification auto-hide
             window.addEventListener('DOMContentLoaded', function () {
                 var noti = document.getElementById('notificationTab');
                 if (noti) {
@@ -278,34 +291,25 @@
                 }
             });
 
+            // Toggle between sign in and sign up
             const signUpButton = document.getElementById('signUp');
             const signInButton = document.getElementById('signIn');
             const container = document.getElementById('container');
+            
             signUpButton.addEventListener('click', () => {
                 container.classList.add('right-panel-active');
             });
+            
             signInButton.addEventListener('click', () => {
                 container.classList.remove('right-panel-active');
             });
 
-            const roleSelect = document.getElementById('role');
-            const phoneContainer = document.getElementById('phoneContainer');
-            const phoneInput = document.getElementById('phoneInput');
-            roleSelect.addEventListener('change', function () {
-                if (this.value === 'employer') {
-                    phoneContainer.style.display = 'block';
-                    phoneInput.required = true;
-                } else {
-                    phoneContainer.style.display = 'none';
-                    phoneInput.required = false;
-                    phoneInput.value = '';
-                }
-            });
-
+            // Password confirmation validation
             const signupForm = document.getElementById('signupForm');
             const password = document.getElementById('password');
             const confirmPassword = document.getElementById('confirmPassword');
             const passwordError = document.getElementById('passwordError');
+            
             signupForm.addEventListener('submit', function (e) {
                 if (password.value !== confirmPassword.value) {
                     passwordError.style.display = 'block';
@@ -316,41 +320,71 @@
                 }
             });
             
-    // --- KIỂM TRA EMAIL ---
-    document.getElementById("email").addEventListener("keyup", function () {
-        let email = this.value.trim();
-        if (email.length === 0) {
-            document.getElementById("emailResult").innerText = "";
-            return;
-        }
+            // AJAX Email validation
+            document.getElementById("email").addEventListener("keyup", function () {
+                let email = this.value.trim();
+                let resultElement = document.getElementById("emailResult");
+                
+                if (email.length === 0) {
+                    resultElement.innerText = "";
+                    resultElement.className = "validation-message";
+                    return;
+                }
 
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "checkInput?type=email&value=" + encodeURIComponent(email), true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                document.getElementById("emailResult").innerText = xhr.responseText;
-            }
-        };
-        xhr.send();
-    });
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", "checkInput?type=email&value=" + encodeURIComponent(email), true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        let response = xhr.responseText.trim();
+                        resultElement.innerText = response;
+                        
+                        // Add appropriate class based on response
+                        if (response.includes("đã tồn tại") || response.includes("không hợp lệ")) {
+                            resultElement.className = "validation-message error";
+                        } else {
+                            resultElement.className = "validation-message success";
+                        }
+                    }
+                };
+                xhr.onerror = function() {
+                    resultElement.innerText = "Lỗi kết nối";
+                    resultElement.className = "validation-message error";
+                };
+                xhr.send();
+            });
 
-    // --- KIỂM TRA SỐ ĐIỆN THOẠI ---
-    document.getElementById("phone").addEventListener("keyup", function () {
-        let phone = this.value.trim();
-        if (phone.length === 0) {
-            document.getElementById("phoneResult").innerText = "";
-            return;
-        }
+            // AJAX Phone validation
+            document.getElementById("phone").addEventListener("keyup", function () {
+                let phone = this.value.trim();
+                let resultElement = document.getElementById("phoneResult");
+                
+                if (phone.length === 0) {
+                    resultElement.innerText = "";
+                    resultElement.className = "validation-message";
+                    return;
+                }
 
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "checkInput?type=phone&value=" + encodeURIComponent(phone), true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                document.getElementById("phoneResult").innerText = xhr.responseText;
-            }
-        };
-        xhr.send();
-    });
-</script>
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", "checkInput?type=phone&value=" + encodeURIComponent(phone), true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        let response = xhr.responseText.trim();
+                        resultElement.innerText = response;
+                        
+                        // Add appropriate class based on response
+                        if (response.includes("đã tồn tại") || response.includes("không hợp lệ")) {
+                            resultElement.className = "validation-message error";
+                        } else {
+                            resultElement.className = "validation-message success";
+                        }
+                    }
+                };
+                xhr.onerror = function() {
+                    resultElement.innerText = "Lỗi kết nối";
+                    resultElement.className = "validation-message error";
+                };
+                xhr.send();
+            });
+        </script>
     </body>
 </html>

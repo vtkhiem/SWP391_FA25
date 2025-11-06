@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.wall;
+package controller.candidate;
 
-import dal.ServiceEmployerDAO;
-import dal.ServiceFunctionDAO;
-import dal.WallDAO;
+import dal.CandidateDAO;
+import dal.EmailBannedDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,15 +13,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Function;
+import jakarta.servlet.http.HttpSession;
+import model.Candidate;
+import model.EmailBanned;
+import tool.EmailService;
 
 /**
  *
  * @author vuthienkhiem
  */
-@WebServlet(name = "PinJobOnWallServlet", urlPatterns = {"/pinJob"})
-public class PinJobOnWallServlet extends HttpServlet {
+@WebServlet(name = "CandidateBanServlet", urlPatterns = {"/candidateBan"})
+public class CandidateBanServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +42,10 @@ public class PinJobOnWallServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PinJobOnWallServlet</title>");
+            out.println("<title>Servlet CandidateBanServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PinJobOnWallServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CandidateBanServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,52 +63,7 @@ public class PinJobOnWallServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-          try {
-            int employerId = Integer.parseInt(request.getParameter("employerId"));
-            int jobPostId = Integer.parseInt(request.getParameter("jobpostId"));
-            String action = request.getParameter("action"); // "pin" hoặc "unpin"
-
-            WallDAO dao = new WallDAO();
-            boolean success = false;
-                ServiceEmployerDAO sedao= new ServiceEmployerDAO();
-                    ServiceFunctionDAO sfdao = new ServiceFunctionDAO();
-            int serviceId = sedao.getCurrentServiceByEmployerId(employerId);
-            List<Function> list = sfdao.getFunctionsByServiceId(serviceId);
-              boolean hasWallFunction = false;
-            for(Function f : list){
-                 if (f.getFunctionName().equalsIgnoreCase("PinPost")) {
-                        hasWallFunction = true;
-                        break;
-                    }
-            }
-            
-              if(hasWallFunction){
-                   if ("pin".equalsIgnoreCase(action)) {
-                success = dao.pinJob(employerId, jobPostId);
-            } else if ("unpin".equalsIgnoreCase(action)) {
-                success = dao.unpinJob(employerId, jobPostId);
-            }
-
-            if (success) {
-                request.getSession().setAttribute("message",
-                        "pin".equalsIgnoreCase(action)
-                                ? "📌 Đã ghim bài tuyển dụng lên đầu tường!"
-                                : "📍 Đã bỏ ghim bài tuyển dụng!");
-            } else {
-                request.getSession().setAttribute("error", "Cập nhật ghim thất bại!");
-            }
-              }else{
-                   request.getSession().setAttribute("error", "Dịch vụ hiện tại của bạn không hỗ trợ chức năng ghim bài viết!");
-              }
-
-           
-
-            response.sendRedirect("employerWall");
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.getSession().setAttribute("error", "Lỗi khi cập nhật trạng thái ghim!");
-            response.sendRedirect("employerWall");
-        }
+   
     }
 
     /**
@@ -121,7 +77,28 @@ public class PinJobOnWallServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+      EmailBannedDAO ebdao = new EmailBannedDAO();
+        EmailService es = new EmailService();
+      
+        String banReason = request.getParameter("banReason");
+        int id = Integer.parseInt(request.getParameter("id"));
+        CandidateDAO candao = new CandidateDAO();
+       Candidate can = candao.getCandidateById(id);
+        if (can.getEmail() == null || can.getEmail().isEmpty() || banReason == null || banReason.isEmpty()) {
+            session.setAttribute("error", "Lỗi: Email và Lý do không được để trống.");
+            response.sendRedirect("admin/candidates");
+            return;
+        }
+      
+    boolean success = ebdao.addBannedEmail(can.getEmail(),"Candidate",banReason);
+    if(success){
+         session.setAttribute("message", "Hạn chế tài khoản có "+can.getEmail()+" thành công");
+         es.sendWarningToUser(can.getEmail(), banReason, "Candidate");
+    }else{
+         session.setAttribute("error", "Tài khoản "+can.getEmail()+" vai trò "+ "Candidate "+"đã bị hạn chế từ trước");
+    }
+      response.sendRedirect("admin/candidates");
     }
 
     /**

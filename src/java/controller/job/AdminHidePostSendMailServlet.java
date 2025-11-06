@@ -87,10 +87,10 @@ public class AdminHidePostSendMailServlet extends HttpServlet {
 
                 emailService.sendEmailToUser(employerEmail, responses, subject);
                 
-                session.setAttribute("message", "Đã  bài đăng " + jobPostID + " và gửi email.");
+                session.setAttribute("message", "Đã ẩn bài đăng " + jobPostID + " và gửi email.");
             } else {
                 System.err.println("AdminHideJob: Không tìm thấy email cho EmployerID: " + employerId);
-                session.setAttribute("message", "Đã  bài đăng. (Lỗi: Không tìm thấy email NTD để gửi thông báo).");
+                session.setAttribute("message", "Đã ẩn bài đăng. (Lỗi: Không tìm thấy email NTD để gửi thông báo).");
             }
 
         } catch (Exception e) {
