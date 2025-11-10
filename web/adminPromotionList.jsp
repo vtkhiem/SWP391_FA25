@@ -69,8 +69,8 @@
 </head>
 <body>
 
- <div class="navbar">
-    <a>Admin Dashboard</a>
+<div class="navbar">
+     <a href="${pageContext.request.contextPath}/admin_home.jsp" class="nav-link">Admin Dashboard</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
     <span class="divider">|</span>
@@ -86,6 +86,8 @@
           <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
              <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
+           <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/bannedAccountList" class="nav-link" style="text-decoration:underline;">Banned</a>
 </div>
 
 <div class="container">
@@ -142,7 +144,7 @@
                                             <button class="btn btn-success btn-sm" type="submit">Duyệt</button>
                                         </form>
 
-                                        <form action="deletePromo" method="post" class="d-inline-custom"
+                                        <form action="deletePromotion" method="post" class="d-inline-custom"
                                               onsubmit="return confirm('Bạn có chắc muốn từ chối (xóa) khuyến mãi ${p.code}?');">
                                             <input type="hidden" name="promotionId" value="${p.promotionID}">
                                             <button class="btn btn-danger btn-sm" type="submit">Từ chối</button>
@@ -151,7 +153,7 @@
 
                                     <c:if test="${p.status}">
                                         <button class="btn btn-secondary btn-sm" disabled>Đã duyệt</button>
-                                        <form action="deletePromo" method="post" class="d-inline-custom"
+                                        <form action="deletePromotion" method="post" class="d-inline-custom"
                                               onsubmit="return confirm('Bạn có chắc muốn xóa khuyến mãi ${p.code}?');">
                                             <input type="hidden" name="promotionId" value="${p.promotionID}">
                                             <button class="btn btn-outline-danger btn-sm" type="submit">Xóa</button>

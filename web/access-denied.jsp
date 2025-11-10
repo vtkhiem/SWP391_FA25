@@ -12,6 +12,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>Bạn không thể truy cập đường dẫn này</h1>
+        <h2>Nếu bạn có thắc mắc hay yêu cầu giúp đỡ hãy ấn vào dòng dưới đây </h2>
+        <a href="requestSupport.jsp">Nhấn vào đây</a>
     </body>
 </html>

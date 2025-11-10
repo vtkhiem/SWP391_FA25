@@ -25,6 +25,21 @@ public class EmailBannedDAO extends DBContext {
             return false; 
         }
     }
+      public boolean isEmailBanned(String email) {
+        String sql = "SELECT * FROM EmailBanned WHERE Email = ? ";
+        
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, email);
+          
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); 
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; 
+        }
+    }
  
     // Lấy thông tin banned email theo email + role
     public EmailBanned getBannedEmail(String email, String role) {

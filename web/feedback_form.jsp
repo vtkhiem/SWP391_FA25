@@ -179,13 +179,20 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Loại phản hồi</label>
-                            <select name="typeFeedbackID" class="form-select" required>
-                                <option value="">-- Chọn loại phản hồi --</option>
-                                <option value="Hệ thống">Hệ thống</option>
-                    <option value="Yêu cầu hỗ trợ">Yêu cầu hỗ trợ</option>
-                      <option value="Góp ý">Góp ý</option>
-                         <option value="Khác">Khác</option>
-                            </select>
+                         <c:forEach var="t" items="${typeFeedbackList}">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input type-checkbox" 
+                                                   type="checkbox" 
+                                                   name="typeFeedbackIDs" 
+                                                   value="${t.typeFeedbackID}" 
+                                                   id="type-${t.typeFeedbackID}">
+                                            <label class="form-check-label" for="type-${t.typeFeedbackID}">
+                                                ${t.typeFeedbackName}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </c:forEach>
                         </div>
 
                         <div class="mb-3">

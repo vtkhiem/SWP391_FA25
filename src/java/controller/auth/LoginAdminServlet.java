@@ -94,7 +94,7 @@ public class LoginAdminServlet extends HttpServlet {
                     switch (role.getRoleId()) {
                         case AdminRoleDefine.ADMIN:
                             session.setAttribute("role", "Admin");
-                            response.sendRedirect("admin/candidates");
+                            response.sendRedirect("admin_home.jsp");
                             return;
                         case AdminRoleDefine.SALE:
                             session.setAttribute("role", "Sale");
