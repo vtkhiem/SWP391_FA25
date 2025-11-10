@@ -14,8 +14,6 @@ import model.JobPost;
 
 @WebServlet(name = "EmployerJobDetailServlet", urlPatterns = {"/employer_job_details"})
 public class EmployerJobDetailServlet extends HttpServlet {
-    private JobPostDAO jobPostDAO = new JobPostDAO();
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -46,6 +44,7 @@ public class EmployerJobDetailServlet extends HttpServlet {
         }
 
         int jobId = Integer.parseInt(request.getParameter("id"));
+        JobPostDAO jobPostDAO = new JobPostDAO();
         JobPost job = jobPostDAO.getJobPostById(jobId);
 
         if (job != null) {

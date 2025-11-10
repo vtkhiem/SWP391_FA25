@@ -253,7 +253,7 @@
                                 <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
                                 <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                             </c:if>
-                            <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
+                            <button onclick="window.location.href = 'employerServices'">Trang chủ</button>
                         </div>
                     </div>
 

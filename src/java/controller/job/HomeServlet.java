@@ -34,7 +34,6 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         JobPostDAO jpDAO = new JobPostDAO();
-        
         List<JobPost> highlight = jpDAO.getHighlightJob();
         
         request.setAttribute("highlightJobs", highlight);
