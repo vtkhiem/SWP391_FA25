@@ -5,6 +5,7 @@
 
 package controller.promotion;
 
+import dal.PromotionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -68,7 +69,14 @@ public class DeletePromotionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            int id = Integer.parseInt(request.getParameter("promotionId"));
+            PromotionDAO dao = new PromotionDAO();
+            dao.deletePromotion(id);
+          response.sendRedirect("adminPromotion");
+            
+        } catch (Exception e) {
+        }
     }
 
     /** 

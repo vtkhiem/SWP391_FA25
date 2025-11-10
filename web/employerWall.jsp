@@ -78,10 +78,7 @@
                         <div class="card-footer bg-white border-top">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex gap-2">
-                                    <a href="jobDetail?jobPostId=${job.jobPostID}" 
-                                       class="btn btn-sm btn-primary">
-                                        <i class="ti-search"></i> View Details
-                                    </a>
+                            
                                     
                                     <c:if test="${job.activeOnWall}">
                                         <c:choose>
@@ -101,22 +98,7 @@
                                     </c:if>
                                 </div>
                                 
-                                <div>
-                                    <c:choose>
-                                        <c:when test="${job.activeOnWall}">
-                                            <a href="toggleWallStatus?jobPostId=${job.jobPostID}&active=false"
-                                               class="btn btn-sm btn-outline-danger">
-                                                <i class="ti-eye-off"></i> Hide
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a href="toggleWallStatus?jobPostId=${job.jobPostID}&active=true"
-                                               class="btn btn-sm btn-outline-success">
-                                                <i class="ti-eye"></i> Show
-                                            </a>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
+                             
                             </div>
                         </div>
                     </div>

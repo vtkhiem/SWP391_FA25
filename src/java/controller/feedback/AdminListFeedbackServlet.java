@@ -35,12 +35,17 @@ public class AdminListFeedbackServlet extends HttpServlet {
             List<Feedback> listAll = feedbackDAO.getAllFeedback();
             List<Feedback> listEmployers = feedbackDAO.getAllFeedbackFromEmployers();
             List<Feedback> listCandidates = feedbackDAO.getAllFeedbackFromCandidates();
+            List<Feedback> listFromBoth = feedbackDAO.getAllFromBoth();
+            int numF = listFromBoth.size();
+int numE =listEmployers.size()-numF;
+int numC = listCandidates.size()-numF;
+int numA = listAll.size();
 
             // 🔍 DEBUG: Kiểm tra list có null không
             System.out.println("=== DEBUG FEEDBACK LISTS ===");
             System.out.println("listAll: " + (listAll == null ? "NULL" : "Size = " + listAll.size()));
-            System.out.println("listEmployers: " + (listEmployers == null ? "NULL" : "Size = " + listEmployers.size()));
-            System.out.println("listCandidates: " + (listCandidates == null ? "NULL" : "Size = " + listCandidates.size()));
+            System.out.println("listEmployers: " + (listEmployers == null ? "NULL" : "Size = " + numE));
+            System.out.println("listCandidates: " + (listCandidates == null ? "NULL" : "Size = " + numC));
 
             // ✅ Khởi tạo Map
             Map<Integer, String> serviceNameMap = new HashMap<>();
