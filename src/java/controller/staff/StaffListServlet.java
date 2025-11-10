@@ -69,6 +69,18 @@ public class StaffListServlet extends HttpServlet {
         }
     }
     String q = req.getParameter("q");
+    if (q != null) {
+            q = q.replaceAll("\\s+", " ").trim(); 
+            if (q.isEmpty()) q = null;
+        }
+
+        String likePattern = null;
+        if (q != null) {
+            likePattern = "%" + q.replace(" ", "%") + "%";
+        }
+
+        req.setAttribute("qNormalized", q);
+
     String pageStr = req.getParameter("page");
     String roleParam = req.getParameter("role"); 
     int pageSize = 10;

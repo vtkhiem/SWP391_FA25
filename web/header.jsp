@@ -58,6 +58,7 @@
                                                         <li><a href="employerWall">DashBoard</a></li>
                                                         <li><a href="job_add">Đăng Công Việc</a></li>
                                                         <li><a href="employer_jobs">Xem Công Việc</a></li>
+                                                        <li><a href="viewPublicCVs">Tìm ứng viên</a></li>
                                                         </c:when>
 
                                                     <%-- Candidate/Guest --%>
@@ -78,8 +79,6 @@
                                                                 <li><a href="list-cv">Quản lí CV</a></li>
                                                             </ul>
                                                         </li>
-                                                        <li><a href="blogs">Blog</a></li>
-                                                        <li><a href="contact.html">Liên hệ</a></li>
 
                                                     </c:otherwise>
                                                 </c:choose>
@@ -97,7 +96,7 @@
                                                 <a href="login.jsp">Đăng nhập</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="login-employer.jsp">Nhà tuyển dụng</a>
+                                                <a class="boxed-btn3" href="employerServices">Nhà tuyển dụng</a>
                                             </div>
                                         </c:if>
 
@@ -123,7 +122,7 @@
                                                                     </c:when>
                                                                     <c:when test="${sessionScope.role eq 'Employer'}">
                                                                         <li><a href="employerProfile">Xem hồ sơ</a></li>
-                                                                        <li><a href="#">Lịch sử giao dịch</a></li>
+                                                                        <li><a href="payments_history">Lịch sử giao dịch</a></li>
                                                                     </c:when>
                                                                 </c:choose>
                                                                 <li><a href="logout">Đăng xuất</a></li>

@@ -55,7 +55,7 @@
                             <div class="single_jobs white-bg d-flex justify-content-between">
                                 <div class="jobs_left d-flex align-items-center">
                                     <div class="thumb">
-                                        <img src="img/svg_icon/1.svg" alt="">
+                                        <img src="${sessionScope.user.imgLogo}" alt="">
                                     </div>
                                     <div class="jobs_conetent">
                                         <h4>${job.title}</h4>

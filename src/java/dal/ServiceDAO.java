@@ -114,6 +114,8 @@ public class ServiceDAO extends DBContext {
                 s.setIsUnlimited(rs.getBoolean("IsUnlimited"));
                 list.add(s);
             }
+        }catch (SQLException e){
+            e.printStackTrace();
         }
         return list;
     }

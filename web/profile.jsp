@@ -5,7 +5,7 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Hồ sơ người dùng</title>
+        <title>Hồ sơ người dùng - Job Board</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body {
@@ -58,6 +58,10 @@
             .profile-avatar {
                 flex: 1;
                 text-align: center;
+                display: flex;
+                flex-direction: column; /* Sắp xếp theo cột */
+                align-items: center;    /* Căn giữa theo trục ngang */
+                gap: 8px;               /* Khoảng cách giữa ảnh và nút */
             }
 
             .profile-avatar img {
@@ -157,7 +161,7 @@
                 border-radius: 6px;
             }
 
-            .error {
+            .modal  .error {
                 color: #ff4444;
                 text-align: center;
                 display: none;
@@ -204,6 +208,7 @@
                             <div class="profile-avatar">
                                 <c:if test="${not empty candidate.avatar}">
                                     <img src="${candidate.avatar}" alt="Avatar">
+                                    <button onclick="openUploadCandidateImageModal()">Avatar</button>
                                 </c:if>
                             </div>
                             <div class="profile-info">
@@ -212,12 +217,12 @@
                                 <p><span class="info-label">Số điện thoại:</span> ${candidate.phoneNumber}</p>
                                 <p><span class="info-label">Địa chỉ:</span> ${candidate.address}</p>
                                 <p><span class="info-label">Quốc tịch:</span> ${candidate.nationality}</p>
+                                <p><span class="info-label">Công khai CV:</span> ${candidate.isPublic ? 'Có' : 'Không'}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="button-group">
-                        <button onclick="openUploadCandidateImageModal()">Avatar</button>
                         <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
                         <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                         <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
@@ -232,6 +237,7 @@
                             <div class="profile-avatar">
                                 <c:if test="${not empty sessionScope.user.imgLogo}">
                                     <img src="${sessionScope.user.imgLogo}" alt="Logo công ty">
+                                    <button onclick="openUploadEmployerLogoModal()">Avatar</button>
                                 </c:if>
                             </div>
                             <div class="profile-info">
@@ -249,7 +255,7 @@
 
                         <div class="button-group">
                             <c:if test="${not empty sessionScope.role}">
-                                <button onclick="openUploadEmployerLogoModal()">Avatar</button>
+
                                 <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
                                 <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                             </c:if>
@@ -262,12 +268,14 @@
                         <div class="service-card">
                             <h2>Gói Dịch Vụ Hiện Tại</h2>
                             <div class="service-details">
+
                                 <p><span class="info-label">Tên gói:</span> ${service.serviceName}</p>
                                 <p><span class="info-label">Giá:</span> ${service.price} VNĐ</p>
                                 <p><span class="info-label">Thời hạn:</span> ${service.duration} ngày</p>
-                                <p><span class="info-label">Ngày đăng ký:</span>${serviceEmployer.registerDate} </p>
-                                <p><span class="info-label">Ngày hết hạn:</span>${serviceEmployer.expirationDate} </p>
+                                <p><span class="info-label">Ngày đăng ký:</span> ${serviceEmployer.registerDateFormatted} </p>
+                                <p><span class="info-label">Ngày hết hạn:</span> ${serviceEmployer.expirationDateFormatted} </p>
                                 <p><span class="info-label">Trạng thái thanh toán:</span> ${serviceEmployer.paymentStatus}</p>
+
                             </div>
                         </div>
                     </c:if>
@@ -317,41 +325,48 @@
 
                     <input type="text" name="address" value="${candidate.address}" placeholder="Địa chỉ" required>
                     <input type="text" name="nationality" value="${candidate.nationality}" placeholder="Quốc tịch" required>
-                    <div style="text-align:center;margin-top:15px;">
-                        <button type="submit">Cập nhật</button>
-                        <button type="button" onclick="closeEditCandidateProfileModal()">Hủy</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!--Modal upload avt candidate-->
-        <div id="uploadCandidateImageModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeUploadCandidateImageModal()">&times;</span>
-                <h2>Avatar</h2>
-                <form id="uploadCandidateImage" action="uploadCandidateImage" method="post"  enctype="multipart/form-data">
-                    <div class="form-group">
-                        <input type="file" class="form-control" name="candidateImage" accept="image/png, image/jpeg, image/jpg"
-                               required>
-                        <small class="form-text text-muted">Chỉ chấp nhận file: IMG,PNG,JPEG,JPG</small>
-                        <div style="text-align:center;margin-top:15px;">
+                    <div style="text-align:center;margin-top:15px;margin-bottom: 15px">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="isPublic" name="isPublic"
+                                   <c:if test="${candidate.isPublic}">checked</c:if> />
+                                   <label class="form-check-label" for="isPublic">
+                                       Công khai CV
+                                   </label>
+                            </div>
                             <button type="submit">Cập nhật</button>
-                            <button type="button" onclick="closeUploadCandidateImageModal()">Hủy</button>
+                            <button type="button" onclick="closeEditCandidateProfileModal()">Hủy</button>
                         </div>
-
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Modal thêm thông tin employer -->
-        <div id="editEmployerProfileModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeEditEmployerProfileModal()">&times;</span>
-                <h2>Thông tin người dùng</h2>
-                <form id="editEmployerProfileform" action="editEmployerProfile" method="post">
-                    <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty" required >
+            <!--Modal upload avt candidate-->
+            <div id="uploadCandidateImageModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeUploadCandidateImageModal()">&times;</span>
+                    <h2>Avatar</h2>
+                    <form id="uploadCandidateImage" action="uploadCandidateImage" method="post"  enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="file" class="form-control" name="candidateImage" accept="image/png, image/jpeg, image/jpg"
+                                   required>
+                            <small class="form-text text-muted">Chỉ chấp nhận file: IMG,PNG,JPEG,JPG</small>
+                            <div style="text-align:center;margin-top:15px;">
+                                <button type="submit">Cập nhật</button>
+                                <button type="button" onclick="closeUploadCandidateImageModal()">Hủy</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal thêm thông tin employer -->
+            <div id="editEmployerProfileModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeEditEmployerProfileModal()">&times;</span>
+                    <h2>Thông tin người dùng</h2>
+                    <form id="editEmployerProfileform" action="editEmployerProfile" method="post">
+                        <input type="text" name="companyName" value="${employer.companyName}" placeholder="Tên công ty" required >
                     <input type="text" name="email" value="${employer.email}" readonly="" placeholder="Email" required>
                     <input id="phone" type="text" name="phoneNumber" 
                            value="${employer.phoneNumber}" placeholder="Số điện thoại" required>
@@ -415,7 +430,7 @@
                 document.getElementById("uploadEmployerLogoModal").style.display = "none";
                 document.body.style.overflow = "auto";
             }
-            
+
             function openUploadCandidateImageModal() {
                 document.getElementById("uploadCandidateImageModal").style.display = "block";
                 document.body.style.overflow = "hidden";

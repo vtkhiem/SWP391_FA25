@@ -25,6 +25,7 @@ public class EmployerDAO extends DBContext {
             params.add(statusFilter);
         }
 
+
         try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
                 Object v = params.get(i);
@@ -45,6 +46,39 @@ public class EmployerDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public List<Employer> getAllEmployers() {
+        List<Employer> list = new ArrayList<>();
+        String sql = "SELECT * FROM Employer";
+        try (PreparedStatement st = c.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+            while (rs.next()) {
+                Employer e = new Employer();
+                e.setEmployerId(rs.getInt("EmployerID"));
+                e.setEmployerName(rs.getString("EmployerName"));
+                e.setEmail(rs.getString("Email"));
+                e.setPhoneNumber(rs.getString("PhoneNumber"));
+                e.setPasswordHash(rs.getString("PasswordHash"));
+                e.setCompanyName(rs.getString("CompanyName"));
+                e.setDescription(rs.getString("Description"));
+                e.setLocation(rs.getString("Location"));
+                e.setUrlWebsite(rs.getString("URLWebsite"));
+
+                // Added TaxCode based on the logic from the HEAD branch for consistency
+                try {
+                    e.setTaxCode(rs.getString("TaxCode"));
+                } catch (SQLException ignored) {
+
+                }
+                e.setImgLogo(rs.getString("ImgLogo"));
+                e.setStatus(rs.getBoolean("Status"));
+                list.add(e);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
     // Merged findPage: Uses Boolean for statusFilter (consistent with countAll)
@@ -132,7 +166,6 @@ public class EmployerDAO extends DBContext {
         return list;
     }
 
-    // New method from 'main' branch
     public Employer findById(int id) {
         String sql = """
             SELECT EmployerID, EmployerName, Email, PhoneNumber, PasswordHash,
@@ -155,7 +188,6 @@ public class EmployerDAO extends DBContext {
                     e.setDescription(rs.getString("Description"));
                     e.setLocation(rs.getString("Location"));
                     e.setUrlWebsite(rs.getString("URLWebsite"));
-                    // Added TaxCode based on the logic from the HEAD branch for consistency
                     try {
                         e.setTaxCode(rs.getString("TaxCode"));
                     } catch (SQLException ignored) {
@@ -170,9 +202,10 @@ public class EmployerDAO extends DBContext {
         }
         return null;
     }
-    
+
 
     // New method from 'main' branch
+
     public String getEmailByID(int id) {
         String sql = """
             SELECT  Email
@@ -245,6 +278,7 @@ public class EmployerDAO extends DBContext {
         }
     }
 
+
     public boolean updateStatus(int employerId, int status) {
         String sql = "UPDATE Employer SET [Status] = ? WHERE EmployerID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -261,7 +295,6 @@ public class EmployerDAO extends DBContext {
         return updateStatus(employerId, 1);
     }
 
-
     public boolean updateEmployerProfile(Employer employer) {
         String sql = "UPDATE Employer\n"
                 + "SET CompanyName = ?,\n"
@@ -270,7 +303,7 @@ public class EmployerDAO extends DBContext {
                 + "Description = ?,\n"
                 + "URLWebsite =?\n"
                 + "WHERE EmployerID = ?";
-        
+
         try (PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, employer.getCompanyName());
@@ -288,8 +321,8 @@ public class EmployerDAO extends DBContext {
             return false;
         }
     }
-    
-        public boolean updateLogo(int employerId, String logoURL){
+
+    public boolean updateLogo(int employerId, String logoURL) {
         String sql = """
             UPDATE Employer
                SET ImgLogo = ?

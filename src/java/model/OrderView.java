@@ -3,27 +3,30 @@ package model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class OrderView implements Serializable {
+
     private int orderId;
     private int employerId;
     private String employerName;
-    private String employerEmail; 
+    private String employerEmail;
     private int serviceId;
     private String serviceName;
-    private BigDecimal amount;      
+    private BigDecimal amount;
     private String payMethod;
     private String status;
     private LocalDateTime date;
-    private Integer duration;        
-    private String promotionCode;  
-    private Integer discountPercent; 
-    private BigDecimal finalAmount;   
+    private Integer duration;
+    private String promotionCode;
+    private BigDecimal discountPercent;
+    private BigDecimal finalAmount;
 
     public OrderView() {
     }
 
-    public OrderView(int orderId, int employerId, String employerName, int serviceId, String serviceName, BigDecimal amount, String payMethod, String status, LocalDateTime date, Integer duration, String promotionCode, Integer discountPercent, BigDecimal finalAmount) {
+    public OrderView(int orderId, int employerId, String employerName, int serviceId, String serviceName, BigDecimal amount, String payMethod, String status, LocalDateTime date, Integer duration, String promotionCode, BigDecimal discountPercent, BigDecimal finalAmount) {
         this.orderId = orderId;
         this.employerId = employerId;
         this.employerName = employerName;
@@ -111,8 +114,8 @@ public class OrderView implements Serializable {
         this.status = status;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public Date getDate() {
+    return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public void setDate(LocalDateTime date) {
@@ -135,11 +138,11 @@ public class OrderView implements Serializable {
         this.promotionCode = promotionCode;
     }
 
-    public Integer getDiscountPercent() {
+    public BigDecimal getDiscountPercent() {
         return discountPercent;
     }
 
-    public void setDiscountPercent(Integer discountPercent) {
+    public void setDiscountPercent(BigDecimal discountPercent) {
         this.discountPercent = discountPercent;
     }
 
@@ -151,23 +154,29 @@ public class OrderView implements Serializable {
         this.finalAmount = finalAmount;
     }
 
-    
+public Date getEndDate() {
+    if (duration == null || date == null) return null;
+    LocalDateTime end = date.plusDays(duration);
+    return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
+}
+
+
     @Override
     public String toString() {
-        return "OrderView{" +
-                "orderId=" + orderId +
-                ", employerId=" + employerId +
-                ", employerName='" + employerName + '\'' +
-                ", serviceId=" + serviceId +
-                ", serviceName='" + serviceName + '\'' +
-                ", amount=" + amount +
-                ", payMethod='" + payMethod + '\'' +
-                ", status='" + status + '\'' +
-                ", date=" + date +
-                ", duration=" + duration +
-                ", promotionCode='" + promotionCode + '\'' +
-                ", discountPercent=" + discountPercent +
-                ", finalAmount=" + finalAmount +
-                '}';
+        return "OrderView{"
+                + "orderId=" + orderId
+                + ", employerId=" + employerId
+                + ", employerName='" + employerName + '\''
+                + ", serviceId=" + serviceId
+                + ", serviceName='" + serviceName + '\''
+                + ", amount=" + amount
+                + ", payMethod='" + payMethod + '\''
+                + ", status='" + status + '\''
+                + ", date=" + date
+                + ", duration=" + duration
+                + ", promotionCode='" + promotionCode + '\''
+                + ", discountPercent=" + discountPercent
+                + ", finalAmount=" + finalAmount
+                + '}';
     }
 }

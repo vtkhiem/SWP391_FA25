@@ -3,7 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ page import="model.Admin" %>
 <%
-    // (tuỳ chọn) chặn truy cập nếu không phải MarketingStaff
     String role = (String) session.getAttribute("role");
     if (role == null || !"MarketingStaff".equals(role)) {
         response.sendRedirect("access-denied.jsp");
@@ -23,15 +22,11 @@
 
     *{box-sizing:border-box}
     body{margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg); color:var(--text)}
-
-    /* ===== HEADER (giống trang Marketing Dashboard) ===== */
     .navbar { background:#00366d; color:#fff; display:flex; align-items:center; justify-content:space-between;
               padding:12px 20px; position:sticky; top:0; z-index:10; }
     .brand a { color:#fff; text-decoration:none; font-weight:700; }
     .navbar .right { display:flex; gap:12px; align-items:center; }
     .navbar .right a { color:#fff; text-decoration:none; }
-
-    /* ===== PAGE CONTENT ===== */
     .wrap{max-width:1100px; margin:18px auto; padding:0 16px}
     h1{font-size:24px; margin:12px 0 16px}
 
@@ -45,11 +40,15 @@
     .small{color:var(--muted); font-size:12px}
 
     .badge{font-size:12px; padding:4px 8px; border-radius:999px; display:inline-block; font-weight:700}
-    .badge.pub{background:#dcfce7; color:#166534}   /* published */
-    .badge.arc{background:#e5e7eb; color:#374151}   /* archived */
+    .badge.pub{background:#dcfce7; color:#166534}
+    .badge.arc{background:#e5e7eb; color:#374151}
 
+    .actions{display:flex; gap:8px; align-items:center}
     .actions a{padding:6px 10px; border-radius:8px; text-decoration:none; border:1px solid var(--line); color:#111; background:#fff}
     .actions a:hover{box-shadow:0 2px 6px rgba(0,0,0,.08)}
+    .actions button{padding:6px 10px; border-radius:8px; border:1px solid var(--line); background:#fff; color:#111; cursor:pointer}
+    .actions button.delete{background:#dc2626; color:#fff; border-color:#dc2626}
+    .actions button.delete:hover{filter:brightness(0.95)}
 
     .pagination{display:flex; gap:8px; justify-content:flex-end; padding:12px; border-top:1px solid var(--line); background:#fafafa}
     .page-btn{padding:6px 10px; border-radius:8px; text-decoration:none; color:#111; background:#e5e7eb}
@@ -57,8 +56,6 @@
   </style>
 </head>
 <body>
-
-  <!-- HEADER Marketing -->
   <div class="navbar">
     <div class="brand">
       <a>Marketing Dashboard</a>
@@ -68,10 +65,9 @@
       <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
     </div>
   </div>
-
-  <!-- NỘI DUNG -->
   <div class="wrap">
     <h1>Quản lý Blog Post</h1>
+    <a class="btn" href="${pageContext.request.contextPath}/blog-list/add">+ Thêm bài viết</a>
 
     <div class="table-card">
       <table>
@@ -79,7 +75,7 @@
           <tr>
             <th style="width:70px;">ID</th>
             <th>Title</th>
-            <th style="width:220px;">Category</th>
+            <th style="width:270px;">Category</th>
             <th style="width:140px;">Published</th>
             <th style="width:120px;">Status</th>
             <th style="width:130px;">Action</th>
@@ -90,7 +86,7 @@
             <tr>
               <td>${p.postID}</td>
               <td class="title-cell">
-                <a href="${pageContext.request.contextPath}${p.url}" target="_blank" title="Xem bài viết">${p.title}</a>
+                <a href="${pageContext.request.contextPath}/${p.url}" target="_blank" title="Xem bài viết">${p.title}</a>
                 <div class="small">${p.url}</div>
               </td>
               <td>${p.categoryName}</td>
@@ -105,8 +101,17 @@
                   <c:otherwise><span class="badge arc">archived</span></c:otherwise>
                 </c:choose>
               </td>
-              <td class="actions">
-                <a href="${pageContext.request.contextPath}/blog-list/edit?id=${p.postID}">View detail</a>
+              <td>
+                <div class="actions">
+                  <a href="${pageContext.request.contextPath}/blog-list/edit?id=${p.postID}">Edit</a>
+                  <form method="post"
+                        action="${pageContext.request.contextPath}/blog-list/delete"
+                        onsubmit="return confirm('Bạn có chắc muốn xóa bài này? Hành động này không thể hoàn tác.');"
+                        style="margin:0;">
+                    <input type="hidden" name="postId" value="${p.postID}">
+                    <button type="submit" class="delete">Delete</button>
+                  </form>
+                </div>
               </td>
             </tr>
           </c:forEach>

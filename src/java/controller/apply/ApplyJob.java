@@ -79,14 +79,24 @@ public class ApplyJob extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(false);
-        
+
+        int page = 1;
+        try {
+            String pageParam = request.getParameter("currentPage");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                page = Integer.parseInt(pageParam);
+            }
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+
         int jobId = Validation.getId(request.getParameter("jobId"));
         int CVID = Validation.getId(request.getParameter("CVID"));
         Candidate candidate = (Candidate) session.getAttribute("user");
-        
+
         if (jobId == 0 || CVID == 0) {
             session.setAttribute("error", "Lỗi không mong muốn đã xảy ra");
-            response.sendRedirect(request.getContextPath() + "/jobs");
+            response.sendRedirect(request.getContextPath() + "/jobs?currentPage=" + page);
             return; // avoid “response already committed”
         }
 
@@ -95,7 +105,7 @@ public class ApplyJob extends HttpServlet {
         LocalDateTime dayCreate = LocalDateTime.now();
         dao.insertApply(jobId, candidate.getCandidateId(), CVID, dayCreate, "Pending", "");
         session.setAttribute("message", "Ứng tuyển vào công việc thành công");
-        response.sendRedirect(request.getContextPath() + "/jobs");
+        response.sendRedirect(request.getContextPath() + "/jobs?currentPage=" + page);
     }
 
     /**

@@ -206,7 +206,7 @@
                                             </div>
                                             <div class="jobs_right">
                                                 <div class="apply_now justify-content-center">
-                                                    <a href="job_details?id=${job.jobPostID}" class="boxed-btn3">Xem Ngay</a>
+                                                    <a href="job_details?id=${job.jobPostID}&currentPage=${param.page}" class="boxed-btn3">Xem Ngay</a>
                                                 </div>
                                             </div>
                                         </div>

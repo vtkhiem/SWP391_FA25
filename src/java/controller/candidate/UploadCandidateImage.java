@@ -104,7 +104,7 @@ public class UploadCandidateImage extends HttpServlet {
         if (!fileName.toLowerCase().matches(".*\\.(jpg|jpeg|png)$")) {
             session.setAttribute("error", "Chỉ được tải lên file ảnh (.jpg, .jpeg, .png)");
             System.out.println(session.getAttribute("error"));
-
+            System.out.println("Redirect with session ID: " + session.getId());
             response.sendRedirect("candidateProfile");
             return;
         }

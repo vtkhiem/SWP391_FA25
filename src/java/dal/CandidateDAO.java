@@ -3,6 +3,7 @@ package dal;
 import model.Candidate;
 import java.sql.*;
 import java.util.*;
+import model.Employer;
 
 public class CandidateDAO extends DBContext {
 
@@ -12,41 +13,49 @@ public class CandidateDAO extends DBContext {
                 var f = DBContext.class.getDeclaredField("c");
                 f.setAccessible(true);
                 Object v = f.get(this);
-                if (v instanceof Connection) return (Connection) v;
-            } catch (NoSuchFieldException ignore) { }
+                if (v instanceof Connection) {
+                    return (Connection) v;
+                }
+            } catch (NoSuchFieldException ignore) {
+            }
             try {
                 var f = DBContext.class.getDeclaredField("connection");
                 f.setAccessible(true);
                 Object v = f.get(this);
-                if (v instanceof Connection) return (Connection) v;
-            } catch (NoSuchFieldException ignore) { }
-        } catch (IllegalAccessException ignore) { }
+                if (v instanceof Connection) {
+                    return (Connection) v;
+                }
+            } catch (NoSuchFieldException ignore) {
+            }
+        } catch (IllegalAccessException ignore) {
+        }
         return null;
     }
 
     private Connection requireConn() throws SQLException {
         Connection cx = conn();
-        if (cx == null) throw new SQLException("DB connection is null");
+        if (cx == null) {
+            throw new SQLException("DB connection is null");
+        }
         return cx;
     }
 
-    public int countAll(String keyword) {
-        String base = "SELECT COUNT(*) FROM Candidate";
-        String where = "";
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            where = " WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ?";
-        }
-        String sql = base + where;
 
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            if (!where.isEmpty()) {
-                String like = "%" + keyword.trim() + "%";
-                ps.setString(1, like);
-                ps.setString(2, like);
-                ps.setString(3, like);
+    public int countAll(String likePattern) {
+        String sql = "SELECT COUNT(*) FROM Candidate";
+        boolean hasKw = likePattern != null && !likePattern.trim().isEmpty();
+        if (hasKw) {
+            sql += " WHERE CandidateName COLLATE Vietnamese_100_CI_AI LIKE ?";
+        }
+
+        try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
+            if (hasKw) {
+                ps.setString(1, likePattern);
             }
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,29 +63,46 @@ public class CandidateDAO extends DBContext {
         return 0;
     }
 
-    public List<Candidate> findPage(int page, int pageSize, String keyword) {
+
+    public List<Candidate> getAllCandidates() {
         List<Candidate> list = new ArrayList<>();
-        if (page < 1) page = 1;
+        String sql = "SELECT * FROM Candidate";
+        try (PreparedStatement st = c.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
+    public List<Candidate> findPage(int page, int pageSize, String likePattern) {
+
+        List<Candidate> list = new ArrayList<>();
+        if (page < 1) {
+            page = 1;
+        }
         int offset = (page - 1) * pageSize;
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality ")
-          .append("FROM Candidate ");
+        boolean hasKw = likePattern != null && !likePattern.trim().isEmpty();
 
-        boolean hasKw = keyword != null && !keyword.trim().isEmpty();
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality, isPublic ")
+                .append("FROM Candidate ");
+
+
         if (hasKw) {
-            sb.append("WHERE CandidateName LIKE ? OR Email LIKE ? OR PhoneNumber LIKE ? ");
+            sb.append("WHERE CandidateName COLLATE Vietnamese_100_CI_AI LIKE ? ");
         }
         sb.append("ORDER BY CandidateID ASC ")
-          .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
+                .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
 
-        try (PreparedStatement ps = c.prepareStatement(sb.toString())) {
+        try (PreparedStatement ps = requireConn().prepareStatement(sb.toString())) {
             int idx = 1;
             if (hasKw) {
-                String like = "%" + keyword.trim() + "%";
-                ps.setString(idx++, like);
-                ps.setString(idx++, like);
-                ps.setString(idx++, like);
+                ps.setString(idx++, likePattern);
             }
             ps.setInt(idx++, offset);
             ps.setInt(idx, pageSize);
@@ -98,22 +124,78 @@ public class CandidateDAO extends DBContext {
         return list;
     }
 
-
     public Candidate findById(int id) {
         String sql = """
-            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar
+            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar, isPublic 
             FROM Candidate
             WHERE CandidateID = ?
         """;
         try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Candidate> getPublicCandidates(int page, int pageSize) {
+        List<Candidate> list = new ArrayList<>();
+
+        if (page < 1) {
+            page = 1;
+        }
+        int offset = (page - 1) * pageSize;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT CandidateID, CandidateName, Email, PhoneNumber, Nationality, isPublic ")
+                .append("FROM Candidate "
+                        + "WHERE isPublic = 1");
+
+        sb.append("ORDER BY CandidateID ASC ")
+                .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;");
+
+        try (PreparedStatement ps = c.prepareStatement(sb.toString())) {
+            int idx = 1;
+            ps.setInt(idx++, offset);
+            ps.setInt(idx, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Candidate cd = new Candidate();
+                    cd.setCandidateId(rs.getInt("CandidateID"));
+                    cd.setCandidateName(rs.getString("CandidateName"));
+                    cd.setEmail(rs.getString("Email"));
+                    cd.setPhoneNumber(rs.getString("PhoneNumber"));
+                    cd.setNationality(rs.getString("Nationality"));
+                    cd.setIsPublic(rs.getBoolean("isPublic"));
+                    list.add(cd);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int countPublicCanididates() {
+        String sql = "SELECT COUNT(*) FROM Candidate WHERE isPublic =1 ";
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public Candidate getCandidateById(int id) {
@@ -129,7 +211,7 @@ public class CandidateDAO extends DBContext {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return true; // phòng thủ: coi như đã tồn tại khi lỗi
+            return true; 
         }
     }
 
@@ -159,10 +241,9 @@ public class CandidateDAO extends DBContext {
         }
     }
 
- 
     public Candidate checkLogin(String email, String passwordHash) {
         String sql = """
-            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar
+            SELECT CandidateID, CandidateName, Address, Email, PhoneNumber, Nationality, PasswordHash, Avatar, isPublic 
             FROM Candidate
             WHERE Email = ? AND PasswordHash = ?
         """;
@@ -170,7 +251,9 @@ public class CandidateDAO extends DBContext {
             ps.setString(1, email);
             ps.setString(2, passwordHash);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -178,15 +261,15 @@ public class CandidateDAO extends DBContext {
         return null;
     }
 
+
     public boolean deleteCascade(int candidateId) {
         String delApply = "DELETE FROM Apply WHERE CandidateID = ?";
-        String delCand  = "DELETE FROM Candidate WHERE CandidateID = ?";
+        String delCand = "DELETE FROM Candidate WHERE CandidateID = ?";
         try {
             Connection cx = requireConn();
             boolean oldAuto = cx.getAutoCommit();
             cx.setAutoCommit(false);
-            try (PreparedStatement ps1 = cx.prepareStatement(delApply);
-                 PreparedStatement ps2 = cx.prepareStatement(delCand)) {
+            try (PreparedStatement ps1 = cx.prepareStatement(delApply); PreparedStatement ps2 = cx.prepareStatement(delCand)) {
                 ps1.setInt(1, candidateId);
                 ps1.executeUpdate();
                 ps2.setInt(1, candidateId);
@@ -204,14 +287,16 @@ public class CandidateDAO extends DBContext {
             return false;
         }
     }
-        // Cập nhật hồ sơ ứng viên
+    // Cập nhật hồ sơ ứng viên
+
     public boolean updateCandidateProfile(Candidate candidate) {
         String sql = """
             UPDATE Candidate
                SET CandidateName = ?,
                    Address = ?,
                    PhoneNumber = ?,
-                   Nationality = ?
+                   Nationality = ?,
+                   isPublic = ?
              WHERE CandidateID = ?
             """;
         try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
@@ -220,7 +305,8 @@ public class CandidateDAO extends DBContext {
             ps.setString(2, candidate.getAddress());
             ps.setString(3, candidate.getPhoneNumber());
             ps.setString(4, candidate.getNationality());
-            ps.setInt(5, candidate.getCandidateId());
+            ps.setBoolean(5, candidate.isIsPublic());
+            ps.setInt(6, candidate.getCandidateId());
 
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -230,6 +316,7 @@ public class CandidateDAO extends DBContext {
             return false;
         }
     }
+
 
     private Candidate mapRow(ResultSet rs) throws SQLException {
         Candidate cd = new Candidate();
@@ -241,10 +328,11 @@ public class CandidateDAO extends DBContext {
         cd.setNationality(rs.getString("Nationality"));
         cd.setPasswordHash(rs.getString("PasswordHash"));
         cd.setAvatar(rs.getString("Avatar"));
+        cd.setIsPublic(false);
         return cd;
     }
-    
-    public boolean updateAvatar(int candidateId, String imageURL){
+
+    public boolean updateAvatar(int candidateId, String imageURL) {
         String sql = """
             UPDATE Candidate
                SET Avatar = ?
@@ -262,5 +350,40 @@ public class CandidateDAO extends DBContext {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Candidate getCandidateByCV(int CVID) {
+        String sql = """
+            SELECT c.CandidateID, c.CandidateName, c.Address, c.Email, 
+                   c.PhoneNumber, c.Nationality, c.PasswordHash, c.Avatar, c.isPublic
+            FROM Candidate c
+            JOIN CV v ON c.CandidateID = v.CandidateID
+            WHERE v.CVID = ?
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, CVID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Candidate candidate = new Candidate();
+                    candidate.setCandidateId(rs.getInt("CandidateID"));
+                    candidate.setCandidateName(rs.getString("CandidateName"));
+                    candidate.setAddress(rs.getString("Address"));
+                    candidate.setEmail(rs.getString("Email"));
+                    candidate.setPhoneNumber(rs.getString("PhoneNumber"));
+                    candidate.setNationality(rs.getString("Nationality"));
+                    candidate.setPasswordHash(rs.getString("PasswordHash"));
+                    candidate.setAvatar(rs.getString("Avatar"));
+                    candidate.setIsPublic(rs.getBoolean("isPublic"));
+                    return candidate;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new CandidateDAO().getCandidateByCV(2));
     }
 }
