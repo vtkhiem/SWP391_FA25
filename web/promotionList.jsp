@@ -63,12 +63,7 @@
                                 </c:otherwise>
                             </c:choose>
                         </td>
-                        <td>
-                            <a href="editPromotion?id=${p.promotionID}" class="btn btn-warning btn-sm">Sửa</a>
-                            <a href="deletePromotion?&id=${p.promotionID}" 
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Bạn có chắc muốn xóa khuyến mãi này không?')">Xóa</a>
-                        </td>
+                     
                     </tr>
                 </c:forEach>
             </tbody>

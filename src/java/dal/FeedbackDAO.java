@@ -9,7 +9,7 @@ public class FeedbackDAO extends DBContext {
     // ✅ Thêm phản hồi mới
     public boolean addFeedback(Feedback feedback) throws SQLException {
         String sql = """
-            INSERT INTO Feedback (EmployerID, CandidateID, Subject, Content, Type, Status, CreatedAt)
+            INSERT INTO Feedback (EmployerID, CandidateID, Subject, Content, Status, CreatedAt)
             VALUES (?, ?, ?, ?, ?, 'Pending', GETDATE())
         """;
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -198,6 +198,24 @@ public class FeedbackDAO extends DBContext {
         }
         return list;
     }
+       public List<Feedback> getAllFromBoth() throws SQLException {
+        List<Feedback> list = new ArrayList<>();
+        String sql = """
+            SELECT * 
+            FROM Feedback 
+            WHERE EmployerID is not null And CandidateID is not null
+            ORDER BY CreatedAt DESC
+        """;
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToFeedback(rs));
+                }
+            }
+        }
+        return list;
+    }
     // ✅ Lấy ID người gửi feedback (tức là EmployerID hoặc CandidateID)
 
     public Integer getSenderId(int feedbackID) throws SQLException {
@@ -235,6 +253,19 @@ public class FeedbackDAO extends DBContext {
             ps.executeBatch();
         }
     }
+    public void insertFeedbackType(int feedbackID, int feedbackType) throws SQLException {
+        String sql = "INSERT INTO FeedbackTypes (FeedbackID, TypeFeedbackID) VALUES (?, ?)";
+        try (
+                PreparedStatement ps = c.prepareStatement(sql)) {
+
+           
+                ps.setInt(1, feedbackID);
+                ps.setInt(2, feedbackType);
+              
+
+              ps.executeUpdate();
+        }
+    }
 
     public int insertFeedbackAndReturnId(Feedback feedback) throws SQLException {
         String sql = "INSERT INTO Feedback (EmployerID, Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?, ?, ?, ?, ?, GETDATE())";
@@ -264,6 +295,78 @@ public class FeedbackDAO extends DBContext {
             }
         }
         return -1;
+    } 
+    public int insertFeedbackAndReturnIdCan(Feedback feedback) throws SQLException {
+        String sql = "INSERT INTO Feedback (CandidateID, Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?, ?, ?, ?, ?, GETDATE())";
+        try (
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setInt(1, feedback.getCandidateID());
+            ps.setString(2, feedback.getSubject());
+            ps.setString(3, feedback.getContent());
+
+            if (feedback.getServiceID() != null) {
+                ps.setInt(4, feedback.getServiceID());
+            } else {
+                ps.setNull(4, java.sql.Types.INTEGER);
+            }
+
+            if (feedback.getPromotionID() != null) {
+                ps.setInt(5, feedback.getPromotionID());
+            } else {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            }
+
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
     }
+      public int insertFeedbackAndReturnIdGuest(Feedback feedback) throws SQLException {
+        String sql = "INSERT INTO Feedback (EmployerID,CandidateID,Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?,?, ?, ?, ?, ?, GETDATE())";
+        try (
+                PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+          
+              if (feedback.getEmployerID() != null) {
+            ps.setInt(1, feedback.getEmployerID());
+        } else {
+            ps.setNull(1, Types.INTEGER);
+        }
+        
+        // Xử lý CandidateID
+        if (feedback.getCandidateID() != null) {
+            ps.setInt(2, feedback.getCandidateID());
+        } else {
+            ps.setNull(2, Types.INTEGER);
+        }
+        
+        ps.setString(3, feedback.getSubject());
+        ps.setString(4, feedback.getContent());
+        
+        if (feedback.getServiceID() != null) {
+            ps.setInt(5, feedback.getServiceID());
+        } else {
+            ps.setNull(5, Types.INTEGER);
+        }
+        
+        if (feedback.getPromotionID() != null) {
+            ps.setInt(6, feedback.getPromotionID());
+        } else {
+            ps.setNull(6, Types.INTEGER);
+        }
+        
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
+    }
+    
 
 }

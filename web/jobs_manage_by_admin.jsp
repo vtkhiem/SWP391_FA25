@@ -94,8 +94,8 @@
 </head>
 <body>
 
- <div class="navbar">
-    <a>Admin Dashboard</a>
+<div class="navbar">
+     <a href="${pageContext.request.contextPath}/admin_home.jsp" class="nav-link">Admin Dashboard</a>
     <span class="divider">|</span>
     <a href="${pageContext.request.contextPath}/admin/candidates" class="nav-link">Candidates</a>
     <span class="divider">|</span>
@@ -111,6 +111,8 @@
           <a href="${pageContext.request.contextPath}/adminFeedbackList" class="nav-link">Feedback</a>
              <span class="divider">|</span>
           <a href="${pageContext.request.contextPath}/adminJobpostList" class="nav-link">Jobs</a>
+           <span class="divider">|</span>
+    <a href="${pageContext.request.contextPath}/bannedAccountList" class="nav-link" style="text-decoration:underline;">Banned</a>
 </div>
 <div class="container">
 
