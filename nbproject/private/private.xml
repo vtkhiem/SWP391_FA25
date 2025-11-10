@@ -3,21 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391_FA25/src/java/tool/EmailService.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/employer/FilterPublicCandidate.java</file>
-            <file>file:/D:/SWP391_FA25/nbproject/build-impl.xml</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/service/EmployerViewPublicCVs.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/dal/OrderDAO.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/employer/EmployerDeleteServlet.java</file>
+            <file>file:/D:/SWP391_FA25/web/employer-view-candidate.jsp</file>
             <file>file:/D:/SWP391_FA25/web/sale.jsp</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/candidate/CandidateBanServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/dal/EmailBannedDAO.java</file>
-            <file>file:/D:/SWP391_FA25/web/admin/employer-list.jsp</file>
-            <file>file:/D:/SWP391_FA25/web/admin/candidate-list.jsp</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/employer/EmployerBanServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/candidate/CandidateDeleteServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/controller/job/AdminHidePostSendMailServlet.java</file>
-            <file>file:/D:/SWP391_FA25/src/java/model/Candidate.java</file>
         </group>
     </open-files>
 </project-private>

@@ -495,7 +495,7 @@
                                         </div>
                                     </div>
                                     <div class="cv_item_right">
-                                        <span class="cv_status status_reviewing"><a href="${pageContext.request.contextPath}/${cv.fileData} class="action_btn btn_view">
+                                        <span class="cv_status status_reviewing" ><a href="${pageContext.request.contextPath}/${cv.fileData}">
                                                 <i class="ti-eye"></i> Xem chi tiết CV
                                             </a></span>
 

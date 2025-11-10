@@ -79,8 +79,6 @@
                                                                 <li><a href="list-cv">Quản lí CV</a></li>
                                                             </ul>
                                                         </li>
-                                                        <li><a href="blogs">Blog</a></li>
-                                                        <li><a href="contact.html">Liên hệ</a></li>
 
                                                     </c:otherwise>
                                                 </c:choose>
