@@ -313,13 +313,14 @@
                         <th>Gói</th>
                         <th>Khuyến mãi</th>
                         <th>Giảm (%)</th>
-                        <th>Tổnng tiền</th>
+                        <th>Trạng thái</th>
                         <th>Phương thức</th>
                         <th>Ngày kết thúc</th>
-                        <th>Trạng thái</th>
+                        <th>Tổng tiền</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <c:set var="totalAmount" value="0"/>
                     <c:forEach var="o" items="${orders}">
                         <tr class="clickable-row" data-buyer-name="${fn:escapeXml(o.employerName)}" data-buyer-email="${fn:escapeXml(o.employerEmail)}">
                             <td>${o.orderId}</td>
@@ -334,7 +335,7 @@
                                     <c:when test="${o.discountPercent != null}"><c:out value="${o.discountPercent}"/>%</c:when>
                                     <c:otherwise>—</c:otherwise>
                                 </c:choose></td>
-                            <td><fmt:formatNumber value="${o.finalAmount}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></td>
+                            <td><span class="status ${o.status}"><c:out value="${o.status}"/></span></td>
                             <td><c:out value="${o.payMethod}"/></td>
                             <td>
                                 <c:choose>
@@ -344,12 +345,17 @@
                                     <c:otherwise>—</c:otherwise>
                                 </c:choose>
                             </td>
-                            <td><span class="status ${o.status}"><c:out value="${o.status}"/></span></td>
+                            <td><fmt:formatNumber value="${o.finalAmount}" type="currency" currencySymbol="₫" maxFractionDigits="0"/></td>
                         </tr>
+                        <c:set var="totalAmount" value="${totalAmount + o.finalAmount}"/>
                     </c:forEach>
-                    <c:if test="${empty orders}">
-                        <tr><td colspan="11" class="muted" style="text-align:center;">Không có dữ liệu</td></tr>
-                    </c:if>
+                    <tr>
+                        <td colspan="9" style="text-align:right;font-weight:bold;">Tổng cộng:</td>
+                        <td style="font-weight:bold;">
+                            <fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="₫" maxFractionDigits="0"/>
+                        </td>
+                    </tr>
+
                 </tbody>
             </table>
 
@@ -357,6 +363,9 @@
             <div class="pagination">
                 <div class="container">
                     <a href="exportOrderList"><button class="btn primary" type="submit">Xuất dữ liệu</button></a>
+                </div>
+                <div class="container">
+                    <a href="viewOrderByQuarter"><button class="btn primary" type="submit">Doanh thu theo quý</button></a>
                 </div>
                 <c:forEach var="i" begin="1" end="${totalPages}">
                     <a class="page-link ${i==page?'active':''}"
@@ -423,13 +432,14 @@
                     modal.style.display = 'none';
                 }
 
-                document.querySelectorAll('tr.clickable-row').forEach(tr => {
-                    tr.addEventListener('click', () => {
-                        const name = tr.getAttribute('data-buyer-name');
-                        const email = tr.getAttribute('data-buyer-email');
-                        openModal(name, email);
-                    });
+                table.querySelectorAll('tr').forEach(tr => {
+                    if (tr.querySelector('td[colspan]'))
+                        return; // skip row thông báo "Không có dữ liệu"
+                    const td = tr.cells[6]; // cột tổng tiền
+                    if (td)
+                        total += parseCurrency(td.textContent);
                 });
+
 
                 okBtn.addEventListener('click', closeModal);
                 modal.addEventListener('click', e => {
@@ -441,6 +451,7 @@
                         closeModal();
                 });
             })();
+
         </script>
     </body>
 </html>

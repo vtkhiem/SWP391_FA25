@@ -20,6 +20,11 @@
         <link rel="stylesheet" href="css/slicknav.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css">
+        <style>
+            .main-menu {
+                overflow-x: hidden;
+            }
+        </style>
     </head>
     <body>
         <header>
@@ -54,8 +59,8 @@
                                                 <c:choose>
                                                     <%-- Employer --%>
                                                     <c:when test="${sessionScope.role eq 'Employer'}">
-                                                        <li><a href="employerServices">Trang chủ</a></li>
-                                                        <li><a href="employerWall">DashBoard</a></li>
+                                                        <li><a href="employerServices">Dịch vụ</a></li>
+                                                        <li><a href="employerWall">Wall</a></li>
                                                         <li><a href="job_add">Đăng Công Việc</a></li>
                                                         <li><a href="employer_jobs">Xem Công Việc</a></li>
                                                         <li><a href="viewPublicCVs">Tìm ứng viên</a></li>
@@ -96,7 +101,7 @@
                                                 <a href="login.jsp">Đăng nhập</a>
                                             </div>
                                             <div class="d-none d-lg-block">
-                                                <a class="boxed-btn3" href="employerServices">Nhà tuyển dụng</a>
+                                                <a class="boxed-btn3" href="viewPromotionPosts">Nhà tuyển dụng</a>
                                             </div>
                                         </c:if>
 
@@ -115,12 +120,12 @@
                                                                 <c:choose>
                                                                     <c:when test="${sessionScope.role eq 'Candidate'}">
                                                                         <li><a href="candidateProfile">Xem hồ sơ</a></li>
-                                                                    </c:when>
-                                                                    <c:when test="${sessionScope.role eq 'Employer'}">
+                                                                        </c:when>
+                                                                        <c:when test="${sessionScope.role eq 'Employer'}">
                                                                         <li><a href="employerProfile">Xem hồ sơ</a></li>
                                                                         <li><a href="payments_history">Lịch sử giao dịch</a></li>
-                                                                    </c:when>
-                                                                </c:choose>
+                                                                        </c:when>
+                                                                    </c:choose>
                                                                 <li><a href="logout">Đăng xuất</a></li>
                                                             </ul>
                                                         </li>
