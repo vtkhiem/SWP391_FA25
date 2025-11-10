@@ -53,7 +53,7 @@
       <h3>Đăng tin khuyến mãi</h3>
       <p>Tạo mới tin khuyến mãi để thu hút ứng viên & nhà tuyển dụng.</p>
       <div class="actions">
-        <a class="btn primary" href="${pageContext.request.contextPath}/postPromotion">Tạo khuyến mãi</a>
+        <a class="btn primary" href="${pageContext.request.contextPath}/post_promotion">Tạo khuyến mãi</a>
       </div>
     </div>
 

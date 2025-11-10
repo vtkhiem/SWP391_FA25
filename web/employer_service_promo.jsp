@@ -33,7 +33,7 @@
             body {
                 background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
             }
-            
+
             .bradcam_area {
                 background: linear-gradient(135deg, #1489f1 0%, #0f6bb8 100%);
                 padding: 3rem 0;
@@ -41,13 +41,13 @@
                 color: white;
                 margin-bottom: 50px;
             }
-            
+
             .bradcam_text h3 {
                 font-size: 2.5rem;
                 margin-bottom: 0.8rem;
                 font-weight: 700;
             }
-            
+
             .bradcam_text p {
                 font-size: 1.1rem;
                 opacity: 0.95;
@@ -318,7 +318,6 @@
     </head>
 
     <body>
-
         <!-- ✅ Header -->
         <jsp:include page="header.jsp"/>
 
@@ -331,7 +330,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Toast Notification -->
         <c:if test="${not empty message}">
             <div class="toast-message success">${message}</div>
@@ -374,12 +373,12 @@
                                         <fmt:formatNumber 
                                             value="${(1 - finalPrice / s.price) * 100}" 
                                             maxFractionDigits="0"
-                                        />%
+                                            />%
                                     </div>
                                 </div>
 
-                                        <div class="service-duration"><b>${s.duration} ngày sử dụng</b></div>
-                                
+                                <div class="service-duration"><b>${s.duration} ngày sử dụng</b></div>
+
                                 <c:if test="${not empty s.description}">
                                     <div class="service-description">${s.description}</div>
                                 </c:if>
@@ -389,7 +388,7 @@
                                     <ul class="feature-list">
                                         <c:forEach var="f" items="${s.functions}">
                                             <li>${f.functionName}</li>
-                                        </c:forEach>
+                                            </c:forEach>
                                     </ul>
                                 </c:if>
 
@@ -437,7 +436,7 @@
                                 </div>
 
                                 <div class="service-duration">${s.duration} ngày sử dụng</div>
-                                
+
                                 <c:if test="${not empty s.description}">
                                     <div class="service-description">${s.description}</div>
                                 </c:if>
@@ -447,7 +446,7 @@
                                     <ul class="feature-list">
                                         <c:forEach var="f" items="${s.functions}">
                                             <li>${f.functionName}</li>
-                                        </c:forEach>
+                                            </c:forEach>
                                     </ul>
                                 </c:if>
 
@@ -471,18 +470,8 @@
             <c:if test="${empty serviceList or hasNonPromo eq 'false'}">
                 <div class="empty-message">Hiện chưa có dịch vụ nào không giảm giá.</div>
             </c:if>
-
-            <!-- ======= Feedback Section ======= -->
-         <div class="text-center my-5">
-                <form action="prepare" method="post">
-                   
-                    <button type="submit" class="buy-btn">
-                        <i class="ti-comment-alt"></i> Gửi phản hồi cho quản trị viên
-                    </button>
-                </form>
-            </div>
         </div>
- </body>
+
         <!-- ======= Footer ======= -->
         <jsp:include page="footer.jsp"/>
 
@@ -518,5 +507,5 @@
                 });
             });
         </script>
-   
+    </body>
 </html>

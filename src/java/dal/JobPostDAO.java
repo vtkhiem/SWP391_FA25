@@ -22,17 +22,60 @@ public class JobPostDAO extends DBContext {
         System.out.println("Total jobs: " + list.size());
         return list;
     }
+    
+    public List<JobPost> getHighlightJob() {
+        List<JobPost> list = new ArrayList<>();
+        String sql = """
+            SELECT
+                jp.*,
+                e.EmployerID,
+                e.CompanyName AS CompanyName,
+                e.ImgLogo AS imageUrl
+            FROM JobHighlight jh
+            INNER JOIN JobPost jp ON jh.JobPostID = jp.JobPostID
+            INNER JOIN Employer e ON jp.EmployerID = e.EmployerID
+            WHERE jp.Visible = 1
+            AND jp.DueDate >= GETDATE()
+            ORDER BY jp.DayCreate DESC
+        """;
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    JobPost job = extractJobPost(rs);
+                    job.setCompanyName(rs.getString("CompanyName"));
+                    job.setImageUrl(rs.getString("imageUrl"));
+                    list.add(job);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL error (getJobPosts): " + e.getMessage());
+        }
+
+        System.out.println("Total jobs: " + list.size());
+        return list;
+    }
 
     public List<JobPost> getJobPosts(int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-        String sql = "SELECT * FROM JobPost WHERE Visible = 1 AND DueDate >= GETDATE() ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = """
+            SELECT j.*, e.imgLogo AS imageUrl
+            FROM JobPost j
+            JOIN Employer e ON j.employerId = e.employerId
+            WHERE j.Visible = 1
+            AND j.DueDate >= GETDATE()
+            ORDER BY j.DayCreate DESC
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, offset);
             ps.setInt(2, noOfRecords);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(extractJobPost(rs));
+                    JobPost job = extractJobPost(rs);
+                    job.setImageUrl(rs.getString("imageUrl"));
+                    list.add(job);
                     System.out.println("Loaded job: " + rs.getString("Title"));
                 }
             }
@@ -43,7 +86,7 @@ public class JobPostDAO extends DBContext {
         System.out.println("Total jobs: " + list.size());
         return list;
     }
-    
+
     public int countJobs() {
         String sql = "SELECT COUNT(*) FROM JobPost WHERE Visible = 1 AND DueDate >= GETDATE()";
 
@@ -60,12 +103,19 @@ public class JobPostDAO extends DBContext {
     }
 
     public JobPost getJobPostById(int id) {
-        String sql = "SELECT * FROM JobPost WHERE JobPostID = ?";
+        String sql = """
+            SELECT j.*, e.imgLogo AS imageUrl
+            FROM JobPost j
+            JOIN Employer e ON j.employerId = e.employerId
+            WHERE JobPostID = ?
+        """;
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return extractJobPost(rs);
+                    JobPost job = extractJobPost(rs);
+                    job.setImageUrl(rs.getString("imageUrl"));
+                    return job;
                 }
             }
         } catch (SQLException e) {
@@ -78,29 +128,29 @@ public class JobPostDAO extends DBContext {
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
             int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM JobPost WHERE Visible = 1");
+        StringBuilder sql = new StringBuilder("SELECT j.*, e.imgLogo AS imageUrl FROM JobPost j JOIN Employer e ON j.employerId = e.employerId WHERE j.Visible = 1 AND j.DueDate >= GETDATE()");
 
         if (category != null && !category.isEmpty()) {
-            sql.append(" AND Category LIKE ?");
+            sql.append(" AND j.Category LIKE ?");
         }
         if (location != null && !location.isEmpty()) {
-            sql.append(" AND Location LIKE ?");
+            sql.append(" AND j.Location LIKE ?");
         }
         if (minSalary != null && minSalary >= 0) {
-            sql.append(" AND OfferMin >= ?");
+            sql.append(" AND j.OfferMin >= ?");
         }
         if (maxSalary != null && maxSalary >= 0) {
-            sql.append(" AND OfferMax <= ?");
+            sql.append(" AND j.OfferMax <= ?");
         }
         if (keyword != null && !keyword.isEmpty()) {
             // Sử dụng COLLATE chính xác và đặt điều kiện cho Title/Description
-            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+            sql.append(" AND (j.Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR j.Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
         }
         if (numberExp >= 0) {
-            sql.append(" AND NumberExp = ?");
+            sql.append(" AND j.NumberExp = ?");
         }
         if (jobType != null && !jobType.isEmpty()) {
-            sql.append(" AND TypeJob = ?");
+            sql.append(" AND j.TypeJob = ?");
         }
 
         sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
@@ -134,7 +184,9 @@ public class JobPostDAO extends DBContext {
             ps.setInt(idx++, noOfRecords);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(extractJobPost(rs));
+                    JobPost job = extractJobPost(rs);
+                    job.setImageUrl(rs.getString("imageUrl"));
+                    list.add(job);
                 }
             }
         } catch (SQLException e) {
@@ -159,7 +211,7 @@ public class JobPostDAO extends DBContext {
 
     public int countJobsSearched(String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE Visible = 1");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE Visible = 1 AND DueDate >= GETDATE()");
 
         if (category != null && !category.isEmpty()) {
             sql.append(" AND Category LIKE ?");
@@ -234,65 +286,69 @@ public class JobPostDAO extends DBContext {
     }
 
     public List<JobPost> getJobsByEmployer(int employerId, int offset, int limit) {
-    List<JobPost> list = new ArrayList<>();
-    String sql = """
-        SELECT jp.*, 
-               ISNULL(w.IsActive, 0) AS activeOnWall
-        FROM JobPost jp
-        LEFT JOIN EmployerWall w
-            ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID
-        WHERE jp.EmployerID = ?
-        ORDER BY jp.DayCreate DESC
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-    """;
+        List<JobPost> list = new ArrayList<>();
+        String sql = """
+            SELECT jp.*, ISNULL(w.IsActive, 0) AS activeOnWall
+            FROM JobPost jp
+            LEFT JOIN (
+                SELECT JobPostID, EmployerID, MAX(CAST(ISNULL(IsActive,0) AS INT)) AS IsActive
+                FROM EmployerWall
+                GROUP BY JobPostID, EmployerID
+            ) w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID
+            WHERE jp.EmployerID = ?
+            ORDER BY jp.DayCreate DESC
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
 
-    try (PreparedStatement ps = c.prepareStatement(sql)) {
-        ps.setInt(1, employerId);
-        ps.setInt(2, offset);
-        ps.setInt(3, limit);
-        ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, employerId);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            JobPost j = new JobPost();
-            j.setJobPostID(rs.getInt("JobPostID"));
-            j.setEmployerID(rs.getInt("EmployerID"));
-            j.setTitle(rs.getString("Title"));
-            j.setDescription(rs.getString("Description"));
-            j.setCategory(rs.getString("Category"));
-            j.setPosition(rs.getString("Position"));
-            j.setLocation(rs.getString("Location"));
-            j.setOfferMin(rs.getBigDecimal("OfferMin"));
-            j.setOfferMax(rs.getBigDecimal("OfferMax"));
-            j.setNumberExp(rs.getInt("NumberExp"));
-            j.setVisible(rs.getBoolean("Visible"));
-            j.setTypeJob(rs.getString("TypeJob"));
-
-            Timestamp dayCreate = rs.getTimestamp("DayCreate");
-            if (dayCreate != null) j.setDayCreate(dayCreate.toLocalDateTime());
-
-            Timestamp dueDate = rs.getTimestamp("DueDate");
-            if (dueDate != null) j.setDueDate(dueDate.toLocalDateTime());
-
-            // ✅ Thêm dòng này
-            j.setActiveOnWall(rs.getBoolean("activeOnWall"));
-
-            list.add(j);
+            while (rs.next()) {
+                JobPost j = new JobPost();
+                j.setJobPostID(rs.getInt("JobPostID"));
+                j.setEmployerID(rs.getInt("EmployerID"));
+                j.setTitle(rs.getString("Title"));
+                j.setDescription(rs.getString("Description"));
+                j.setCategory(rs.getString("Category"));
+                j.setPosition(rs.getString("Position"));
+                j.setLocation(rs.getString("Location"));
+                j.setOfferMin(rs.getBigDecimal("OfferMin"));
+                j.setOfferMax(rs.getBigDecimal("OfferMax"));
+                j.setNumberExp(rs.getInt("NumberExp"));
+                j.setVisible(rs.getBoolean("Visible"));
+                j.setTypeJob(rs.getString("TypeJob"));
+                Timestamp dayCreate = rs.getTimestamp("DayCreate");
+                if (dayCreate != null) {
+                    j.setDayCreate(dayCreate.toLocalDateTime());
+                }
+                Timestamp dueDate = rs.getTimestamp("DueDate");
+                if (dueDate != null) {
+                    j.setDueDate(dueDate.toLocalDateTime());
+                }
+                j.setActiveOnWall(rs.getBoolean("activeOnWall"));
+                list.add(j);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return list;
     }
 
-    return list;
-}
-    
     public int countJobsByEmployer(int employerId) {
-        String sql = "SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?";
+        String sql = """
+            SELECT COUNT(*) AS cnt
+            FROM JobPost jp
+            WHERE jp.EmployerID = ?
+        """;
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, employerId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return rs.getInt("cnt");
                 }
             }
         } catch (SQLException e) {
@@ -300,7 +356,7 @@ public class JobPostDAO extends DBContext {
         }
         return 0;
     }
-    
+
     public int countJobsByEmployerAndDayCreate(int employerId) {
         String sql = "SELECT COUNT(*) FROM JobPost jp JOIN ServiceEmployer se ON jp.EmployerID = se.EmployerID WHERE jp.EmployerID = ? AND jp.DayCreate BETWEEN se.RegisterDate AND se.ExpirationDate";
 
@@ -316,34 +372,34 @@ public class JobPostDAO extends DBContext {
         }
         return 0;
     }
-    
+
     public List<JobPost> searchJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
             int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM JobPost WHERE EmployerID = ?");
+        StringBuilder sql = new StringBuilder("SELECT jp.*, ISNULL(w.IsActive, 0) AS activeOnWall FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
 
         if (category != null && !category.isEmpty()) {
-            sql.append(" AND Category LIKE ?");
+            sql.append(" AND jp.Category LIKE ?");
         }
         if (location != null && !location.isEmpty()) {
-            sql.append(" AND Location LIKE ?");
+            sql.append(" AND jp.Location LIKE ?");
         }
         if (minSalary != null && minSalary >= 0) {
-            sql.append(" AND OfferMin >= ?");
+            sql.append(" AND jp.OfferMin >= ?");
         }
         if (maxSalary != null && maxSalary >= 0) {
-            sql.append(" AND OfferMax <= ?");
+            sql.append(" AND jp.OfferMax <= ?");
         }
         if (keyword != null && !keyword.isEmpty()) {
             // Sử dụng COLLATE chính xác và đặt điều kiện cho Title/Description
-            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+            sql.append(" AND (jp.Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR jp.Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
         }
         if (numberExp >= 0) {
-            sql.append(" AND NumberExp = ?");
+            sql.append(" AND jp.NumberExp = ?");
         }
         if (jobType != null && !jobType.isEmpty()) {
-            sql.append(" AND TypeJob = ?");
+            sql.append(" AND jp.TypeJob = ?");
         }
 
         sql.append(" ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
@@ -378,7 +434,29 @@ public class JobPostDAO extends DBContext {
             ps.setInt(idx++, noOfRecords);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(extractJobPost(rs));
+                    JobPost j = new JobPost();
+                    j.setJobPostID(rs.getInt("JobPostID"));
+                    j.setEmployerID(rs.getInt("EmployerID"));
+                    j.setTitle(rs.getString("Title"));
+                    j.setDescription(rs.getString("Description"));
+                    j.setCategory(rs.getString("Category"));
+                    j.setPosition(rs.getString("Position"));
+                    j.setLocation(rs.getString("Location"));
+                    j.setOfferMin(rs.getBigDecimal("OfferMin"));
+                    j.setOfferMax(rs.getBigDecimal("OfferMax"));
+                    j.setNumberExp(rs.getInt("NumberExp"));
+                    j.setVisible(rs.getBoolean("Visible"));
+                    j.setTypeJob(rs.getString("TypeJob"));
+                    Timestamp dayCreate = rs.getTimestamp("DayCreate");
+                    if (dayCreate != null) {
+                        j.setDayCreate(dayCreate.toLocalDateTime());
+                    }
+                    Timestamp dueDate = rs.getTimestamp("DueDate");
+                    if (dueDate != null) {
+                        j.setDueDate(dueDate.toLocalDateTime());
+                    }
+                    j.setActiveOnWall(rs.getBoolean("activeOnWall"));
+                    list.add(j);
                 }
             }
         } catch (SQLException e) {
@@ -386,31 +464,31 @@ public class JobPostDAO extends DBContext {
         }
         return list;
     }
-    
+
     public int countSearchedJobsByEmployer(int employerId, String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE EmployerID = ?");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT jp.JobPostID) AS cnt FROM JobPost jp LEFT JOIN EmployerWall w ON jp.JobPostID = w.JobPostID AND jp.EmployerID = w.EmployerID WHERE jp.EmployerID = ?");
 
         if (category != null && !category.isEmpty()) {
-            sql.append(" AND Category LIKE ?");
+            sql.append(" AND jp.Category LIKE ?");
         }
         if (location != null && !location.isEmpty()) {
-            sql.append(" AND Location LIKE ?");
+            sql.append(" AND jp.Location LIKE ?");
         }
         if (minSalary != null && minSalary >= 0) {
-            sql.append(" AND OfferMin >= ?");
+            sql.append(" AND jp.OfferMin >= ?");
         }
         if (maxSalary != null && maxSalary >= 0) {
-            sql.append(" AND OfferMax <= ?");
+            sql.append(" AND jp.OfferMax <= ?");
         }
         if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND (Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
+            sql.append(" AND (jp.Title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? OR jp.Description COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?)");
         }
         if (numberExp >= 0) {
-            sql.append(" AND NumberExp = ?");
+            sql.append(" AND jp.NumberExp = ?");
         }
         if (jobType != null && !jobType.isEmpty()) {
-            sql.append(" AND TypeJob = ?");
+            sql.append(" AND jp.TypeJob = ?");
         }
 
         try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
@@ -441,7 +519,7 @@ public class JobPostDAO extends DBContext {
             }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return rs.getInt("cnt");
                 }
             }
         } catch (SQLException e) {
@@ -475,7 +553,7 @@ public class JobPostDAO extends DBContext {
         }
         return false;
     }
-    
+
     public boolean visibleJobPost(int id) {
         String sql = "UPDATE JobPost SET Visible = 1 WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -535,22 +613,24 @@ public class JobPostDAO extends DBContext {
             ps.setTimestamp(13, null);
         }
     }
-    public int getEmployerIdByJobPostId(int jobpostID){
-          String sql = "SELECT EmployerID FROM JobPost WHERE JobpostID = ?";
+
+    public int getEmployerIdByJobPostId(int jobpostID) {
+        String sql = "SELECT EmployerID FROM JobPost WHERE JobpostID = ?";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, jobpostID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("EmployerID"); 
+                    return rs.getInt("EmployerID");
                 }
             }
         } catch (SQLException e) {
-               System.err.println("Error retrieving EmployerID for JobpostID " + jobpostID);
-        e.printStackTrace();
+            System.err.println("Error retrieving EmployerID for JobpostID " + jobpostID);
+            e.printStackTrace();
         }
         return -1;
     }
+
     public boolean deleteJobPost(int id) {
         String sql = "DELETE FROM JobPost WHERE JobPostID = ?";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -564,7 +644,7 @@ public class JobPostDAO extends DBContext {
 
     public List<JobPost> adminGetJobPosts(int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-      
+
         String sql = "SELECT * FROM JobPost ORDER BY DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -581,9 +661,8 @@ public class JobPostDAO extends DBContext {
         return list;
     }
 
-    
     public int adminCountAllJobs() {
-       
+
         String sql = "SELECT COUNT(*) FROM JobPost";
 
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -597,8 +676,10 @@ public class JobPostDAO extends DBContext {
         }
         return 0;
     }
+
     /**
      * Tìm kiếm jobs cho Admin (KHÔNG lọc Visible = 1)
+     *
      * @return Danh sách JobPost
      */
     public List<JobPost> adminSearchJobs(String category, String location,
@@ -665,7 +746,7 @@ public class JobPostDAO extends DBContext {
             }
             ps.setInt(idx++, offset);
             ps.setInt(idx++, noOfRecords);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractJobPost(rs));
@@ -679,6 +760,7 @@ public class JobPostDAO extends DBContext {
 
     /**
      * Đếm kết quả tìm kiếm cho Admin (KHÔNG lọc Visible = 1)
+     *
      * @return Tổng số bài đăng
      */
     public int adminCountJobsSearched(String category, String location,
@@ -735,10 +817,11 @@ public class JobPostDAO extends DBContext {
             if (jobType != null && !jobType.isEmpty()) {
                 ps.setString(idx++, jobType);
             }
-             if (employerId >= 0) {
+
+            if (employerId >= 0) {
                 ps.setInt(idx++, employerId);
             }
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);

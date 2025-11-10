@@ -1,99 +1,31 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<footer class="footer">
-    <div class="footer_top">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-3 col-md-6 col-lg-3">
-                    <div class="footer_widget wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">
-                        <div class="footer_logo">
-                            <a href="#">
-                                <img src="${pageContext.request.contextPath}/assets/img/logo.png" alt="">
-                            </a>
-                        </div>
-                        <p>
-                            finloan@support.com <br>
-                            +10 873 672 6782 <br>
-                            600/D, Green road, NewYork
-                        </p>
-                        <div class="socail_links">
-                            <ul>
-                                <li>
-                                    <a href="#">
-                                        <i class="ti-facebook"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-google-plus"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-twitter"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-instagram"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+<footer>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                <a href="#" class="logo">
+                    <img src="${pageContext.request.contextPath}/img/logo.png" alt="Logo" />
+                </a>
+                <p class="mt-3 mb-0">Giải Pháp Tìm Việc Làm Tối Ưu Dành Cho Bạn</p>
+            </div>
 
+            <div class="col-lg-8 col-md-12">
+                <form action="prepare" method="get">
+                    <div class="contact-form">
+                        <h3>Cần Liên Hệ Với Chúng Tôi?</h3>
+                        <button class="btn btn-success btn-send">
+                            <i class="ti-comment-alt" style="font-size: 12px"></i>Gửi Phản Hồi Cho Quản Trị Viên
+                        </button>
                     </div>
-                </div>
-                <div class="col-xl-2 col-md-6 col-lg-2">
-                    <div class="footer_widget wow fadeInUp" data-wow-duration="1.1s" data-wow-delay=".4s">
-                        <h3 class="footer_title">
-                            Company
-                        </h3>
-                        <ul>
-                            <li><a href="#">About </a></li>
-                            <li><a href="#"> Pricing</a></li>
-                            <li><a href="#">Carrier Tips</a></li>
-                            <li><a href="#">FAQ</a></li>
-                        </ul>
-
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6 col-lg-3">
-                    <div class="footer_widget wow fadeInUp" data-wow-duration="1.2s" data-wow-delay=".5s">
-                        <h3 class="footer_title">
-                            Category
-                        </h3>
-                        <ul>
-                            <li><a href="#">Design & Art</a></li>
-                            <li><a href="#">Engineering</a></li>
-                            <li><a href="#">Sales & Marketing</a></li>
-                            <li><a href="#">Finance</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-md-6 col-lg-4">
-                    <div class="footer_widget wow fadeInUp" data-wow-duration="1.3s" data-wow-delay=".6s">
-                        <h3 class="footer_title">
-                            Subscribe
-                        </h3>
-                        <form action="#" class="newsletter_form">
-                            <input type="text" placeholder="Enter your mail">
-                            <button type="submit">Subscribe</button>
-                        </form>
-                        <p class="newsletter_text">Esteem spirit temper too say adieus who direct esteem esteems
-                            luckily.</p>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-    </div>
-    <div class="copy-right_text wow fadeInUp" data-wow-duration="1.4s" data-wow-delay=".3s">
-        <div class="container">
-            <div class="footer_border"></div>
-            <div class="row">
-                <div class="col-xl-12">
-                    <p class="copy_right text-center">
-                        Copyright &copy;
-                        <script>document.write(new Date().getFullYear());</script> All rights reserved
-                    </p>
+
+        <!-- Copyright -->
+        <div class="row">
+            <div class="col-12">
+                <div class="copyright">
+                    <p class="mb-0">&copy; 2025 Job Board. Tất cả các quyền được bảo lưu.</p>
                 </div>
             </div>
         </div>
