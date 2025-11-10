@@ -65,7 +65,6 @@
       <div class="content">
         <c:choose>
           <c:when test="${not empty detail && not empty detail.contentHtml}">
-            <!-- render HTML từ DB -->
             <c:out value="${detail.contentHtml}" escapeXml="false"/>
           </c:when>
           <c:otherwise>
@@ -83,7 +82,7 @@
         var main   = document.querySelector('main');
         if (!header || !main) return;
         var h = header.offsetHeight || 0;
-        main.style.paddingTop = (h + 24) + 'px'; // +24px cho thoáng
+        main.style.paddingTop = (h + 24) + 'px'; 
       }
       window.addEventListener('load',  applyOffset);
       window.addEventListener('resize', applyOffset);

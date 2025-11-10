@@ -31,7 +31,7 @@ public class RegisterServiceServlet extends HttpServlet {
         try {
             Employer emp = (Employer) request.getSession().getAttribute("user");
             if (emp == null) {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("login-employer.jsp");
                 return;
             }
 

@@ -1,16 +1,32 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Filter.java to edit this template
+ */
 package filter;
 
 import java.io.IOException;
-import jakarta.servlet.*;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebFilter(urlPatterns = {"/job_post.jsp", "/job_add", "/job_edit", "/job_delete", "/viewApply", "/job_delete_bulk", "/employer_jobs", "/employer_search", "/filterApply","/employerProfile", "/editEmployerProfile", "/employerServices", "/employerCandidates", "/filterPublicCandidate"})
-public class AuthEmployerFilter implements Filter {
+/**
+ *
+ * @author shiro
+ */
+@WebFilter(filterName = "AuthAdminFilter", urlPatterns = {"/filterOrderList"})
+public class AuthAdminFilter implements Filter {
 
-    @Override
+   @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
@@ -19,9 +35,12 @@ public class AuthEmployerFilter implements Filter {
 
         // nếu chưa login hoặc role khác Employer ->  redirect tới login
         if (session == null || session.getAttribute("role") == null
-                || !"Employer".equals(session.getAttribute("role"))) {
+                || (!"Admin".equals(session.getAttribute("role"))
+                && !"Sale".equals(session.getAttribute("role"))
+                && !"MarketingStaff".equals(session.getAttribute("role")))
+                ) {
             // bạn có thể thêm thông báo ?next= để redirect sau khi login
-            response.sendRedirect("login-employer.jsp");
+            response.sendRedirect("login-admin.jsp");
             return;
         }
 

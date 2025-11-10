@@ -172,7 +172,9 @@
                                                 <td>${d.cv.numberExp}</td>
                                                 <td>${d.cv.currentSalary}</td>
                                                 <td>
-                                                    <select class="form-control status-select" data-apply-id="${d.apply.applyId}">
+                                                    <select class="form-control status-select"
+                                                            data-apply-id="${d.apply.applyId}"
+                                                            ${d.apply.status == 'Approved' || d.apply.status == 'Rejected' ? 'disabled' : ''}>
                                                         <option value="Pending" ${d.apply.status == 'Pending' ? 'selected' : ''}>Pending</option>
                                                         <option value="Approved" ${d.apply.status == 'Approved' ? 'selected' : ''}>Approved</option>
                                                         <option value="Rejected" ${d.apply.status == 'Rejected' ? 'selected' : ''}>Rejected</option>

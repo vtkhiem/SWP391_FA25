@@ -13,17 +13,12 @@ public class Candidate {
     private String nationality;
     private String passwordHash;
     private String avatar;
-
+    private boolean isPublic;
+    
     public Candidate() {
     }
-    public Candidate(int candidateId, String candidateName, String email, String phoneNumber, String nationality) {
-        this.candidateId = candidateId;
-        this.candidateName = candidateName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.nationality = nationality;
-    }
-    public Candidate(int candidateId, String candidateName, String address, String email, String phoneNumber, String nationality, String passwordHash, String avatar) {
+
+    public Candidate(int candidateId, String candidateName, String address, String email, String phoneNumber, String nationality, String passwordHash, String avatar, boolean isPublic) {
         this.candidateId = candidateId;
         this.candidateName = candidateName;
         this.address = address;
@@ -32,14 +27,7 @@ public class Candidate {
         this.nationality = nationality;
         this.passwordHash = passwordHash;
         this.avatar = avatar;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.isPublic = isPublic;
     }
 
     public int getCandidateId() {
@@ -74,6 +62,14 @@ public class Candidate {
         this.email = email;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getNationality() {
         return nationality;
     }
@@ -98,4 +94,17 @@ public class Candidate {
         this.avatar = avatar;
     }
 
-}
+    public boolean isIsPublic() {
+        return isPublic;
+    }
+
+    public void setIsPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    @Override
+    public String toString() {
+        return "Candidate{" + "candidateId=" + candidateId + ", candidateName=" + candidateName + ", address=" + address + ", email=" + email + ", phoneNumber=" + phoneNumber + ", nationality=" + nationality + ", passwordHash=" + passwordHash + ", avatar=" + avatar + ", isPublic=" + isPublic + '}';
+    }
+    
+    }

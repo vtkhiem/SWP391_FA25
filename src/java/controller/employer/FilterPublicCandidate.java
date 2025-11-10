@@ -2,9 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.apply;
+package controller.employer;
 
 import dal.ApplyDAO;
+import dal.CVDAO;
+import dal.CandidateDAO;
+import dal.EmployerDAO;
+import dal.JobPostDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,17 +17,22 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import model.Apply;
+import model.ApplyDetail;
+import model.CV;
 import model.Candidate;
+import model.Employer;
+import model.JobPost;
 import tool.Validation;
 
 /**
  *
  * @author shiro
  */
-@WebServlet(name = "ApplyJob", urlPatterns = {"/applyJob"})
-public class ApplyJob extends HttpServlet {
+@WebServlet(name = "FilterPublicCandidate", urlPatterns = {"/filterPublicCandidate"})
+public class FilterPublicCandidate extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +51,10 @@ public class ApplyJob extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ApplyJob</title>");
+            out.println("<title>Servlet FilterPublicCandidate</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ApplyJob at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet FilterPublicCandidate at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,8 +72,50 @@ public class ApplyJob extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
+
+        String txt = Validation.searchKey(request.getParameter("txt"));
+
+        // Salary filter (nếu không nhập thì set = -1 để bỏ qua)
+        double min = -1;
+
+        try {
+            String minParam = request.getParameter("offerMin");
+            if (minParam != null && !minParam.isEmpty()) {
+                min = Double.parseDouble(minParam);
+            }
+        } catch (NumberFormatException e) {
+            // Nếu parse lỗi thì bỏ qua filter
+            min = -1;
+        }
+        
+
+        int page = Validation.getPage(request.getParameter("page"));
+
+        ApplyDAO dao = new ApplyDAO();
+        JobPostDAO jdao = new JobPostDAO();
+        CandidateDAO cdao = new CandidateDAO();
+        CVDAO cvdao = new CVDAO();
+        EmployerDAO edao = new EmployerDAO();
+
+        int recordsPerPage = 10;
+        int offset = (page - 1) * recordsPerPage;
+       List<CV> cvs = cvdao.filterPublicCVs(txt, min, offset,recordsPerPage);
+
+        
+        int totalRecords = cvdao.countFilteredPublicCV(txt, min);
+        int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
+        request.setAttribute("cvs", cvs);
+        request.setAttribute("txt", txt);
+        request.setAttribute("offerMin", min);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        request.getRequestDispatcher("employer-view-candidate.jsp").forward(request, response);
     }
+    
+    
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -77,35 +128,7 @@ public class ApplyJob extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(false);
-
-        int page = 1;
-        try {
-            String pageParam = request.getParameter("currentPage");
-            if (pageParam != null && !pageParam.isEmpty()) {
-                page = Integer.parseInt(pageParam);
-            }
-        } catch (NumberFormatException e) {
-            page = 1;
-        }
-
-        int jobId = Validation.getId(request.getParameter("jobId"));
-        int CVID = Validation.getId(request.getParameter("CVID"));
-        Candidate candidate = (Candidate) session.getAttribute("user");
-
-        if (jobId == 0 || CVID == 0) {
-            session.setAttribute("error", "Lỗi không mong muốn đã xảy ra");
-            response.sendRedirect(request.getContextPath() + "/jobs?currentPage=" + page);
-            return; // avoid “response already committed”
-        }
-
-        //tao apply 
-        ApplyDAO dao = new ApplyDAO();
-        LocalDateTime dayCreate = LocalDateTime.now();
-        dao.insertApply(jobId, candidate.getCandidateId(), CVID, dayCreate, "Pending", "");
-        session.setAttribute("message", "Ứng tuyển vào công việc thành công");
-        response.sendRedirect(request.getContextPath() + "/jobs?currentPage=" + page);
+        processRequest(request, response);
     }
 
     /**
