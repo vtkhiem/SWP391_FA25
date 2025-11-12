@@ -1,5 +1,5 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -40,7 +40,7 @@
 
                                             <%-- Candidate/Guest --%>
                                             <c:otherwise>
-                                                <a href="index.jsp">
+                                                <a href="home">
                                                     <img src="img/logo.png" alt="">
                                                 </a>
                                             </c:otherwise>
@@ -63,7 +63,7 @@
 
                                                     <%-- Candidate/Guest --%>
                                                     <c:otherwise>
-                                                        <li><a href="index.jsp">Trang chủ</a></li>
+                                                        <li><a href="home">Trang chủ</a></li>
                                                         <li><a href="jobs">Việc làm <i class="ti-angle-down"></i></a>
                                                             <ul class="submenu">
                                                                 <li><a href="jobs">Tìm việc làm</a></li>
@@ -75,11 +75,10 @@
                                                         </li>
                                                         <li><a href="#">CV <i class="ti-angle-down"></i></a>
                                                             <ul class="submenu">
-                                                                <li><a href="cv-create.jsp">Tạo CV</a></li>
+                                                                <li><a href="create-cv">Tạo CV</a></li>
                                                                 <li><a href="list-cv">Quản lí CV</a></li>
                                                             </ul>
                                                         </li>
-
                                                     </c:otherwise>
                                                 </c:choose>
 
@@ -102,10 +101,6 @@
 
                                         <!-- Nếu đã login thì hiện tên user + Logout -->
                                         <c:if test="${not empty sessionScope.user}">
-                                      
-                                        
-
-
                                             <div class="main-menu phone_num d-none d-xl-block">
                                                 <nav>
                                                     <ul id="navigation">

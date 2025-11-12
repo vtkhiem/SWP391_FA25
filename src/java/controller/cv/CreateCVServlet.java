@@ -1,9 +1,5 @@
-
 package controller.cv;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +9,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,15 +17,29 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.sql.Date;
 import model.Candidate;
+import model.Employer;
 
 @WebServlet(name = "CreateCVServlet", urlPatterns = {"/create-cv"})
-@MultipartConfig(       fileSizeThreshold = 1024 * 1024, // 1 MB
-               maxFileSize = 1024 * 1024 * 10, // 10 MB
-                maxRequestSize = 1024 * 1024 * 15 // 15 MB
-        )
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1 MB
+        maxFileSize = 1024 * 1024 * 10, // 10 MB
+        maxRequestSize = 1024 * 1024 * 15 // 15 MB
+)
 public class CreateCVServlet extends HttpServlet {
-
     private static final String UPLOAD_DIRECTORY = "uploads/cv_files";
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Candidate candidate = (Candidate) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
+        
+        if (candidate == null || !"Candidate".equals(role)) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/cv-create.jsp");
+    }
 
     @Override
     public void init() throws ServletException {
@@ -205,7 +214,6 @@ public class CreateCVServlet extends HttpServlet {
             cv.setGender(gender);
             cv.setFileData(filePath); // Lưu đường dẫn thay vì nội dung file
 
-
             System.out.println("CV object created, attempting to save to database...");
 
             // Save to database
@@ -233,5 +241,4 @@ public class CreateCVServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

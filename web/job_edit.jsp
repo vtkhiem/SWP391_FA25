@@ -201,7 +201,7 @@
                                                 <option value="" disabled selected hidden>Chọn hình thức làm việc...</option>
                                                 <option value="Full-time" <c:if test="${job.typeJob eq 'Full-time'}">selected</c:if>>Toàn thời gian (Full-time)</option>
                                             <option value="Part-time"<c:if test="${job.typeJob eq 'Part-time'}">selected</c:if>>Bán thời gian (Part-time)</option>
-                                            <option value="Internship"<c:if test="${job.typeJob eq 'Intership'}">selected</c:if>>Thực tập (Internship)</option>
+                                            <option value="Internship"<c:if test="${job.typeJob eq 'Internship'}">selected</c:if>>Thực tập (Internship)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -391,7 +391,7 @@
                 });
 
                 form.addEventListener("submit", (e) => {
-                    document.querySelectorAll('.moeny-input').forEach(el => {
+                    document.querySelectorAll('.money-input').forEach(el => {
                         el.value = el.value.replace(/\./g, '');
                     });
                     if (!validateForm())

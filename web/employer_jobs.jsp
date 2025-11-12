@@ -1,16 +1,8 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page import="model.JobPost, java.time.format.DateTimeFormatter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%
-    // Kiểm tra nếu chưa đăng nhập thì redirect về trang login
-    Object user = session.getAttribute("user");
-    if (user == null) {
-        response.sendRedirect("login.jsp");
-        return; // dừng xử lý trang
-    }
-%>
-
 <!DOCTYPE html>
 <html>
     <head>

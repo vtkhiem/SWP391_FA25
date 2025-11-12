@@ -14,8 +14,6 @@ import model.JobPost;
 
 @WebServlet(name = "JobSearchServlet", urlPatterns = {"/search"})
 public class JobSearchServlet extends HttpServlet {
-    private JobPostDAO jobPostDAO = new JobPostDAO();
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -111,6 +109,7 @@ public class JobSearchServlet extends HttpServlet {
         int recordsPerPage = 10;
         int offset = (page - 1) * recordsPerPage;
         
+        JobPostDAO jobPostDAO = new JobPostDAO();
         List<JobPost> jobs = jobPostDAO.searchJobs(category, location, min, max, keyword, numExp, jobType, offset, recordsPerPage);
         int totalRecords = jobPostDAO.countJobsSearched(category, location, min, max, keyword, numExp, jobType);
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);

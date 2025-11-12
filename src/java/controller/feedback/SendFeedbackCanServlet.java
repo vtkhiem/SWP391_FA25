@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import model.Candidate;
 import model.Feedback;
@@ -66,15 +67,7 @@ public class SendFeedbackCanServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-           try {
-            TypeFeedbackDAO dao = new TypeFeedbackDAO();
-            List<TypeFeedback> typeFeedbackList = dao.getTypeFeedbackByRole("Candidate");
-            request.setAttribute("typeFeedbackList", typeFeedbackList);
-        } catch (SQLException e) {  
-            e.printStackTrace();
-        }
-        request.getRequestDispatcher("feedback_form.jsp").forward(request, response);
-    
+          
     }
 
     /**
@@ -97,23 +90,26 @@ public class SendFeedbackCanServlet extends HttpServlet {
                 return;
             }
 
-        Integer employerID = Integer.valueOf(can.getCandidateId());
+       String[] typeFeedbackIDs = request.getParameterValues("typeFeedbackIDs");
+ Integer canID = can.getCandidateId();
         String subject = request.getParameter("subject");
         String content = request.getParameter("content");
-        String type = request.getParameter("type");
+   
 
-        Feedback feedback = new Feedback(null, can.getCandidateId(), subject, content, null, null);
+        Feedback feedback = new Feedback(null, canID, subject, content, null, null);
 
         try {
             FeedbackDAO dao = new FeedbackDAO();
-            boolean success = dao.addFeedback(feedback);
-            if (success) {
+             int feedbackID = dao.insertFeedbackAndReturnIdCan(feedback);
+           dao.insertFeedbackTypes(feedbackID, Arrays.asList(typeFeedbackIDs));
+          
+          
                    EmailService tool = new EmailService();
                 tool.sendFeedbackToAdmin("vuthienkhiem2005@gmail.com", can.getEmail(), subject, content);
                 request.setAttribute("message", "Gửi phản hồi thành công! Cảm ơn bạn đã góp ý.");
-            } else {
-                request.setAttribute("error", "Không thể gửi phản hồi. Vui lòng thử lại.");
-            }
+            
+                
+            
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());

@@ -142,6 +142,28 @@ public class CandidateDAO extends DBContext {
         }
         return null;
     }
+public int getIdByEmail(String email) {
+    String sql = """
+                 SELECT CandidateID
+                 FROM Candidate
+                 WHERE Email = ?
+               """;
+    try (PreparedStatement ps = requireConn().prepareStatement(sql)) {
+        ps.setString(1, email);
+        try (ResultSet rs = ps.executeQuery()) {
+      
+            if (rs.next()) {
+                return rs.getInt("CandidateID"); // <--- Dòng 127 của bạn
+            }
+            
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+
+    return -1; 
+}
 
     public List<Candidate> getPublicCandidates(int page, int pageSize) {
         List<Candidate> list = new ArrayList<>();

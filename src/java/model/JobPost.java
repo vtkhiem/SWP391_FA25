@@ -19,18 +19,15 @@ public class JobPost {
     private String typeJob;
     private LocalDateTime dayCreate;
     private LocalDateTime dueDate;
-    private boolean activeOnWall; 
+    private boolean activeOnWall;
     private boolean pinned;
     private String companyName;
-
+    private String imageUrl;
 
     public JobPost() {
     }
 
-    public JobPost(int jobPostID, int employerID, String title, String description,
-            String category, String position, String location,
-            BigDecimal offerMin, BigDecimal offerMax, int numberExp,
-            boolean visible, String typeJob, LocalDateTime dayCreate, LocalDateTime dueDate) {
+    public JobPost(int jobPostID, int employerID, String title, String description, String category, String position, String location, BigDecimal offerMin, BigDecimal offerMax, int numberExp, boolean visible, String typeJob, LocalDateTime dayCreate, LocalDateTime dueDate, boolean activeOnWall, boolean pinned, String companyName, String imageUrl) {
         this.jobPostID = jobPostID;
         this.employerID = employerID;
         this.title = title;
@@ -45,8 +42,11 @@ public class JobPost {
         this.typeJob = typeJob;
         this.dayCreate = dayCreate;
         this.dueDate = dueDate;
+        this.activeOnWall = activeOnWall;
+        this.pinned = pinned;
+        this.companyName = companyName;
+        this.imageUrl = imageUrl;
     }
-    
 
     public int getJobPostID() {
         return jobPostID;
@@ -151,11 +151,11 @@ public class JobPost {
     public void setDayCreate(LocalDateTime dayCreate) {
         this.dayCreate = dayCreate;
     }
-    
+
     public LocalDateTime getDueDate() {
         return dueDate;
     }
-    
+
     public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
     }
@@ -175,40 +175,38 @@ public class JobPost {
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
     }
-    
-    
 
-    @Override
-    public String toString() {
-        return "JobPost{"
-                + "jobPostID=" + jobPostID
-                + ", employerID=" + employerID
-                + ", title='" + title + '\''
-                + ", description='" + description + '\''
-                + ", category='" + category + '\''
-                + ", position='" + position + '\''
-                + ", location='" + location + '\''
-                + ", offerMin=" + offerMin
-                + ", offerMax=" + offerMax
-                + ", numberExp=" + numberExp
-                + ", visible=" + visible
-                + ", typeJob='" + typeJob + '\''
-                + ", dayCreate=" + dayCreate
-                + ", dueDate=" + dueDate
-                + '}';
+    public String getCompanyName() {
+        return companyName;
     }
-    
-        public String getOfferMinFormatted() {
-        if (offerMin == null) return "";
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getOfferMinFormatted() {
+        if (offerMin == null) {
+            return "";
+        }
         return formatBigDecimal(offerMin);
     }
 
     public String getOfferMaxFormatted() {
-        if (offerMax == null) return "";
+        if (offerMax == null) {
+            return "";
+        }
         return formatBigDecimal(offerMax);
     }
-    
-        // Hàm chung format
+
+    // Hàm chung format
     private String formatBigDecimal(BigDecimal value) {
         // Bỏ số 0 thừa ở cuối
         value = value.stripTrailingZeros();

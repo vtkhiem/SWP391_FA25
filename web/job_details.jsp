@@ -28,80 +28,6 @@
         <link rel="stylesheet" href="css/custom.css"> 
     </head>
 
-    <style>
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            inset: 0;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        .error {
-            color: #ff4444;
-            text-align: center;
-            display: none;
-        }
-
-        .notification {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            padding: 15px 20px;
-            background-color: #28a745;
-            color: white;
-            border-radius: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            display: none;
-        }
-
-        .notification.error {
-            background-color: #e53935;
-        }
-
-        /*button*/
-        .button-group {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        button {
-            background-color: #1d2671;
-            color: #fff;
-            border: none;
-            border-radius: 25px;
-            padding: 12px 25px;
-            margin: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background-color: #c33764;
-            transform: scale(1.05);
-        }
-    </style>
-
     <body>
         <!-- header_start -->
         <jsp:include page="header.jsp"/>
@@ -137,14 +63,20 @@
                         <div class="job_details_header">
                             <div class="single_jobs white-bg d-flex justify-content-between">
                                 <div class="jobs_left d-flex align-items-center">
-                                    <div class="thumb">
-                                        <img src="img/svg_icon/1.svg" alt="">
+                                    <div class="my-thumb">
+                                        <c:choose>
+                                            <c:when test="${not empty job.imageUrl}">
+                                                <img src="${job.imageUrl}" alt="Avatar">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="img/svg_icon/1.svg" alt="">
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                     <div class="jobs_conetent">
                                         <a href="redirectWall?jobpostID=${job.jobPostID}">
-                                              <h4>${job.title}</h4>
+                                            <h4>${job.title}</h4>
                                         </a>
-                                      
                                         <div class="links_locat d-flex align-items-center">
                                             <div class="location">
                                                 <p><i class="fa fa-map-marker"></i> ${job.location}</p>
@@ -178,6 +110,15 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <c:if test="${not empty sessionScope.user}">
+                                <div class="single_jobs white-bg justify-content-between">
+                                    <form action="selectCV" method="post">
+                                        <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                        <button type="submit" class="boxed-btn3 w-100">Ứng tuyển ngay</button>    
+                                    </form>
+                                </div>
+                            </c:if>
                         </div>
 
                         <!-- Description -->
@@ -187,7 +128,6 @@
                                 <p>${job.description}</p>
                             </div>
                         </div>
-                            
                             <c:if test="${not empty sessionScope.role}">
                                 <form action="selectCV" method="post">
                                     <input type="hidden" name="jobId" value="${job.jobPostID}">
@@ -195,8 +135,6 @@
                                     <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>    
                                 </form>
                             </c:if>
-
-
                     </div>
 
                     <!-- Sidebar -->
