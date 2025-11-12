@@ -4,8 +4,11 @@
  */
 package model;
 
+import dal.OrderDAO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  *
@@ -90,6 +93,11 @@ public class Order {
     public LocalDateTime getDate() {
         return date;
     }
+    
+    public Date getDateFormatted() {
+        return Date.from(date.atZone(ZoneId.systemDefault()).toInstant());
+    }
+    
 
     public void setDate(LocalDateTime date) {
         this.date = date;
@@ -111,6 +119,8 @@ public class Order {
         this.code = code;
     }
     
-    
+    public BigDecimal getFinalAmount(int orderId){
+        return new OrderDAO().getFinalAmount(orderId);
+    }
     
 }

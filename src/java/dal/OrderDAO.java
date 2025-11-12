@@ -92,10 +92,11 @@ public class OrderDAO extends DBContext {
         }
     }
 
-    public List<Order> getAllOrders() throws SQLException {
+    public List<Order> getAllOrders()  {
         List<Order> list = new ArrayList<>();
         String sql = "SELECT * FROM Orders ORDER BY OrderID DESC";
-        try (PreparedStatement ps = c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = c.prepareStatement(sql)){
+          try(ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Order order = new Order(
                         rs.getInt("OrderID"),
@@ -111,6 +112,9 @@ public class OrderDAO extends DBContext {
                 list.add(order);
             }
         }
+        }catch(Exception e){
+            e.printStackTrace();
+        }    
         return list;
     }
 
@@ -391,6 +395,38 @@ public class OrderDAO extends DBContext {
         }
 
         return 0;
+    }
+
+    public BigDecimal getFinalAmount(int orderId) {
+        String sql = """
+        SELECT CAST(o.Amount * (1 - ISNULL(ap.Discount,0)) AS DECIMAL(18,2)) AS FinalAmount
+        FROM Orders o
+        OUTER APPLY (
+            SELECT TOP 1 p.Discount
+            FROM Promotion p
+            LEFT JOIN ServicePromotion sp ON sp.PromotionID = p.PromotionID
+            WHERE (o.Code IS NOT NULL AND p.Code = o.Code)
+               OR (o.Code IS NULL 
+                   AND sp.ServiceID = o.ServiceID
+                   AND p.DateSt <= o.[Date] AND o.[Date] <= p.DateEn
+                   AND p.Status = 1)
+            ORDER BY p.Discount DESC, p.PromotionID ASC
+        ) ap
+        WHERE o.OrderID = ?
+    """;
+
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BigDecimal result = rs.getBigDecimal("FinalAmount");
+                    return result != null ? result : BigDecimal.ZERO;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ZERO;
     }
 
     public static void main(String[] args) {
