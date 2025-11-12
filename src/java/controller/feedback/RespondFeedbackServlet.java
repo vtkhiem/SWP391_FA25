@@ -83,17 +83,26 @@ public class RespondFeedbackServlet extends HttpServlet {
             String adminResponse = request.getParameter("adminResponse");
             String newStatus = request.getParameter("newStatus");
             String role = request.getParameter("role");
-            int id=feedbackDAO.getSenderId(feedbackID);
-            EmailService email = new EmailService();
+             String email = request.getParameter("email");
+             EmailService emailS = new EmailService();
+             if(role!=null){
+                 int id=feedbackDAO.getSenderId(feedbackID);
+            
             Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);
+           
             if(role.equalsIgnoreCase("employer")){
                 EmployerDAO dao = new EmployerDAO();
-                email.sendEmailToUser(dao.getEmailByID(id), adminResponse, feedback.getSubject());
+                emailS.sendEmailToUser(dao.getEmailByID(id), adminResponse, feedback.getSubject());
             }else if(role.equalsIgnoreCase("candidate")){
                 CandidateDAO dao = new CandidateDAO();
-                email.sendEmailToUser(dao.getCandidateById(id).getEmail(), adminResponse, feedback.getSubject());
+                emailS.sendEmailToUser(dao.getCandidateById(id).getEmail(), adminResponse, feedback.getSubject());
             }
-            
+             }
+             else if(role==null){
+                  Feedback feedback = feedbackDAO.getFeedbackById(feedbackID);
+                emailS.sendEmailToUser(email, adminResponse, feedback.getSubject());
+            }
+           
             
          
             try {

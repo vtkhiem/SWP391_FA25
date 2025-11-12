@@ -268,7 +268,7 @@ public class FeedbackDAO extends DBContext {
     }
 
     public int insertFeedbackAndReturnId(Feedback feedback) throws SQLException {
-        String sql = "INSERT INTO Feedback (EmployerID, Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Feedback (EmployerID, Subject, Content, ServiceID, PromotionID,Email, CreatedAt) VALUES (?, ?, ?, ?, ?,?, GETDATE())";
         try (
                 PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -287,6 +287,7 @@ public class FeedbackDAO extends DBContext {
             } else {
                 ps.setNull(5, java.sql.Types.INTEGER);
             }
+            ps.setString(6, feedback.getEmail());
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
@@ -297,7 +298,7 @@ public class FeedbackDAO extends DBContext {
         return -1;
     } 
     public int insertFeedbackAndReturnIdCan(Feedback feedback) throws SQLException {
-        String sql = "INSERT INTO Feedback (CandidateID, Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Feedback (CandidateID, Subject, Content, ServiceID, PromotionID,Email, CreatedAt) VALUES (?, ?, ?, ?, ?,?, GETDATE())";
         try (
                 PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -316,6 +317,7 @@ public class FeedbackDAO extends DBContext {
             } else {
                 ps.setNull(5, java.sql.Types.INTEGER);
             }
+            ps.setString(6, feedback.getEmail());
 
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
@@ -326,7 +328,7 @@ public class FeedbackDAO extends DBContext {
         return -1;
     }
       public int insertFeedbackAndReturnIdGuest(Feedback feedback) throws SQLException {
-        String sql = "INSERT INTO Feedback (EmployerID,CandidateID,Subject, Content, ServiceID, PromotionID, CreatedAt) VALUES (?,?, ?, ?, ?, ?, GETDATE())";
+        String sql = "INSERT INTO Feedback (EmployerID,CandidateID,Subject, Content, ServiceID, PromotionID,Email, CreatedAt) VALUES (?,?, ?, ?, ?,?, ?, GETDATE())";
         try (
                 PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -358,7 +360,7 @@ public class FeedbackDAO extends DBContext {
         } else {
             ps.setNull(6, Types.INTEGER);
         }
-        
+         ps.setString(7, feedback.getEmail());
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
