@@ -129,14 +129,6 @@
                             </div>
                         </div>
 
-                            <c:if test="${not empty sessionScope.role}">
-                                <form action="selectCV" method="post">
-                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
-                                    <input type="hidden" name="currentPage" value="${param.currentPage}">
-                                    <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>    
-                                </form>
-                            </c:if>
-
                     </div>
 
                     <!-- Sidebar -->
