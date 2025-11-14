@@ -21,9 +21,7 @@
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css">
         <style>
-            .main-menu {
-                overflow-x: hidden;
-            }
+
         </style>
     </head>
     <body>
@@ -84,7 +82,6 @@
                                                                 <li><a href="list-cv">Quản lí CV</a></li>
                                                             </ul>
                                                         </li>
-                                                        
                                                     </c:otherwise>
                                                 </c:choose>
 

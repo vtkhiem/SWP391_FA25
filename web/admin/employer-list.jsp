@@ -374,7 +374,7 @@
             </div>
             <%-- Xóa attribute khỏi session sau khi đã hiển thị --%>
             <c:remove var="message" scope="session"/>
-        </c:if>
+
 
         <c:if test="${not empty sessionScope.error}">
             <div id="toast" class="toast-message error show">
