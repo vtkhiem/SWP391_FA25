@@ -397,6 +397,9 @@
                 </div>
 
                 <div class="pagination">
+                    <div class="container">
+                        <a href="${pageContext.request.contextPath}/admin/exportEmployerList""><button class="btn primary" type="submit">Xuất dữ liệu</button></a>
+                    </div>
                     <c:forEach var="i" begin="1" end="${totalPages}">
                         <c:url var="pageUrl" value="">
                             <c:param name="page" value="${i}"/>
