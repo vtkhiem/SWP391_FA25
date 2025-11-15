@@ -23,12 +23,13 @@ public class Feedback {
     private LocalDateTime respondedAt; 
     private Integer serviceID;
 private Integer promotionID;
+private String email;
 private List<TypeFeedback> types;
 
     public Feedback() {
     }
 
-    public Feedback( Integer employerID, Integer candidateID, String subject, String content,  Integer serviceID, Integer promotionID) {
+    public Feedback( Integer employerID, Integer candidateID, String subject, String content,  Integer serviceID, Integer promotionID, String email) {
      
         this.employerID = employerID;
         this.candidateID = candidateID;
@@ -38,6 +39,7 @@ private List<TypeFeedback> types;
       
         this.serviceID = serviceID;
         this.promotionID = promotionID;
+        this.email = email;
     }
 
  
@@ -130,6 +132,14 @@ private List<TypeFeedback> types;
 
     public void setPromotionID(Integer promotionID) {
         this.promotionID = promotionID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public List<TypeFeedback> getTypes() {

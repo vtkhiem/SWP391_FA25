@@ -11,19 +11,14 @@
 %>
 <!DOCTYPE html>
 <html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <title>Admin Dashboard - Employers</title>
-        <style>
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard - Employers</title>
+<style>
 
-            body {
-                margin:0;
-                font-family: Arial, sans-serif;
-                background:#f3f4f6;
-                color:#111827;
-            }
+    body { margin:0; font-family: Arial, sans-serif; background:#f3f4f6; color:#111827; }
 
-            .navbar {
+    .navbar {
 
         background:#003366; color:#fff; padding:10px 20px; display:flex; gap:10px;
     }
@@ -372,212 +367,63 @@
                     required></textarea>
                 <input type="hidden" id="employerId" name="id">
             </div>
-            <%-- Xóa attribute khỏi session sau khi đã hiển thị --%>
-            <c:remove var="message" scope="session"/>
-        </c:if>
-
-        <c:if test="${not empty sessionScope.error}">
-            <div id="toast" class="toast-message error show">
-                ${sessionScope.error}
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="closeBanModal()">Hủy</button>
+                <button type="submit" class="btn btn-confirm">Xác nhận Ban</button>
             </div>
-            <%-- Xóa attribute khỏi session sau khi đã hiển thị --%>
-            <c:remove var="error" scope="session"/>
-        </c:if>
+        </form>
+    </div>
+</div>
 
-        <div class="searchbar-wrap">
-            <form class="searchbar" method="get" action="">
-                <input type="text" name="q" placeholder="Tìm employer theo tên, email, công ty, SĐT" value="${q}"/>
+<script>
+    function openBanModal(employerId, employerName, companyName) {
+        document.getElementById('employerId').value = employerId;
+        document.getElementById('employerName').textContent = employerName;
+        
+        // Show company name if available
+        const companyInfo = document.getElementById('companyInfo');
+        if (companyName && companyName.trim() !== '') {
+            companyInfo.textContent = '(' + companyName + ')';
+        } else {
+            companyInfo.textContent = '';
+        }
+        
+        document.getElementById('banReason').value = '';
+        document.getElementById('banModal').classList.add('active');
+    }
 
-                <select name="status">
-                    <option value="" ${empty status ? 'selected' : ''}>Tất cả</option>
-                    <option value="true" ${status == 'true' ? 'selected' : ''}>Verified</option>
-                    <option value="false" ${status == 'false' ? 'selected' : ''}>Not Verified</option>
-                </select>
+    function closeBanModal() {
+        document.getElementById('banModal').classList.remove('active');
+    }
 
-                <button class="btn primary" type="submit">Tìm kiếm</button>
-            </form>
-        </div>
+    // Close modal when clicking outside
+    document.getElementById('banModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeBanModal();
+        }
+    });
 
-        <div class="container">
-            <div class="total-card">
-                <div class="total-title">Tổng nhà tuyển dụng</div>
-                <div class="total-num">${total}</div>
-            </div>
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeBanModal();
+        }
+    });
+    document.addEventListener('DOMContentLoaded', (event) => {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        // Sau 3 giây (3000ms), bắt đầu làm mờ
+        setTimeout(() => {
+            toast.style.opacity = '0';
+        }, 3000);
+        
+        // Sau 3.5 giây (3500ms), hoàn toàn ẩn đi
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3500);
+    }
+});
+</script>
 
-            <div class="table-card">
-                <div class="table-head">Danh Sách nhà tuyển dụng</div>
-
-                <div class="table-scroll"> 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="col-id">ID</th>
-                                <th class="col-name">Tên</th>
-                                <th class="col-company">Công ty</th>
-                                <th class="col-email">Email</th>
-                                <th class="col-phone">SĐT</th>
-                                <th class="col-loc">Địa điểm</th>
-                                <th class="col-web">Website</th>
-                                <th class="col-tax">TaxCode</th>
-                                <th class="col-status">Status</th>
-                                <th class="col-actions">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:choose>
-                                <c:when test="${not empty employers}">
-                                    <c:forEach var="e" items="${employers}">
-                                        <tr>
-                                            <td class="col-id">${e.employerId}</td>
-                                            <td class="col-name">${e.employerName}</td>
-                                            <td class="col-company"><c:out value="${e.companyName}"/></td>
-                                            <td class="col-email">${e.email}</td>
-                                            <td class="col-phone">${e.phoneNumber}</td>
-                                            <td class="col-loc">${e.location}</td>
-                                            <td class="col-web">
-                                                <c:if test="${not empty e.urlWebsite}">
-                                                    <a href="<c:out value='${e.urlWebsite.startsWith("http") ? e.urlWebsite : "//" += e.urlWebsite}'/>" target="_blank" rel="noopener noreferrer">${e.urlWebsite}</a>
-                                                </c:if>
-                                                <c:if test="${empty e.urlWebsite}">—</c:if>
-                                                </td>
-                                                <td class="col-tax">${e.taxCode}</td>
-                                            <td class="col-status">
-                                                <c:choose>
-                                                    <c:when test="${e.status}">
-                                                        <span class="badge badge-ok">Verified</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="badge badge-no">Not Verified</span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                            <td class="col-actions">
-                                                <c:if test="${not e.status}">
-                                                    <form method="post"
-                                                          action="${pageContext.request.contextPath}/admin/employer/verify"
-                                                          style="display:inline-block; margin-right:8px;"
-                                                          onsubmit="return confirm('Xác minh employer ${e.employerName}?');">
-                                                        <input type="hidden" name="id" value="${e.employerId}">
-                                                        <button class="btn btn-success" type="submit">Verify</button>
-                                                    </form>
-                                                </c:if>
-
-                                                <button class="btn btn-danger" type="button" 
-                                                        onclick="openBanModal(${e.employerId}, '${e.employerName}', '${e.companyName}')">
-                                                    Ban
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:when>
-                                <c:otherwise>
-                                    <tr><td colspan="10" class="empty">Không có dữ liệu</td></tr>
-                                </c:otherwise>
-                            </c:choose>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination">
-                    <c:forEach var="i" begin="1" end="${totalPages}">
-                        <c:url var="pageUrl" value="">
-                            <c:param name="page" value="${i}"/>
-                            <c:if test="${not empty q}">
-                                <c:param name="q" value="${q}"/>
-                            </c:if>
-                            <c:if test="${not empty status}">
-                                <c:param name="status" value="${status}"/>
-                            </c:if>
-                        </c:url>
-
-                        <c:choose>
-                            <c:when test="${i == page}">
-                                <span class="active">${i}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageUrl}">${i}</a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ban Modal -->
-        <div id="banModal" class="modal-overlay">
-            <div class="modal-content">
-                <div class="modal-header">Ban nhà tuyển dụng</div>
-                <form id="banForm" method="post" action="${pageContext.request.contextPath}/employerBan">
-                    <div class="modal-body">
-                        <p style="margin-bottom: 16px; color: #6b7280;">
-                            Bạn có chắc chắn muốn ban nhà tuyển dụng <strong id="employerName"></strong>
-                            <span id="companyInfo" style="color: #9ca3af;"></span>?
-                        </p>
-                        <label class="modal-label" for="banReason">Lý do ban <span style="color: #dc2626;">*</span></label>
-                        <textarea 
-                            id="banReason" 
-                            name="banReason" 
-                            class="modal-input" 
-                            placeholder="Nhập lý do ban nhà tuyển dụng..."
-                            required></textarea>
-                        <input type="hidden" id="employerId" name="id">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-cancel" onclick="closeBanModal()">Hủy</button>
-                        <button type="submit" class="btn btn-confirm">Xác nhận Ban</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <script>
-            function openBanModal(employerId, employerName, companyName) {
-                document.getElementById('employerId').value = employerId;
-                document.getElementById('employerName').textContent = employerName;
-
-                // Show company name if available
-                const companyInfo = document.getElementById('companyInfo');
-                if (companyName && companyName.trim() !== '') {
-                    companyInfo.textContent = '(' + companyName + ')';
-                } else {
-                    companyInfo.textContent = '';
-                }
-
-                document.getElementById('banReason').value = '';
-                document.getElementById('banModal').classList.add('active');
-            }
-
-            function closeBanModal() {
-                document.getElementById('banModal').classList.remove('active');
-            }
-
-            // Close modal when clicking outside
-            document.getElementById('banModal').addEventListener('click', function (e) {
-                if (e.target === this) {
-                    closeBanModal();
-                }
-            });
-
-            // Close modal with Escape key
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    closeBanModal();
-                }
-            });
-            document.addEventListener('DOMContentLoaded', (event) => {
-                const toast = document.getElementById('toast');
-                if (toast) {
-                    // Sau 3 giây (3000ms), bắt đầu làm mờ
-                    setTimeout(() => {
-                        toast.style.opacity = '0';
-                    }, 3000);
-
-                    // Sau 3.5 giây (3500ms), hoàn toàn ẩn đi
-                    setTimeout(() => {
-                        toast.style.display = 'none';
-                    }, 3500);
-                }
-            });
-        </script>
-    </body>
+</body>
 </html>

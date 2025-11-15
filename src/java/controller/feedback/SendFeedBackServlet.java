@@ -88,6 +88,7 @@ public class SendFeedBackServlet extends HttpServlet {
         }
 
         Integer employerID = emp.getEmployerId();
+        String email = emp.getEmail();
        
         String subject = request.getParameter("subject");
         String content = request.getParameter("content");
@@ -116,7 +117,7 @@ Integer serviceID = null;
             FeedbackDAO dao = new FeedbackDAO();
 
       
-            Feedback feedback = new Feedback(employerID, null, subject, content, serviceID,promotionID);
+            Feedback feedback = new Feedback(employerID, null, subject, content, serviceID,promotionID,email);
            
             if(promotionID!=null && serviceID != null){
                  PromotionDAO pdao = new PromotionDAO();

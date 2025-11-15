@@ -141,6 +141,7 @@
                                         <div class="collapse mt-3" id="replyFormAll${fb.feedbackID}">
                                             <form action="respondFeedback" method="post">
                                                 <input type="hidden" name="feedbackID" value="${fb.feedbackID}">
+                                                  <input type="hidden" name="email" value="${fb.email}">
                                                 <c:choose>
                                                     <c:when test="${not empty fb.employerID}">
                                                         <input type="hidden" name="role" value="employer">
