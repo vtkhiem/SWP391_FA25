@@ -17,7 +17,6 @@
         <meta charset="UTF-8">
         <title>Admin Dashboard - Employers</title>
         <style>
-
             body {
                 margin:0;
                 font-family: Arial, sans-serif;
@@ -52,36 +51,95 @@
             }
 
             .searchbar-wrap {
-                background:#e9eef7;
-                padding:14px 16px;
-                display:flex;
-                justify-content:center;
-                border-bottom:1px solid #dbe2f1;
+                background: #e9eef7;
+                padding: 16px 20px;
+                display: flex;
+                justify-content: center;
+                border-bottom: 1px solid #dbe2f1;
             }
             .searchbar {
-                width:100%;
-                max-width:1180px;
-                display:flex;
-                gap:10px;
-                align-items:center;
-                background:#fff;
-                border:1px solid #e5e7eb;
-                border-radius:12px;
-                padding:8px;
+                width: 100%;
+                max-width: 1180px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                align-items: flex-end;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 16px 20px;
+                box-sizing: border-box;
             }
-            .searchbar input[type="text"]{
-                flex:1;
-                padding:12px 14px;
-                border:none;
-                outline:none;
-                font-size:14px;
+
+            .searchbar label {
+                display: block;
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 6px;
+                color: #374151;
             }
-            .searchbar select {
-                border:none;
-                outline:none;
-                padding:10px 8px;
-                font-size:14px;
-                background:transparent;
+
+            .searchbar .form-group {
+                flex: 1 1 200px;
+                min-width: 150px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .searchbar input[type="date"]{
+                padding: 10px 12px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 14px;
+                outline: none;
+                transition: border-color 0.2s ease;
+            }
+
+            .searchbar input[type="date"]:focus {
+                border-color: #ff7a00;
+                box-shadow: 0 0 5px rgba(255, 122, 0, 0.4);
+            }
+
+            .searchbar .btn-group {
+                display: flex;
+                gap: 12px;
+                flex: 0 0 auto;
+            }
+
+            .searchbar button,
+            .searchbar a.btn {
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-weight: 600;
+                font-size: 14px;
+                border: none;
+                cursor: pointer;
+                text-align: center;
+                text-decoration: none;
+                user-select: none;
+                transition: background-color 0.3s ease;
+            }
+
+            .searchbar button.btn-primary {
+                background-color: #ff7a00;
+                color: #fff;
+                border: 1px solid #ff7a00;
+            }
+
+            .searchbar button.btn-primary:hover {
+                background-color: #e67300;
+                border-color: #e67300;
+            }
+
+            .searchbar a.btn-secondary {
+                background-color: #f3f4f6;
+                color: #374151;
+                border: 1px solid #d1d5db;
+            }
+
+            .searchbar a.btn-secondary:hover {
+                background-color: #e5e7eb;
+                color: #111827;
             }
 
             .btn {
@@ -250,16 +308,17 @@
                 border-color:#fecaca;
             }
 
+            /* Pagination styles */
             .pagination {
                 display: flex;
                 justify-content: center;
-                margin-top: 25px;
+                gap: 8px;
+                padding: 20px 0;
                 list-style: none;
-                gap: 5px;
             }
 
             .pagination .page-item {
-                display: inline-block;
+                user-select: none;
             }
 
             .pagination .page-link {
@@ -269,12 +328,13 @@
                 border: 1px solid #dee2e6;
                 border-radius: 6px;
                 text-decoration: none;
-                background-color: #fff;
-                transition: all 0.25s ease;
                 font-weight: 500;
+                transition: background-color 0.25s ease, color 0.25s ease;
+                min-width: 36px;
+                text-align: center;
             }
 
-            .pagination .page-link:hover {
+            .pagination .page-link:hover:not(.disabled):not(.active) {
                 background-color: #007bff;
                 color: white;
                 border-color: #007bff;
@@ -293,11 +353,6 @@
                 border-color: #dee2e6;
                 cursor: not-allowed;
                 pointer-events: none;
-            }
-
-            .pagination .page-link {
-                min-width: 36px;
-                text-align: center;
             }
 
             .pagination .page-link:focus {
@@ -330,27 +385,26 @@
         </div>
 
         <div class="searchbar-wrap">
-            <form class="searchbar" method="get" action="">
-                <input type="text" name="q" placeholder="Tìm employer theo tên, email, công ty, SĐT" value="${q}"/>
-
-                <select name="status">
-                    <option value="" ${empty status ? 'selected' : ''}>Tất cả</option>
-                    <option value="true" ${status == 'true' ? 'selected' : ''}>Verified</option>
-                    <option value="false" ${status == 'false' ? 'selected' : ''}>Not Verified</option>
-                </select>
-
-                <button class="btn primary" type="submit">Tìm kiếm</button>
+            <form method="get" class="searchbar">
+                <input type="hidden" name="id" value="${param.id}"/> 
+                <div class="form-group">
+                    <label for="fromDate">Từ ngày</label>
+                    <input type="date" id="fromDate" name="fromDate" class="form-control" value="${param.fromDate != null ? param.fromDate : ''}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="toDate">Đến ngày</label>
+                    <input type="date" id="toDate" name="toDate" class="form-control" value="${param.toDate != null ? param.toDate : ''}">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Lọc</button>
+                    <a href="?" class="btn btn-secondary">Đặt lại</a>
+                </div>
             </form>
         </div>
 
         <div class="container">
-            <div class="total-card">
-                <div class="total-title">Tổng nhà tuyển dụng</div>
-                <div class="total-num">${total}</div>
-            </div>
-
             <div class="table-card">
-                <div class="table-head">Danh Sách nhà tuyển dụng</div>
+                <div class="table-head">Lịch sử giao dịch của Nhà tuyển dụng</div>
 
                 <!-- payment-history-area -->
                 <div class="payment_history_area">
@@ -410,21 +464,21 @@
                                 <div class="pagination">
                                     <ul class="pagination">
                                         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                            <a class="page-link" href="?id=${id}&page=${currentPage-1}">
+                                            <a class="page-link" href="?id=${id}&page=${currentPage-1}&fromDate=${param.fromDate}&toDate=${param.toDate}" tabindex="-1">
                                                 &lt;
                                             </a>
                                         </li>
 
                                         <c:forEach var="i" begin="1" end="${noOfPages}">
                                             <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                                <a class="page-link" href="?id=${id}&page=${i}">
+                                                <a class="page-link" href="?id=${id}&page=${i}&fromDate=${param.fromDate}&toDate=${param.toDate}">
                                                     ${i}
                                                 </a>
                                             </li>
                                         </c:forEach>
 
                                         <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                            <a class="page-link" href="?id=${id}&page=${currentPage+1}">
+                                            <a class="page-link" href="?id=${id}&page=${currentPage+1}&fromDate=${param.fromDate}&toDate=${param.toDate}">
                                                 &gt;
                                             </a>
                                         </li>

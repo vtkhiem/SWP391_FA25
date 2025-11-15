@@ -371,6 +371,11 @@
     gap: 10px;
     box-sizing: border-box;
     min-width: 0;
+    transition: all 0.3s ease;
+}
+
+.job_card:hover {
+    border: 1px solid #00D363;
 }
 
 .job_card_logo {
@@ -384,6 +389,7 @@
 .job_card_info {
     flex: 1;
     min-width: 0;
+    margin: auto 0;
 }
 
 .job_card_title {
@@ -439,6 +445,16 @@
     font-size: 13px;
     color: #ff7043;
     margin-right: 2px;
+}
+
+.job_card_link {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1;
+  /* Đảm bảo không che nội dung và vẫn click được */
+  text-indent: -9999px; /* hoặc font-size: 0 để ẩn text nếu có */
+  background: transparent;
+  display: block;
 }
 
 @media (max-width: 1200px) {
@@ -1011,6 +1027,32 @@ button.save_job:hover {
         height: 80px;
         flex: 0 0 80px;
     }
+}
+
+.my-thumb-2 {
+    width: 80px !important;
+    height: 80px !important;             /* ép vuông thật để tránh lỗi aspect-ratio khi bị flex cha chi phối */
+    flex: 0 0 80px !important;           /* giữ nguyên kích thước, không cho co giãn */
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #f9f9f9;
+    margin: auto 10px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    line-height: 0;
+}
+
+.my-thumb-2 img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: cover;         /* fill đầy khung, không méo */
+    object-position: center;
+    vertical-align: middle !important;
+    display: block;
 }
 
 footer {

@@ -298,7 +298,6 @@
         </style>
     </head>
     <body>
-
         <div class="navbar">
             <a href="${pageContext.request.contextPath}/admin_home.jsp" class="nav-link">Admin Dashboard</a>
             <span class="divider">|</span>

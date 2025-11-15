@@ -45,8 +45,12 @@ public class SavedJobDAO extends DBContext {
     public List<JobPost> getSavedJobsByCandidate(int candidateID, int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
         String sql = """
-            SELECT jp.* FROM SavedJob s
+            SELECT
+                jp.*,
+                e.ImgLogo
+            FROM SavedJob s
             JOIN JobPost jp ON s.JobPostID = jp.JobPostID
+            JOIN Employer e ON jp.EmployerID = e.EmployerID
             WHERE s.CandidateID = ? AND jp.Visible = 1
             ORDER BY s.DateCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
         """;
@@ -69,6 +73,7 @@ public class SavedJobDAO extends DBContext {
                     job.setNumberExp(rs.getInt("NumberExp"));
                     job.setVisible(rs.getBoolean("Visible"));
                     job.setTypeJob(rs.getString("TypeJob"));
+                    job.setImageUrl(rs.getString("ImgLogo"));
                     Timestamp dc = rs.getTimestamp("DayCreate");
                     if (dc != null) {
                         job.setDayCreate(dc.toLocalDateTime());
@@ -132,7 +137,7 @@ public class SavedJobDAO extends DBContext {
 
     public List<JobPost> searchSavedJobs(int candidateId, String category, String location, Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType, int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT jp.* FROM SavedJob s JOIN JobPost jp ON s.JobPostID = jp.JobPostID WHERE s.CandidateID = ? AND jp.Visible = 1");
+        StringBuilder sql = new StringBuilder("SELECT jp.*, e.ImgLogo FROM SavedJob s JOIN JobPost jp ON s.JobPostID = jp.JobPostID JOIN Employer e ON jp.EmployerID = e.EmployerID WHERE s.CandidateID = ? AND jp.Visible = 1");
 
         if (category != null && !category.isEmpty()) {
             sql.append(" AND Category LIKE ?");
@@ -202,6 +207,7 @@ public class SavedJobDAO extends DBContext {
                     job.setNumberExp(rs.getInt("NumberExp"));
                     job.setVisible(rs.getBoolean("Visible"));
                     job.setTypeJob(rs.getString("TypeJob"));
+                    job.setImageUrl(rs.getString("ImgLogo"));
                     Timestamp dc = rs.getTimestamp("DayCreate");
                     if (dc != null) {
                         job.setDayCreate(dc.toLocalDateTime());

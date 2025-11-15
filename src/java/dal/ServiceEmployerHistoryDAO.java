@@ -6,21 +6,40 @@ import java.util.List;
 import model.ServiceEmployerHistory;
 
 public class ServiceEmployerHistoryDAO extends DBContext {
-    public List<ServiceEmployerHistory> getServiceEmployerHistoryByEmployer(int employerID, int offset, int limit) {
+    public List<ServiceEmployerHistory> getServiceEmployerHistoryByEmployer(int employerID, Timestamp fromDate, Timestamp toDate, int offset, int limit) {
         List<ServiceEmployerHistory> list = new ArrayList();
-        String sql = """
-            SELECT *
+        StringBuilder sql = new StringBuilder("""
+            SELECT seh.*, s.ServiceName
             FROM ServiceEmployerHistory seh
             JOIN Service s ON seh.ServiceID = s.ServiceID
-            WHERE EmployerID = ?
-            ORDER BY CreatedAt DESC
-            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-        """;
+            WHERE seh.EmployerID = ?
+        """);
+            
+        if (fromDate != null) {
+            sql.append(" AND seh.CreatedAt >= ? ");
+        }
         
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, employerID);
-            ps.setInt(2, offset);
-            ps.setInt(3, limit);
+        if (toDate != null) {
+            sql.append(" AND seh.CreatedAt <= ? ");
+        }
+        
+        sql.append("""
+            ORDER BY seh.CreatedAt DESC
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """);
+        
+        
+        try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            int i = 1;
+            ps.setInt(i++, employerID);
+            if (fromDate != null) {
+                ps.setTimestamp(i++, fromDate);
+            }
+            if (toDate != null) {
+                ps.setTimestamp(i++, toDate);
+            }
+            ps.setInt(i++, offset);
+            ps.setInt(i++, limit);
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
@@ -44,11 +63,30 @@ public class ServiceEmployerHistoryDAO extends DBContext {
         return list;
     }
     
-    public int countServiceEmployerHistoryByEmployer(int employerID) {
-        String sql = "SELECT COUNT(*) FROM ServiceEmployerHistory WHERE EmployerID = ?";
+    public int countServiceEmployerHistoryByEmployer(int employerID, Timestamp fromDate, Timestamp toDate) {
+        StringBuilder sql = new StringBuilder("""
+            SELECT COUNT(*)
+            FROM ServiceEmployerHistory
+            WHERE EmployerID = ?
+        """);
+        
+        if (fromDate != null) {
+            sql.append(" AND CreatedAt >= ? ");
+        }
+        
+        if (toDate != null) {
+            sql.append(" AND CreatedAt <= ? ");
+        }
 
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, employerID);
+        try (PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            int i = 1;
+            ps.setInt(i++, employerID);
+            if (fromDate != null) {
+                ps.setTimestamp(i++, fromDate);
+            }
+            if (toDate != null) {
+                ps.setTimestamp(i++, toDate);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);

@@ -36,7 +36,7 @@
                 border: none;
                 padding: 12px 15px;
                 margin: 8px 0;
-                width: 100%;
+                width: 92%;
                 border-radius: 5px;
                 font-size: 14px;
             }

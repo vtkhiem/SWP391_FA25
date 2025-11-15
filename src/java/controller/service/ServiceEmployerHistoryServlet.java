@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import model.Employer;
 import model.ServiceEmployerHistory;
@@ -57,8 +60,30 @@ public class ServiceEmployerHistoryServlet extends HttpServlet {
         int recordsPerPage = 10;
         int offset = (page - 1) * recordsPerPage;
         
-        List<ServiceEmployerHistory> payments = serviceEmployerHistoryDAO.getServiceEmployerHistoryByEmployer(employer.getEmployerId(), offset, recordsPerPage);
-        int totalRecords = serviceEmployerHistoryDAO.countServiceEmployerHistoryByEmployer(employer.getEmployerId());
+        String fromDateStr = request.getParameter("fromDate");
+        String toDateStr   = request.getParameter("toDate");
+
+        Timestamp fromDate = null;
+        Timestamp toDate   = null;
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            if (fromDateStr != null && !fromDateStr.isEmpty()) {
+                LocalDate d = LocalDate.parse(fromDateStr, fmt);
+                fromDate = Timestamp.valueOf(d.atStartOfDay());
+            }
+
+            if (toDateStr != null && !toDateStr.isEmpty()) {
+                LocalDate d = LocalDate.parse(toDateStr, fmt);
+                toDate = Timestamp.valueOf(d.atTime(23, 59, 59));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        List<ServiceEmployerHistory> payments = serviceEmployerHistoryDAO.getServiceEmployerHistoryByEmployer(employer.getEmployerId(), fromDate, toDate, offset, recordsPerPage);
+        int totalRecords = serviceEmployerHistoryDAO.countServiceEmployerHistoryByEmployer(employer.getEmployerId(), fromDate, toDate);
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
         
         request.setAttribute("payments", payments);

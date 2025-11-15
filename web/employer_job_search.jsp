@@ -48,7 +48,7 @@
             </div>
         </div>
         <!--/ bradcam_area  -->
-        
+
         <!-- Toast Notification -->
         <c:if test="${not empty message}">
             <div class="toast-message success">${message}</div>
@@ -175,9 +175,7 @@
                             <table class="table table-hover table-bordered">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th style="width:40px">
-                                            <input type="checkbox" id="selectAll"/>
-                                        </th>
+                                        <th style="width:40px"></th>
                                         <th style="width:48px">No</th>
                                         <th style="width:160px">Tiêu đề</th>
                                         <th style="width:160px">Vị trí</th>
@@ -192,7 +190,14 @@
                                     <c:forEach var="job" items="${jobs}" varStatus="st">
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="jobIds" value="${job.jobPostID}" class="jobCheckbox"/>
+                                                <c:choose>
+                                                    <c:when test="${job.visible}">
+                                                        <i class="ti-unlock"></i>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <i class="ti-lock"></i>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                             <td>${st.index + 1}</td>
 
@@ -257,6 +262,12 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                                 <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
+                                                <form action="highlight-job" method="post" style="display:inline;" onsubmit="return confirm('Bạn muốn làm nổi bật công việc này?');">
+                                                    <input type="hidden" name="jobId" value="${job.jobPostID}">
+                                                    <button type="submit" class="btn btn-sm btn-light m-1">
+                                                        <i class="ti-target"></i>
+                                                    </button>
+                                                </form>
                                                 <c:choose>
                                                     <c:when test="${job.visible}">
                                                         <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
@@ -287,7 +298,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="pagination justify-content-center mt-4">
                             <ul class="pagination">
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
@@ -322,11 +333,6 @@
         <!-- footer -->
 
         <script>
-            document.getElementById("selectAll").addEventListener("click", function () {
-                const checkboxes = document.querySelectorAll(".jobCheckbox");
-                checkboxes.forEach(cb => cb.checked = this.checked);
-            });
-
             document.addEventListener("DOMContentLoaded", function () {
                 const form = document.getElementById("filterForm");
                 const minInput = document.querySelector('input[name="minSalary"]');
@@ -348,7 +354,7 @@
                     }
                 });
             });
-            
+
             document.addEventListener("DOMContentLoaded", () => {
                 const toasts = document.querySelectorAll(".toast-message");
                 toasts.forEach((toast, index) => {

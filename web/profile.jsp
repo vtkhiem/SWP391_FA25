@@ -220,7 +220,7 @@
                         <button onclick="openUploadCandidateImageModal()">Avatar</button>
                         <button onclick="openEditCandidateProfileModal()">Chỉnh sửa</button>
                         <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
-                        <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
+                        <button onclick="window.location.href = 'home'">Trang chủ</button>
                     </div>
                 </c:when>
 
@@ -253,7 +253,7 @@
                                 <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
                                 <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                             </c:if>
-                            <button onclick="window.location.href = 'employerServices'">Trang chủ</button>
+                            <button onclick="window.location.href = 'viewPromotionPosts'">Trang chủ</button>
                         </div>
                     </div>
 

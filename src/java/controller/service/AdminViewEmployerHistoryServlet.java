@@ -3,12 +3,15 @@ package controller.service;
 import dal.ServiceEmployerHistoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import model.Admin;
 import model.ServiceEmployerHistory;
@@ -58,9 +61,30 @@ public class AdminViewEmployerHistoryServlet extends HttpServlet {
         int offset = (page - 1) * recordsPerPage;
         
         String employerId = (String) request.getParameter("id");
+        String fromDateStr = request.getParameter("fromDate");
+        String toDateStr   = request.getParameter("toDate");
+
+        Timestamp fromDate = null;
+        Timestamp toDate   = null;
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            if (fromDateStr != null && !fromDateStr.isEmpty()) {
+                LocalDate d = LocalDate.parse(fromDateStr, fmt);
+                fromDate = Timestamp.valueOf(d.atStartOfDay());
+            }
+
+            if (toDateStr != null && !toDateStr.isEmpty()) {
+                LocalDate d = LocalDate.parse(toDateStr, fmt);
+                toDate = Timestamp.valueOf(d.atTime(23, 59, 59));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
-        List<ServiceEmployerHistory> payments = serviceEmployerHistoryDAO.getServiceEmployerHistoryByEmployer(Integer.parseInt(employerId), offset, recordsPerPage);
-        int totalRecords = serviceEmployerHistoryDAO.countServiceEmployerHistoryByEmployer(Integer.parseInt(employerId));
+        List<ServiceEmployerHistory> payments = serviceEmployerHistoryDAO.getServiceEmployerHistoryByEmployer(Integer.parseInt(employerId), fromDate, toDate, offset, recordsPerPage);
+        int totalRecords = serviceEmployerHistoryDAO.countServiceEmployerHistoryByEmployer(Integer.parseInt(employerId), fromDate, toDate);
         int noOfPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
         
         request.setAttribute("payments", payments);

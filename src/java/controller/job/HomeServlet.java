@@ -35,8 +35,10 @@ public class HomeServlet extends HttpServlet {
     throws ServletException, IOException {
         JobPostDAO jpDAO = new JobPostDAO();
         List<JobPost> highlight = jpDAO.getHighlightJob();
+        List<JobPost> jobs = jpDAO.getJobPosts(0, 8);
         
         request.setAttribute("highlightJobs", highlight);
+        request.setAttribute("jobs", jobs);
         request.getRequestDispatcher("index.jsp").forward(request, response);
     } 
 

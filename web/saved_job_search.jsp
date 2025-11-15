@@ -175,8 +175,15 @@
                                     <div class="col-lg-12 col-md-12 mb-3">
                                         <div class="single_jobs white-bg d-flex justify-content-between p-3 rounded shadow-sm">
                                             <div class="jobs_left d-flex align-items-center">
-                                                <div class="thumb me-3">
-                                                    <img src="img/svg_icon/1.svg" alt="">
+                                                <div class="my-thumb me-3">
+                                                    <c:choose>
+                                                        <c:when test="${not empty job.imageUrl}">
+                                                            <img src="${job.imageUrl}" alt="Avatar">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="img/svg_icon/1.svg" alt="">
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                                 <div class="jobs_conetent">
                                                     <a href="job_details?id=${job.jobPostID}">
@@ -212,21 +219,21 @@
                         <div class="pagination justify-content-center mt-4">
                             <ul class="pagination">
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage-1}">
+                                    <a class="page-link" href="?page=${currentPage-1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                         &lt;
                                     </a>
                                 </li>
 
                                 <c:forEach var="i" begin="1" end="${noOfPages}">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="?page=${i}">
+                                        <a class="page-link" href="?page=${i}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                             ${i}
                                         </a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage+1}">
+                                    <a class="page-link" href="?page=${currentPage+1}&keyword=${fn:escapeXml(param.keyword)}&category=${fn:escapeXml(param.category)}&location=${fn:escapeXml(param.location)}&minSalary=${param.minSalary}&maxSalary=${param.maxSalary}&jobType=${fn:escapeXml(param.jobType)}">
                                         &gt;
                                     </a>
                                 </li>
