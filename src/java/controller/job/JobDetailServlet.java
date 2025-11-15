@@ -10,14 +10,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import model.Candidate;
 import model.JobPost;
 import model.SavedJob;
 
 @WebServlet(name = "JobDetailServlet", urlPatterns = {"/job_details"})
 public class JobDetailServlet extends HttpServlet {
-    private JobPostDAO jobPostDAO = new JobPostDAO();
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -38,24 +37,27 @@ public class JobDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        
         int jobId = Integer.parseInt(request.getParameter("id"));
+        JobPostDAO jobPostDAO = new JobPostDAO();
         JobPost job = jobPostDAO.getJobPostById(jobId);
 
         if (job != null) {
             if (job.isVisible()) {
-                HttpSession session = request.getSession();
-                Candidate candidate = (Candidate) session.getAttribute("user");
-                if (candidate != null) {
-                    SavedJobDAO savedJobDAO = new SavedJobDAO();
-                    SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
-                    request.setAttribute("isSaved", savedJob != null);
+                if (job.getDueDate().isAfter(LocalDateTime.now())) {
+                    HttpSession session = request.getSession();
+                    Candidate candidate = (Candidate) session.getAttribute("user");
+                    if (candidate != null) {
+                        SavedJobDAO savedJobDAO = new SavedJobDAO();
+                        SavedJob savedJob = savedJobDAO.getSavedJobByID(candidate.getCandidateId(), jobId);
+                        request.setAttribute("isSaved", savedJob != null);
+                    } else {
+                        request.setAttribute("isSaved", false);
+                    }
+                    request.setAttribute("job", job);
+                    request.getRequestDispatcher("/job_details.jsp").forward(request, response);
                 } else {
-                    request.setAttribute("isSaved", false);
+                    response.sendRedirect(request.getContextPath() + "/jobs");
                 }
-                request.setAttribute("job", job);
-                request.getRequestDispatcher("/job_details.jsp").forward(request, response);
             } else {
                 response.sendRedirect(request.getContextPath() + "/jobs");
             }

@@ -3,6 +3,7 @@ package controller.job;
 import dal.JobPostDAO;
 import dal.ServiceDAO;
 import dal.ServiceEmployerDAO;
+import dal.ServiceFunctionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,15 +18,15 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import model.Employer;
+import model.Function;
 import model.JobPost;
 import model.Service;
 import model.ServiceEmployer;
 
 @WebServlet(name = "JobAddServlet", urlPatterns = {"/job_add"})
 public class JobAddServlet extends HttpServlet {
-    private JobPostDAO jobPostDAO = new JobPostDAO();
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -55,33 +56,47 @@ public class JobAddServlet extends HttpServlet {
             return;
         }
 
-        ServiceEmployerDAO serviceEmployerDAO = new ServiceEmployerDAO();
         try {
-            int serviceId = serviceEmployerDAO.getCurrentServiceByEmployerId(employer.getEmployerId());
+            ServiceEmployerDAO seDAO = new ServiceEmployerDAO();
+            int serviceId = seDAO.getCurrentServiceByEmployerId(employer.getEmployerId());
             if (serviceId == -1) {
                 session.setAttribute("error", "Chưa đăng kí dịch vụ. Vui lòng đăng kí.");
                 response.sendRedirect(request.getContextPath() + "/employerServices");
-                return;
             } else {
-                ServiceEmployer se = serviceEmployerDAO.getCurrentServiceInfoByEmployerID(employer.getEmployerId(), serviceId);
+                ServiceEmployer se = seDAO.getCurrentServiceInfoByEmployerID(employer.getEmployerId(), serviceId);
                 if (!se.getExpirationDate().after(new Timestamp(System.currentTimeMillis()))) {
                     session.setAttribute("error", "Dịch vụ đã hết hạn. Vui lòng đăng kí mới.");
                     response.sendRedirect(request.getContextPath() + "/employerServices");
-                    return;
                 } else {
-                    ServiceDAO serviceDAO = new ServiceDAO();
-                    Service s = serviceDAO.getServiceById(serviceId);
-                    if (s.isIsUnlimited()) {
-                        response.sendRedirect(request.getContextPath() + "/job_post.jsp");
+                    ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
+                    List<Function> funcs = sfDAO.getFunctionsByServiceId(serviceId);
+                    boolean hasAddFunction = false;
+
+                    for (Function f : funcs) {
+                        if (f.getFunctionName().equalsIgnoreCase("JobPost")) {
+                            hasAddFunction = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasAddFunction) {
+                        session.setAttribute("error", "Gói dịch vụ không có quyền được thêm công việc.");
+                        response.sendRedirect(request.getContextPath() + "/employerServices");
                     } else {
-                        int amount = s.getJobPostAmount();
-                        int jobCount = jobPostDAO.countJobsByEmployerAndDayCreate(serviceId);
-                        if (amount <= jobCount) {
-                            session.setAttribute("error", "Đã đạt đến giới hạn đăng bài.");
-                            response.sendRedirect(request.getContextPath() + "/employerServices");
-                            return;
-                        } else {
+                        ServiceDAO serviceDAO = new ServiceDAO();
+                        Service s = serviceDAO.getServiceById(serviceId);
+                        if (s.isIsUnlimited()) {
                             response.sendRedirect(request.getContextPath() + "/job_post.jsp");
+                        } else {
+                            int amount = s.getJobPostAmount();
+                            JobPostDAO jobPostDAO = new JobPostDAO();
+                            int jobCount = jobPostDAO.countJobsByEmployerAndDayCreate(employer.getEmployerId());
+                            if (amount <= jobCount) {
+                                session.setAttribute("error", "Đã đạt đến giới hạn đăng bài.");
+                                response.sendRedirect(request.getContextPath() + "/employerServices");
+                            } else {
+                                response.sendRedirect(request.getContextPath() + "/job_post.jsp");
+                            }
                         }
                     }
                 }
@@ -105,92 +120,119 @@ public class JobAddServlet extends HttpServlet {
         }
 
         try {
-            String title = request.getParameter("title");
-            String desc1 = request.getParameter("description-1");
-            String desc2 = request.getParameter("description-2");
-            String desc3 = request.getParameter("description-3");
-            String category = request.getParameter("category");
-            String position = request.getParameter("position");
-            String location = request.getParameter("location");
-            String offerMinStr = request.getParameter("offerMin");
-            String offerMaxStr = request.getParameter("offerMax");
-            String numberExpStr = request.getParameter("numberExp");
-            String typeJob = request.getParameter("typeJob");
-            String dueDateStr = request.getParameter("dueDate");
-            String employerIdStr = request.getParameter("employerId");
-
-            if (employerIdStr == null || employerIdStr.isEmpty()
-                    || Integer.parseInt(employerIdStr) != employer.getEmployerId()) {
-                request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
-                request.getRequestDispatcher("job_post.jsp").forward(request, response);
-                return;
-            }
-
-            if (title == null || title.trim().isEmpty()
-                    || desc1 == null || desc1.trim().isEmpty()
-                    || desc2 == null || desc2.trim().isEmpty()
-                    || desc3 == null || desc3.trim().isEmpty()
-                    || category == null || category.trim().isEmpty()
-                    || position == null || position.trim().isEmpty()
-                    || location == null || location.trim().isEmpty()
-                    || offerMinStr == null || offerMinStr.isEmpty()
-                    || offerMaxStr == null || offerMaxStr.isEmpty()
-                    || numberExpStr == null || numberExpStr.isEmpty()
-                    || typeJob == null || typeJob.trim().isEmpty()
-                    || dueDateStr == null || dueDateStr.isEmpty()) {
-                request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
-                request.getRequestDispatcher("job_post.jsp").forward(request, response);
-                return;
-            }
-
-            StringBuilder descriptionBuilder = new StringBuilder();
-            descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
-            descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
-            descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n", "<br>"));
-            String description = descriptionBuilder.toString().trim();
-
-            int employerId = Integer.parseInt(employerIdStr);
-            BigDecimal offerMin = new BigDecimal(offerMinStr);
-            BigDecimal offerMax = new BigDecimal(offerMaxStr);
-            int numberExp = Integer.parseInt(numberExpStr);
-
-            if (offerMax.compareTo(offerMin) < 0) {
-                request.setAttribute("error", "Mức lương tối đa không được nhỏ hơn tối thiểu.");
-                request.getRequestDispatcher("job_post.jsp").forward(request, response);
-                return;
-            }
-
-            LocalDateTime dueDate = null;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(dueDateStr, formatter);
-            dueDate = localDate.atStartOfDay();
-
-            ServiceEmployerDAO serviceEmployerDAO = new ServiceEmployerDAO();
-            int serviceId = serviceEmployerDAO.getCurrentServiceByEmployerId(employer.getEmployerId());
-            ServiceEmployer se = serviceEmployerDAO.getCurrentServiceInfoByEmployerID(employerId, serviceId);
-            LocalDateTime expDate = se.getExpirationDate().toLocalDateTime();
-            if (dueDate.isAfter(expDate)) {
-                request.setAttribute("error", "Ngày hết hạn vi phạm thời hạn gói dịch vụ. Vui lòng chọn ngày trước ngày " + expDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            ServiceEmployerDAO seDAO = new ServiceEmployerDAO();
+            int serviceId = seDAO.getCurrentServiceByEmployerId(employer.getEmployerId());
+            if (serviceId == -1) {
+                session.setAttribute("error", "Chưa đăng kí dịch vụ. Vui lòng đăng kí.");
+                response.sendRedirect(request.getContextPath() + "/employerServices");
             } else {
-                JobPost job = new JobPost(0, employerId, title.trim(), description.trim(),
-                        category.trim(), position.trim(), location.trim(),
-                        offerMin, offerMax, numberExp, false, typeJob.trim(),
-                        LocalDateTime.now(), dueDate);
-
-                boolean success = jobPostDAO.insertJobPost(job);
-
-                if (success) {
-                    request.setAttribute("message", "Thêm công việc thành công!");
+                ServiceEmployer se = seDAO.getCurrentServiceInfoByEmployerID(employer.getEmployerId(), serviceId);
+                if (!se.getExpirationDate().after(new Timestamp(System.currentTimeMillis()))) {
+                    session.setAttribute("error", "Dịch vụ đã hết hạn. Vui lòng đăng kí mới.");
+                    response.sendRedirect(request.getContextPath() + "/employerServices");
                 } else {
-                    request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
+                    ServiceFunctionDAO sfDAO = new ServiceFunctionDAO();
+                    List<Function> funcs = sfDAO.getFunctionsByServiceId(serviceId);
+                    boolean hasAddFunction = false;
+
+                    for (Function f : funcs) {
+                        if (f.getFunctionName().equalsIgnoreCase("JobPost")) {
+                            hasAddFunction = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasAddFunction) {
+                        session.setAttribute("error", "Gói dịch vụ không có quyền được thêm công việc.");
+                        response.sendRedirect(request.getContextPath() + "/employerServices");
+                    } else {
+                        String title = request.getParameter("title");
+                        String desc1 = request.getParameter("description-1");
+                        String desc2 = request.getParameter("description-2");
+                        String desc3 = request.getParameter("description-3");
+                        String category = request.getParameter("category");
+                        String position = request.getParameter("position");
+                        String location = request.getParameter("location");
+                        String offerMinStr = request.getParameter("offerMin");
+                        String offerMaxStr = request.getParameter("offerMax");
+                        String numberExpStr = request.getParameter("numberExp");
+                        String typeJob = request.getParameter("typeJob");
+                        String dueDateStr = request.getParameter("dueDate");
+                        String employerIdStr = request.getParameter("employerId");
+
+                        if (employerIdStr == null || employerIdStr.isEmpty()
+                                || Integer.parseInt(employerIdStr) != employer.getEmployerId()) {
+                            request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
+                            request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                            return;
+                        }
+
+                        if (title == null || title.trim().isEmpty()
+                                || desc1 == null || desc1.trim().isEmpty()
+                                || desc2 == null || desc2.trim().isEmpty()
+                                || desc3 == null || desc3.trim().isEmpty()
+                                || category == null || category.trim().isEmpty()
+                                || position == null || position.trim().isEmpty()
+                                || location == null || location.trim().isEmpty()
+                                || offerMinStr == null || offerMinStr.isEmpty()
+                                || offerMaxStr == null || offerMaxStr.isEmpty()
+                                || numberExpStr == null || numberExpStr.isEmpty()
+                                || typeJob == null || typeJob.trim().isEmpty()
+                                || dueDateStr == null || dueDateStr.isEmpty()) {
+                            request.setAttribute("error", "Vui lòng nhập đầy đủ các trường bắt buộc.");
+                            request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                            return;
+                        }
+
+                        StringBuilder descriptionBuilder = new StringBuilder();
+                        descriptionBuilder.append((desc1.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
+                        descriptionBuilder.append("<b>Yêu cầu công việc:</b><br>").append((desc2.trim()).replaceAll("\r?\n", "<br>")).append("<br>");
+                        descriptionBuilder.append("<b>Về quyền lợi:</b><br>").append((desc3.trim()).replaceAll("\r?\n", "<br>"));
+                        String description = descriptionBuilder.toString().trim();
+
+                        int employerId = Integer.parseInt(employerIdStr);
+                        BigDecimal offerMin = new BigDecimal(offerMinStr);
+                        BigDecimal offerMax = new BigDecimal(offerMaxStr);
+                        int numberExp = Integer.parseInt(numberExpStr);
+
+                        if (offerMax.compareTo(offerMin) < 0) {
+                            request.setAttribute("error", "Mức lương tối đa không được nhỏ hơn tối thiểu.");
+                            request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                            return;
+                        }
+
+                        LocalDateTime dueDate = null;
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        LocalDate localDate = LocalDate.parse(dueDateStr, formatter);
+                        dueDate = localDate.atStartOfDay();
+
+                        LocalDateTime expDate = se.getExpirationDate().toLocalDateTime();
+                        if (dueDate.isAfter(expDate)) {
+                            request.setAttribute("error", "Ngày hết hạn vi phạm thời hạn gói dịch vụ. Vui lòng chọn ngày trước ngày " + expDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        } else {
+                            JobPost job = new JobPost(0, employerId, title.trim(), description.trim(),
+                                    category.trim(), position.trim(), location.trim(),
+                                    offerMin, offerMax, numberExp, false, typeJob.trim(),
+                                    LocalDateTime.now(), dueDate, false, false, null, null);
+
+                            JobPostDAO jobPostDAO = new JobPostDAO();
+                            boolean success = jobPostDAO.insertJobPost(job);
+
+                            if (success) {
+                                request.setAttribute("message", "Thêm công việc thành công!");
+                                request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                            } else {
+                                request.setAttribute("error", "Thêm công việc thất bại. Vui lòng thử lại.");
+                                request.getRequestDispatcher("job_post.jsp").forward(request, response);
+                            }
+                        }
+                    }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ServletException | IOException | NumberFormatException | SQLException e) {
             request.setAttribute("error", "Lỗi xử lý: " + e.getMessage());
+            request.getRequestDispatcher("job_post.jsp").forward(request, response);
         }
-
-        request.getRequestDispatcher("job_post.jsp").forward(request, response);
     }
 
     @Override

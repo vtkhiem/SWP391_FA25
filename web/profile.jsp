@@ -5,7 +5,7 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Hồ sơ người dùng</title>
+        <title>Hồ sơ người dùng - Job Board</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body {
@@ -253,7 +253,7 @@
                                 <button onclick="openEditEmployerProfileModal()">Chỉnh sửa</button>
                                 <button onclick="openChangePasswordModal()">Đổi mật khẩu</button>
                             </c:if>
-                            <button onclick="window.location.href = 'index.jsp'">Trang chủ</button>
+                            <button onclick="window.location.href = 'employerServices'">Trang chủ</button>
                         </div>
                     </div>
 
@@ -262,12 +262,11 @@
                         <div class="service-card">
                             <h2>Gói Dịch Vụ Hiện Tại</h2>
                             <div class="service-details">
-                                <p><span class="info-label">Tên gói:</span> ${service.serviceName}</p>
-                                <p><span class="info-label">Giá:</span> ${service.price} VNĐ</p>
-                                <p><span class="info-label">Thời hạn:</span> ${service.duration} ngày</p>
-                                <p><span class="info-label">Ngày đăng ký:</span>${serviceEmployer.registerDate} </p>
-                                <p><span class="info-label">Ngày hết hạn:</span>${serviceEmployer.expirationDate} </p>
-                                <p><span class="info-label">Trạng thái thanh toán:</span> ${serviceEmployer.paymentStatus}</p>
+                                <p><span class="info-label">Tên gói: </span> ${service.serviceName}</p>
+                                <p><span class="info-label">Giá: </span> ${service.price} VNĐ</p>
+                                <p><span class="info-label">Thời hạn: </span> ${service.duration} ngày</p>
+                                <p><span class="info-label">Ngày đăng ký: </span>${serviceEmployer.registerDate} </p>
+                                <p><span class="info-label">Ngày hết hạn: </span>${serviceEmployer.expirationDate} </p>
                             </div>
                         </div>
                     </c:if>

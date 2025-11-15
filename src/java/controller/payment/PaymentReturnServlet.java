@@ -144,7 +144,25 @@ public class PaymentReturnServlet extends HttpServlet {
                 boolean inserted = serviceEmpDAO.registerService(employerId, serviceId, registerDate, expirationDate, paymentStatus, actionType);
                 if (inserted) {
 
-                    response.sendRedirect("payment_success.jsp?" + request.getQueryString());
+                    String orderIdSuccess = orderIdStr;
+                    String amount = request.getParameter("vnp_Amount"); // Đây là số tiền x 100
+                    String vnp_TransactionNo = request.getParameter("vnp_TransactionNo"); // Mã giao dịch VNPay
+                    String vnp_BankCode = request.getParameter("vnp_BankCode");
+                    String vnp_PayDate = request.getParameter("vnp_PayDate"); // Ngày thanh toán
+
+                    // ✅ 1. Lấy session
+                    jakarta.servlet.http.HttpSession session = request.getSession();
+
+                    // ✅ 2. Lưu các thông tin vào session
+                    session.setAttribute("orderId", orderIdSuccess);
+                    // Chia lại cho 100 để ra số tiền đúng
+                    session.setAttribute("amount", Long.parseLong(amount) / 100);
+                    session.setAttribute("transactionNo", vnp_TransactionNo);
+                    session.setAttribute("bankCode", vnp_BankCode);
+                    session.setAttribute("payDate", vnp_PayDate);
+
+                    // ✅ 3. Redirect sang trang success với URL SẠCH
+                    response.sendRedirect("payment_success.jsp");
 
                 } else {
                     //database 

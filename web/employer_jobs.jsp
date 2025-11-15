@@ -1,16 +1,8 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@page import="model.JobPost, java.time.format.DateTimeFormatter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%
-    // Kiểm tra nếu chưa đăng nhập thì redirect về trang login
-    Object user = session.getAttribute("user");
-    if (user == null) {
-        response.sendRedirect("login.jsp");
-        return; // dừng xử lý trang
-    }
-%>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -243,9 +235,30 @@
                                             <td>
                                                 <a class="btn btn-sm btn-info m-1" href="viewApply?jobId=${job.jobPostID}"><i class="ti-folder"></i></a>
                                                 <a class="btn btn-sm btn-primary m-1" href="employer_job_details?id=${job.jobPostID}"><i class="ti-eye"></i></a>
+                                                <a class="btn btn-sm btn-secondary m-1" href="addToWall?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}">
+                                                    <i class="ti-pin-alt"></i>
+                                                </a>
+                                                <c:choose>
+                                                    <c:when test="${job.activeOnWall}">
+                                                        <!-- Nếu đang hiện, thì click sẽ tắt -->
+                                                        <a class="btn btn-sm btn-dark m-1"
+                                                           href="hideAndShow?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}&active=false"
+                                                           onclick="return confirm('Bạn có chắc muốn ẩn bài này khỏi tường?');">
+                                                            <i class="ti-view-grid"></i>
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <!-- Nếu đang ẩn, click sẽ bật -->
+                                                        <a class="btn btn-sm btn-dark m-1"
+                                                           href="hideAndShow?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}&active=true"
+                                                           onclick="return confirm('Bạn có chắc muốn hiển thị bài này trên tường?');">
+                                                            <i class="ti-layout-grid2-alt"></i>
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
                                                 <a class="btn btn-sm btn-warning m-1" href="job_edit?id=${job.jobPostID}"><i class="ti-write"></i></a>
-                                                    <c:choose>
-                                                        <c:when test="${job.visible}">
+                                                <c:choose>
+                                                    <c:when test="${job.visible}">
                                                         <form action="hide_job" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn ẩn công việc này?');">
                                                             <input type="hidden" name="jobId" value="${job.jobPostID}">
                                                             <button type="submit" class="btn btn-sm btn-danger m-1">
@@ -262,27 +275,7 @@
                                                         </form>
                                                     </c:otherwise>
                                                 </c:choose>
-                                                <a class="btn btn-sm btn-warning m-1" href="addToWall?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}"><i class="ti-write"></i></a>
-                                                    <c:choose>
-                                                        <c:when test="${job.activeOnWall}">
-                                                        <!-- Nếu đang hiện, thì click sẽ tắt -->
-                                                        <a class="btn btn-sm btn-danger m-1"
-                                                           href="hideAndShow?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}&active=false"
-                                                           onclick="return confirm('Bạn có chắc muốn ẩn bài này khỏi tường?');">
-                                                            <i class="ti-lock"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <!-- Nếu đang ẩn, click sẽ bật -->
-                                                        <a class="btn btn-sm btn-success m-1"
-                                                           href="hideAndShow?employerId=${sessionScope.user.employerId}&jobpostId=${job.jobPostID}&active=true"
-                                                           onclick="return confirm('Bạn có chắc muốn hiển thị bài này trên tường?');">
-                                                            <i class="ti-unlock"></i>
-                                                        </a>
-                                                    </c:otherwise>
-                                                </c:choose>
                                             </td>
-
                                         </tr>
                                     </c:forEach>
 
@@ -322,7 +315,6 @@
             </div>
         </div>
         <!-- job_listing_area_end -->
-        <p>Employer ID: ${sessionScope.user.employerId}</p>
 
         <!-- footer -->
         <jsp:include page="footer.jsp"/>
