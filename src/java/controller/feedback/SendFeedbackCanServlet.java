@@ -92,11 +92,12 @@ public class SendFeedbackCanServlet extends HttpServlet {
 
        String[] typeFeedbackIDs = request.getParameterValues("typeFeedbackIDs");
  Integer canID = can.getCandidateId();
+ String email = can.getEmail();
         String subject = request.getParameter("subject");
         String content = request.getParameter("content");
    
 
-        Feedback feedback = new Feedback(null, canID, subject, content, null, null);
+        Feedback feedback = new Feedback(null, canID, subject, content, null, null,email);
 
         try {
             FeedbackDAO dao = new FeedbackDAO();

@@ -105,7 +105,7 @@ public class RequestSupportServlet extends HttpServlet {
         }
         
         // Tạo feedback với đúng ID
-        Feedback feedback = new Feedback(employerID, candidateID, subject, content, null, null);
+        Feedback feedback = new Feedback(employerID, candidateID, subject, content, null, null,email);
         
         int feedbackId;
         if (employerID != null && candidateID != null) {
