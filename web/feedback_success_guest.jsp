@@ -17,6 +17,6 @@
 <body class="text-center p-5">
     <h3 class="text-success">${message}</h3>
     <h3 class="text-danger">${error}</h3>
-    <a href="index.jsp" class="btn btn-primary mt-3">Quay lại trang dịch vụ</a>
+    <a href="home" class="btn btn-primary mt-3">Quay lại trang dịch vụ</a>
 </body>
 </html>

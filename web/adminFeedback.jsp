@@ -94,6 +94,7 @@
                                 <div class="card shadow-sm">
                                     <div class="card-body">
                                         <h5 class="card-title">${fb.subject}</h5>
+                                       
                                         <p class="card-text text-muted">${fb.content}</p>
 
                                         <!-- ✅ HIỂN THỊ TYPE -->
@@ -220,6 +221,7 @@
                                 <div class="card shadow-sm">
                                     <div class="card-body">
                                         <h5 class="card-title">${fb.subject}</h5>
+                                        
                                         <p class="card-text text-muted">${fb.content}</p>
 
                                         <!-- ✅ HIỂN THỊ TYPE -->
