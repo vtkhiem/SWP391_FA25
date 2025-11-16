@@ -81,6 +81,15 @@ public class SelectCV extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(false);
 
+        int page = 1;
+        try {
+            String pageParam = request.getParameter("currentPage");
+            if (pageParam != null && !pageParam.isEmpty()) {
+                page = Integer.parseInt(pageParam);
+            }
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
         int jobId = Validation.getId(request.getParameter("jobId"));
         Candidate candidate = (Candidate) session.getAttribute("user");
 
@@ -92,15 +101,17 @@ public class SelectCV extends HttpServlet {
         ApplyDAO dao = new ApplyDAO();
         if (!dao.isApplicable(jobId, candidate.getCandidateId())) {
             session.setAttribute("error", "Bạn đã ứng tuyển vào công việc này rồi");
-            response.sendRedirect(request.getContextPath() + "/jobs");
+
+            response.sendRedirect(request.getContextPath() + "/jobs?currentPage=" + page);
             return; // avoid “response already committed”
         }
-        
+
         CVDAO cvdao = new CVDAO();
         List<CV> cvList = cvdao.getCVsByCandidate(candidate.getCandidateId());
 
         request.setAttribute("jobId", jobId);
         request.setAttribute("cvList", cvList);
+        request.setAttribute("currentPage", page);
         request.getRequestDispatcher("cv-select.jsp").forward(request, response);
     }
 

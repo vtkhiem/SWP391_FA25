@@ -4,14 +4,19 @@
  */
 package model;
 
+import dal.PromotionDAO;
+import dal.PromotionPostDAO;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  *
  * @author vuthienkhiem
  */
 public class PromotionPost {
-     private int promotionPostID;
+
+    private int promotionPostID;
     private int serviceID;
     private String title;
     private String content;
@@ -22,12 +27,13 @@ public class PromotionPost {
     private int priorityLevel;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private int createdBy; 
+    private int createdBy;
+    private int promotionID;
 
     public PromotionPost() {
     }
 
-    public PromotionPost(int promotionPostID,  int serviceID, String title, String content, String bannerImage, LocalDateTime startDate, LocalDateTime endDate, boolean isActive, int priorityLevel, LocalDateTime createdAt, LocalDateTime updatedAt, int createdBy) {
+    public PromotionPost(int promotionPostID, int serviceID, String title, String content, String bannerImage, LocalDateTime startDate, LocalDateTime endDate, boolean isActive, int priorityLevel, LocalDateTime createdAt, LocalDateTime updatedAt, int createdBy) {
         this.promotionPostID = promotionPostID;
         this.serviceID = serviceID;
         this.title = title;
@@ -39,9 +45,11 @@ public class PromotionPost {
         this.priorityLevel = priorityLevel;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
     }
-
+    
+    public String getService(){
+        return new PromotionPostDAO().getServiceByPostID(promotionPostID).getServiceName();
+    }
     public int getPromotionPostID() {
         return promotionPostID;
     }
@@ -82,16 +90,24 @@ public class PromotionPost {
         this.bannerImage = bannerImage;
     }
 
+    public Date getStartDateFormatted() {
+        return Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
     public LocalDateTime getStartDate() {
         return startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
     }
 
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
-        return endDate;
+    public Date getEndDateFormatted() {
+        return Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public void setEndDate(LocalDateTime endDate) {
@@ -134,7 +150,7 @@ public class PromotionPost {
         return createdBy;
     }
 
-    public void setCreatedBy( int createdBy) {
+    public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
 

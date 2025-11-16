@@ -61,10 +61,9 @@ public class LogoutServlet extends HttpServlet {
 
             session.removeAttribute("user");   // xóa key username trong session
             session.removeAttribute("role");        // xóa role 
-            request.getRequestDispatcher("index.jsp").forward(request, response);
-
+            response.sendRedirect(request.getContextPath() + "/home");
         } catch (Exception s) {
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/home");
         }
     } 
 

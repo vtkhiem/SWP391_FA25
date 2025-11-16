@@ -128,6 +128,7 @@
                                 <p>${job.description}</p>
                             </div>
                         </div>
+
                     </div>
 
                     <!-- Sidebar -->

@@ -84,7 +84,7 @@ public class DeleteCVServlet extends HttpServlet {
             }
         }
         
-        response.sendRedirect("cv-list");
+        response.sendRedirect("list-cv");
     }
 
     /** 

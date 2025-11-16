@@ -167,86 +167,30 @@
                 </div>
                 <div class="job_listing_nav">
                     <div class="job_listing_grid">
-                        <!-- Job Card 1 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/1.svg" alt="VinUni" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Head of Marketing & ...</div>
-                                <div class="job_card_company">VinUniversity</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội</div>
+                        <c:forEach var="job" items="${jobs}">
+                            <div class="job_card">
+                                <a href="job_details?id=${job.jobPostID}" class="job_card_link"></a>
+                                <div class="my-thumb-2">
+                                    <c:choose>
+                                        <c:when test="${not empty job.imageUrl}">
+                                            <img src="${job.imageUrl}" alt="Avatar">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="img/svg_icon/1.svg" alt="">
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="job_card_info">
+                                    <div class="job_card_title">${job.title}</div>
+                                    <div class="job_card_company">${job.companyName}</div>
+                                    <div class="job_card_salary">
+                                        <fmt:formatNumber value="${job.offerMin}" type="number" maxFractionDigits="0"/> -
+                                        <fmt:formatNumber value="${job.offerMax}" type="number" maxFractionDigits="0"/> VNĐ
+                                    </div>
+                                    <div class="job_card_location">${job.location}</div>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Job Card 2 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/2.svg" alt="Techcombank" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Internal Audit</div>
-                                <div class="job_card_company">Techcombank</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội</div>
-                            </div>
-                        </div>
-                        <!-- Job Card 3 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/3.svg" alt="Vietcombank" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Chuyên Viên Kiểm Đị...</div>
-                                <div class="job_card_company">Vietcombank</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội</div>
-                            </div>
-                        </div>
-                        <!-- Job Card 4 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/3.svg" alt="Vietcombank" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Chuyên Viên Kiểm Đị...</div>
-                                <div class="job_card_company">Vietcombank</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội</div>
-                            </div>
-                        </div>
-                        <!-- Job Card 5 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/2.svg" alt="Techcombank" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Chuyên Viên Cao Cấp...</div>
-                                <div class="job_card_company">Techcombank</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội</div>
-                            </div>
-                        </div>
-                        <!-- Job Card 6 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/4.svg" alt="Chailease" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Nhân Viên Quan Hệ K...</div>
-                                <div class="job_card_company">Chailease</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Bình Dương, Đồng Nai, Hồ Chí Minh</div>
-                            </div>
-                        </div>
-                        <!-- Job Card 7 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/2.svg" alt="Techcombank" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Chuyên Gia Tài Chính...</div>
-                                <div class="job_card_company">Techcombank</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội</div>
-                            </div>
-                        </div>
-                        <!-- Job Card 8 -->
-                        <div class="job_card">
-                            <img src="img/svg_icon/5.svg" alt="CityLand" class="job_card_logo">
-                            <div class="job_card_info">
-                                <div class="job_card_title">Giám Đốc Kinh Doanh...</div>
-                                <div class="job_card_company">CityLand</div>
-                                <div class="job_card_salary">Thương lượng</div>
-                                <div class="job_card_location">Hà Nội, Hồ Chí Minh</div>
-                            </div>
-                        </div>
+                        </c:forEach>
                     </div>
                 </div>
             </div>
@@ -284,59 +228,84 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                const slides = document.querySelectorAll(".job_slide");
-                const container = document.querySelector(".job_slide_container");
+
+                const slides = Array.from(document.querySelectorAll(".job_slide"));
                 const dotsContainer = document.querySelector(".job_dots");
+                const prevBtn = document.querySelector(".job_nav_arrow.prev");
+                const nextBtn = document.querySelector(".job_nav_arrow.next");
+
+                let dots = [];
                 let currentIndex = 0;
+                let intervalId = null;
+                const AUTO_MS = 6000;
 
-                // Tạo chấm tròn
-                slides.forEach((_, i) => {
-                    const dot = document.createElement("span");
-                    if (i === 0)
-                        dot.classList.add("active");
-                    dot.addEventListener("click", () => goToSlide(i));
-                    dotsContainer.appendChild(dot);
-                });
+                if (slides.length === 0)
+                    return;
 
-                const dots = dotsContainer.querySelectorAll("span");
+                // Tạo dots
+                function buildDots() {
+                    dotsContainer.innerHTML = "";
+                    dots = [];
 
-                function goToSlide(index) {
+                    slides.forEach((_, i) => {
+                        const dot = document.createElement("span");
+                        dot.className = i === 0 ? "active" : "";
+                        dot.addEventListener("click", () => goToSlide(i));
+                        dotsContainer.appendChild(dot);
+                        dots.push(dot);
+                    });
+                }
+
+                function updateSlides() {
                     slides.forEach((slide, i) => {
-                        slide.classList.toggle("active", i === index);
+                        slide.classList.toggle("active", i === currentIndex);
                     });
                     dots.forEach((dot, i) => {
-                        dot.classList.toggle("active", i === index);
+                        dot.classList.toggle("active", i === currentIndex);
                     });
+                }
+
+                function goToSlide(index) {
                     currentIndex = index;
+                    updateSlides();
                 }
 
                 function nextSlide() {
-                    let nextIndex = (currentIndex + 1) % slides.length;
-                    goToSlide(nextIndex);
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateSlides();
                 }
 
-                document.querySelector(".job_nav_arrow.prev").addEventListener("click", () => {
-                    let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-                    goToSlide(prevIndex);
-                });
-
-                document.querySelector(".job_nav_arrow.next").addEventListener("click", () => {
-                    nextSlide();
-                });
-
-                function startAutoSlide() {
-                    intervalId = setInterval(nextSlide, 6000);
+                function prevSlide() {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateSlides();
                 }
 
-                function stopAutoSlide() {
-                    clearInterval(intervalId);
+                function startAuto() {
+                    stopAuto();
+                    if (slides.length > 1)
+                        intervalId = setInterval(nextSlide, AUTO_MS);
                 }
 
-                startAutoSlide();
+                function stopAuto() {
+                    if (intervalId)
+                        clearInterval(intervalId);
+                    intervalId = null;
+                }
 
+                // Khởi tạo
+                buildDots();
+                updateSlides();
+                startAuto();
+
+                // Nút điều hướng
+                prevBtn?.addEventListener("click", prevSlide);
+                nextBtn?.addEventListener("click", nextSlide);
+
+                // Hover để dừng
                 const slider = document.querySelector(".job_highlight_slider");
-                slider.addEventListener("mouseenter", stopAutoSlide);
-                slider.addEventListener("mouseleave", startAutoSlide);
+                slider?.addEventListener("mouseenter", stopAuto);
+                slider?.addEventListener("mouseleave", startAuto);
+
             });
         </script>
     </body>

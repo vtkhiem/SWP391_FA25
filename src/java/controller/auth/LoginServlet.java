@@ -80,7 +80,7 @@ public class LoginServlet extends HttpServlet {
                         session.setAttribute("role", "Candidate");
                         session.setAttribute("user", candidate);
                         session.setAttribute("candidateId", candidate.getCandidateId());
-                        response.sendRedirect("index.jsp");
+                        response.sendRedirect(request.getContextPath() + "/home");
                         return;
                     } else {
                         status = "Tài Khoản hoặc Mật khẩu của bạn không chính xác";

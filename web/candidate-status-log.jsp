@@ -418,36 +418,132 @@
         <jsp:include page="header.jsp"/>
         <!-- header_end -->
 
+        <!-- Toast Notification -->
+        <c:if test="${not empty sessionScope.error}">
+            <div class="toast-message error">${sessionScope.error}</div>
+            <c:remove var="error" scope="session"/>
+        </c:if>
+
+        <c:if test="${not empty sessionScope.message}">
+            <div class="toast-message success">${sessionScope.message}</div>
+            <c:remove var="message" scope="session"/>
+        </c:if>
+
         <div class="main-content">
             <div class="apply_management_area">
                 <div class="apply_container">
 
                     <!-- Filters -->
-                    <form action="filterApplyLog" method="get">
-                        <div class="apply_filters">
-                            <!-- Search box -->
-                            <input type="text" class="form-control align-middle"
-                                   name="txt" id="searchInput" value="${txt}"
-                                   placeholder="Search by job title..."
-                                   style="height: 38px; min-width: 250px;">
 
-                            <div class="filter_group">
-                                <select class="form-control" name="status" id="statusFilter" style="height: 38px; min-width: 150px;">
-                                    <option value="" disabled <c:if test="${empty status}">selected</c:if> hidden>Filter by Status</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Approved">Approved</option>
-                                        <option value="Rejected">Rejected</option>
+                    <!-- Container -->
+                    <form action="${pageContext.request.contextPath}/filterApplyLog" method="get"
+                          class="container-fluid bg-light p-3 rounded shadow-sm mt-3 mb-4"
+                          style="margin-left: 0;">
+
+                        <div class="row g-2 align-items-center">
+                            <!-- Search -->
+                            <div class="col-md-3">
+                                <input type="text" class="form-control"
+                                       name="txt" id="searchInput" value="${txt}"
+                                       placeholder="🔍 Search by job name...">
+                            </div>
+
+                            <!-- Filter by category -->
+                            <div class="col-md-2">
+                                <select class="form-select" name="category" id="categoryFilter">
+                                    <option value="" <c:if test="${empty category}">selected</c:if>>Filter by Category</option>
+
+                                        <option value="Công nghệ thông tin" <c:if test="${category eq 'Công nghệ thông tin'}">selected</c:if>>
+                                            Công nghệ thông tin
+                                        </option>
+                                        <option value="Thiết kế" <c:if test="${category eq 'Thiết kế'}">selected</c:if>>
+                                            Thiết kế
+                                        </option>
+                                        <option value="Marketing / Truyền thông" <c:if test="${category eq 'Marketing / Truyền thông'}">selected</c:if>>
+                                            Marketing / Truyền thông
+                                        </option>
+                                        <option value="Dịch vụ khách hàng" <c:if test="${category eq 'Dịch vụ khách hàng'}">selected</c:if>>
+                                            Dịch vụ khách hàng
+                                        </option>
+                                        <option value="Kế toán - Tài chính" <c:if test="${category eq 'Kế toán - Tài chính'}">selected</c:if>>
+                                            Kế toán - Tài chính
+                                        </option>
+                                        <option value="Hành chính - Nhân sự" <c:if test="${category eq 'Hành chính - Nhân sự'}">selected</c:if>>
+                                            Hành chính - Nhân sự
+                                        </option>
+                                        <option value="Kinh doanh" <c:if test="${category eq 'Kinh doanh'}">selected</c:if>>
+                                            Kinh doanh
+                                        </option>
+                                        <option value="Vận tải / Kho vận" <c:if test="${category eq 'Vận tải / Kho vận'}">selected</c:if>>
+                                            Vận tải / Kho vận
+                                        </option>
+                                        <option value="Dịch vụ ăn uống" <c:if test="${category eq 'Dịch vụ ăn uống'}">selected</c:if>>
+                                            Dịch vụ ăn uống
+                                        </option>
+                                        <option value="Giáo dục / Đào tạo" <c:if test="${category eq 'Giáo dục / Đào tạo'}">selected</c:if>>
+                                            Giáo dục / Đào tạo
+                                        </option>
+                                        <option value="Hành chính - Văn phòng" <c:if test="${category eq 'Hành chính - Văn phòng'}">selected</c:if>>
+                                            Hành chính - Văn phòng
+                                        </option>
+                                        <option value="Phân tích dữ liệu" <c:if test="${category eq 'Phân tích dữ liệu'}">selected</c:if>>
+                                            Phân tích dữ liệu
+                                        </option>
+                                        <option value="Pháp lý" <c:if test="${category eq 'Pháp lý'}">selected</c:if>>
+                                            Pháp lý
+                                        </option>
+                                        <option value="Quản lý sản phẩm" <c:if test="${category eq 'Quản lý sản phẩm'}">selected</c:if>>
+                                            Quản lý sản phẩm
+                                        </option>
+                                        <option value="Kỹ thuật / Cơ khí" <c:if test="${category eq 'Kỹ thuật / Cơ khí'}">selected</c:if>>
+                                            Kỹ thuật / Cơ khí
+                                        </option>
                                     </select>
                                 </div>
 
-                                <button type="submit" class="btn btn-sm btn-warning me-2">
-                                    <i class="ti-filter"></i> Lọc
-                                </button>
+
+                                <!-- Filter by status -->
+                                <div class="col-md-2">
+                                    <select class="form-select" name="status" id="statusFilter">
+                                        <option value="" disabled <c:if test="${empty status}">selected</c:if> hidden>
+                                            Filter by Status
+                                        </option>
+                                        <option value="Pending" <c:if test="${status eq 'Pending'}">selected</c:if>>Pending</option>
+                                    <option value="Approved" <c:if test="${status eq 'Approved'}">selected</c:if>>Approved</option>
+                                    <option value="Rejected" <c:if test="${status eq 'Rejected'}">selected</c:if>>Rejected</option>
+                                    </select>
+                                </div>
+
+                                <!-- Apply + Clear buttons -->
+                                <div class="col-md-2 d-flex justify-content-start gap-2">
+                                    <button type="submit" class="btn btn-warning w-100">
+                                        Apply
+                                    </button>
+                                    <button id="" type="reset" class="btn btn-secondary w-100">
+                                        Clear
+                                    </button>
+                                </div>
                             </div>
-                        </form>
+
+                            <!-- Salary range row -->
+                            <div class="row g-2 align-items-center mt-2">
+                                <label class="col-md-2 col-form-label fw-semibold text-end">Salary range:</label>
+                                <div class="col-md-2">
+                                    <input type="number" name="offerMin" id="offerMin" placeholder="From..." class="form-control" value="${param.minSalary}">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" name="offerMax" id="offerMax   " placeholder="To..." class="form-control" value="${param.maxSalary}">
+                            </div>
+                        </div>
+
+                        <!-- Error message -->
+                        <c:if test="${not empty errorMessage}">
+                            <div class="alert alert-danger mt-3 mb-0 text-center">${errorMessage}</div>
+                        </c:if>
+                    </form>
 
 
-                        <!-- Apply List -->
+                    <!-- Apply List -->
 
                     <c:forEach var="d" items="${details}" varStatus="st">
                         <div class="apply_list">
@@ -456,7 +552,8 @@
                                     <div class="apply_item_left">
                                         <img src="${d.employer.imgLogo}" alt="Techcombank" class="apply_item_logo">
                                         <div class="apply_item_info">
-                                            <div class="apply_item_job">${d.job.title}</div>
+                                            <a href="job_details?id=${d.job.jobPostID}"><div class="apply_item_job">${d.job.title}</div></a>
+
                                             <div class="apply_item_company">${d.employer.companyName}</div>
                                             <div class="apply_item_meta">
                                                 <span><i class="ti-location-pin"></i>${d.job.location}</span>
@@ -542,5 +639,27 @@
         <script src="js/jquery.validate.min.js"></script>
         <script src="js/mail-script.js"></script>
         <script src="js/main.js"></script>
+        <script>
+            // --- 1. FILTER FORM ---
+            const form = document.querySelector("form[action$='filterApplyLog']");
+            const searchInput = document.getElementById("searchInput");
+            const categoryFilter = document.getElementById("categoryFilter");
+            const statusFilter = document.getElementById("statusFilter");
+            const offerMin = document.getElementById("offerMin");
+            const offerMax = document.getElementById("offerMax");
+
+            // Xử lý nút Clear: reset form và reload lại danh sách gốc
+            const clearBtn = form.querySelector("button[type='reset']");
+            clearBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                searchInput.value = "";
+                categoryFilter.value = "";
+                statusFilter.value = "";
+                offerMin.value = "";
+                offerMax.value = "";
+                // Reload lại trang không có filter
+                const jobId = form.querySelector("input[name='jobId']").value;
+            });
+        </script>
     </body>
 </html>

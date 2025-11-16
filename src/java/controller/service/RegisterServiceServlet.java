@@ -31,13 +31,18 @@ public class RegisterServiceServlet extends HttpServlet {
         try {
             Employer emp = (Employer) request.getSession().getAttribute("user");
             if (emp == null) {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("login-employer.jsp");
                 return;
             }
 
             int employerId = emp.getEmployerId();
             int serviceId = Integer.parseInt(request.getParameter("serviceID"));
             String promoCode = request.getParameter("promoCode");
+            
+            // --- DEBUG 1: Kiểm tra mã khuyến mãi nhận được ---
+            System.out.println("DEBUG (Start): Xử lý đăng ký dịch vụ...");
+            System.out.println("DEBUG 1: Promo Code nhận được: [" + promoCode + "]");
+            // ----------------------------------------------------
 
             ServiceDAO serviceDAO = new ServiceDAO();
             PromotionDAO promoDAO = new PromotionDAO();
@@ -54,13 +59,37 @@ public class RegisterServiceServlet extends HttpServlet {
             Promotion promo = null;
             
             if (promoCode != null && !promoCode.trim().isEmpty()) {
+                
+                // Khả năng cao lỗi nằm trong dòng này, do DB hoặc mapping
                 promo = promoDAO.getPromotionByCode(promoCode.trim());
+                
+                // --- DEBUG 2: Kiểm tra đối tượng Promotion sau khi truy vấn DB ---
+                if (promo == null) {
+                    System.out.println("DEBUG 2: Đối tượng Promotion là NULL (Mã không tồn tại hoặc lỗi DB)");
+                } else {
+                    System.out.println("DEBUG 2: Đối tượng Promotion đã được lấy: Mã = " + promo.getCode() + ", Trạng thái = " + promo.isStatus());
+                }
+                // -----------------------------------------------------------------
+                
                 if (promo != null && promo.isStatus()) {
                     Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-                    if (now.after(promo.getDateSt()) && now.before(promo.getDateEn())) {
+
+                    // --- DEBUG 3: Kiểm tra các trường thời gian ---
+                    System.out.println("DEBUG 3: Date Start: " + promo.getDateSt());
+                    System.out.println("DEBUG 3: Date End: " + promo.getDateEn());
+                    
+                    if (promo.getDateSt() == null || promo.getDateEn() == null) {
+                        // Nếu trường ngày tháng bị null, nó sẽ gây ra NullPointerException 
+                        // trong khối này nếu không được kiểm tra.
+                        System.out.println("DEBUG 3 ERROR: DateSt hoặc DateEn của Promotion là NULL. KHÔNG ÁP DỤNG KM.");
+                    } else if (now.after(promo.getDateSt()) && now.before(promo.getDateEn())) {
+                        System.out.println("DEBUG 3: Mã KM còn hiệu lực. Bắt đầu tính giảm giá.");
                         BigDecimal discount = BigDecimal.ONE.subtract(promo.getDiscount());
                         finalPrice = finalPrice.multiply(discount);
+                    } else {
+                        System.out.println("DEBUG 3: Mã KM đã hết hạn hoặc chưa đến thời gian áp dụng.");
                     }
+                    // ---------------------------------------------
                 }
             }
 
@@ -85,6 +114,8 @@ public class RegisterServiceServlet extends HttpServlet {
             // ✅ Chuyển sang PaymentServlet
             String orderInfo = "Thanh toan don hang #" + orderId + " - " + service.getServiceName();
             String amount = String.valueOf(finalPrice.intValue());
+            
+            System.out.println("DEBUG (End): Tạo Order thành công và chuyển hướng đến Payment Servlet.");
 
             response.sendRedirect(
                 request.getContextPath() + "/payment"
@@ -94,7 +125,10 @@ public class RegisterServiceServlet extends HttpServlet {
             );
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // --- DEBUG Catch: In ra Stack Trace đầy đủ ---
+            System.err.println("CRITICAL ERROR: Lỗi xảy ra trong RegisterServiceServlet:");
+            e.printStackTrace(); 
+            // ----------------------------------------------
             response.sendRedirect("error.jsp");
         }
     }

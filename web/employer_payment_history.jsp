@@ -53,6 +53,30 @@
             <div class="container p-0">
                 <div class="row">
                     <div class="col-12">
+                        <div class="card p-3 mt-3">
+                            <form method="get" class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="fromDate">Từ ngày</label>
+                                    <input type="date" id="fromDate" name="fromDate" class="form-control"
+                                           value="${param.fromDate}">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="toDate">Đến ngày</label>
+                                    <input type="date" id="toDate" name="toDate" class="form-control"
+                                           value="${param.toDate}">
+                                </div>
+                                <div class="form-group col-md-4 d-flex align-items-end">
+                                    <div class="w-100 d-flex">
+                                        <button type="submit" class="btn btn-primary w-50 mr-2">
+                                            Lọc
+                                        </button>
+                                        <a href="?" class="btn btn-secondary w-50">
+                                            Đặt lại
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                         <div class="table-responsive mt-3">
                             <table class="table table-hover table-bordered">
                                 <thead class="thead-light">
@@ -102,25 +126,25 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         <div class="pagination justify-content-center mb-4">
                             <ul class="pagination">
                                 <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage-1}">
+                                    <a class="page-link" href="?page=${currentPage-1}&fromDate=${param.fromDate}&toDate=${param.toDate}">
                                         &lt;
                                     </a>
                                 </li>
 
                                 <c:forEach var="i" begin="1" end="${noOfPages}">
                                     <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                        <a class="page-link" href="?page=${i}">
+                                        <a class="page-link" href="?page=${i}&fromDate=${param.fromDate}&toDate=${param.toDate}">
                                             ${i}
                                         </a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${currentPage == noOfPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="?page=${currentPage+1}">
+                                    <a class="page-link" href="?page=${currentPage+1}&fromDate=${param.fromDate}&toDate=${param.toDate}">
                                         &gt;
                                     </a>
                                 </li>

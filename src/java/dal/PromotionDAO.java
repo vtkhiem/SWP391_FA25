@@ -78,6 +78,8 @@ public class PromotionDAO extends DBContext {
                 );
                 list.add(p);
             }
+        }catch (SQLException e){
+            e.printStackTrace();
         }
         return list;
     }
@@ -170,13 +172,13 @@ public String getCodeById(int id) throws SQLException {
  public List<Promotion> getAllActiveAndDatePromotionsForAService(int serviceId) throws SQLException {
     List<Promotion> list = new ArrayList<>();
     String sql = """
-        SELECT p.*
-        FROM Promotion p
-        INNER JOIN ServicePromotion sp ON p.PromotionID = sp.PromotionID
-        WHERE sp.ServiceID = ?
-          AND p.Status = 1
-          AND GETDATE() BETWEEN p.DateSt AND p.DateEn
-        ORDER BY p.DateSt DESC
+                SELECT p.*
+                FROM Promotion p
+                INNER JOIN ServicePromotion sp ON p.PromotionID = sp.PromotionID
+                WHERE sp.ServiceID = ?
+                  AND p.Status = 1
+                  AND GETDATE() BETWEEN p.DateSt AND p.DateEn
+                ORDER BY p.DateSt DESC
     """;
 
     try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -224,7 +226,7 @@ public String getCodeById(int id) throws SQLException {
     }
 }
      public Promotion getPromotionByCode(String code) throws SQLException {
-        String sql = "SELECT * FROM Promotion WHERE Code = ?";
+        String sql = "SELECT * FROM Promotion WHERE Code = ? AND Status = 1";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, code);
             try (ResultSet rs = ps.executeQuery()) {

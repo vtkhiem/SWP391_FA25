@@ -38,20 +38,20 @@ public class EditCandidateProfile extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         String address = request.getParameter("address");
         String nationality = request.getParameter("nationality");
+        boolean isPublic = request.getParameter("isPublic") != null;
 
         // Kiểm tra dữ liệu đầu vào
         if (candidateName == null || candidateName.trim().isEmpty()
                 || address == null || address.trim().isEmpty()
                 || nationality == null || nationality.trim().isEmpty()) {
-
-            request.setAttribute("error", "Vui lòng điền đầy đủ thông tin.");
-            request.getRequestDispatcher("/candidateProfile").forward(request, response);
+            session.setAttribute("error", "Vui lòng điền đầy đủ thông tin.");
+            response.sendRedirect("candidateProfile");
             return;
         }
 
         if (!Validation.isValidPhone(phoneNumber)) {
-            request.setAttribute("error", "Số điện thoại không hợp lệ.");
-            request.getRequestDispatcher("/candidateProfile").forward(request, response);
+            session.setAttribute("error", "Số điện thoại không hợp lệ.");
+            response.sendRedirect("candidateProfile");
             return;
         }
 
@@ -60,6 +60,7 @@ public class EditCandidateProfile extends HttpServlet {
         candidate.setPhoneNumber(phoneNumber.trim());
         candidate.setAddress(address.trim());
         candidate.setNationality(nationality.trim());
+        candidate.setIsPublic(isPublic);
 
         try {
             RegisterCandidateDAO dao = new RegisterCandidateDAO();
@@ -69,19 +70,18 @@ public class EditCandidateProfile extends HttpServlet {
             if (updated) {
                 // Cập nhật lại thông tin trong session
                 session.setAttribute("user", candidate);
-                session.setAttribute("candidate", candidate);
-                request.setAttribute("success", "Cập nhật thông tin thành công!");
+                session.setAttribute("message", "Cập nhật thông tin thành công!");
             } else {
-                request.setAttribute("error", "Không thể cập nhật thông tin. Vui lòng thử lại.");
+                session.setAttribute("error", "Không thể cập nhật thông tin. Vui lòng thử lại.");
             }
 
             // Forward về profile.jsp (thông qua ProfileServlet)
-            request.getRequestDispatcher("/candidateProfile").forward(request, response);
+            response.sendRedirect("candidateProfile");
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi trong quá trình cập nhật.");
-            request.getRequestDispatcher("/candidateProfile").forward(request, response);
+            session.setAttribute("error", "Đã xảy ra lỗi trong quá trình cập nhật.");
+            response.sendRedirect("candidateProfile");
         }
     }
 

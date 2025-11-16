@@ -143,6 +143,7 @@
                                             <div class="jobs_right">
                                                 <input type="hidden" name="jobId" value="${jobId}">
                                                 <input type="hidden" name="CVID" value="${cv.CVID}">
+                                                <input type="hidden" name="currentPage" value="${currentPage}">
                                                 <button type="submit" class="boxed-btn3 w-100">Ứng tuyển</button>
                                             </div>
                                         </div>

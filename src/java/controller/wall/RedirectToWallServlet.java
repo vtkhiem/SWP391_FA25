@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Candidate;
+import model.Employer;
 import model.JobPost;
 
 /**
@@ -72,6 +73,12 @@ public class RedirectToWallServlet extends HttpServlet {
        WallDAO dao = new WallDAO();
        List<JobPost> list = dao.getJobsOnWallByEmployer(employerId);
        String companyName = edao.getCompanyNameByEmployerID(employerId);
+       Employer employer = edao.findById(employerId);
+       request.setAttribute("ImgLogo", employer.getImgLogo());
+       request.setAttribute("description", employer.getDescription());
+       request.setAttribute("location", employer.getLocation());
+       request.setAttribute("email", employer.getEmail());
+       request.setAttribute("URLWebsite", employer.getUrlWebsite());
        request.setAttribute("companyName", companyName);
        request.setAttribute("wallJobs", list);
       request.getRequestDispatcher("viewEmployerWall.jsp").forward(request, response);

@@ -66,6 +66,18 @@ public class Validation {
             return 0;
         }
     }
+    
+    public static Double getSalary(String input){
+        if (input == null || input.trim().isEmpty()) {
+            return Double.parseDouble("-1");
+        }
+        try {
+            return Double.parseDouble(input.trim());
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid double: " + input);   
+        }
+        return Double.parseDouble("-1");
+    }
 
         public static Integer getPage(String input) {
             if (input == null || input.trim().isEmpty()) {

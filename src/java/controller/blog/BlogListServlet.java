@@ -60,7 +60,7 @@ public class BlogListServlet extends HttpServlet {
     throws ServletException, IOException {
         
         int page = 1;
-        int pagesize = 10;
+        int pagesize = 8;
         try {
             String p = request.getParameter("page");
             if (p != null) page = Integer.parseInt(p);

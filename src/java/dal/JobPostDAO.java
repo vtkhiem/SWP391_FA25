@@ -22,7 +22,7 @@ public class JobPostDAO extends DBContext {
         System.out.println("Total jobs: " + list.size());
         return list;
     }
-    
+
     public List<JobPost> getHighlightJob() {
         List<JobPost> list = new ArrayList<>();
         String sql = """
@@ -36,6 +36,7 @@ public class JobPostDAO extends DBContext {
             INNER JOIN Employer e ON jp.EmployerID = e.EmployerID
             WHERE jp.Visible = 1
             AND jp.DueDate >= GETDATE()
+            AND jh.isActive = 1
             ORDER BY jp.DayCreate DESC
         """;
 
@@ -59,7 +60,7 @@ public class JobPostDAO extends DBContext {
     public List<JobPost> getJobPosts(int offset, int noOfRecords) {
         List<JobPost> list = new ArrayList<>();
         String sql = """
-            SELECT j.*, e.imgLogo AS imageUrl
+            SELECT j.*, e.imgLogo AS imageUrl, e.CompanyName AS CompanyName
             FROM JobPost j
             JOIN Employer e ON j.employerId = e.employerId
             WHERE j.Visible = 1
@@ -75,6 +76,7 @@ public class JobPostDAO extends DBContext {
                 while (rs.next()) {
                     JobPost job = extractJobPost(rs);
                     job.setImageUrl(rs.getString("imageUrl"));
+                    job.setCompanyName(rs.getString("CompanyName"));
                     list.add(job);
                     System.out.println("Loaded job: " + rs.getString("Title"));
                 }
@@ -684,7 +686,7 @@ public class JobPostDAO extends DBContext {
      */
     public List<JobPost> adminSearchJobs(String category, String location,
             Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,
-            int offset, int noOfRecords,int employerId) {
+            int offset, int noOfRecords, int employerId) {
         List<JobPost> list = new ArrayList<>();
         // Bỏ 'WHERE Visible = 1'
         // Dùng 'WHERE 1=1' để dễ dàng nối các mệnh đề 'AND'
@@ -710,7 +712,8 @@ public class JobPostDAO extends DBContext {
         }
         if (jobType != null && !jobType.isEmpty()) {
             sql.append(" AND TypeJob = ?");
-        }if (employerId >= 0) {
+        }
+        if (employerId >= 0) {
             sql.append(" AND EmployerID = ?");
         }
 
@@ -764,7 +767,7 @@ public class JobPostDAO extends DBContext {
      * @return Tổng số bài đăng
      */
     public int adminCountJobsSearched(String category, String location,
-            Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType,int employerId) {
+            Double minSalary, Double maxSalary, String keyword, int numberExp, String jobType, int employerId) {
         // Bỏ 'WHERE Visible = 1'
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM JobPost WHERE 1=1");
 
@@ -788,7 +791,8 @@ public class JobPostDAO extends DBContext {
         }
         if (jobType != null && !jobType.isEmpty()) {
             sql.append(" AND TypeJob = ?");
-        }if (employerId >= 0) {
+        }
+        if (employerId >= 0) {
             sql.append(" AND EmployerID = ?");
         }
 
@@ -831,5 +835,66 @@ public class JobPostDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public boolean setHighlightJob(int employerId, int jobPostId) {
+        String sqlDeactivate = """
+        UPDATE JobHighlight
+        SET isActive = 0
+        WHERE JobPostID IN (SELECT JobPostID FROM JobPost WHERE EmployerID = ?)
+    """;
+
+        String sqlCheck = "SELECT JobHighlightID FROM JobHighlight WHERE JobPostID = ?";
+        String sqlActivate = "UPDATE JobHighlight SET isActive = 1 WHERE JobHighlightID = ?";
+        String sqlInsert = "INSERT INTO JobHighlight (JobPostID, isActive) VALUES (?, 1)";
+
+        try {
+            c.setAutoCommit(false);
+
+            try (PreparedStatement psDeactivate = c.prepareStatement(sqlDeactivate)) {
+                psDeactivate.setInt(1, employerId);
+                psDeactivate.executeUpdate();
+            }
+
+            int jobHighlightId = -1;
+            try (PreparedStatement psCheck = c.prepareStatement(sqlCheck)) {
+                psCheck.setInt(1, jobPostId);
+                try (ResultSet rs = psCheck.executeQuery()) {
+                    if (rs.next()) {
+                        jobHighlightId = rs.getInt("JobHighlightID");
+                    }
+                }
+            }
+
+            if (jobHighlightId != -1) {
+                try (PreparedStatement psActivate = c.prepareStatement(sqlActivate)) {
+                    psActivate.setInt(1, jobHighlightId);
+                    psActivate.executeUpdate();
+                }
+            } else {
+                try (PreparedStatement psInsert = c.prepareStatement(sqlInsert)) {
+                    psInsert.setInt(1, jobPostId);
+                    psInsert.executeUpdate();
+                }
+            }
+
+            c.commit();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                c.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                c.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
     }
 }
