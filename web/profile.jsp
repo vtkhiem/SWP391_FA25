@@ -6,6 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Hồ sơ người dùng - Job Board</title>
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body {

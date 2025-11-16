@@ -364,32 +364,32 @@ public class CVDAO extends DBContext {
             WHERE c.isPublic = 1 
             ORDER BY cv.DayCreate DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
         """;
-        
+
         try (
-                PreparedStatement ps = c.prepareStatement(sql); ) {
+                PreparedStatement ps = c.prepareStatement(sql);) {
             ps.setInt(1, offset);
             ps.setInt(2, recordsPerPage);
-            try(ResultSet rs = ps.executeQuery()){
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                CV cv = new CV();
-                cv.setCVID(rs.getInt("CVID"));
-                cv.setCandidateID(rs.getInt("CandidateID"));
-                cv.setFullName(rs.getString("FullName"));
-                cv.setAddress(rs.getString("Address"));
-                cv.setEmail(rs.getString("Email"));
-                cv.setPosition(rs.getString("Position"));
-                cv.setNumberExp(rs.getInt("NumberExp"));
-                cv.setEducation(rs.getString("Education"));
-                cv.setField(rs.getString("Field"));
-                cv.setCurrentSalary(rs.getBigDecimal("CurrentSalary"));
-                cv.setBirthday(rs.getDate("Birthday"));
-                cv.setNationality(rs.getString("Nationality"));
-                cv.setGender(rs.getString("Gender"));
-                cv.setFileData(rs.getString("FileData"));
-                cv.setDayCreate(rs.getDate("DayCreate"));
+                    CV cv = new CV();
+                    cv.setCVID(rs.getInt("CVID"));
+                    cv.setCandidateID(rs.getInt("CandidateID"));
+                    cv.setFullName(rs.getString("FullName"));
+                    cv.setAddress(rs.getString("Address"));
+                    cv.setEmail(rs.getString("Email"));
+                    cv.setPosition(rs.getString("Position"));
+                    cv.setNumberExp(rs.getInt("NumberExp"));
+                    cv.setEducation(rs.getString("Education"));
+                    cv.setField(rs.getString("Field"));
+                    cv.setCurrentSalary(rs.getBigDecimal("CurrentSalary"));
+                    cv.setBirthday(rs.getDate("Birthday"));
+                    cv.setNationality(rs.getString("Nationality"));
+                    cv.setGender(rs.getString("Gender"));
+                    cv.setFileData(rs.getString("FileData"));
+                    cv.setDayCreate(rs.getDate("DayCreate"));
 
-                list.add(cv);
-            }
+                    list.add(cv);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -419,8 +419,6 @@ public class CVDAO extends DBContext {
 
     public List<CV> filterPublicCVs(String text, Double offerMin, int offset, int recordsPerPage) {
         List<CV> list = new ArrayList<>();
-
-        
 
         StringBuilder sql = new StringBuilder("""
             SELECT 
@@ -542,6 +540,21 @@ public class CVDAO extends DBContext {
         return count;
     }
 
+    public boolean hasApplied(int CVID) {
+        String sql = "SELECT 1 FROM Apply WHERE CVID = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, CVID);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next(); 
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; 
+        }
+    }
+
     public static void main(String[] args) {
         CVDAO dao = new CVDAO();
         /*
@@ -574,50 +587,3 @@ public class CVDAO extends DBContext {
 
     }
 }
-
-
-/*
-    public static void main(String[] args) {
-        try {
-            // Tạo đối tượng CV test
-            CV testCV = new CV();
-            testCV.setCandidateID(1); // Đảm bảo ID này tồn tại trong bảng Candidate
-            testCV.setFullName("Test User");
-            testCV.setEmail("test@example.com");
-            testCV.setAddress("Test Address");
-            testCV.setPosition("Software Developer");
-            testCV.setNumberExp(3);
-            testCV.setEducation("Bachelor Degree");
-            testCV.setField("Information Technology");
-            testCV.setCurrentSalary(new BigDecimal("50000.00"));
-            testCV.setBirthday(Date.valueOf("1990-01-01"));
-            testCV.setNationality("Vietnamese");
-            testCV.setGender("male");
-            testCV.setFileData("uploads/cv_files/test_cv.pdf");
-
-            // Gọi DAO
-            CVDAO cvDao = new CVDAO();
-
-            // Thử thêm CV vào database
-            boolean success = cvDao.createCV(testCV);
-
-            if (success) {
-                System.out.println("CV created successfully!");
-                // Kiểm tra CV vừa tạo
-                System.out.println("Checking CVs for candidate 1:");
-                cvDao.getCVsByCandidate(2).forEach(cv -> {
-                    System.out.println("CV ID: " + cv.getCVID());
-                    System.out.println("Full Name: " + cv.getFullName());
-                    System.out.println("Position: " + cv.getPosition());
-                    System.out.println("Email: " + cv.getEmail());
-                    System.out.println("--------------------");
-                });
-            } else {
-                System.out.println("Failed to create CV!");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Error creating CV:");
-            e.printStackTrace();
-        }
-    }*/

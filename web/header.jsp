@@ -20,9 +20,7 @@
         <link rel="stylesheet" href="css/slicknav.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css">
-        <style>
-
-        </style>
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     </head>
     <body>
         <header>

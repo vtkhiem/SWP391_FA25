@@ -2,9 +2,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@page import="model.Employer"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%
     String role = (String) session.getAttribute("role");
@@ -52,6 +49,7 @@
 <!DOCTYPE html>
 <html lang="vi">
     <head>
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
         <meta charset="UTF-8">
         <title>Gửi phản hồi</title>
         <link rel="stylesheet" href="css/bootstrap.min.css">

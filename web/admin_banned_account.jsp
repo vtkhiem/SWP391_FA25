@@ -14,6 +14,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+            <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <title>Admin Dashboard - Banned Accounts</title>
     <style>
         body { margin:0; font-family: Arial, sans-serif; background:#f3f4f6; color:#111827; }

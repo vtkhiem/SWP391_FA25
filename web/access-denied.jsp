@@ -8,6 +8,8 @@
 <!DOCTYPE html>
 <html>
     <head>
+                <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>

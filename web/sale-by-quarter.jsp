@@ -5,7 +5,10 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fmt:setLocale value="vi_VN" scope="session"/>
-
+<head>
+    
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+</head>
 <div class="container">
     <h3>Bảng doanh thu theo quý</h3>
     <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">

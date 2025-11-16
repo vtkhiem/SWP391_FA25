@@ -8,6 +8,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+            <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <meta charset="UTF-8">
     <title>Chọn vai trò</title>
     <style>

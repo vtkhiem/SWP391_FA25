@@ -12,6 +12,8 @@
     <meta charset="UTF-8">
     <title>Danh sách Feedback</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <style>
           .navbar {
             background:#003366; color:#fff; padding:10px 20px; display:flex; gap:10px;

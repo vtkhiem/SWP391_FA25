@@ -20,6 +20,8 @@
         <link rel="stylesheet" href="css/slicknav.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css">
+        
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
 
         <style>
             * {
@@ -474,7 +476,7 @@
                         </div>
 
                         <!-- Expired Overlay -->
-                        <c:if test="${!promo.isActive || promo.endDateFormatted < now}">
+                        <c:if test="${!promo.isActive}">
                             <div class="expired-overlay">
                                 <div class="expired-text">HẾT HẠN</div>
                             </div>

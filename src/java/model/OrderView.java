@@ -12,7 +12,7 @@ public class OrderView implements Serializable {
     private int employerId;
     private String employerName;
     private String employerEmail;
-    private int serviceId;
+    private int serviceId;  
     private String serviceName;
     private BigDecimal amount;
     private String payMethod;
