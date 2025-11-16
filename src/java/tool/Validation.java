@@ -47,7 +47,7 @@ public class Validation {
         }
 
         // B1: Xóa ký tự đặc biệt, chỉ giữ chữ, số và khoảng trắng
-        key = key.replaceAll("[^a-zA-Z0-9\\s]", "");
+        key = key.replaceAll("[^a-zA-Z0-9\\s@.]", "");
         // B2: Xóa khoảng trắng thừa
         key = key.replaceAll("\\s+", " ");
         // B3: Xóa khoảng trắng ở đầu và cuối

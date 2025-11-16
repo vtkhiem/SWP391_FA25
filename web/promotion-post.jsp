@@ -478,7 +478,7 @@
                         </div>
 
                         <!-- Expired Overlay -->
-                        <c:if test="${!promo.isActive || promo.endDateFormatted < now}">
+                        <c:if test="${!promo.isActive}">
                             <div class="expired-overlay">
                                 <div class="expired-text">EXPIRED</div>
                             </div>
