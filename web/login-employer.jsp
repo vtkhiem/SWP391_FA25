@@ -4,6 +4,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
         <title>Đăng nhập & Đăng ký cho Nhà Tuyển Dụng</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>

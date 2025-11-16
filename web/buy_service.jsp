@@ -10,6 +10,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+            <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <meta charset="UTF-8">
     <title>Thanh toán dịch vụ</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">

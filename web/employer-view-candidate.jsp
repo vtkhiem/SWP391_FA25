@@ -28,6 +28,8 @@
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/custom.css">
 
+                <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
         <style>
             .cv_management_area {
                 padding: 60px 0;

@@ -14,6 +14,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+            <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <title>Edit CV</title>
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>

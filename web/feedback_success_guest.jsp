@@ -8,6 +8,8 @@
 <!DOCTYPE html>
 <html>
    <head>
+       
+       <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <meta charset="UTF-8">
     <title>Kết quả gửi phản hồi</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">

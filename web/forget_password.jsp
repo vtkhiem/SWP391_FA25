@@ -9,6 +9,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <meta charset="utf-8">
     <title>Quên Mật Khẩu</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">

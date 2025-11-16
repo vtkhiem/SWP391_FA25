@@ -24,6 +24,8 @@
     .btn.secondary{background:#6b7280}
     .hr{height:1px; background:var(--line); margin:16px 0}
   </style>
+          <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
 </head>
 <body>
   <div class="wrap">

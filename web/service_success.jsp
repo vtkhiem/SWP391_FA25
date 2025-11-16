@@ -11,6 +11,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <title>Đăng ký thành công</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>

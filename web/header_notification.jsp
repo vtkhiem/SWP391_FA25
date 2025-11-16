@@ -5,6 +5,9 @@
 --%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+</head>
 
 <div class="notification-area d-inline-block me-3" style="position: relative;">
     <a href="#" id="notificationToggle" style="color: white; font-size: 20px;">

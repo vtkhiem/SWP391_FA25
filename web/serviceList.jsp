@@ -14,6 +14,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
     <meta charset="UTF-8">
     <title>Admin Dashboard - Services</title>
     <style>

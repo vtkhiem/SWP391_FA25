@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author shiro
  */
-@WebFilter(filterName = "AuthAdminFilter", urlPatterns = {"/filterOrderList"})
+@WebFilter(filterName = "AuthAdminFilter", urlPatterns = {"/filterOrderList", "/admin_home.jsp", "/candidates", "/employers", "/listService", "/adminPromotion", "/staffs", "/adminFeedbackList", "/adminJobpostList"})
 public class AuthAdminFilter implements Filter {
 
    @Override
@@ -40,7 +40,8 @@ public class AuthAdminFilter implements Filter {
                 && !"MarketingStaff".equals(session.getAttribute("role")))
                 ) {
             // bạn có thể thêm thông báo ?next= để redirect sau khi login
-            response.sendRedirect("login-admin.jsp");
+            response.sendRedirect(request.getContextPath() + "/login-admin.jsp");
+
             return;
         }
 

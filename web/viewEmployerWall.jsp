@@ -7,6 +7,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- ===== EMPLOYER WALL START ===== -->
 <jsp:include page="header.jsp"/>
+<head>
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+</head>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-xl-6">
