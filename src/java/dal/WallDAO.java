@@ -156,13 +156,15 @@ public class WallDAO extends DBContext {
     public List<JobPost> getJobsOnWallByEmployer(int employerId) {
     List<JobPost> list = new ArrayList<>();
     String sql = """
-    SELECT jp.*, ew.IsActive, ew.IsPinned, ew.CreatedAt, ew.PinnedAt
-    FROM JobPost jp
-    JOIN EmployerWall ew ON jp.JobPostID = ew.JobPostID
-    WHERE ew.EmployerID = ?
-                  AND jp.Visible = 1    
-    ORDER BY ew.IsPinned DESC, ew.PinnedAt DESC, ew.CreatedAt DESC
-""";
+        SELECT jp.*, ew.IsActive, ew.IsPinned, ew.CreatedAt, ew.PinnedAt, e.ImgLogo
+        FROM JobPost jp
+        JOIN EmployerWall ew ON jp.JobPostID = ew.JobPostID
+        JOIN Employer e ON jp.EmployerID = e.EmployerID
+        WHERE ew.EmployerID = ?
+        AND jp.Visible = 1
+        AND jp.DueDate >= GETDATE()
+        ORDER BY ew.IsPinned DESC, ew.PinnedAt DESC, ew.CreatedAt DESC
+    """;
 
 
     try (PreparedStatement st = c.prepareStatement(sql)) {
@@ -184,6 +186,7 @@ public class WallDAO extends DBContext {
             }
             j.setTypeJob(rs.getString("TypeJob"));
             j.setActiveOnWall(rs.getBoolean("IsActive"));
+            j.setImageUrl(rs.getString("ImgLogo"));
 j.setPinned(rs.getBoolean("IsPinned"));
             list.add(j);
         }

@@ -274,7 +274,6 @@
                 border-radius: 30px;
                 font-weight: bold;
                 font-size: 1.2rem;
-                transform: rotate(-15deg);
             }
 
             /* Service Type Badge */
@@ -295,6 +294,8 @@
                 background: white;
                 border-radius: 15px;
                 box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+                margin-top: 0;
+                margin-bottom: 80px;
             }
 
             .empty-state h3 {
@@ -370,9 +371,7 @@
 
                                                 <%-- Candidate/Guest --%>
                                                 <c:otherwise>
-                                                    <div class="d-none d-lg-block">
-                                                        <li><a href="login-employer.jsp">Đăng ký/ Đăng nhập cho nhà tuyển dụng</a></li>       
-                                                    </div>
+                                                    <li><a href="login-employer.jsp">Đăng ký/ Đăng nhập cho nhà tuyển dụng</a></li>       
                                                 </c:otherwise>
                                             </c:choose>
 
@@ -381,39 +380,38 @@
                                 </div>
                             </div>
                             <div class="col-xl-3 col-lg-3 d-none d-lg-block">
-                                    <!-- Nếu đã login thì hiện tên user + Logout -->
-                                    <c:if test="${not empty sessionScope.user}">
-                                        <div class="main-menu phone_num d-none d-xl-block">
-                                            <nav>
-                                                <ul id="navigation">
-                                                    <li>
+                                <!-- Nếu đã login thì hiện tên user + Logout -->
+                                <c:if test="${not empty sessionScope.user}">
+                                    <div class="main-menu phone_num d-none d-xl-block">
+                                        <nav>
+                                            <ul id="navigation">
+                                                <li>
+                                                    <c:choose>
+                                                        <c:when test="${sessionScope.role eq 'Candidate'}"><a href="candidateProfile"><b style="color: white">Xin chào, ${sessionScope.user.candidateName}</b></a></c:when>
+                                                        <c:when test="${sessionScope.role eq 'Employer'}"><a href="employerProfile"><b style="color: white">Xin chào, ${sessionScope.user.employerName}</b></a></c:when>
+                                                        <c:otherwise>${sessionScope.user.username}</c:otherwise>
+                                                    </c:choose>
+                                                    <ul class="submenu">
                                                         <c:choose>
-                                                            <c:when test="${sessionScope.role eq 'Candidate'}"><a href="candidateProfile"><b style="color: white">Xin chào, ${sessionScope.user.candidateName}</b></a></c:when>
-                                                            <c:when test="${sessionScope.role eq 'Employer'}"><a href="employerProfile"><b style="color: white">Xin chào, ${sessionScope.user.employerName}</b></a></c:when>
-                                                            <c:otherwise>${sessionScope.user.username}</c:otherwise>
-                                                        </c:choose>
-                                                        <ul class="submenu">
-                                                            <c:choose>
-                                                                <c:when test="${sessionScope.role eq 'Candidate'}">
-                                                                    <li><a href="candidateProfile">Xem hồ sơ</a></li>
-                                                                    </c:when>
-                                                                    <c:when test="${sessionScope.role eq 'Employer'}">
-                                                                    <li><a href="employerProfile">Xem hồ sơ</a></li>
-                                                                    <li><a href="payments_history">Lịch sử giao dịch</a></li>
-                                                                    </c:when>
-                                                                </c:choose>
-                                                            <li><a href="logout">Đăng xuất</a></li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </nav>
-                                        </div>
-                                    </c:if>
-                                </div>
+                                                            <c:when test="${sessionScope.role eq 'Candidate'}">
+                                                                <li><a href="candidateProfile">Xem hồ sơ</a></li>
+                                                                </c:when>
+                                                                <c:when test="${sessionScope.role eq 'Employer'}">
+                                                                <li><a href="employerProfile">Xem hồ sơ</a></li>
+                                                                <li><a href="payments_history">Lịch sử giao dịch</a></li>
+                                                                </c:when>
+                                                            </c:choose>
+                                                        <li><a href="logout">Đăng xuất</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </c:if>
                             </div>
-                            <div class="col-12">
-                                <div class="mobile_menu d-block d-lg-none"></div>
-                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
                         </div>
                     </div>
                 </div>
@@ -424,8 +422,8 @@
         <!-- Hero Section -->
         <div class="hero-section">
             <div class="container main-container">
-                <h1 class="hero-title">🎉 Special Promotions & Discounts</h1>
-                <p class="hero-subtitle">Save big on job posting services with our exclusive discount codes</p>
+                <h1 class="hero-title">Ưu đãi dành cho Nhà tuyển dụng khi Đăng ký</h1>
+                <p class="hero-subtitle">Tiết kiệm chi phí khi chọn lựa những gói dịch vụ hấp dẫn với giá thành phù hợp</p>
             </div>
         </div>
 
@@ -434,9 +432,9 @@
             <!-- Filter Section -->
             <div class="filter-section">
                 <div class="filter-buttons">
-                    <a href="viewPromotionPosts" class="filter-btn">All Promotions</a>
-                    <a href="filterPromotionPosts?isActive=1" class="filter-btn">Active</a>
-                    <a href="filterPromotionPosts?isActive=0" class="filter-btn">Expired</a>
+                    <a href="viewPromotionPosts" class="filter-btn">Tất cả</a>
+                    <a href="filterPromotionPosts?isActive=1" class="filter-btn">Còn hiệu lực</a>
+                    <a href="filterPromotionPosts?isActive=0" class="filter-btn">Các gói cũ</a>
                 </div>
             </div>
 
@@ -478,7 +476,7 @@
                         <!-- Expired Overlay -->
                         <c:if test="${!promo.isActive || promo.endDateFormatted < now}">
                             <div class="expired-overlay">
-                                <div class="expired-text">EXPIRED</div>
+                                <div class="expired-text">HẾT HẠN</div>
                             </div>
                         </c:if>
                     </div>
@@ -488,8 +486,8 @@
             <!-- Empty State (if no promotions) -->
             <c:if test="${empty promotionPosts}">
                 <div class="empty-state">
-                    <h3>No Promotions Available</h3>
-                    <p>Check back later for exciting discount offers!</p>
+                    <h3>Hiện không có gói cước nào</h3>
+                    <p>Bạn hãy quay lại sau nhé!</p>
                 </div>
             </c:if>
         </div>
@@ -522,6 +520,8 @@
                 </ul>
             </nav>
         </c:if>
+        
+        <jsp:include page="footer.jsp"/>
         <!-- JavaScript -->
         <script src="js/jquery-1.12.4.min.js"></script>
         <script>

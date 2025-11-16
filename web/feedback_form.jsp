@@ -61,7 +61,7 @@
             }
             .feedback-card {
                 max-width: 650px;
-                margin: 3rem auto;
+                margin: 9rem auto 3rem auto;
                 background: #fff;
                 padding: 2rem;
                 border-radius: 15px;
@@ -208,11 +208,7 @@
             </div>
         </div>
     </body>
-    <c:out value="${serviceList}" default="serviceList = null hoặc empty" /><br>
-    <c:out value="${promotionList}" default="promotionList = null hoặc empty" /><br>
-    <c:out value="${typeFeedbackList}" default="typeFeedbackList = null hoặc empty" /><br>
 
-    <jsp:include page="footer.jsp"/>
 
     <!-- ========== JavaScript xử lý hiển thị nhóm dịch vụ/khuyến mãi ========== -->
     <script>

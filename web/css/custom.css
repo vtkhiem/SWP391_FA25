@@ -138,15 +138,28 @@
 }
 
 .job_slide_container {
-    display: flex;
-    transition: transform 0.6s ease;
+    margin: 0 0 0 60px;
+    position: relative;
     width: 100%;
+    height: auto;
 }
 
+/* Tất cả slide chồng lên nhau */
 .job_slide {
-    min-width: 100%;
-    display: flex;
-    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+/* Slide đang hiển thị */
+.job_slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
 }
 
 .job_card_large {

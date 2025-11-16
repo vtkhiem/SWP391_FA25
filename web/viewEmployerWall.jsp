@@ -1,305 +1,124 @@
-<%-- 
-    Document   : viewEmployerWall
-    Created on : Nov 3, 2025, 2:37:15 AM
-    Author     : vuthienkhiem
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!-- ===== EMPLOYER WALL START ===== -->
-<jsp:include page="header.jsp"/>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-xl-6">
-            <div class="wall-header mb-4">
-                <h3 class="fw-bold">Tường của nhà tuyển dụng</h3>
-                <h5 class="text-primary">${companyName}</h5>
-            </div>
-            
-            <c:if test="${empty wallJobs}">
-                <div class="alert alert-info shadow-sm">
-                    <i class="ti-info-alt me-2"></i>
-                    Nhà tuyển dụng này chưa đăng bài viết nào lên tường.
-                </div>
-            </c:if>
-            
-            <!-- Job Posts Feed -->
-            <c:forEach var="job" items="${wallJobs}">
-                <div class="job-post-card mb-4">
-                    <div class="card shadow-sm">
-                        <!-- Post Header -->
-                        <div class="card-header bg-white border-bottom">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center flex-grow-1">
-                                    <div class="post-icon me-3">
-                                        <i class="ti-briefcase"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h5 class="mb-1 fw-bold text-dark">${job.title}</h5>
-                                        <small class="text-muted d-flex align-items-center">
-                                            <i class="ti-time me-1"></i> 
-                                            Đăng ${job.dayCreate}
-                                        </small>
-                                    </div>
-                                </div>
-                                <c:if test="${job.pinned}">
-                                    <span class="badge bg-warning">
-                                        <i class="ti-pin2"></i> Ghim
-                                    </span>
-                                </c:if>
+<%@page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>${companyName} - Job Board</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+
+        <!-- CSS: Bootstrap first, then libraries, then main style -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/themify-icons.css">
+        <link rel="stylesheet" href="css/flaticon.css">
+        <link rel="stylesheet" href="css/owl.carousel.min.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/nice-select.css">
+        <link rel="stylesheet" href="css/gijgo.css">
+        <link rel="stylesheet" href="css/animate.min.css">
+        <link rel="stylesheet" href="css/slicknav.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/custom.css"> 
+    </head>
+    <body>
+        <jsp:include page="header.jsp"/>
+
+        <div class="bradcam_area bradcam_bg_1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="bradcam_text d-flex align-items-center gap-3">
+                            <div class="job_logo_large">
+                                <c:choose>
+                                    <c:when test="${not empty ImgLogo}">
+                                        <img src="${ImgLogo}" alt="${companyName}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="img/svg_icon/1.svg" alt="${job.companyName}" />
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
-                        </div>
-                        
-                        <!-- Post Content -->
-                        <div class="card-body p-4">
-                            <div class="job-details">
-                                <div class="detail-item mb-3">
-                                    <div class="detail-icon">
-                                        <i class="ti-location-pin"></i>
-                                    </div>
-                                    <div class="detail-content">
-                                        <span class="detail-label">Địa điểm</span>
-                                        <span class="detail-value">${job.location}</span>
-                                    </div>
-                                </div>
-                                <div class="detail-item mb-3">
-                                    <div class="detail-icon">
-                                        <i class="ti-briefcase"></i>
-                                    </div>
-                                    <div class="detail-content">
-                                        <span class="detail-label">Vị trí</span>
-                                        <span class="detail-value">${job.position}</span>
-                                    </div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-icon">
-                                        <i class="ti-money"></i>
-                                    </div>
-                                    <div class="detail-content">
-                                        <span class="detail-label">Mức lương</span>
-                                        <span class="detail-value salary">${job.offerMinFormatted} - ${job.offerMaxFormatted}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Post Actions -->
-                        <div class="card-footer bg-light border-top">
-                            <div class="d-flex justify-content-center">
-                                <a href="job_details?id=${job.jobPostID}" 
-                                   class="btn btn-primary btn-view-detail">
-                                    <i class="ti-search me-2"></i> Xem chi tiết công việc
-                                </a>
+                            <div>
+                                <h1 class="text-white mb-3">${companyName}</h1>
+                                <h5 class="text-white mb-4">${description}</h5>
+                                <h5 class="text-white mb-2"><i class="ti ti-location-pin mr-2"></i>${location}</h5>
+                                <h5 class="text-white mb-2"><i class="ti ti-email mr-2"></i>${email}</h5>
+                                <h5 class="text-white"><i class="ti ti-link mr-2"></i>${URLWebsite}</h5>
                             </div>
                         </div>
                     </div>
                 </div>
-            </c:forEach>
+            </div>
         </div>
-    </div>
-</div>
-<!-- ===== EMPLOYER WALL END ===== -->
 
-<style>
-    .wall-header {
-        margin-top: 10%;
-        text-align: center;
-        padding: 1.5rem;
-        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-        border-radius: 16px;
-        color: white;
-        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-    }
-    
-    .wall-header h3 {
-        margin-bottom: 0.5rem;
-        font-size: 1.5rem;
-    }
-    
-    .wall-header h5 {
-        margin-bottom: 0;
-        color: rgba(255, 255, 255, 0.95);
-        font-weight: 600;
-    }
-    
-    .job-post-card {
-        animation: fadeInUp 0.4s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .card {
-        border-radius: 16px;
-        border: 1px solid #e5e7eb;
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-    
-    .card:hover {
-        box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-        transform: translateY(-4px);
-    }
-    
-    .card-header {
-        padding: 1.5rem 1.75rem;
-        border-radius: 16px 16px 0 0 !important;
-    }
-    
-    .card-header h5 {
-        font-size: 1.25rem;
-        color: #1a202c;
-    }
-    
-    .post-icon {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: white;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
-    }
-    
-    .card-body {
-        padding: 2rem 1.75rem;
-    }
-    
-    .job-details {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 1.75rem;
-        border-radius: 12px;
-        border: 1px solid #dee2e6;
-    }
-    
-    .detail-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 0.75rem;
-        background: white;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-    
-    .detail-item:hover {
-        transform: translateX(5px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    
-    .detail-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-    
-    .detail-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        flex-grow: 1;
-    }
-    
-    .detail-label {
-        font-size: 0.8rem;
-        color: #6b7280;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .detail-value {
-        font-size: 1.05rem;
-        color: #1a202c;
-        font-weight: 600;
-    }
-    
-    .detail-value.salary {
-        color: #10b981;
-        font-size: 1.15rem;
-        font-weight: 700;
-    }
-    
-    .card-footer {
-        padding: 1.5rem 1.75rem;
-        border-radius: 0 0 16px 16px !important;
-        background: #f8f9fa !important;
-    }
-    
-    .btn-view-detail {
-        padding: 0.75rem 2rem;
-        font-size: 1rem;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-    }
-    
-    .btn-view-detail:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
-    }
-    
-    .badge {
-        padding: 0.5rem 0.9rem;
-        font-weight: 600;
-        border-radius: 8px;
-        font-size: 0.85rem;
-    }
-    
-    .alert {
-        border-radius: 12px;
-        padding: 1.25rem;
-        font-size: 1rem;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-        .card-header {
-            padding: 1.25rem;
-        }
-        
-        .card-body {
-            padding: 1.5rem 1.25rem;
-        }
-        
-        .job-details {
-            padding: 1.25rem;
-        }
-        
-        .card-footer {
-            padding: 1.25rem;
-        }
-        
-        .btn-view-detail {
-            width: 100%;
-        }
-        
-        .post-icon {
-            width: 45px;
-            height: 45px;
-        }
-        
-        .card-header h5 {
-            font-size: 1.1rem;
-        }
-    }
-</style>
+        <!-- job_listing_area -->
+        <div class="job_listing_area plus_padding">
+            <div class="container">
+                <div class="row">
+                    <!-- Danh sách việc làm -->
+                    <div class="col-12">
+                        <div class="recent_joblist_wrap">
+                            <div class="recent_joblist white-bg mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h3>Công việc tiêu biểu</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="job_lists m-0">
+                            <div class="row">
+                                <c:forEach var="job" items="${wallJobs}">
+                                    <div class="col-lg-12 col-md-12 mb-3">
+                                        <div class="single_jobs white-bg d-flex justify-content-between p-3 rounded shadow-sm">
+                                            <div class="jobs_left d-flex align-items-center">
+                                                <div class="my-thumb me-3">
+                                                    <c:choose>
+                                                        <c:when test="${not empty job.imageUrl}">
+                                                            <img src="${job.imageUrl}" alt="Avatar">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="img/svg_icon/1.svg" alt="">
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                                <div class="jobs_conetent">
+                                                    <a href="job_details?id=${job.jobPostID}">
+                                                        <h4>${job.title}</h4>
+                                                    </a>
+                                                    <div class="links_locat d-flex align-items-center">
+                                                        <div class="location me-3">
+                                                            <p><i class="fa fa-map-marker"></i> ${job.location}</p>
+                                                        </div>
+                                                        <div class="location">
+                                                            <p><i class="fa fa-clock-o"></i> ${job.typeJob}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="jobs_right">
+                                                <div class="apply_now justify-content-center">
+                                                    <a href="job_details?id=${job.jobPostID}&currentPage=${param.page}" class="boxed-btn3">Xem Ngay</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- job_listing_area_end  -->
+
+        <jsp:include page="footer.jsp"/>
+    </body>
+</html>

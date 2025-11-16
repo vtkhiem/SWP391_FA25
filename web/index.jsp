@@ -228,59 +228,84 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                const slides = document.querySelectorAll(".job_slide");
-                const container = document.querySelector(".job_slide_container");
+
+                const slides = Array.from(document.querySelectorAll(".job_slide"));
                 const dotsContainer = document.querySelector(".job_dots");
+                const prevBtn = document.querySelector(".job_nav_arrow.prev");
+                const nextBtn = document.querySelector(".job_nav_arrow.next");
+
+                let dots = [];
                 let currentIndex = 0;
+                let intervalId = null;
+                const AUTO_MS = 6000;
 
-                // Tạo chấm tròn
-                slides.forEach((_, i) => {
-                    const dot = document.createElement("span");
-                    if (i === 0)
-                        dot.classList.add("active");
-                    dot.addEventListener("click", () => goToSlide(i));
-                    dotsContainer.appendChild(dot);
-                });
+                if (slides.length === 0)
+                    return;
 
-                const dots = dotsContainer.querySelectorAll("span");
+                // Tạo dots
+                function buildDots() {
+                    dotsContainer.innerHTML = "";
+                    dots = [];
 
-                function goToSlide(index) {
+                    slides.forEach((_, i) => {
+                        const dot = document.createElement("span");
+                        dot.className = i === 0 ? "active" : "";
+                        dot.addEventListener("click", () => goToSlide(i));
+                        dotsContainer.appendChild(dot);
+                        dots.push(dot);
+                    });
+                }
+
+                function updateSlides() {
                     slides.forEach((slide, i) => {
-                        slide.classList.toggle("active", i === index);
+                        slide.classList.toggle("active", i === currentIndex);
                     });
                     dots.forEach((dot, i) => {
-                        dot.classList.toggle("active", i === index);
+                        dot.classList.toggle("active", i === currentIndex);
                     });
+                }
+
+                function goToSlide(index) {
                     currentIndex = index;
+                    updateSlides();
                 }
 
                 function nextSlide() {
-                    let nextIndex = (currentIndex + 1) % slides.length;
-                    goToSlide(nextIndex);
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateSlides();
                 }
 
-                document.querySelector(".job_nav_arrow.prev").addEventListener("click", () => {
-                    let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-                    goToSlide(prevIndex);
-                });
-
-                document.querySelector(".job_nav_arrow.next").addEventListener("click", () => {
-                    nextSlide();
-                });
-
-                function startAutoSlide() {
-                    intervalId = setInterval(nextSlide, 6000);
+                function prevSlide() {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateSlides();
                 }
 
-                function stopAutoSlide() {
-                    clearInterval(intervalId);
+                function startAuto() {
+                    stopAuto();
+                    if (slides.length > 1)
+                        intervalId = setInterval(nextSlide, AUTO_MS);
                 }
 
-                startAutoSlide();
+                function stopAuto() {
+                    if (intervalId)
+                        clearInterval(intervalId);
+                    intervalId = null;
+                }
 
+                // Khởi tạo
+                buildDots();
+                updateSlides();
+                startAuto();
+
+                // Nút điều hướng
+                prevBtn?.addEventListener("click", prevSlide);
+                nextBtn?.addEventListener("click", nextSlide);
+
+                // Hover để dừng
                 const slider = document.querySelector(".job_highlight_slider");
-                slider.addEventListener("mouseenter", stopAutoSlide);
-                slider.addEventListener("mouseleave", startAutoSlide);
+                slider?.addEventListener("mouseenter", stopAuto);
+                slider?.addEventListener("mouseleave", startAuto);
+
             });
         </script>
     </body>
